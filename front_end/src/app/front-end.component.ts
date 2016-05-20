@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['front-end.component.css']
 })
 export class FrontEndAppComponent {
-  title = 'front-end works!';
+  title = 'The Angular 2 app works!';
 }

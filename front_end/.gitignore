@@ -1,0 +1,5 @@
+## Ignore Angular 2 and Typescript directories
+dist/
+tmp/
+typings/
+src/css/
