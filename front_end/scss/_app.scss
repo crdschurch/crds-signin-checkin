@@ -14,17 +14,16 @@ p {
 .header {
   background-color: $gray-lightest;
   padding: 1em 0;
-  min-height: 8vh;
+  height: 8vh;
 }
 .logo {
-  margin-bottom: -73px;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
 }
 .main {
   padding: 60px 0;
   color: #fff;
-  min-height: 92vh;
+  height: 92vh;
 }
 .footer {
   position: absolute;
@@ -41,7 +40,7 @@ p {
   background: none;
   border: none;
   &::placeholder {
-    font-size: 1rem;
+    font-size: 1.5rem;
     color: #fff;
   }
   &:focus {
