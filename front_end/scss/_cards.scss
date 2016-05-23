@@ -1,0 +1,23 @@
+.card {
+  color: $gray-dark;
+}
+
+.round-plus {
+  background: $brand-primary;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 3rem;
+  font-weight: bold;
+  height: 100px;
+  width: 100px;
+  line-height: 100px;
+  text-align: center;
+  @extend .center-block;
+  @extend .m-b-1;
+
+  &:hover {
+    color: #fff;
+    text-decoration: none;
+    background: darken($brand-primary, 10%);
+  }
+}
