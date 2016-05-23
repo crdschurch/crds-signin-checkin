@@ -5,7 +5,11 @@
   transform: translate(-50%, -50%);
   width: 100%;
 }
-
+.img-background {
+  background-size: cover;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
 /**
  * Add/remove margins
  */

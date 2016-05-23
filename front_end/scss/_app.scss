@@ -1,13 +1,60 @@
 /***************************************************************************************
 * Typography
 ***************************************************************************************/
-
-
+p {
+  font-weight: $font-weight;
+}
+.btn {
+  font-size: 1.75em;
+  text-transform: uppercase;
+}
 /***************************************************************************************
 * Layout
 ***************************************************************************************/
-
+.header {
+  background-color: $gray-lightest;
+  padding: 1em 0;
+  min-height: 8vh;
+}
+.logo {
+  margin-bottom: -73px;
+  width: 80px;
+  height: 80px;
+}
+.main {
+  padding: 60px 0;
+  color: #fff;
+  min-height: 92vh;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin: 1em 0;
+}
+.wrapper {
+  background-image: url("../assets/images/bg-highschool.png");
+}
+.num-pad-value {
+  @extend .display-4;
+  text-align: center;
+  background: none;
+  border: none;
+  &::placeholder {
+    font-size: 1rem;
+    color: #fff;
+  }
+  &:focus {
+    outline: none;
+  }
+}
 
 /***************************************************************************************
 * General
 ***************************************************************************************/
+.heading-highlight {
+  background-color: rgba(116,143,162,0.50);
+  padding: 15px;
+  /** TODO: This should be moved out to affect all headings. Make a class that uses fluid font-size for all heading **/
+  font-size: 2.4vw;
+}

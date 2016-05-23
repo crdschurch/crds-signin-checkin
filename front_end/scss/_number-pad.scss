@@ -1,0 +1,46 @@
+$num-pad-bg: $brand-gray;
+
+.num-pad {
+  color: $body-color;
+
+  table {
+    margin: 0 auto;
+    padding: 0;
+    border-collapse: collapse;
+    border: 0.1rem solid $num-pad-bg;
+    width: 100%;
+    background-color: $num-pad-bg;
+  }
+  table td {
+    padding: 0;
+    width: 18%;
+    height: 18%;
+    border: 0.1rem solid $num-pad-bg;
+  }
+  table button {
+    display: block;
+    font-size: 2em;
+    width: 100%;
+    min-height: 90px;
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #fff;
+    appearance: none;
+    transition: background-color .3s ease-out;
+    &:focus {
+      outline: none;
+    }
+    &:active {
+      background-color: $num-pad-bg;
+    }
+  }
+  table button.btn-muted {
+    background-color: transparent;
+    opacity: .5;
+    font-size: 1.5em;
+    &:active {
+      background-color: #fff;
+    }
+  }
+}

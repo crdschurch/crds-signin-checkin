@@ -3,7 +3,6 @@
 // Copy settings from this file into the provided `_custom.scss` to override
 // the Bootstrap defaults without modifying key, versioned files.
 
-
 // Table of Contents
 //
 // Colors
@@ -32,7 +31,14 @@ $gray-light:                #818a91 !default;
 $gray-lighter:              #eceeef !default;
 $gray-lightest:             #f7f7f9 !default;
 
-$brand-primary:             #0275d8 !default;
+$brand-blue:				            #748FA2; //PMS 5405 C58 M17 Y0   K46
+$brand-orange:			            #b05c30; //PMS 167  C0  M60 Y100 K17
+$brand-dkblue:			            #27475C;
+$brand-gray:				            #D7DCE0; //PMS Cool Grey 9
+
+$brand-primary:			        $brand-blue;
+$brand-secondary:           $brand-orange;
+
 $brand-success:             #5cb85c !default;
 $brand-info:                #5bc0de !default;
 $brand-warning:             #f0ad4e !default;
@@ -43,12 +49,12 @@ $brand-danger:              #d9534f !default;
 //
 // Quickly modify global styling by enabling or disabling optional features.
 
-$enable-flex:               false !default;
+$enable-flex:               true !default;
 $enable-rounded:            true !default;
 $enable-shadows:            false !default;
 $enable-gradients:          false !default;
-$enable-transitions:        false !default;
-$enable-hover-media-query:  false !default;
+$enable-transitions:        true !default;
+$enable-hover-media-query:  true !default;
 $enable-grid-classes:       true !default;
 
 
@@ -142,13 +148,14 @@ $grid-gutter-width:          1.875rem !default; // 30px
 //
 // Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif:     "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$font-family-sans-serif:     'Roboto', "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 $font-family-serif:          Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:      Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $font-family-base:           $font-family-sans-serif !default;
 
 // Pixel value used to responsively scale all typography. Applied to the `<html>` element.
 $font-size-root:             16px !default;
+$font-weight:                300;
 
 $font-size-base:             1rem !default;
 $font-size-lg:               1.25rem !default;
@@ -176,7 +183,7 @@ $line-height:                1.5 !default;
 
 $headings-margin-bottom:     ($spacer / 2) !default;
 $headings-font-family:       inherit !default;
-$headings-font-weight:       500 !default;
+$headings-font-weight:       400 !default;
 $headings-line-height:       1.1 !default;
 $headings-color:             inherit !default;
 
@@ -239,9 +246,9 @@ $table-border-color:            $gray-lighter !default;
 //
 // For each of Bootstrap's buttons, define text, background and border color.
 
-$btn-padding-x:                  1rem !default;
+$btn-padding-x:                  1.25rem !default;
 $btn-padding-y:                  .375rem !default;
-$btn-font-weight:                normal !default;
+$btn-font-weight:                bold !default;
 
 $btn-primary-color:              #fff !default;
 $btn-primary-bg:                 $brand-primary !default;
@@ -269,10 +276,10 @@ $btn-danger-border:              $btn-danger-bg !default;
 
 $btn-link-disabled-color:        $gray-light !default;
 
-$btn-padding-x-sm:               .75rem !default;
+$btn-padding-x-sm:               1rem !default;
 $btn-padding-y-sm:               .25rem !default;
 
-$btn-padding-x-lg:               1.25rem !default;
+$btn-padding-x-lg:               2rem !default;
 $btn-padding-y-lg:               .75rem !default;
 
 // Allows for customizing button radius independently from global border radius
