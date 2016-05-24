@@ -11,28 +11,44 @@ p {
 /***************************************************************************************
 * Layout
 ***************************************************************************************/
+html {
+  background-image: url("../assets/images/bg-highschool.png");
+}
+body {
+  background-color: transparent;
+  background-size: cover;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.wrapper {
+  height: 100vh;
+}
 .header {
   background-color: $gray-lightest;
   padding: 1em 0;
   height: 8vh;
 }
-.logo {
-  width: 70px;
-  height: 70px;
-}
 .main {
-  padding: 60px 0;
+  margin: 8vh 0 0 0;
+  height: 73vh;
   color: #fff;
-  height: 92vh;
+  overflow: scroll;
+  .card {
+    color: $body-color;
+  }
 }
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  margin: 1em 0;
+  margin: 2vh 0;
+  height: 8vh;
+  color: #fff;
 }
-.wrapper {
-  background-image: url("../assets/images/bg-highschool.png");
+.logo {
+  width: 70px;
+  height: 70px;
+  margin-bottom: -3em;
 }
 .num-pad-value {
   @extend .display-4;

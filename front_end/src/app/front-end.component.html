@@ -1,4 +1,5 @@
-<div class="wrapper img-background">
+<div class="wrapper">
+
 <header class="header">
   <div class="container-fluid">
 
@@ -31,13 +32,22 @@
   </div>
 </div><!--/main-->
 
-<footer class="footer text-xs-right">
+<footer class="footer">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-xs-12">
-        <a class="btn btn-primary btn-lg" href="#" [routerLink]="['/results']">Next &#x025B8;</a>
+      <div class="col-xs-4">
+        <a class="btn btn-primary btn-lg pull-xs-left" href="#" [routerLink]="['/']">&#x025C2; Back</a>
+      </div>
+      <div class="col-xs-4 text-xs-center p-t-1">
+        <span class="tgl-inline-label">Are you serving today?</span>
+        <input class='tgl tgl-light' id='serving-1' type='checkbox'>
+        <label class='tgl-btn' for='serving-1'></label>
+      </div>
+      <div class="col-xs-4">
+        <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/results']">Next &#x025B8;</a>
       </div>
     </div>
   </div>
 </footer>
+
 </div>

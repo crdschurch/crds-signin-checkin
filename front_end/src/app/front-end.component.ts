@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import { Router, Routes, ROUTER_DIRECTIVES } from '@angular/router';
 import { SearchComponent } from './search';
 import { ResultsComponent } from './+results';
+import { AssignmentComponent } from './+assignment';
 
 @Routes ([
   { path: '/', component: SearchComponent },
-  { path: '/results', component: ResultsComponent }
+  { path: '/results', component: ResultsComponent },
+  { path: '/assignment', component: AssignmentComponent }
+
 ])
 
 @Component({
