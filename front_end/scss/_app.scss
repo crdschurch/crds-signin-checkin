@@ -13,6 +13,8 @@ p {
 ***************************************************************************************/
 html {
   background-image: url("../assets/images/bg-highschool.png");
+  background-color: $brand-dkblue;
+  overflow: hidden;
 }
 body {
   background-color: transparent;
@@ -25,7 +27,7 @@ body {
 }
 .header {
   background-color: $gray-lightest;
-  padding: 1em 0;
+  padding: 2vh 0;
   height: 8vh;
 }
 .main {
@@ -55,9 +57,13 @@ body {
   text-align: center;
   background: none;
   border: none;
+  vertical-align: bottom;
+  position: relative;
   &::placeholder {
     font-size: 1.5rem;
+    line-height: 1em;
     color: #fff;
+    vertical-align: bottom;
   }
   &:focus {
     outline: none;
@@ -72,4 +78,24 @@ body {
   padding: 15px;
   /** TODO: This should be moved out to affect all headings. Make a class that uses fluid font-size for all heading **/
   font-size: 2.4vw;
+}
+
+
+.modal-full {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background-color: rgba(39, 71, 92, 0.95);
+  z-index: 999;
+  h1 {
+    font-size: 3.5em;
+  }
+  h3 {
+    font-size: 2.5em;
+  }
 }

@@ -9,7 +9,8 @@ var plumber     = require ('gulp-plumber');
 gulp.task('serve', ['sass'], function() {
 
     browserSync.init({
-        server: "dist/"
+        //server: "dist/"
+        proxy: "localhost:4200"
     });
 
     gulp.watch("scss/*.scss", ['sass']);
