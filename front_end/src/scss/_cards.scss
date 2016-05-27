@@ -14,12 +14,6 @@
   text-align: center;
   @extend .center-block;
   @extend .m-b-1;
-
-  &:hover {
-    color: #fff;
-    text-decoration: none;
-    background: darken($brand-primary, 10%);
-  }
 }
 
 .eqWrap {

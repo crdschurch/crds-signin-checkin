@@ -13,13 +13,13 @@ gulp.task('serve', ['sass'], function() {
         proxy: "localhost:4200"
     });
 
-    gulp.watch("scss/*.scss", ['sass']);
-    gulp.watch("**/*.html").on('change', browserSync.reload);
+    gulp.watch("src/scss/*.scss", ['sass']);
+    gulp.watch("src/**/*.html").on('change', browserSync.reload);
 });
 
 // Compile sass into CSS & auto-inject into browsers
 gulp.task('sass', function() {
-    return gulp.src("scss/*.scss")
+    return gulp.src("src/scss/*.scss")
         .pipe(plumber())
         .pipe(sass())
         .pipe(prefix(['last 15 versions', '> 1%', 'ie 8', 'ie 7'], { cascade: true }))

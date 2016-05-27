@@ -43,11 +43,11 @@
   width: 64px;
   height: 64px;
 }
-svg {
-  path, text {
-    fill: currentColor;
-  }
-  circle {
-    stroke: currentColor;
-  }
+
+svg path.currentcolor {
+  stroke: currentcolor;
+  color: currentcolor;
+}
+svg path.fill {
+  fill: currentcolor;
 }

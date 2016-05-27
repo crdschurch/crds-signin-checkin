@@ -28,22 +28,6 @@ export class FrontEndAppComponent {
   ngOnInit() {
     this.router.navigate([window.location.pathname]);
   }
-
-  showServing() {
-    return window.location.pathname=="/results";
-  }
-  showBackToSearch() {
-    return window.location.pathname=="/results";
-  }
-  showBackToResults() {
-    return window.location.pathname=="/assignment";
-  }
-  showNextToResults() {
-    return window.location.pathname=="/";
-  }
-  showNextToAssignment() {
-    return window.location.pathname=="/results";
-  }
   activeStep1() {
     return window.location.pathname=="/";
   }
@@ -52,8 +36,5 @@ export class FrontEndAppComponent {
   }
   activeStep3() {
     return window.location.pathname=="/assignment";
-  }
-  showAddGuest() {
-    return window.location.pathname=="/guest";
   }
 }
