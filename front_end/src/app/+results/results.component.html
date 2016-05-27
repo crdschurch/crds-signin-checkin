@@ -1,0 +1,136 @@
+<div>
+  <router-outlet></router-outlet>
+</div>
+
+<div class="container card-container text-xs-left">
+  <div class="row">
+    <div class="col-md-12">
+
+      <div class="eqWrap">
+        <div class="card text-xs-center">
+          <a href="#">
+          <div class="card-block">
+            <span class="round-plus">+</span>
+            <h4 class="card-title text-uppercase">Add A Guest</h4>
+          </div>
+          </a>
+        </div>
+        <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">James Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb1' type='checkbox' checked>
+            <label class='tgl-btn' for='cb1'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Josiah Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb2' type='checkbox' checked>
+            <label class='tgl-btn' for='cb2'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Lizett Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb3' type='checkbox' >
+            <label class='tgl-btn' for='cb3'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Boone Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb4' type='checkbox' checked>
+            <label class='tgl-btn' for='cb4'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Jo Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb5' type='checkbox' checked>
+            <label class='tgl-btn' for='cb5'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Story Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb6' type='checkbox' >
+            <label class='tgl-btn' for='cb6'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Sassy Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb7' type='checkbox' >
+            <label class='tgl-btn' for='cb7'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Benjamin Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb8' type='checkbox' >
+            <label class='tgl-btn' for='cb8'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Mike Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb9' type='checkbox' >
+            <label class='tgl-btn' for='cb9'></label>
+          </div>
+        </div><!--/card-->
+        <div class="card">
+          <div class="card-block">
+            <h4 class="card-title">Zariah Kerstanoff</h4>
+            <p class="text-muted">DOB: 4/23/2012</p>
+            <span class="tgl-inline-label">Sign In:</span>
+            <input class='tgl tgl-light' id='cb10' type='checkbox' >
+            <label class='tgl-btn' for='cb10'></label>
+          </div>
+        </div><!--/card-->
+
+      </div><!--/eqWrap-->
+
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container-fluid">
+    <div class="row">
+
+      <div class="col-xs-4">
+        <a  class="btn btn-primary btn-lg pull-xs-left" href="#" [routerLink]="['/']">&#10094; Back</a>
+      </div>
+
+      <div class="col-xs-4 text-xs-center p-t-1">
+        <span class="tgl-inline-label">Are you serving today?</span>
+        <input class='tgl tgl-light' id='serving-1' type='checkbox'>
+        <label class='tgl-btn' for='serving-1'></label>
+      </div>
+
+      <div class="col-xs-4">
+        <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/assignment']">Next &#10095;</a>
+      </div>
+
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,32 @@
+.card {
+  color: $gray-dark;
+}
+
+.round-plus {
+  background: $brand-primary;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 3rem;
+  font-weight: bold;
+  height: 70px;
+  width: 70px;
+  line-height: 70px;
+  text-align: center;
+  @extend .center-block;
+  @extend .m-b-1;
+}
+
+.eqWrap {
+	display: flex;
+  flex-wrap: wrap;
+  .card {
+  	width: 32%;
+  	margin: 1%;
+  }
+  .card:nth-of-type(3n) {
+  	margin-right: 0;
+  }
+  .card:nth-of-type(3n+1) {
+  	margin-left: 0;
+  }
+}
