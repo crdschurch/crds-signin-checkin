@@ -16,94 +16,94 @@
           </a>
         </div>
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb1">
           <div class="card-block">
-            <h4 class="card-title">James Kerstanoff</h4>
+            <h4 class="card-title">James Kerstanoff <span class="label label-info">Guest</span></h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb1' type='checkbox' checked>
-            <label class='tgl-btn' for='cb1'></label>
+            <input class='tgl tgl-light' id='cb1' type='checkbox' checked [(ngModel)]="cb1">
+            <label class='tgl-btn' for='cb1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb2">
           <div class="card-block">
             <h4 class="card-title">Josiah Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb2' type='checkbox' checked>
-            <label class='tgl-btn' for='cb2'></label>
+            <input class='tgl tgl-light' id='cb2' type='checkbox' checked [(ngModel)]="cb2">
+            <label class='tgl-btn' for='cb2'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card unchecked" [class.unchecked]="!cb3">
           <div class="card-block">
             <h4 class="card-title">Lizett Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb3' type='checkbox' >
-            <label class='tgl-btn' for='cb3'></label>
+            <input class='tgl tgl-light' id='cb3' type='checkbox' [(ngModel)]="cb3">
+            <label class='tgl-btn' for='cb3'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb4">
           <div class="card-block">
             <h4 class="card-title">Boone Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb4' type='checkbox' checked>
-            <label class='tgl-btn' for='cb4'></label>
+            <input class='tgl tgl-light' id='cb4' type='checkbox' checked [(ngModel)]="cb4">
+            <label class='tgl-btn' for='cb4'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb5">
           <div class="card-block">
             <h4 class="card-title">Jo Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb5' type='checkbox' checked>
-            <label class='tgl-btn' for='cb5'></label>
+            <input class='tgl tgl-light' id='cb5' type='checkbox' checked [(ngModel)]="cb5">
+            <label class='tgl-btn' for='cb5'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb6">
           <div class="card-block">
             <h4 class="card-title">Story Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb6' type='checkbox' >
-            <label class='tgl-btn' for='cb6'></label>
+            <input class='tgl tgl-light' id='cb6' type='checkbox' checked [(ngModel)]="cb6">
+            <label class='tgl-btn' for='cb6'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb7">
           <div class="card-block">
             <h4 class="card-title">Sassy Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb7' type='checkbox' >
-            <label class='tgl-btn' for='cb7'></label>
+            <input class='tgl tgl-light' id='cb7' type='checkbox' checked [(ngModel)]="cb7">
+            <label class='tgl-btn' for='cb7'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb8">
           <div class="card-block">
             <h4 class="card-title">Benjamin Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb8' type='checkbox' >
-            <label class='tgl-btn' for='cb8'></label>
+            <input class='tgl tgl-light' id='cb8' type='checkbox' checked [(ngModel)]="cb8">
+            <label class='tgl-btn' for='cb8'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb9">
           <div class="card-block">
             <h4 class="card-title">Mike Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb9' type='checkbox' >
-            <label class='tgl-btn' for='cb9'></label>
+            <input class='tgl tgl-light' id='cb9' type='checkbox' checked [(ngModel)]="cb9">
+            <label class='tgl-btn' for='cb9'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
-        <div class="card">
+        <div class="card" [class.unchecked]="!cb10">
           <div class="card-block">
             <h4 class="card-title">Zariah Kerstanoff</h4>
             <p class="text-muted">DOB: 4/23/2012</p>
             <span class="tgl-inline-label">Sign In:</span>
-            <input class='tgl tgl-light' id='cb10' type='checkbox' >
-            <label class='tgl-btn' for='cb10'></label>
+            <input class='tgl tgl-light' id='cb10' type='checkbox' [(ngModel)]="cb10">
+            <label class='tgl-btn' for='cb10'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </div>
         </div><!--/card-->
 
@@ -123,8 +123,8 @@
 
       <div class="col-xs-4 text-xs-center p-t-1">
         <span class="tgl-inline-label">Are you serving today?</span>
-        <input class='tgl tgl-light' id='serving-1' type='checkbox'>
-        <label class='tgl-btn' for='serving-1'></label>
+        <input class='tgl tgl-light tgl-darkbg' id='serving-1' type='checkbox'>
+        <label class='tgl-btn' for='serving-1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
       </div>
 
       <div class="col-xs-4">
