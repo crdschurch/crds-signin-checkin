@@ -58,7 +58,7 @@
 // themes
 .tgl-light{
 	+ .tgl-btn{
-		background: $gray-dark;
+		background: $gray-light;
 		border-radius: 2em;
 		padding: 2px;
 		transition: all .4s ease;
@@ -77,10 +77,4 @@
 .tgl-inline-label {
   position: relative;
   bottom: 0.85em;
-}
-
-.tgl-darkbg {
-	+ .tgl-btn{
-		background: $gray-light;
-	}
 }
