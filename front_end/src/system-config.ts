@@ -35,6 +35,7 @@ const barrels: string[] = [
   'app/search/+noresults',
   'app/+results/+serving-length',
   'app/+guest',
+  'app/+room',
   /** @cli-barrel */
 ];
 

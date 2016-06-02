@@ -4,11 +4,13 @@ import { SearchComponent } from './search';
 import { ResultsComponent } from './+results';
 import { AssignmentComponent } from './+assignment';
 import { GuestComponent } from './+guest';
+import { RoomComponent } from './+room';
 
 @Routes ([
   { path: '/', component: SearchComponent },
   { path: '/search', component: SearchComponent },
   { path: '/results', component: ResultsComponent },
+  { path: '/room', component: RoomComponent },
   { path: '/assignment', component: AssignmentComponent },
   { path: '/guest', component: GuestComponent }
 ])
@@ -36,5 +38,8 @@ export class FrontEndAppComponent {
   }
   activeStep3() {
     return window.location.pathname=="/assignment";
+  }
+  inRoom() {
+    return window.location.pathname=="/room";
   }
 }
