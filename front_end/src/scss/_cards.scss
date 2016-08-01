@@ -1,5 +1,11 @@
 .card {
   color: $gray-dark;
+
+  &.unchecked {
+    box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.4);
+    border-color: $gray-dark;
+    opacity: .9;
+  }
 }
 
 .round-plus {
@@ -8,9 +14,9 @@
   color: #fff;
   font-size: 3rem;
   font-weight: bold;
-  height: 70px;
-  width: 70px;
-  line-height: 70px;
+  height: 2em;
+  width: 2em;
+  line-height: 2em;
   text-align: center;
   @extend .center-block;
   @extend .m-b-1;
