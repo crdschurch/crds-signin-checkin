@@ -51,3 +51,9 @@ svg path.currentcolor {
 svg path.fill {
   fill: currentcolor;
 }
+
+.list-group-item {
+  .icon {
+    vertical-align: text-bottom;
+  }
+}
