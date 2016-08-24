@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Routes , ROUTER_DIRECTIVES} from '@angular/router';
 
 @Component({
   moduleId: module.id,

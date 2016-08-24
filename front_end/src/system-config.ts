@@ -3,10 +3,15 @@
  **********************************************************************************************/
 /** Map relative paths to URLs. */
 const map: any = {
+    'ng2-bootstrap': 'vendor/ng-bootstrap'
 };
 
 /** User packages configuration. */
 const packages: any = {
+    'vendor/ng2-bootstrap': {
+      main: "bundles/ng2-bootstrap.js",
+      defaultExtension: 'js'
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
