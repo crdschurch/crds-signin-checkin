@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ServingLengthComponent } from './+serving-length';
-import { Routes , ROUTER_DIRECTIVES} from '@angular/router';
+import { ROUTER_DIRECTIVES} from '@angular/router';
 
+/*
 @Routes ([
   { path: '/serving-length', component: ServingLengthComponent },
 ])
+*/
 
 @Component({
   moduleId: module.id,
@@ -13,9 +15,7 @@ import { Routes , ROUTER_DIRECTIVES} from '@angular/router';
   styleUrls: ['results.component.css'],
   directives: [ROUTER_DIRECTIVES]
 })
-@Routes([
-  {path: '/serving-length', component: ServingLengthComponent}
-])
+
 export class ResultsComponent implements OnInit {
 
   private cb1: boolean = true;

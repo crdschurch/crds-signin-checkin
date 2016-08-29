@@ -44,3 +44,14 @@ $num-pad-bg: $brand-gray;
     }
   }
 }
+
+.call-number {
+  text-align: center;
+  color: $gray-dark;
+}
+
+.call-number::-webkit-inner-spin-button,
+.call-number::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
