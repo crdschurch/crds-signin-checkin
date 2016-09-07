@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ServingLengthComponent } from './+serving-length';
 import { ROUTER_DIRECTIVES} from '@angular/router';
+import {MODAL_DIRECTIVES, ModalDirective, BS_VIEW_PROVIDERS} from 'ng2-bootstrap/ng2-bootstrap';
 
 /*
 @Routes ([
@@ -13,7 +14,8 @@ import { ROUTER_DIRECTIVES} from '@angular/router';
   selector: 'app-results',
   templateUrl: 'results.component.html',
   styleUrls: ['results.component.css'],
-  directives: [ROUTER_DIRECTIVES]
+  directives: [ MODAL_DIRECTIVES, ROUTER_DIRECTIVES ],
+  viewProviders: [BS_VIEW_PROVIDERS]
 })
 
 export class ResultsComponent implements OnInit {
@@ -29,9 +31,18 @@ export class ResultsComponent implements OnInit {
   private cb9: boolean = true;
   private cb10: boolean = true;
 
+  private serving1: boolean = true;
+
+  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
+
+  public showServiceSelectModal():void {
+    this.serviceSelectModal.show();
+  }
+
   constructor() {}
 
   ngOnInit() {
+
   }
 
 }

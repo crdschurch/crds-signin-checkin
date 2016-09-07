@@ -46,7 +46,8 @@ body {
 
 .fade-out {
   width: 100%;
-  background: $body-color;
+  background: transparent;
+  @include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
   height: 20px;
   margin-top: -20px;
   display: block;
