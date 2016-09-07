@@ -57,6 +57,14 @@ body {
 .footer {
   width: 100%;
   color: #fff;
+
+  @include media-breakpoint-down(xs) {
+    .row {
+      > div:first-of-type {
+        margin-bottom: $half-spacing-unit;
+      }
+    }
+  }
 }
 
 .sticky-footer {
@@ -125,40 +133,4 @@ body {
 .label {
   vertical-align: bottom;
   font-weight: normal;
-}
-
-
-/***************************************************************************************
-* Check In Screen
-***************************************************************************************/
-.signin-header {
-  span {
-    vertical-align: middle;
-  }
-}
-
-.echeck-list-group {
-  height: 60vh;
-  background: #fff;
-  @include border-radius( $border-radius );
-  overflow-y: scroll;
-
-  .move-child {
-    background: red;
-    display: block;
-  }
-
-  .view-child-profile {
-    background: blue;
-    display: block;
-  }
-
-  .list-group-item:last-child {
-    border-radius: 0px;
-  }
-
-  .icon {
-    fill: $brand-blue;
-    padding-left: 5px;
-  }
 }

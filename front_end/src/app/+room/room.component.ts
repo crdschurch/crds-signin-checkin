@@ -12,18 +12,23 @@ import {MODAL_DIRECTIVES, ModalDirective, BS_VIEW_PROVIDERS} from 'ng2-bootstrap
 
 export class RoomComponent implements OnInit {
   @ViewChild('numberSearchModal') public numberSearchModal: ModalDirective;
+  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
+  @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
 
   constructor() {}
 
   ngOnInit() {
   }
 
-  public shownumberSearchModal():void {
+  public showNumberSearchModal():void {
     this.numberSearchModal.show();
   }
 
-  public hidenumberSearchModal():void {
-    this.numberSearchModal.hide();
+  public showServiceSelectModal():void {
+    this.serviceSelectModal.show();
   }
 
+  public showChildDetailModal():void {
+    this.childDetailModal.show();
+  }
 }
