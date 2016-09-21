@@ -3,10 +3,26 @@
  **********************************************************************************************/
 /** Map relative paths to URLs. */
 const map: any = {
+    'ng2-bootstrap': 'vendor/ng2-bootstrap',
+    'lodash': 'vendor/lodash',
+    'moment': 'vendor/moment/moment.js'
 };
 
 /** User packages configuration. */
 const packages: any = {
+    'vendor/ng2-bootstrap': {
+      main: "bundles/ng2-bootstrap.js",
+      defaultExtension: 'js'
+    },
+    // Moment.js
+    'moment': {
+      format: 'cjs'
+    },
+    'lodash': {
+      format: 'cjs',
+      main: 'index.js',
+      defaultExtension: "js"
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,6 +36,7 @@ const barrels: string[] = [
   '@angular/compiler',
   '@angular/http',
   '@angular/router',
+  '@angular/forms',
   '@angular/platform-browser',
   '@angular/platform-browser-dynamic',
 
@@ -35,6 +52,7 @@ const barrels: string[] = [
   'app/search/+noresults',
   'app/+results/+serving-length',
   'app/+guest',
+  'app/+room',
   /** @cli-barrel */
 ];
 

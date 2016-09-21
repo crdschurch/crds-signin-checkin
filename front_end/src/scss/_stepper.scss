@@ -4,14 +4,24 @@
     margin: 0;
     font-size: .75rem;
     text-transform: uppercase;
+
     .step-item{
         float: left;
         zoom: 1;
-        width: 120px;
+        // min-width: 50px;
         height: 30px;
         text-align: center;
         line-height: 30px;
         background-color: $gray-lighter;
+
+        // @include media-breakpoint-up(md) {
+        //   min-width: 100px;
+        // }
+        //
+        // @include media-breakpoint-up(lg) {
+        //   min-width: 120px;
+        // }
+
         b{
             float: right;
             position: relative;
@@ -40,18 +50,19 @@
             border-radius: 0 3px 3px 0;
         }
         &.step-single{
-          padding: 0 2em;
+          // padding: 0 1em;
           width: auto;
           font-size: 1rem;
         }
     }
+
     .current{
         z-index: 1;
         background-color: $brand-primary;
         color: #fff;
         .arrow-space{
             border-style: solid;
-            border-color: $gray-lighter $gray-lighter $gray-lighter $gray-lightest;
+            // border-color: $gray-lighter $gray-lighter $gray-lighter $gray-lightest;
         }
         .arrow-bg{
             border-color: transparent transparent transparent $brand-primary;

@@ -20,6 +20,7 @@
   },
   "defaults": {
     "prefix": "app",
-    "sourceDir": "src"
+    "sourceDir": "src",
+    "styleExt": "scss"
   }
 }

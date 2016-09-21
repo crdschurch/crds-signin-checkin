@@ -4,7 +4,7 @@
 p {
   font-weight: $font-weight;
 }
-.btn {
+.btn-large {
   font-size: 1.75em;
   text-transform: uppercase;
 }
@@ -22,33 +22,63 @@ body {
   background-repeat: no-repeat;
 }
 .wrapper {
-  height: 100vh;
+
 }
 .header {
   background-color: $gray-lightest;
-  padding: 2vh 0;
-  height: 8vh;
+  // padding: 2vh 0;
+  // height: 8vh;
 }
 .main {
-  margin: 7vh 0 0 0;
-  height: 68vh;
+  flex: 1;
   color: #fff;
   overflow: scroll;
   .card, .list-group {
     color: $body-color;
   }
 }
+
+.card-container {
+  max-height: 72vh;
+  overflow-y: scroll;
+  position: relative;
+}
+
+.fade-out {
+  width: 100%;
+  background: transparent;
+  @include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
+  height: 40px;
+  margin-top: -40px;
+  display: block;
+  z-index: 2;
+  position: relative;
+}
+
 .footer {
+  width: 100%;
+  color: #fff;
+
+  @include media-breakpoint-down(xs) {
+    .row {
+      > div:first-of-type {
+        margin-bottom: $half-spacing-unit;
+      }
+    }
+  }
+}
+
+.sticky-footer {
   position: absolute;
   bottom: 0;
-  width: 100%;
-  margin: 0 0 2vh 0;
-  height: 8vh;
-  color: #fff;
+  background: rgba(00,00,00,.2);
 }
+
 .logo {
-  width: 4.5em;
-  height: 4.5em;
+  @include media-breakpoint-up(md) {
+    height: 4.5em;
+    width: 4.5em;
+  }
   margin-bottom: -3em;
 }
 .num-pad-value {
@@ -85,7 +115,7 @@ body {
   right: 0;
   width: 100%;
   height: 100%;
-  min-height: 100vh;
+  // min-height: 100vh;
   background-color: $brand-dkblue;
   z-index: 999;
   h1 {

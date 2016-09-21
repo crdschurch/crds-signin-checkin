@@ -1,14 +1,10 @@
-<div>
-  <router-outlet></router-outlet>
-</div>
-
-<div class="container card-container text-xs-left">
+<div class="container card-container text-xs-left m-t-3 p-b-2">
   <div class="row">
     <div class="col-md-12">
 
       <div class="eqWrap">
         <div class="card text-xs-center">
-          <a href="#">
+          <a href="#" [routerLink]="['/guest']">
           <div class="card-block">
             <span class="round-plus">+</span>
             <h4 class="card-title text-uppercase">Add A Guest</h4>
@@ -112,8 +108,9 @@
     </div>
   </div>
 </div>
+<div class="fade-out"></div>
 
-<footer class="footer">
+<footer class="footer p-t-1 sticky-footer">
   <div class="container-fluid">
     <div class="row">
 
@@ -121,16 +118,39 @@
         <a  class="btn btn-primary btn-lg pull-xs-left" href="#" [routerLink]="['/']">&#10094; Back</a>
       </div>
 
-      <div class="col-xs-4 text-xs-center p-t-1">
+      <div class="col-xs-4 text-xs-center p-b-1">
         <span class="tgl-inline-label">Are you serving today?</span>
-        <input class='tgl tgl-light' id='serving-1' type='checkbox'>
-        <label class='tgl-btn' for='serving-1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+        <input class='tgl tgl-light' id='serving1' type='checkbox' [(ngModel)]="serving1" (click)="showServiceSelectModal.show()">
+        <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
       </div>
 
       <div class="col-xs-4">
-        <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/assignment']">Next &#10095;</a>
+        <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/assignment']">Sign In &#10095;</a>
       </div>
 
     </div>
   </div>
 </footer>
+
+<div bsModal #showServiceSelectModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="serviceSelectModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <button type="button" class="close m-r-1 m-t-1" (click)="showServiceSelectModal.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="modal-body">
+        <h5 class="m-b-3">
+          How many services will your children be in Kids’ Club?
+        </h5>
+        <div class="row m-b-3">
+          <div class="col-sm-4 col-sm-offset-2">
+            <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block p-y-3">1 HOUR</a>
+          </div>
+          <div class="col-sm-4">
+            <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block p-y-3">2 HOURS</a>
+          </div>
+        </div><!--/row-->
+      </div><!--/modal-body-->
+    </div><!--/modal-content-->
+  </div><!--/modal-dialog-->
+</div><!--/modal-->
