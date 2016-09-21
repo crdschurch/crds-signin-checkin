@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ROUTER_DIRECTIVES } from '@angular/router';
-import { NoresultsComponent } from './+noresults';
+import { NoresultsComponent } from './noresults';
 
 /*
 @Routes ([
@@ -9,10 +9,8 @@ import { NoresultsComponent } from './+noresults';
 */
 
 @Component({
-  moduleId: module.id,
   selector: 'app-search',
   templateUrl: 'search.component.html',
-  styleUrls: ['search.component.css'],
   directives: [ROUTER_DIRECTIVES]
 })
 export class SearchComponent implements OnInit {

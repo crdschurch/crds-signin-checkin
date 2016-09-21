@@ -1,83 +1,31 @@
-## crds_signin_checkin Angular 2 Front End code
+# FrontEnd
 
-## Prerequisites
+This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.15.
 
-We are using Angular-CLI for scaffolding and generating project resources.
+## Development server
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-The project has dependencies that require **Node 4 or greater**.
+## Code scaffolding
 
-## Basics of Angualr-CLI Installation and usage
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class`.
 
-**BEFORE YOU INSTALL:** please read the [prerequisites](#prerequisites)
-```bash
-npm install -g angular-cli
-ng --help
+## Build
 
-ng serve
-```
-Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-You can configure the default HTTP port and the one used by the LiveReload server with two command-line options :
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
-```bash
-ng serve --port 4201 --live-reload-port 49153
-```
+## Running unit tests
 
-You can use the `ng generate` (or just `ng g`) command to generate Angular components:
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-```
-You can find all possible blueprints in the table below:
+## Running end-to-end tests
 
-Scaffold  | Usage
----       | ---
-Component | `ng g component my-new-component`
-Directive | `ng g directive my-new-directive`
-Pipe      | `ng g pipe my-new-pipe`
-Service   | `ng g service my-new-service`
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). 
+Before running the tests make sure you are serving the app via `ng serve`.
 
-You can generate a new route by with the following command (note the singular
-used in `hero`):
+## Deploying to Github Pages
 
-```bash
-ng generate route hero
-```
+Run `ng github-pages:deploy` to deploy to Github Pages.
 
-This will create a folder which will contain the hero component and related test and style files.
+## Further help
 
-The generated route will also be registered with the parent component's `@RouteConfig` decorator. 
-
-By default the route will be designated as a **lazy** route which means that it will be loaded into the browser when needed, not upfront as part of a bundle.
-
-In order to visually distinguish lazy routes from other routes the folder for the route will be prefixed with a `+` per the above example the folder will be named `+hero`.
-This is done in accordance with the [style guide](https://angular.io/styleguide#!#prefix-lazy-loaded-folders-with-).
-
-The default lazy nature of routes can be turned off via the lazy flag (`--lazy false`)
-
-There is an optional flag for `skip-router-generation` which will not add the route to the parent component's `@RouteConfig` decorator.
-
-### Creating a build
-
-```bash
-ng build
-```
-
-The build artifacts will be stored in the `dist/` directory.
-
-### Environments
-
-At build time, the `src/client/app/environment.ts` will be replaced by either
-`config/environment.dev.ts` or `config/environment.prod.ts`, depending on the
-current cli environment.
-
-Environment defaults to `dev`, but you can generate a production build via
-the `-prod` flag in either `ng build -prod` or `ng serve -prod`.
-
-### Running unit tests
-
-```bash
-ng test
-```
-
-Tests will execute after a build is executed via [Karma](http://karma-runner.github.io/0.13/index.html)
-
-If run with the watch argument `--watch` (shorthand `-w`) builds will run when source files have changed
-and tests will run after each successful build
+To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
