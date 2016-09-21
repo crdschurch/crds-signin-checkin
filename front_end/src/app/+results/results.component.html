@@ -4,7 +4,7 @@
 
       <div class="eqWrap">
         <div class="card text-xs-center">
-          <a href="#">
+          <a href="#" [routerLink]="['/guest']">
           <div class="card-block">
             <span class="round-plus">+</span>
             <h4 class="card-title text-uppercase">Add A Guest</h4>
@@ -125,7 +125,7 @@
       </div>
 
       <div class="col-xs-4">
-        <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/assignment']">Next &#10095;</a>
+        <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/assignment']">Sign In &#10095;</a>
       </div>
 
     </div>
@@ -144,10 +144,10 @@
         </h5>
         <div class="row m-b-3">
           <div class="col-sm-4 col-sm-offset-2">
-            <a href="#" class="btn btn-primary btn-block p-y-3">1 HOUR</a>
+            <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block p-y-3">1 HOUR</a>
           </div>
           <div class="col-sm-4">
-            <a href="#" class="btn btn-primary btn-block p-y-3">2 HOURS</a>
+            <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block p-y-3">2 HOURS</a>
           </div>
         </div><!--/row-->
       </div><!--/modal-body-->

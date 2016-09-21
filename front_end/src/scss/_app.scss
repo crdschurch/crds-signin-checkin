@@ -48,8 +48,8 @@ body {
   width: 100%;
   background: transparent;
   @include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
-  height: 20px;
-  margin-top: -20px;
+  height: 40px;
+  margin-top: -40px;
   display: block;
   z-index: 2;
   position: relative;

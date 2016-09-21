@@ -1,7 +1,7 @@
-<div class="container">
+<div class="container-fluid m-t-3 p-t-1">
   <div class="row">
     <div class="col-xs-12 col-sm-10 col-sm-offset-1">
-      <h3 class="text-xs-center">Enter your guest info below and click “Next”</h3>
+      <h3 class="text-xs-center heading-highlight m-b-1">Enter your guest info below and click “Next”</h3>
     </div>
   </div>
 
@@ -22,24 +22,24 @@
         <div class="col-sm-6">
           <label>Age Group</label>
           <div class="list-group">
-            <a href="#" class="list-group-item">0-11 months</a>
-            <a href="#" class="list-group-item active">One year of age</a>
-            <a href="#" class="list-group-item">Two years of age</a>
-            <a href="#" class="list-group-item">Three years of age</a>
-            <a href="#" class="list-group-item">Four years of age</a>
-            <a href="#" class="list-group-item">Five years of age</a>
+            <a class="list-group-item">0-11 months</a>
+            <a class="list-group-item active">One year of age</a>
+            <a class="list-group-item">Two years of age</a>
+            <a class="list-group-item">Three years of age</a>
+            <a class="list-group-item">Four years of age</a>
+            <a class="list-group-item">Five years of age</a>
           </div>
         </div>
         <label class="list-group-or">or</label>
         <div class="col-sm-6">
           <label>Grade Group</label>
           <div class="list-group">
-            <a href="#" class="list-group-item">Kindergarden</a>
-            <a href="#" class="list-group-item">1st Grade</a>
-            <a href="#" class="list-group-item">2nd Grade</a>
-            <a href="#" class="list-group-item">3rd Grade</a>
-            <a href="#" class="list-group-item">4th Grade</a>
-            <a href="#" class="list-group-item">5th Grade</a>
+            <a class="list-group-item">Kindergarden</a>
+            <a class="list-group-item">1st Grade</a>
+            <a class="list-group-item">2nd Grade</a>
+            <a class="list-group-item">3rd Grade</a>
+            <a class="list-group-item">4th Grade</a>
+            <a class="list-group-item">5th Grade</a>
           </div>
         </div>
       </div>
@@ -51,10 +51,10 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-6 text-xs-left">
-        <a class="btn btn-secondary-outline btn-lg m-r-1" href="#" >Cancel</a>
+        <a class="btn btn-secondary-outline btn-lg m-r-1" [routerLink]="['/results']">Cancel</a>
       </div>
       <div class="col-xs-6 text-xs-right">
-        <a class="btn btn-primary btn-lg" href="#" >Next &#10095;</a>
+        <a class="btn btn-primary btn-lg" [routerLink]="['/results']">Next &#10095;</a>
       </div>
     </div>
   </div>
