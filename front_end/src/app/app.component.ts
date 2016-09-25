@@ -1,35 +1,14 @@
 import { Component, ViewContainerRef } from '@angular/core';
-import { provideRouter, RouterConfig, Router, ROUTER_DIRECTIVES } from '@angular/router';
-import { SearchComponent } from './search';
-import { ResultsComponent } from './results';
-import { AssignmentComponent } from './assignment';
-import { GuestComponent } from './guest';
-import { RoomComponent } from './room';
-
-export const routes: RouterConfig =  [
-  { path: '', pathMatch: 'full', redirectTo: '/search' },
-  { path: 'search', component: SearchComponent },
-  { path: 'results', component: ResultsComponent },
-  { path: 'room', component: RoomComponent },
-  { path: 'assignment', component: AssignmentComponent },
-  { path: 'guest', component: GuestComponent }
-];
-
-export const APP_ROUTER_PROVIDERS = [
- provideRouter(routes)
-];
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app',
   templateUrl: 'app.component.html',
-  directives: [ROUTER_DIRECTIVES]
 })
 export class AppComponent {
   title = 'The Angular 2 app works!';
 
-  constructor(
-    private router: Router,
-    public viewContainerRef:ViewContainerRef) {
+  constructor(private router: Router) {
   }
 
   ngOnInit() {
