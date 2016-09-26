@@ -2,6 +2,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ChildCheckinComponent } from './child-checkin.component';
+import { SearchComponent } from './search';
 import { AssignmentComponent } from './assignment';
 
 const childCheckinRoutes: Routes = [
@@ -11,6 +12,10 @@ const childCheckinRoutes: Routes = [
     children: [
       {
         path: '',
+        component: SearchComponent
+      },
+      {
+        path: 'assignment',
         component: AssignmentComponent
       }
     ]

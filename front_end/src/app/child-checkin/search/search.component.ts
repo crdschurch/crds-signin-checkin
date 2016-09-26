@@ -5,7 +5,21 @@ import { Component } from '@angular/core';
   templateUrl: 'search.component.html',
 })
 export class SearchComponent {
+  private phoneNumber: string = '';
 
   constructor() {}
 
+  setPhoneNumber(num: string) {
+    if (this.phoneNumber.length < 10) {
+      this.phoneNumber = `${this.phoneNumber}${num}`;
+    }
+  }
+
+  delete(): void {
+    this.phoneNumber = this.phoneNumber.slice(0, this.phoneNumber.length - 1);
+  }
+
+  clear(): void {
+    this.phoneNumber = '';
+  }
 }

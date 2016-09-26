@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { SharedModule } from '../shared/shared.module';
 
 import { ChildCheckinComponent } from './child-checkin.component';
 import { SearchComponent } from './search';
@@ -13,7 +13,7 @@ import { childCheckinRouting } from './child-checkin.routes';
     AssignmentComponent,
   ],
   imports: [
-    CommonModule,
+    SharedModule,
     childCheckinRouting
   ],
 })
