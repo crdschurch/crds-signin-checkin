@@ -1,0 +1,12 @@
+.guest-age-btns {
+  .btn {
+    small {
+      display: block;
+      width: 100%;
+    }
+    > span {
+      font-size: 40px;
+      line-height: 1;
+    }
+  }
+}
