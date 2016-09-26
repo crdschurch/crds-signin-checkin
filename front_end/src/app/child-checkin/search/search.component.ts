@@ -1,20 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-
-/*
-@Routes ([
-  { path: '/noresults', component: NoresultsComponent },
-])
-*/
+import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-search',
+  selector: 'search',
   templateUrl: 'search.component.html',
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent {
 
   constructor() {}
-
-  ngOnInit() {
-  }
 
 }

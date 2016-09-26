@@ -1,22 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
+import { ChildCheckinComponent } from './child-checkin.component';
+import { SearchComponent } from './search';
 import { AssignmentComponent } from './assignment';
-import { GuestComponent } from './guest';
-import { RoomComponent } from './room';
-import { AppComponent } from './search';
-
-import { routing } from './child-checkin.routes';
+import { childCheckinRouting } from './child-checkin.routes';
 
 @NgModule({
   declarations: [
+    ChildCheckinComponent,
+    SearchComponent,
     AssignmentComponent,
-    GuestComponent,
-    RoomComponent
   ],
   imports: [
     CommonModule,
-    routing
+    childCheckinRouting
   ],
 })
 

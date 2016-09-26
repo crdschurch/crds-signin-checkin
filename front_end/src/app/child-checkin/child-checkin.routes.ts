@@ -1,16 +1,20 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-const appRoutes: Routes = [
-  { path: 'child-checkin', redirectTo: '/search', pathMatch: 'full' },
-  { path: 'search', component: SearchComponent },
-  { path: 'results', component: ResultsComponent },
-  { path: 'room', component: RoomComponent },
-  { path: 'assignment', component: AssignmentComponent },
-  { path: 'guest', component: GuestComponent }
-  { path: 'hero/:id', component: HeroDetailComponent },
-  { path: 'crisis-center', component: CrisisCenterComponent },
+import { ChildCheckinComponent } from './child-checkin.component';
+import { AssignmentComponent } from './assignment';
+
+const childCheckinRoutes: Routes = [
   {
+    path: 'child-checkin',
+    component: ChildCheckinComponent,
+    children: [
+      {
+        path: '',
+        component: AssignmentComponent
+      }
+    ]
+  }
 ];
 
-export const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes);
+export const childCheckinRouting: ModuleWithProviders = RouterModule.forChild(childCheckinRoutes);

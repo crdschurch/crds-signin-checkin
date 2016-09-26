@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-guest',
+  selector: 'guest',
   templateUrl: 'guest.component.html',
 })
 export class GuestComponent implements OnInit {

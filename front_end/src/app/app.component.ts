@@ -1,30 +1,27 @@
-import { Component, ViewContainerRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app',
+  selector: 'app-root',
   templateUrl: 'app.component.html',
 })
 export class AppComponent {
-  title = 'The Angular 2 app works!';
 
-  constructor(private router: Router) {
-  }
+  constructor(private router: Router) { }
 
-  ngOnInit() {
-    this.router.navigate([window.location.pathname]);
-  }
   activeStep1() {
-    return window.location.pathname=="/";
+    return this.router.url === '/child-checkin';
   }
+
   activeStep2() {
-    return window.location.pathname=="/results";
+    return this.router.url === '/child-checkin/results';
   }
+
   activeStep3() {
-    return window.location.pathname=="/assignment";
+    return this.router.url === '/child-checkin/assignment';
   }
+
   inRoom() {
-    return window.location.pathname=="/room";
+    return this.router.url === '/child-checkin/room';
   }
 }
-

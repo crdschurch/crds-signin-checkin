@@ -2,9 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import {MODAL_DIRECTIVES, ModalDirective, BS_VIEW_PROVIDERS} from 'ng2-bootstrap/ng2-bootstrap';
 
 @Component({
-  selector: 'app-room',
+  selector: 'room',
   templateUrl: 'room.component.html',
-  directives: [  MODAL_DIRECTIVES ],
   viewProviders: [BS_VIEW_PROVIDERS]
 })
 
