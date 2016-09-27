@@ -1,21 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ROUTER_DIRECTIVES} from '@angular/router';
-import {MODAL_DIRECTIVES, ModalDirective, BS_VIEW_PROVIDERS} from 'ng2-bootstrap/ng2-bootstrap';
-
-/*
-@Routes ([
-  { path: '/serving-length', component: ServingLengthComponent },
-])
-*/
+import { Component, ViewChild } from '@angular/core';
+import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 @Component({
-  selector: 'app-results',
+  selector: 'results',
   templateUrl: 'results.component.html',
-  directives: [ MODAL_DIRECTIVES, ROUTER_DIRECTIVES ],
-  viewProviders: [BS_VIEW_PROVIDERS]
 })
 
-export class ResultsComponent implements OnInit {
+export class ResultsComponent {
 
   private cb1: boolean = true;
   private cb2: boolean = true;
@@ -30,16 +21,9 @@ export class ResultsComponent implements OnInit {
 
   private serving1: boolean = true;
 
-  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
+ @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
-  public showServiceSelectModal():void {
+  public showServiceSelectModal(): void {
     this.serviceSelectModal.show();
   }
-
-  constructor() {}
-
-  ngOnInit() {
-
-  }
-
 }

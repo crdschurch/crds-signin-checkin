@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { Ng2BootstrapModule } from 'ng2-bootstrap/ng2-bootstrap';
+
 import { PhoneNumberPipe } from './phoneNumber.pipe';
 
 @NgModule({
@@ -14,7 +16,8 @@ import { PhoneNumberPipe } from './phoneNumber.pipe';
   exports: [
     PhoneNumberPipe,
     CommonModule,
-    FormsModule
+    FormsModule,
+    Ng2BootstrapModule
   ],
 })
 export class SharedModule {

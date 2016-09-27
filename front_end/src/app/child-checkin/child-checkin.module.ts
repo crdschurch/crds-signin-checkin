@@ -3,6 +3,7 @@ import { SharedModule } from '../shared/shared.module';
 
 import { ChildCheckinComponent } from './child-checkin.component';
 import { SearchComponent } from './search';
+import { ResultsComponent } from './results';
 import { AssignmentComponent } from './assignment';
 import { childCheckinRouting } from './child-checkin.routes';
 
@@ -10,6 +11,7 @@ import { childCheckinRouting } from './child-checkin.routes';
   declarations: [
     ChildCheckinComponent,
     SearchComponent,
+    ResultsComponent,
     AssignmentComponent,
   ],
   imports: [

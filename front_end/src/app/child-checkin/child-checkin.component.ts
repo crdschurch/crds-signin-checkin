@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 })
 export class ChildCheckinComponent {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   activeStep1() {
     return this.router.url === '/child-checkin';

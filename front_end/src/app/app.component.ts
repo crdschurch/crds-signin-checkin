@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,7 +7,12 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
 
-  constructor(private router: Router) { }
+  private viewContainerRef: ViewContainerRef;
+
+  constructor(private router: Router, viewContainerRef:ViewContainerRef) {
+    // You need this small hack in order to catch application root view container ref
+    this.viewContainerRef = viewContainerRef;
+  }
 
   activeStep1() {
     return this.router.url === '/child-checkin';
