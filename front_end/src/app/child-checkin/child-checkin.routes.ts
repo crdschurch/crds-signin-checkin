@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ChildCheckinComponent } from './child-checkin.component';
 import { SearchComponent } from './search';
 import { ResultsComponent } from './results';
+import { GuestComponent } from './guest';
 import { AssignmentComponent } from './assignment';
 
 const childCheckinRoutes: Routes = [
@@ -18,6 +19,10 @@ const childCheckinRoutes: Routes = [
       {
         path: 'results',
         component: ResultsComponent
+      },
+      {
+        path: 'guest',
+        component: GuestComponent
       },
       {
         path: 'assignment',
