@@ -47,15 +47,9 @@ body {
 .fade-out {
   width: 100%;
   background: transparent;
-<<<<<<< HEAD:front_end/src/assets/scss/_app.scss
   //@include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
-  height: 20px;
-  margin-top: -20px;
-=======
-  @include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
   height: 40px;
   margin-top: -40px;
->>>>>>> e01211121740c2e32d7f2f00904320c32eda494c:front_end/src/scss/_app.scss
   display: block;
   z-index: 2;
   position: relative;

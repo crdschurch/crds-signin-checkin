@@ -12,17 +12,9 @@
   <div class="row">
     <div class="col-xs-12">
       <!--DEVNOTE: create an input mask that appears as user types https://igorescobar.github.io/jQuery-Mask-Plugin/ -->
-<<<<<<< HEAD:front_end/src/app/child-checkin/search/search.component.html
       <input type="tel" class="num-pad-value col-xs-12"
         readonly placeholder="Enter your phone number to check in your kids."
         value="{{phoneNumber | phoneNumber}}">
-=======
-      <!-- UPDATE: reference for placeholder: http://codepen.io/npsantini/pen/LVBwbB -->
-      <div class="phone-input-group">
-        <input type="tel" class="num-pad-value m-input" value="" placeholder="" ui-mask="(999) 999-9999">
-        <label for="phone-input">Enter your phone number with area code to check in your kids.</label>
-      </div><!--/input-group-->
->>>>>>> e01211121740c2e32d7f2f00904320c32eda494c:front_end/src/app/search/search.component.html
     </div>
   </div>
 
@@ -59,12 +51,8 @@
         </table>
       </div>
       <div class="m-t-2">
-<<<<<<< HEAD:front_end/src/app/child-checkin/search/search.component.html
-        <a class="btn btn-primary btn-lg pull-xs-right" href="#" routerLink="/child-checkin/results">Next &#10095;</a>
-=======
         <a class="pull-xs-left pointer" (click)="showUnmatchedNumberModal.show()">Number not found (temporary link)</a>
-        <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/results']">Next &#10095;</a>
->>>>>>> e01211121740c2e32d7f2f00904320c32eda494c:front_end/src/app/search/search.component.html
+        <a class="btn btn-primary btn-lg pull-xs-right" href="#" routerLink="/child-checkin/results">Next &#10095;</a>
       </div><!--/m-t-1-->
     </div>
   </div>
