@@ -136,8 +136,7 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ApiVersionController.cs" />
-    <Compile Include="Controllers\V2_0_0_0\HelloWorldV2_0_0Controller.cs" />
-    <Compile Include="Controllers\V1_0_0_0\HelloWorldController.cs" />
+    <Compile Include="Controllers\HelloWorldController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
