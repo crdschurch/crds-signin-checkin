@@ -114,17 +114,17 @@
   <div class="container-fluid">
     <div class="row">
 
-      <div class="col-xs-4">
+      <div class="col-xs-4 p-b-1">
         <a  class="btn btn-primary btn-lg pull-xs-left" href="#" [routerLink]="['/']">&#10094; Back</a>
       </div>
 
-      <div class="col-xs-4 text-xs-center p-b-1">
+      <div class="col-xs-4 text-xs-center serving-question-cont">
         <span class="tgl-inline-label">Are you serving today?</span>
         <input class='tgl tgl-light' id='serving1' type='checkbox' [(ngModel)]="serving1" (click)="showServiceSelectModal.show()">
         <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
       </div>
 
-      <div class="col-xs-4">
+      <div class="col-xs-4 p-b-1">
         <a class="btn btn-primary btn-lg pull-xs-right" href="#" [routerLink]="['/assignment']">Sign In &#10095;</a>
       </div>
 
