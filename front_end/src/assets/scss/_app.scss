@@ -47,9 +47,15 @@ body {
 .fade-out {
   width: 100%;
   background: transparent;
+<<<<<<< HEAD:front_end/src/assets/scss/_app.scss
   //@include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
   height: 20px;
   margin-top: -20px;
+=======
+  @include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
+  height: 40px;
+  margin-top: -40px;
+>>>>>>> e01211121740c2e32d7f2f00904320c32eda494c:front_end/src/scss/_app.scss
   display: block;
   z-index: 2;
   position: relative;
@@ -72,6 +78,10 @@ body {
   position: absolute;
   bottom: 0;
   background: rgba(00,00,00,.2);
+
+  .serving-question-cont {
+    padding-top: .5rem;
+  }
 }
 
 .logo {
@@ -81,22 +91,71 @@ body {
   }
   margin-bottom: -3em;
 }
+
 .num-pad-value {
+  //
+  // text-align: center;
+  // background: none;
+  // border: none;
+  // vertical-align: bottom;
+  // position: relative;
+  // // letter-spacing: .1em;
+  // width: 100%;
+  //
+  // &::placeholder {
+  //   color: lighten($brand-dkblue, 10%);
+  //   vertical-align: bottom;
+  // }
+  //
+  // &:focus {
+  //   outline: none;
+  // }
+}
+
+.phone-input-group {
   @extend .display-4;
-  text-align: center;
-  background: none;
-  border: none;
-  vertical-align: bottom;
-  position: relative;
-  &::placeholder {
-    font-size: 1.5rem;
-    line-height: 1em;
-    color: #fff;
+
+  input {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    padding: 10px 0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  label {
+		position: absolute;
+		top: 30px;
+		left: 0;
+		color: $gray-lightest;
+		font-weight: 300;
+		transition: transform 0.2s ease, color 0.2s ease;
     vertical-align: bottom;
+    font-size: 20px;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+
+    &:hover {
+		  cursor: text;
+    }
   }
-  &:focus {
-    outline: none;
-  }
+}
+
+.phone-input-group input:focus + label {
+		color: $gray-light;
+}
+
+.phone-input-group input:focus + label,
+.phone-input-group input.active + label {
+		transform: translateY(-40px);
 }
 
 /***************************************************************************************
@@ -134,4 +193,8 @@ body {
 .label {
   vertical-align: bottom;
   font-weight: normal;
+}
+
+.pointer {
+  cursor: pointer;
 }
