@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.Routing;
+using Newtonsoft.Json;
 using SignInCheckIn.ApiVersioning;
 using SignInCheckIn.ApiVersioning.Attributes;
 
@@ -21,7 +22,7 @@ namespace SignInCheckIn.Controllers
             {
                 Deprecated = r.Value.Deprecated,
                 MinimumVersion = r.Value.MinimumVersion.ToString(),
-                MaximumVersion = r.Value.MaximumVersion?.ToString() ?? "latest",
+                MaximumVersion = r.Value.MaximumVersion?.ToString(),
                 Endpoint = r.Key
             }).ToList();
             return Ok(results);
@@ -70,9 +71,13 @@ namespace SignInCheckIn.Controllers
 
     class ApiVersion
     {
+        [JsonProperty("endpoint")]
         public string Endpoint { get; set; }
+        [JsonProperty("minimumVersion")]
         public string MinimumVersion { get; set; }
+        [JsonProperty(PropertyName = "maximumVersion", NullValueHandling = NullValueHandling.Ignore)]
         public string MaximumVersion { get; set; }
+        [JsonProperty("deprecated")]
         public bool Deprecated { get; set; }
     }
 }
