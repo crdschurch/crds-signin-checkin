@@ -48,8 +48,8 @@ body {
   width: 100%;
   background: transparent;
   @include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
-  height: 20px;
-  margin-top: -20px;
+  height: 40px;
+  margin-top: -40px;
   display: block;
   z-index: 2;
   position: relative;
@@ -81,22 +81,71 @@ body {
   }
   margin-bottom: -3em;
 }
+
 .num-pad-value {
+  //
+  // text-align: center;
+  // background: none;
+  // border: none;
+  // vertical-align: bottom;
+  // position: relative;
+  // // letter-spacing: .1em;
+  // width: 100%;
+  //
+  // &::placeholder {
+  //   color: lighten($brand-dkblue, 10%);
+  //   vertical-align: bottom;
+  // }
+  //
+  // &:focus {
+  //   outline: none;
+  // }
+}
+
+.phone-input-group {
   @extend .display-4;
-  text-align: center;
-  background: none;
-  border: none;
-  vertical-align: bottom;
-  position: relative;
-  &::placeholder {
-    font-size: 1.5rem;
-    line-height: 1em;
-    color: #fff;
+
+  input {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    padding: 10px 0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  label {
+		position: absolute;
+		top: 30px;
+		left: 0;
+		color: $gray-lightest;
+		font-weight: 300;
+		transition: transform 0.2s ease, color 0.2s ease;
     vertical-align: bottom;
+    font-size: 20px;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+
+    &:hover {
+		  cursor: text;
+    }
   }
-  &:focus {
-    outline: none;
-  }
+}
+
+.phone-input-group input:focus + label {
+		color: $gray-light;
+}
+
+.phone-input-group input:focus + label,
+.phone-input-group input.active + label {
+		transform: translateY(-40px);
 }
 
 /***************************************************************************************
@@ -134,4 +183,8 @@ body {
 .label {
   vertical-align: bottom;
   font-weight: normal;
+}
+
+.pointer {
+  cursor: pointer;
 }
