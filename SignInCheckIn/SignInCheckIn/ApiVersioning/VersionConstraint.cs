@@ -12,9 +12,10 @@ namespace SignInCheckIn.ApiVersioning
         public SemanticVersion MinimumVersion { get; }
         public SemanticVersion MaximumVersion { get; }
         public bool Deprecated { get; }
+        public bool Removed { get; }
 
 
-        public VersionConstraint(SemanticVersion minimumVersion, SemanticVersion maximumVersion, bool deprecated)
+        public VersionConstraint(SemanticVersion minimumVersion, SemanticVersion maximumVersion, bool deprecated, bool removed)
         {
             if (maximumVersion != null && maximumVersion.IsBefore(minimumVersion))
             {
@@ -24,6 +25,7 @@ namespace SignInCheckIn.ApiVersioning
             MinimumVersion = minimumVersion;
             MaximumVersion = maximumVersion;
             Deprecated = deprecated;
+            Removed = removed;
         }
 
         public bool Match(HttpRequestMessage request, IHttpRoute route, string parameterName, IDictionary<string, object> values, HttpRouteDirection routeDirection)
@@ -39,9 +41,16 @@ namespace SignInCheckIn.ApiVersioning
                 ? version.IsFrom(MinimumVersion)
                 : version.IsBetween(MinimumVersion, MaximumVersion);
 
-            if (matchesVersion && Deprecated)
+            if (matchesVersion)
             {
-                request.Properties.Add(new KeyValuePair<string, object>("deprecated", true));
+                if (Deprecated)
+                {
+                    request.Properties.Add(new KeyValuePair<string, object>("deprecated", true));
+                }
+                if (Removed)
+                {
+                    request.Properties.Add(new KeyValuePair<string, object>("removed", true));
+                }
             }
 
             return matchesVersion;

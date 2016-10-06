@@ -51,14 +51,14 @@ namespace SignInCheckIn.Controllers
                     results.Add(route.RouteTemplate,
                         route.Constraints.Any() && route.Constraints.ContainsKey(VersionedRoute.VersionedRouteConstraint)
                             ? (VersionConstraint) route.Constraints[VersionedRoute.VersionedRouteConstraint]
-                            : new VersionConstraint(new SemanticVersion("1.0.0"), new SemanticVersion("1.0.0"), false));
+                            : new VersionConstraint(new SemanticVersion("1.0.0"), new SemanticVersion("1.0.0"), false, false));
                 }
                 else
                 {
                     var current = results[route.RouteTemplate];
                     var constraint = route.Constraints.Any() && route.Constraints.ContainsKey(VersionedRoute.VersionedRouteConstraint)
                         ? (VersionConstraint) route.Constraints[VersionedRoute.VersionedRouteConstraint]
-                        : new VersionConstraint(new SemanticVersion("1.0.0"), new SemanticVersion("1.0.0"), false);
+                        : new VersionConstraint(new SemanticVersion("1.0.0"), new SemanticVersion("1.0.0"), false, false);
                     if (constraint.CompareTo(current) > 0)
                     {
                         results[route.RouteTemplate] = constraint;

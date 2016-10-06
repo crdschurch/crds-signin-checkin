@@ -8,10 +8,11 @@ namespace SignInCheckIn.ApiVersioning.Attributes
         public SemanticVersion MinimumVersion { get; }
         public SemanticVersion MaximumVersion { get; }
         public bool Deprecated { get; }
+        public bool Removed { get; }
         public const string ApiVersionParameter = "apiVersion";
         public const string VersionedRouteConstraint = "allowedVersions";
 
-        public VersionedRoute(string template, string minimumVersion, string maximumVersion = null, bool deprecated = false)
+        public VersionedRoute(string template, string minimumVersion, string maximumVersion = null, bool deprecated = false, bool removed = false)
             : base($"v{{{ApiVersionParameter}}}/{template}")
         {
             MinimumVersion = new SemanticVersion(minimumVersion);
@@ -19,6 +20,7 @@ namespace SignInCheckIn.ApiVersioning.Attributes
                 ? null
                 : new SemanticVersion(maximumVersion);
             Deprecated = deprecated;
+            Removed = removed;
         }
 
         public override IDictionary<string, object> Constraints
@@ -27,7 +29,7 @@ namespace SignInCheckIn.ApiVersioning.Attributes
             {
                 var constraints = new HttpRouteValueDictionary
                 {
-                    {VersionedRouteConstraint, new VersionConstraint(MinimumVersion, MaximumVersion, Deprecated)}
+                    {VersionedRouteConstraint, new VersionConstraint(MinimumVersion, MaximumVersion, Deprecated, Removed)}
                 };
                 return constraints;
             }
