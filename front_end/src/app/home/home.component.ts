@@ -14,6 +14,6 @@ export class HomeComponent {
   }
 
   goToAdminTools() {
-    this.router.navigate(['/admin']);
+    this.router.navigate(['/admin/sign-in']);
   }
 }
