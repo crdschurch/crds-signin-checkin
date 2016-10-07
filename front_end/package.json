@@ -38,6 +38,7 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-teamcity-reporter": "^0.2.0",
+    "karma-mocha-reporter": "^1.0.4",
     "karma-cli": "^1.0.1",
     "karma-jasmine": "^1.0.2",
     "karma-remap-istanbul": "^0.2.1",
