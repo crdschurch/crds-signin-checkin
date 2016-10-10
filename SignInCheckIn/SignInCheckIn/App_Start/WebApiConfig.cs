@@ -1,6 +1,9 @@
-﻿using System.Web.Http;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
 using SignInCheckIn.ApiVersioning;
 using SignInCheckIn.ApiVersioning.Filters;
+using SignInCheckIn.Filters;
 
 namespace SignInCheckIn
 {
@@ -17,6 +20,10 @@ namespace SignInCheckIn
 
             // Add a filter to change 200 to 299 response code for deprecated APIs
             config.Filters.Add(new DeprecatedVersionFilter());
+
+            // Add a filter to verify domain-locked API keys
+            var domainLockedApiKeyFilter = (DomainLockedApiKeyFilter)config.DependencyResolver.GetService(typeof(DomainLockedApiKeyFilter));
+            config.Filters.Add(domainLockedApiKeyFilter);
         }
     }
 }

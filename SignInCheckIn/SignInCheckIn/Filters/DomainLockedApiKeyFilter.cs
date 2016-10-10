@@ -9,9 +9,11 @@ using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using MinistryPlatform.Translation.Models.Attributes;
+using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json;
 
-namespace SignInCheckIn.DomainApiKey.Filters
+namespace SignInCheckIn.Filters
 {
     public class DomainLockedApiKeyFilter : ActionFilterAttribute
     {
@@ -79,7 +81,7 @@ namespace SignInCheckIn.DomainApiKey.Filters
 
         private static string GetRemoteHost(HttpRequestMessage request)
         {
-            // Try X-Forwarded-For first - this should be set if coming through apache mod_proxy
+            // Try X-Forwarded-For first - this should be set if coming through apache mod_proxy (or any proxy/load-balancer)
             if (request.Headers.Contains("X-Forwarded-For"))
             {
                 return request.Headers.GetValues("X-Forwarded-For").First();
