@@ -9,7 +9,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         Dictionary<string, object> Authenticate(string username, string password);
         Dictionary<string, object> RefreshToken(string refreshToken);
-        Dictionary<string, object> GetUserFromToken(string token);
+        List<string> GetUserRolesFromToken(string token);
 
         //Dictionary<string, object> Authenticate(string username, string password);
 

@@ -28,6 +28,10 @@ namespace SignInCheckIn.Services
                 refreshToken = authData["refreshToken"].ToString()
             };
 
+            var roles = _authenticationRepository.GetUserRolesFromToken(loginReturn.userToken);
+
+            loginReturn.roles = roles;
+
             return loginReturn;
         }
     }

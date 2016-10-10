@@ -9,7 +9,7 @@ namespace SignInCheckIn.Models.Authentication
     public class LoginReturn
     {
         public LoginReturn() { }
-        public LoginReturn(string userToken, int userId, string username, string userEmail, List<MpRoleDto> roles)
+        public LoginReturn(string userToken, int userId, string username, string userEmail, List<string> roles)
         {
             this.userId = userId;
             this.userToken = userToken;
@@ -23,7 +23,7 @@ namespace SignInCheckIn.Models.Authentication
         public int userId { get; set; }
         public string username { get; set; }
         public string userEmail { get; set; }
-        public List<MpRoleDto> roles { get; set; }
+        public List<string> roles { get; set; }
         public int age { get; set; }
     }
 }
