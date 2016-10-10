@@ -1,37 +1,42 @@
-var webpackConfig = require('./webpack.test');
+// Karma configuration file, see link for more information
+// https://karma-runner.github.io/0.13/config/configuration-file.html
 
 module.exports = function (config) {
-  var _config = {
+  config.set({
     basePath: '',
-
     frameworks: ['jasmine'],
-
-    files: [
-      {pattern: './config/karma-test-shim.js', watched: false}
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-phantomjs-launcher'),
+      require('karma-teamcity-reporter'),
+      require('karma-remap-istanbul'),
+      require('karma-mocha-reporter'),
     ],
-
+    files: [
+      { pattern: '../src/test.ts', watched: false }
+    ],
     preprocessors: {
-      './config/karma-test-shim.js': ['webpack', 'sourcemap']
+      './karma-test-shim.js': ['webpack', 'sourcemap']
     },
-
-    webpack: webpackConfig,
-
-    webpackMiddleware: {
-      stats: 'errors-only'
+    remapIstanbulReporter: {
+      reports: {
+        html: 'coverage',
+        lcovonly: './coverage/coverage.lcov'
+      }
     },
-
-    webpackServer: {
-      noInfo: true
-    },
-
-    reporters: ['progress'],
+    // reporter(s) to use - set to 'teamcity' for ci server
+    reporters: ['mocha'],
     port: 9876,
+    // enable / disable colors in the output (reporters and logs)
     colors: true,
+    // level of logging
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
-    autoWatch: false,
+    // enable / disable watching file and executing tests whenever any file changes
+    autoWatch: true,
     browsers: ['PhantomJS'],
-    singleRun: true
-  };
-
-  config.set(_config);
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits; set to true for ci server
+    singleRun: false
+  });
 };
