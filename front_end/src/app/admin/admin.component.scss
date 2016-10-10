@@ -1,0 +1,27 @@
+admin {
+  background: white;
+
+  .navbar {
+    border-radius: 0px;
+
+    .nav-link {
+      padding-top: .55rem;
+    }
+
+    &.subnav {
+      border-top: 1px solid #eceeef; // Replace with $gray-lighter
+      border-bottom: 1px solid #eceeef; // Replace with $gray-lighter
+    }
+  }
+}
+
+.admin-logo {
+  height: 1.5em;
+  width: 1.5em;
+  float: left;
+  margin-right: .5rem;
+}
+
+.admin-content {
+  background: #fff;
+}

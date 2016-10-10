@@ -3,15 +3,15 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'child-checkin',
-  styleUrls: ['child-checkin.component.scss'],
   templateUrl: 'child-checkin.component.html',
+  styleUrls: ['child-checkin.component.scss', 'scss/_stepper.scss' ]
 })
 export class ChildCheckinComponent {
 
   constructor(private router: Router) {}
 
   activeStep1() {
-    console.log("hi", JSON.stringify(process.env), process.env, process.env.CRDS_API_ENDPOINT);
+    console.log("hi", process.env.CRDS_API_TOKEN, process.env.CRDS_API_ENDPOINT);
     return this.router.url === '/child-checkin';
   }
 
