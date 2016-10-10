@@ -11,7 +11,7 @@ export class ChildCheckinComponent {
   constructor(private router: Router) {}
 
   activeStep1() {
-    console.log("hi", process.env, process.env.NODE_ENV, process.env.TESTY);
+    console.log("hi", JSON.stringify(process.env), process.env, process.env.CRDS_API_ENDPOINT);
     return this.router.url === '/child-checkin';
   }
 
