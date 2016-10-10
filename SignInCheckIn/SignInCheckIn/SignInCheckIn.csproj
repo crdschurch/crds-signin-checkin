@@ -130,9 +130,11 @@
   <ItemGroup>
     <Compile Include="ApiVersioning\ApiRouteProvider.cs" />
     <Compile Include="ApiVersioning\Filters\DeprecatedVersionFilter.cs" />
+    <Compile Include="ApiVersioning\Filters\RemovedVersionFilter.cs" />
     <Compile Include="ApiVersioning\SemanticVersion.cs" />
     <Compile Include="ApiVersioning\VersionConstraint.cs" />
     <Compile Include="ApiVersioning\Attributes\VersionedRoute.cs" />
+    <Compile Include="ApiVersioning\VersionSpace.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />

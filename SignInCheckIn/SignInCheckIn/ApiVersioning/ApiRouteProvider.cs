@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
 
@@ -14,7 +16,41 @@ namespace SignInCheckIn.ApiVersioning
             IInlineConstraintResolver constraintResolver)
         {
             DirectRoutes = base.GetDirectRoutes(controllerDescriptor, actionDescriptors, constraintResolver);
+            DetermineRouteIntegrity();
             return DirectRoutes;
+        }
+
+        private void DetermineRouteIntegrity()
+        {
+            foreach(RouteEntry routeEntry in DirectRoutes)
+            {
+                string routePath = routeEntry.Route.RouteTemplate;
+                string route = routeBasename(routePath);
+                VersionConstraint constraint = null;
+                if (routeEntry.Route.Constraints.ContainsKey("allowedVersions"))
+                    constraint = routeEntry.Route.Constraints["allowedVersions"] as VersionConstraint;
+                VersionSpace.Add(route, constraint);
+            }
+            string gapReport = VersionSpace.GapReport();
+            if (gapReport != "")
+                System.Diagnostics.Debug.WriteLine(gapReport);
+        }
+
+        private const string _versionedRoutePattern = @"^api/v\{apiVersion\}/(.*)$";
+        private readonly Regex _versionedRouteRegex = new Regex(_versionedRoutePattern);
+        private const string _unversionedRoutePattern = @"^api/(.*)$";
+        private readonly Regex _unversionedRouteRegex = new Regex(_unversionedRoutePattern);
+
+        private string routeBasename(string routePath)
+        {
+            var match = _versionedRouteRegex.Match(routePath);
+            if (!match.Success)
+            {
+                match = _unversionedRouteRegex.Match(routePath);
+                if (!match.Success)
+                    return "";
+            }
+            return match.Groups[1].Captures[0].Value;
         }
 
         protected override string GetRoutePrefix(HttpControllerDescriptor controllerDescriptor)

@@ -5,8 +5,8 @@ namespace SignInCheckIn.ApiVersioning
 {
     public class SemanticVersion : IComparable<SemanticVersion>
     {
-        private const string SemanticVersionRegexPatterm = @"^(\d+)\.(\d+)\.(\d+)";
-        private readonly Regex _semanticVersionRegex = new Regex(SemanticVersionRegexPatterm);
+        private const string SemanticVersionRegexPattern = @"^(\d+)\.(\d+)\.(\d+)";
+        private readonly Regex _semanticVersionRegex = new Regex(SemanticVersionRegexPattern);
         public Version Version { get; }
         public SemanticVersion(string version)
         {
