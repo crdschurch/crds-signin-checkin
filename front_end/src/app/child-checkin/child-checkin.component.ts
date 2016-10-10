@@ -4,12 +4,14 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'child-checkin',
   templateUrl: 'child-checkin.component.html',
+  styleUrls: ['child-checkin.component.scss', 'scss/_stepper.scss' ]
 })
 export class ChildCheckinComponent {
 
   constructor(private router: Router) {}
 
   activeStep1() {
+    console.log("example environment variables:", process.env.API_TOKEN, process.env.API_ENDPOINT, process.env.CMS_ENDPOINT);
     return this.router.url === '/child-checkin';
   }
 
