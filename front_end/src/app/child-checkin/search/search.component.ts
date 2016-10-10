@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'search',
   templateUrl: 'search.component.html',
+  styleUrls: ['../_number-pad.scss', ]
 })
 export class SearchComponent {
   private phoneNumber: string = '';

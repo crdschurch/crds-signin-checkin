@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'child-checkin',
   templateUrl: 'child-checkin.component.html',
+  styleUrls: ['child-checkin.component.scss' ]
 })
 export class ChildCheckinComponent {
 
