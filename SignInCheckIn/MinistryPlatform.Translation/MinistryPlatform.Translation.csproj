@@ -59,7 +59,6 @@
   <ItemGroup>
     <Compile Include="Extensions\RestSharpExtensions.cs" />
     <Compile Include="Models\Attributes\MpRestApiTable.cs" />
-    <Compile Include="Models\DTO\MpRoleDTO.cs" />
     <Compile Include="Repositories\AuthenticationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAuthenticationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IMinistryPlatformRestRepository.cs" />

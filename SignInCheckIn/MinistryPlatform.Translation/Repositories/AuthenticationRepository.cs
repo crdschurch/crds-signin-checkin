@@ -2,25 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Http;
-using Crossroads.Utilities.Interfaces;
-using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
-//using System.Net.Http;
 using Newtonsoft.Json.Linq;
-using RestSharp;
-using RestSharp.Authenticators;
 
 namespace MinistryPlatform.Translation.Repositories
 {
     public class AuthenticationRepository : IAuthenticationRepository
     {
-        //private readonly IConfigurationWrapper _configurationWrapper;
-
-        //public AuthenticationRepository(IConfigurationWrapper configurationWrapper)
-        //{
-        //    _configurationWrapper = configurationWrapper;
-        //}
-
         public Dictionary<string, object> Authenticate(string username, string password)
         {
             var userCredentials =
