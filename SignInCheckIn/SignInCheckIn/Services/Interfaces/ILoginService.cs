@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SignInCheckIn.Models.Authentication;
 
 namespace SignInCheckIn.Services.Interfaces
 {
     public interface ILoginService
     {
-        void Login(string username, string password);
+        LoginReturn Login(string username, string password);
     }
 }

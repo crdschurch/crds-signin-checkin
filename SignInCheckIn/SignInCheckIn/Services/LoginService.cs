@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using SignInCheckIn.Models.Authentication;
 using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Services
@@ -16,11 +17,18 @@ namespace SignInCheckIn.Services
             _authenticationRepository = authenticationRepository;
         }
 
-        public void Login(string username, string password)
+        public LoginReturn Login(string username, string password)
         {
-            //_authenticationRepository.Authenticate(username, password);
-            //_authenticationRepository.
-            var x = 1;
+            var authData = _authenticationRepository.Authenticate(username, password);
+
+            LoginReturn loginReturn = new LoginReturn
+            {
+                userToken = authData["token"].ToString(),
+                userTokenExp = authData["exp"].ToString(),
+                refreshToken = authData["refreshToken"].ToString()
+            };
+
+            return loginReturn;
         }
     }
 }

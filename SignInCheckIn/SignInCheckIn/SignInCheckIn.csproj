@@ -150,6 +150,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Authentication\LoginReturn.cs" />
     <Compile Include="Models\HelloWorldInputDto.cs" />
     <Compile Include="Models\HelloWorldOutputDto.cs" />
     <Compile Include="Models\HelloWorldV2InputDto.cs" />
