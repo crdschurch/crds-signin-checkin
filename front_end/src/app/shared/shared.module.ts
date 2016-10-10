@@ -4,16 +4,15 @@ import { FormsModule } from '@angular/forms';
 
 import { Ng2BootstrapModule } from 'ng2-bootstrap/ng2-bootstrap';
 
-//import { HttpClient } from './services/http-client.service';
+import { HttpClientService } from './http-client/http-client.service';
 import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
 
 @NgModule({
   imports: [
-    CommonModule,
-    //HttpClient
+    CommonModule
   ],
   providers: [
-    //HttpClient,
+    HttpClientService,
   ],
   declarations: [
     PhoneNumberPipe
