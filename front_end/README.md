@@ -4,19 +4,19 @@ This project was generated with [angular-cli](https://github.com/angular/angular
 
 ## Developer Setup
 * Make your editor aware of TypeScript typings
- * VSCode
-  * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at Git repo root)
-   * `"typescript.tsdk": "front_end/node_modules/typescript/lib"`
-  * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at 'front_end' under Git repo root)
-   * `"typescript.tsdk": "node_modules/typescript/lib"`
- * IntelliJ/WebStorm
-  * TBD
- * Atom
-  * TBD
- * Sublime
-  * TBD
- * Vim/vi
-  * Really??  
+  * _VSCode_
+    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at Git repo root)
+      * `"typescript.tsdk": "front_end/node_modules/typescript/lib"`
+    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at 'front_end' under Git repo root)
+      * `"typescript.tsdk": "node_modules/typescript/lib"`
+  * _IntelliJ/WebStorm_
+    * TBD
+  * _Atom_
+    * TBD
+  * _Sublime_
+    * TBD
+  * _Vim/vi_
+    * Really? Why???
    
 ## Development server
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
