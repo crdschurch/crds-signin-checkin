@@ -2,17 +2,13 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AdminComponent } from './admin.component';
-import { DashboardComponent } from './dashboard';
+import { SignInComponent } from './sign-in';
 
 const adminRoutes: Routes = [
   {
-    path: 'admin',
-    component: AdminComponent,
+    path: 'admin', component: AdminComponent,
     children: [
-      {
-        path: '',
-        component: DashboardComponent
-      }
+      { path: 'sign-in', component: SignInComponent }
     ]
   }
 ];
