@@ -18,7 +18,8 @@ namespace SignInCheckIn.Services
 
         public void Login(string username, string password)
         {
-            _authenticationRepository.Authenticate(username, password);
+            //_authenticationRepository.Authenticate(username, password);
+            //_authenticationRepository.
             var x = 1;
         }
     }

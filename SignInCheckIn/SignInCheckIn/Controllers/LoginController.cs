@@ -7,52 +7,70 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using MinistryPlatform.Translation.Models.DTO;
 using SignInCheckIn.Services;
+using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Controllers
 {
     public class LoginController : ApiController
     {
-        [ResponseType(typeof(LoginReturn))]
-        public IHttpActionResult Post([FromBody] Credentials cred)
+        private readonly ILoginService _loginService;
+
+        public LoginController(ILoginService loginService)
         {
-            //try
-            //{
-            //    // try to login 
-            //    var authData = LoginService.Login(cred.username, cred.password);
-            //    var token = authData["token"].ToString();
-            //    var exp = authData["exp"].ToString();
-            //    var refreshToken = authData["refreshToken"].ToString();
+            _loginService = loginService;
+        }
 
-            //    if (token == "")
-            //    {
-            //        return this.Unauthorized();
-            //    }
+        //[ResponseType(typeof(LoginReturn))]
+        //public IHttpActionResult Post([FromBody] Credentials cred)
+        [ResponseType(typeof(LoginReturn))]
+        [HttpPost]
+        [Route("api/authenticate")]
+        public IHttpActionResult Authenticate([FromBody] Credentials cred)
+        {
+            try
+            {
+                // try to login 
+                //var authData = _loginService.Login(cred.username, cred.password);
 
-            //    var userRoles = _personService.GetLoggedInUserRoles(token);
-            //    var p = _personService.GetLoggedInUserProfile(token);
-            //    var r = new LoginReturn
-            //    {
-            //        userToken = token,
-            //        userTokenExp = exp,
-            //        refreshToken = refreshToken,
-            //        userId = p.ContactId,
-            //        username = p.FirstName,
-            //        userEmail = p.EmailAddress,
-            //        roles = userRoles,
-            //        age = p.Age
-            //    };
 
-            //    _loginService.ClearResetToken(cred.username);
+                _loginService.Login(cred.username, cred.password);
 
-            //    //ttpResponseHeadersExtensions.AddCookies();
 
-            //    return this.Ok(r);
-            //}
-            //catch (Exception e)
-            //{
-            //    var apiError = new ApiErrorDto("Login Failed", e);
-            //    throw new HttpResponseException(apiError.HttpResponseMessage);
-            //}
+                //var token = authData["token"].ToString();
+                //var exp = authData["exp"].ToString();
+                //var refreshToken = authData["refreshToken"].ToString();
+
+                //if (token == "")
+                //{
+                //    return this.Unauthorized();
+                //}
+
+                //var userRoles = _personService.GetLoggedInUserRoles(token);
+                //var p = _personService.GetLoggedInUserProfile(token);
+                //var r = new LoginReturn
+                //{
+                //    userToken = token,
+                //    userTokenExp = exp,
+                //    refreshToken = refreshToken,
+                //    userId = p.ContactId,
+                //    username = p.FirstName,
+                //    userEmail = p.EmailAddress,
+                //    roles = userRoles,
+                //    age = p.Age
+                //};
+
+                //_loginService.ClearResetToken(cred.username);
+
+                //HttpResponseHeadersExtensions.AddCookies();
+
+                //return this.Ok(r);
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                //var apiError = new ApiErrorDto("Login Failed", e);
+                //throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
 
             return Ok();
         }
