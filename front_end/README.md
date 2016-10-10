@@ -26,7 +26,7 @@ You can update this file rather than setting environment variables through your 
 npm start
 ```
 
-and visit [http://localhost:8080/]
+and visit [http://localhost:8080/](http://localhost:8080/)
 
 ### Run tests
 
