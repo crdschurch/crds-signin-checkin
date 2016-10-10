@@ -161,6 +161,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Authentication\LoginReturn.cs" />
     <Compile Include="Models\HelloWorldInputDto.cs" />
     <Compile Include="Models\HelloWorldOutputDto.cs" />
     <Compile Include="Models\HelloWorldV2InputDto.cs" />
@@ -188,6 +189,7 @@
     </None>
     <None Include="Web.Integration.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -235,7 +237,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>1685</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:1685/</IISUrl>
+          <IISUrl>http://localhost:49390/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
