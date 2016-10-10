@@ -28,7 +28,17 @@ namespace SignInCheckIn.Filters
 
         public DomainLockedApiKeyFilter(IMinistryPlatformRestRepository ministryPlatformRestRepository, ICorsEngine corsEngine, IApiUserRepository apiUserRepository)
         {
-            _apiKeys = ministryPlatformRestRepository.UsingAuthenticationToken(apiUserRepository.GetToken()).Search<DomainLockedApiKey>();
+            try
+            {
+                _apiKeys =
+                    ministryPlatformRestRepository.UsingAuthenticationToken(apiUserRepository.GetToken())
+                        .Search<DomainLockedApiKey>();
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal("Could not load API Keys from MinistryPlatform - will default to rejecting all requests!", e);
+                _apiKeys = new List<DomainLockedApiKey>();
+            }
             _corsEngine = corsEngine;
         }
 
@@ -58,7 +68,7 @@ namespace SignInCheckIn.Filters
             var key = _apiKeys.Find(k => k.Key.Equals(new Guid(apiKeyValue)));
             if (key == null)
             {
-                _logger.Info($"API key '{apiKeyValue}' found in request, but does not match a known key - rejecting request");
+                _logger.Debug($"API key '{apiKeyValue}' found in request, but does not match a known key - rejecting request");
                 AuditLog(endpoint, method, remoteHost, apiKeyValue, false);
                 actionContext.Response = CreateResponseMessage(HttpStatusCode.Forbidden, $"Unknown API Key {apiKeyValue}");
                 throw new HttpResponseException(actionContext.Response);
@@ -92,7 +102,7 @@ namespace SignInCheckIn.Filters
                 return;
             }
 
-            _logger.Info($"API key '{apiKeyValue}' found in request, but does not match allowed origins [{string.Join(",", key.Origins)}] - rejecting request");
+            _logger.Debug($"API key '{apiKeyValue}' found in request, but does not match allowed origins [{string.Join(",", key.Origins)}] - rejecting request");
             AuditLog(endpoint, method, remoteHost, apiKeyValue, false);
             actionContext.Response = CreateResponseMessage(HttpStatusCode.Forbidden, $"API Key {key.Key} is not allowed from origin {corsContext.Origin}");
             throw new HttpResponseException(actionContext.Response);
@@ -136,7 +146,7 @@ namespace SignInCheckIn.Filters
             }
 
             // Last resort
-            _logger.Warn("Could not find remote host in request");
+            _logger.Debug("Could not find remote host in request");
             return null;
         }
     }
