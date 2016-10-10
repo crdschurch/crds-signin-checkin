@@ -22,8 +22,8 @@ namespace SignInCheckIn.Controllers
 
         //[ResponseType(typeof(LoginReturn))]
         //public IHttpActionResult Post([FromBody] Credentials cred)
-        [ResponseType(typeof(LoginReturn))]
         [HttpPost]
+        [ResponseType(typeof(LoginReturn))]
         [Route("api/authenticate")]
         public IHttpActionResult Authenticate([FromBody] Credentials cred)
         {
