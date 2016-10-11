@@ -1,31 +1,45 @@
 # FrontEnd
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.15.
+## Development
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### Install Dependencies
 
-## Code scaffolding
+```
+npm install
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class`.
+### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-## Build
+Create a .env file in the project root with the following values:
+```
+(TODO: Update with actual default localhost values)
+API_ENDPOINT=http://localhost-api:53454
+CMS_ENDPOINT=http://localhost-cms:29348
+API_TOKEN=dev-42345454
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+You can update this file rather than setting environment variables through your OS or CLI (.env file will not be checked in to git)
 
-## Running unit tests
+### Run locally
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```
+npm start
+```
 
-## Running end-to-end tests
+and visit [http://localhost:8080/](http://localhost:8080/)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). 
-Before running the tests make sure you are serving the app via `ng serve`.
+### Run tests
 
-## Deploying to Github Pages
+```
+npm test
+npm e2e
+```
 
-Run `ng github-pages:deploy` to deploy to Github Pages.
+## Deployment
 
-## Further help
+### Build
 
-To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+(TODO: other environments needed?)
+```
+npm run build
+```
