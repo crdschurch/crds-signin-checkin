@@ -28,9 +28,12 @@ namespace SignInCheckIn.Controllers
             }
             catch (Exception e)
             {
-                //var apiError = new ApiErrorDto("Login Failed", e);
-                //throw new HttpResponseException(apiError.HttpResponseMessage);
-                return InternalServerError(e);
+                if (e.GetType().Name == "UnauthorizedAccessException")
+                {
+                    return Unauthorized();
+                }
+
+                return InternalServerError();                
             }
         }
     }
