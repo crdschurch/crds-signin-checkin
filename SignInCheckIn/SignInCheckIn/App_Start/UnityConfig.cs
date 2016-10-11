@@ -2,6 +2,7 @@ using System.Configuration;
 using Microsoft.Practices.Unity;
 using System.Web.Http;
 using Microsoft.Practices.Unity.Configuration;
+using SignInCheckIn.Filters;
 using Unity.WebApi;
 
 namespace SignInCheckIn
