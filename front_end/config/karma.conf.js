@@ -10,6 +10,18 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (e.g. files, exclude)
     basePath: '',
 
+
+    plugins: [
+      require('karma-coverage'),
+      require('karma-jasmine'),
+      require('karma-phantomjs-launcher'),
+      require('karma-teamcity-reporter'),
+      require('karma-remap-istanbul'),
+      require('karma-mocha-reporter'),
+      require('karma-webpack'),
+      require('karma-sourcemap-loader')
+    ],
+
     /*
      * Frameworks to use
      *
@@ -25,13 +37,13 @@ module.exports = function(config) {
      *
      * we are building the test environment in ./spec-bundle.js
      */
-    files: [ { pattern: './config/spec-bundle.js', watched: false } ],
+    files: [ { pattern: './spec-bundle.js', watched: false } ],
 
     /*
      * preprocess matching files before serving them to the browser
      * available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
      */
-    preprocessors: { './config/spec-bundle.js': ['coverage', 'webpack', 'sourcemap'] },
+    preprocessors: { './spec-bundle.js': ['coverage', 'webpack', 'sourcemap'] },
 
     // Webpack Config at ./webpack.test.js
     webpack: testWebpackConfig,
