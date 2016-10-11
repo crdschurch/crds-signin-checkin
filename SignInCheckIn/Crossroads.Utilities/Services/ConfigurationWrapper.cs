@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Configuration;
-using Crossroads.Utilities.Interfaces;
+using Crossroads.Utilities.Services.Interfaces;
 
 namespace Crossroads.Utilities.Services
 {
