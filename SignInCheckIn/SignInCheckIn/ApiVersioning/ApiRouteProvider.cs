@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web.Http.Controllers;
@@ -20,8 +21,14 @@ namespace SignInCheckIn.ApiVersioning
             return DirectRoutes;
         }
 
+        private static bool _routeIntegrityDetermined = false;
+
         private void DetermineRouteIntegrity()
         {
+            if (_routeIntegrityDetermined)
+                return;
+            _routeIntegrityDetermined = true;
+
             foreach(RouteEntry routeEntry in DirectRoutes)
             {
                 string routePath = routeEntry.Route.RouteTemplate;
@@ -31,9 +38,14 @@ namespace SignInCheckIn.ApiVersioning
                     constraint = routeEntry.Route.Constraints["allowedVersions"] as VersionConstraint;
                 VersionSpace.Add(route, constraint);
             }
-            string gapReport = VersionSpace.GapReport();
-            if (gapReport != "")
-                System.Diagnostics.Debug.WriteLine(gapReport);
+            int routeCount = VersionSpace.Count();
+            JArray problems = VersionSpace.Problems();
+            System.Diagnostics.Debug.WriteLine("-----------------------------------");
+            if (problems.Count > 0)
+                System.Diagnostics.Debug.WriteLine("API Versioning (" + routeCount + " routes) Problems: " + problems);
+            else
+                System.Diagnostics.Debug.WriteLine("API Versioning (" + routeCount + " routes) is OK");
+            System.Diagnostics.Debug.WriteLine("-----------------------------------");
         }
 
         private const string _versionedRoutePattern = @"^api/v\{apiVersion\}/(.*)$";

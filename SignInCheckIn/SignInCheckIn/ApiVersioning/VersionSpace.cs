@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace SignInCheckIn.ApiVersioning
@@ -28,38 +29,46 @@ namespace SignInCheckIn.ApiVersioning
         }
 
         // returns a summary of any version gaps in a route
-        public static string Report(string route)
+        public static JObject Report(string route, JArray problems = null)
         {
-            string report = "not found";
+            dynamic routeReport = new JObject();
+            routeReport.Route = route;
 
             if (routes.ContainsKey(route))
             {
                 VersionSpace versionSpace = routes[route];
-                report = versionSpace.Report();
+                versionSpace.Report(routeReport);
             }
+            else
+                routeReport.Presence("not found");
 
-            return (report == "") ? "" : ("route " + route + ": " + report);
+            int count = 0; // bogus - no JObject way to see how many properties are present
+            foreach (var property in routeReport.Properties())
+                count++;
+            if (count > 1)
+            {
+                if (problems != null)
+                    problems.Add(routeReport);
+                return routeReport;
+            }
+            else
+                return null;
         }
 
-        // returns a summary of any version gaps for each added route
-        // (woe... this should be Report, but you can have instance and class methods
-        //  with the same signatures.)
-        public static string GapReport()
+        internal static int Count()
         {
-            List<string> reports = new List<string>();
-            string report;
+            return routes.Count;
+        }
+
+        // returns a summary of any version problem for each added route
+        public static JArray Problems()
+        {
+            JArray problems = new JArray();
 
             foreach (var route in routes.Keys)
-            {
-                report = Report(route);
-                if (report != "")
-                    reports.Add(report);
-            }
+                Report(route, problems);
 
-            if (reports.Count > 0)
-                reports.Insert(0, "Problems were found with the API routes...");
-
-            return string.Join("\n", reports);
+            return problems;
         }
 
         // adds a version constraint
@@ -72,15 +81,21 @@ namespace SignInCheckIn.ApiVersioning
         }
 
         // reports on potential versioning problems
-        public string Report()
+        public JObject Report()
         {
-            List<string> reports = new List<string>();
+            return Report(new JObject());
+        }
+        public JObject Report(dynamic report)
+        {
             string state = null;
             SemanticVersion current = null;
             VersionConstraint versionConstraint;
+            JArray states = new JArray();
+            JArray gaps = new JArray();
+            JArray overlaps = new JArray();
 
             if (!hasDefault)
-                reports.Add("no default version provided");
+                report.Default = "none";
 
             foreach (var constraint in versionConstraints)
             {
@@ -89,24 +104,24 @@ namespace SignInCheckIn.ApiVersioning
                 if (current == null)
                 {
                     if (!hasDefault && versionConstraint.MinimumVersion.IsAfter(origin))
-                        reports.Add("versioning does not begin at 1.0.0");
+                        report.origin = versionConstraint.MinimumVersion;
                 }
                 else
                 {
                     if (state != null)
                     {
                         if (state == "live" && versionConstraint.Removed)
-                            reports.Add("transition from live to removed at " + versionConstraint.MinimumVersion);
+                            states.Add("live to removed at " + versionConstraint.MinimumVersion);
                         if (state == "live" && versionConstraint.Deprecated)
-                            reports.Add("transition from live to deprecated at " + versionConstraint.MinimumVersion);
+                            states.Add("live to deprecated at " + versionConstraint.MinimumVersion);
                         if (state == "deprecated" && versionConstraint.Removed)
-                            reports.Add("transition from deprecated to removed at " + versionConstraint.MinimumVersion);
+                            states.Add("deprecated to removed at " + versionConstraint.MinimumVersion);
                     }
 
                     if (versionConstraint.MinimumVersion.IsAfter(current))
-                        reports.Add("version gap between " + current + " and " + versionConstraint.MinimumVersion);
+                        gaps.Add("between " + current + " and " + versionConstraint.MinimumVersion);
                     else if (versionConstraint.MinimumVersion.IsBefore(current))
-                        reports.Add("version overlap between " + versionConstraint.MinimumVersion + " and " + current);
+                        overlaps.Add("between " + versionConstraint.MinimumVersion + " and " + current);
                 }
 
                 current = versionConstraint.MaximumVersion;
@@ -114,7 +129,14 @@ namespace SignInCheckIn.ApiVersioning
                         versionConstraint.Deprecated ? "deprecated" : "live";
             }
 
-            return string.Join(", ", reports);
+            if (states.Count > 0)
+                report.States = states;
+            if (gaps.Count > 0)
+                report.Gaps = gaps;
+            if (overlaps.Count > 0)
+                report.Overlaps = overlaps;
+
+            return report;
         }
     }
 }
