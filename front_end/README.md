@@ -28,7 +28,7 @@ npm install
 Create a .env file in the project root with the following values:
 ```
 (TODO: Update with actual default localhost values)
-API_ENDPOINT=http://localhost-api:53454
+API_ENDPOINT=http://localhost-api:53454/api
 CMS_ENDPOINT=http://localhost-cms:29348
 API_TOKEN=dev-42345454
 ```
