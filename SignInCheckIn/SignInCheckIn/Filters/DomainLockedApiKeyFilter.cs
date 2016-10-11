@@ -128,30 +128,35 @@ namespace SignInCheckIn.Filters
             // Try X-Forwarded-For first - this should be set if coming through apache mod_proxy (or any proxy/load-balancer)
             if (request.Headers.Contains("X-Forwarded-For"))
             {
-                _logger.Debug("Found remote host in X-Forwarded-For header");
-                return request.Headers.GetValues("X-Forwarded-For").First();
+                var xForwardedFor = request.Headers.GetValues("X-Forwarded-For").First();
+                var remoteHost = Dns.GetHostEntry(xForwardedFor).HostName;
+                _logger.Debug($"Found remote host {remoteHost} in X-Forwarded-For header");
+                return remoteHost;
             }
 
             // Try Referer next - this may be set if coming from a frontend like crossroads.net
             if (request.Headers.Referrer != null)
             {
-                _logger.Debug("Found remote host in Referrer header");
-                return request.Headers.Referrer.Host;
+                var remoteHost = request.Headers.Referrer.Host;
+                _logger.Debug($"Found remote host {remoteHost} in Referrer header");
+                return remoteHost;
             }
 
             // Now try some more expensive stuff - get User Host Name from the request, if it is there
             if (request.Properties.ContainsKey("MS_HttpContext"))
             {
-                _logger.Debug("Found remote host in MS_HttpContext.Request.UserHostName");
-                return ((HttpContextWrapper)request.Properties["MS_HttpContext"]).Request.UserHostName;
+                var remoteHost = ((HttpContextWrapper) request.Properties["MS_HttpContext"]).Request.UserHostName;
+                _logger.Debug($"Found remote host {remoteHost} in MS_HttpContext.Request.UserHostName");
+                return remoteHost;
             }
 
             // Ok, even more expensive - get the remote endpoint IP address, then lookup the associated hostname
             if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
             {
-                _logger.Debug("Found remote host in RemoteEndpointMessageProperty.Name");
                 var requestEndpoint = (RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name];
-                return Dns.GetHostEntry(requestEndpoint.Address).HostName;
+                var remoteHost = Dns.GetHostEntry(requestEndpoint.Address).HostName;
+                _logger.Debug($"Found remote host {remoteHost} in RemoteEndpointMessageProperty.Name");
+                return remoteHost;
             }
 
             // Last resort
