@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import '../../rxjs-operators';
-import { environment } from '../../../environments/environment';
 import { HttpClientService } from '../../shared/services';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class SignInService {
   private url: string = '';
 
   constructor(private http: HttpClientService) {
-    this.url = `${environment.gatewayUrl}/authenticate`;
+    this.url = `${process.env.API_ENDPOINT}/authenticate`;
   }
 
   logIn(username: string, password: string) {
