@@ -17,12 +17,20 @@ using System.Threading;
 //using Microsoft.Ajax.Utilities;
 //using Microsoft.Owin;
 using MinistryPlatform.Translation.Repositories;
+using MinistryPlatform.Translation.Repositories.Interfaces;
+using SignInCheckIn.Util;
 
 namespace crds_angular.Security
 {
     public class MPAuth : ApiController
     {
         protected readonly log4net.ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private IAuthenticationRepository _authenticationRepository;
+
+        public MPAuth(IAuthenticationRepository authenticationRepository)
+        {
+            _authenticationRepository = authenticationRepository;
+        }
 
         /// <summary>
         /// Ensure that a user is authenticated before executing the given lambda expression.  The expression will
@@ -46,35 +54,33 @@ namespace crds_angular.Security
         /// <returns>An IHttpActionResult from the lambda expression that was executed.</returns>
         protected IHttpActionResult Authorized(Func<string, IHttpActionResult> actionWhenAuthorized, Func<IHttpActionResult> actionWhenNotAuthorized)
         {
-            //try
-            //{
-            //    IEnumerable<string> refreshTokens;
-            //    var authorized = "";
-            //    if (Request.Headers.TryGetValues("RefreshToken", out refreshTokens) && refreshTokens.Any())
-            //    {
-            //        var authData = AuthenticationRepository.RefreshToken(refreshTokens.FirstOrDefault());
-            //        if (authData != null)
-            //        {
-            //            authorized = authData["token"].ToString();
-            //            var RefreshToken = authData["RefreshToken"].ToString();
-            //            var result = new HttpAuthResult(actionWhenAuthorized(authorized), authorized, RefreshToken);
-            //            return result;
-            //        }
-            //    }
+            try
+            {
+                IEnumerable<string> refreshTokens;
+                var authorized = "";
+                if (Request.Headers.TryGetValues("RefreshToken", out refreshTokens) && refreshTokens.Any())
+                {
+                    var authData = _authenticationRepository.RefreshToken(refreshTokens.FirstOrDefault());
+                    if (authData != null)
+                    {
+                        authorized = authData["token"].ToString();
+                        var RefreshToken = authData["RefreshToken"].ToString();
+                        var result = new HttpAuthResult(actionWhenAuthorized(authorized), authorized, RefreshToken);
+                        return result;
+                    }
+                }
 
-            //    authorized = Request.Headers.GetValues("Authorization").FirstOrDefault();
-            //    if (authorized != null && (authorized != "null" || authorized != ""))
-            //    {
-            //        return actionWhenAuthorized(authorized);
-            //    }
-            //    return actionWhenNotAuthorized();
-            //}
-            //catch (System.InvalidOperationException)
-            //{
-            //    return actionWhenNotAuthorized();
-            //}
-
-            return null;
+                authorized = Request.Headers.GetValues("Authorization").FirstOrDefault();
+                if (authorized != null && (authorized != "null" || authorized != ""))
+                {
+                    return actionWhenAuthorized(authorized);
+                }
+                return actionWhenNotAuthorized();
+            }
+            catch (System.InvalidOperationException)
+            {
+                return actionWhenNotAuthorized();
+            }
         }
     }
 }
