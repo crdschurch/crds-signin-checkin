@@ -1,4 +1,4 @@
-﻿namespace Crossroads.Utilities.Interfaces
+﻿namespace Crossroads.Utilities.Services.Interfaces
 {
     public interface IConfigurationWrapper
     {

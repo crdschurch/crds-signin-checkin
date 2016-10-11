@@ -21,6 +21,11 @@ namespace SignInCheckIn.Services
         {
             var authData = _authenticationRepository.Authenticate(username, password);
 
+            if (authData == null)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             LoginReturn loginReturn = new LoginReturn
             {
                 UserToken = authData["token"].ToString(),

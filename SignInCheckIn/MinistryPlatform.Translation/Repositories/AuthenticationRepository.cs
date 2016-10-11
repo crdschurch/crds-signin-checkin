@@ -89,8 +89,7 @@ namespace MinistryPlatform.Translation.Repositories
 
                 });
 
-            //var tokenUrl = ConfigurationManager.AppSettings["TokenURL"];
-            var tokenUrl = "https://adminint.crossroads.net/ministryplatform/oauth/me";
+            var tokenUrl = ConfigurationManager.AppSettings["TokenURL"];
             var message = client.PostAsync(tokenUrl, userCredentials);
             try
             {
