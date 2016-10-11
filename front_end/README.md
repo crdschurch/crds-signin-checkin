@@ -2,8 +2,23 @@
 
 ## Development
 
+## Developer Setup
+* Make your editor aware of TypeScript typings
+  * _VSCode_
+    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at Git repo root)
+      * `"typescript.tsdk": "front_end/node_modules/typescript/lib"`
+    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at 'front_end' under Git repo root)
+      * `"typescript.tsdk": "node_modules/typescript/lib"`
+  * _IntelliJ/WebStorm_
+    * TBD
+  * _Atom_
+    * TBD
+  * _Sublime_
+    * TBD
+  * _Vim/vi_
+    * Really? Why???
+   
 ### Install Dependencies
-
 ```
 npm install
 ```
@@ -13,7 +28,7 @@ npm install
 Create a .env file in the project root with the following values:
 ```
 (TODO: Update with actual default localhost values)
-API_ENDPOINT=http://localhost-api:53454
+API_ENDPOINT=http://localhost-api:53454/api
 CMS_ENDPOINT=http://localhost-cms:29348
 API_TOKEN=dev-42345454
 ```
