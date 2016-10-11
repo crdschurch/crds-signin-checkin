@@ -34,6 +34,7 @@ namespace SignInCheckIn.Filters
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
             _corsEngine = corsEngine;
             _apiUserRepository = apiUserRepository;
+            ReloadKeys();
         }
 
         public void ReloadKeys()

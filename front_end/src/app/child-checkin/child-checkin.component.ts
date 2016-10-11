@@ -11,7 +11,7 @@ export class ChildCheckinComponent {
   constructor(private router: Router) {}
 
   activeStep1() {
-    console.log("example environment variables:", process.env.API_TOKEN, process.env.API_ENDPOINT, process.env.CMS_ENDPOINT);
+    console.log("environment variables:", "ECHECK_API_TOKEN:", process.env.ECHECK_API_TOKEN, " ECHECK_API_ENDPOINT:", process.env.ECHECK_API_ENDPOINT, " CRDS_CMS_ENDPOINT:", process.env.CRDS_CMS_ENDPOINT);
     return this.router.url === '/child-checkin';
   }
 
