@@ -1,8 +1,8 @@
-﻿using Crossroads.Utilities.Interfaces;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
+using Crossroads.Utilities.Services.Interfaces;
 
 namespace Crossroads.Utilities.Services
 {

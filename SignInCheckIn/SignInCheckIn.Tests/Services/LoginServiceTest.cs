@@ -43,29 +43,5 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             _authenticationRepository.VerifyAll();
         }
-
-        // temporarily commented out
-        //[Test]
-        //public void ShouldAuthenticateUserFail()
-        //{
-        //    // Arrange
-        //    string username = "test@test.com";
-        //    string password = "12345678";
-
-        //    Dictionary<string, object> authData = new Dictionary<string, object>
-        //    {
-        //        {"token", "123"},
-        //        {"exp", 123},
-        //        {"refreshToken", "456"}
-        //    };
-
-        //    _authenticationRepository.Setup(m => m.Authenticate(username, password)).Returns(null);
-
-        //    // Act
-        //    _fixture.Login(username, password);
-
-        //    // Assert
-        //    _authenticationRepository.VerifyAll();
-        //}
     }
 }
