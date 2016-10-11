@@ -20,26 +20,34 @@ namespace SignInCheckIn.Filters
     {
         public const string ApiKeyHeader = "Crds-Api-Key";
 
-        private readonly List<DomainLockedApiKey> _apiKeys;
+        private readonly List<DomainLockedApiKey> _apiKeys = new List<DomainLockedApiKey>();
+
+        private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly ICorsEngine _corsEngine;
+        private readonly IApiUserRepository _apiUserRepository;
 
         private readonly ILog _logger = LogManager.GetLogger(typeof (DomainLockedApiKeyFilter));
         private readonly ILog _auditLogger = LogManager.GetLogger("EndpointAuditLog");
 
         public DomainLockedApiKeyFilter(IMinistryPlatformRestRepository ministryPlatformRestRepository, ICorsEngine corsEngine, IApiUserRepository apiUserRepository)
         {
+            _ministryPlatformRestRepository = ministryPlatformRestRepository;
+            _corsEngine = corsEngine;
+            _apiUserRepository = apiUserRepository;
+        }
+
+        public void ReloadKeys()
+        {
+            _apiKeys.Clear();
             try
             {
-                _apiKeys =
-                    ministryPlatformRestRepository.UsingAuthenticationToken(apiUserRepository.GetToken())
-                        .Search<DomainLockedApiKey>();
+                _apiKeys.AddRange(_ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
+                        .Search<DomainLockedApiKey>());
             }
             catch (Exception e)
             {
                 _logger.Fatal("Could not load API Keys from MinistryPlatform - will default to rejecting all requests!", e);
-                _apiKeys = new List<DomainLockedApiKey>();
             }
-            _corsEngine = corsEngine;
         }
 
         private void AuditLog(string endpoint, string method, string remoteHost, string apiKey, bool allowed)
