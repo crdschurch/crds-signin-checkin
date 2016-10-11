@@ -76,6 +76,14 @@ namespace SignInCheckIn.Filters
             var apiKeyValue = actionContext.Request.Headers.GetValues(ApiKeyHeader).First();
             _logger.Debug($"API key '{apiKeyValue}' found in request, will validate against known API keys");
 
+            if (remoteHost == null)
+            {
+                _logger.Debug("No remote host found in request, cannot verify - rejecting request");
+                AuditLog(endpoint, method, null, apiKeyValue, false);
+                actionContext.Response = CreateResponseMessage(HttpStatusCode.BadRequest, $"Cannot verify access for request origin");
+                throw new HttpResponseException(actionContext.Response);
+            }
+
             var key = _apiKeys.Find(k => k.Key.Equals(new Guid(apiKeyValue)));
             if (key == null)
             {
@@ -127,71 +135,16 @@ namespace SignInCheckIn.Filters
 
         private string GetRemoteHost(HttpRequestMessage request)
         {
-            if (request.Headers.Host != null)
-            {
-                _logger.Debug($"Host: ({request.Headers.Host})");
-            }
-
+            // Just look at Origin for now - this will always exist from javascript/angular frontend, and even from Postman
             if (request.Headers.Contains("Origin"))
             {
-                _logger.Debug($"Origin: ({request.Headers.GetValues("Origin").First()})");
-            }
-
-            if (request.Headers.Contains("X-Forwarded-For"))
-            {
-                _logger.Debug($"X-Forwarded-For: ({request.Headers.GetValues("X-Forwarded-For").First()})");
-            }
-
-            if (request.Headers.Referrer != null)
-            {
-                _logger.Debug($"Referer: ({request.Headers.Referrer.Host})");
-            }
-
-            if (request.Properties.ContainsKey("MS_HttpContext"))
-            {
-                _logger.Debug($"MS_HttpContext: ({((HttpContextWrapper)request.Properties["MS_HttpContext"]).Request.UserHostName})");
-            }
-
-            if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
-            {
-                _logger.Debug($"RemoteEndpointMessageProperty.Name: ({(RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name]})");
-            }
-
-            // Try Referer first - this may be set if coming from a frontend like crossroads.net
-            if (request.Headers.Referrer != null)
-            {
-                var remoteHost = request.Headers.Referrer.Host;
+                var origin = new Uri(request.Headers.GetValues("Origin").First());
+                var remoteHost = $"{origin.Host}";
                 _logger.Debug($"Found remote host {remoteHost} in Referrer header");
                 return remoteHost;
             }
 
-            // Try X-Forwarded-For next - this should be set if coming through apache mod_proxy (or any proxy/load-balancer)
-            if (request.Headers.Contains("X-Forwarded-For"))
-            {
-                var xForwardedFor = request.Headers.GetValues("X-Forwarded-For").First();
-                var remoteHost = Dns.GetHostEntry(xForwardedFor).HostName;
-                _logger.Debug($"Found remote host {remoteHost} in X-Forwarded-For header");
-                return remoteHost;
-            }
-
-            // Now try some more expensive stuff - get User Host Name from the request, if it is there
-            if (request.Properties.ContainsKey("MS_HttpContext"))
-            {
-                var remoteHost = ((HttpContextWrapper) request.Properties["MS_HttpContext"]).Request.UserHostName;
-                _logger.Debug($"Found remote host {remoteHost} in MS_HttpContext.Request.UserHostName");
-                return remoteHost;
-            }
-
-            // Ok, even more expensive - get the remote endpoint IP address, then lookup the associated hostname
-            if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
-            {
-                var requestEndpoint = (RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name];
-                var remoteHost = Dns.GetHostEntry(requestEndpoint.Address).HostName;
-                _logger.Debug($"Found remote host {remoteHost} in RemoteEndpointMessageProperty.Name");
-                return remoteHost;
-            }
-
-            // Last resort
+            // No origin - we'll reject the request
             _logger.Debug("Could not find remote host in request");
             return null;
         }
