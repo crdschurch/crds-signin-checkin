@@ -38,11 +38,13 @@ namespace SignInCheckIn.Filters
 
         public void ReloadKeys()
         {
+            _logger.Info("Reloading Domain-locked API keys...");
             _apiKeys.Clear();
             try
             {
                 _apiKeys.AddRange(_ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
                         .Search<DomainLockedApiKey>());
+                _logger.Info("Successfully reloaded Domain-locked API keys");
             }
             catch (Exception e)
             {
