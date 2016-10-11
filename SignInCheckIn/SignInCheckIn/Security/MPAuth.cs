@@ -56,8 +56,8 @@ namespace crds_angular.Security
             //        if (authData != null)
             //        {
             //            authorized = authData["token"].ToString();
-            //            var refreshToken = authData["refreshToken"].ToString();
-            //            var result = new HttpAuthResult(actionWhenAuthorized(authorized), authorized, refreshToken);
+            //            var RefreshToken = authData["RefreshToken"].ToString();
+            //            var result = new HttpAuthResult(actionWhenAuthorized(authorized), authorized, RefreshToken);
             //            return result;
             //        }
             //    }

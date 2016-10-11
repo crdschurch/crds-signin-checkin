@@ -1,6 +1,6 @@
 # FrontEnd
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.15.
+## Development
 
 ## Developer Setup
 * Make your editor aware of TypeScript typings
@@ -18,30 +18,43 @@ This project was generated with [angular-cli](https://github.com/angular/angular
   * _Vim/vi_
     * Really? Why???
    
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### Install Dependencies
+```
+npm install
+```
 
-## Code scaffolding
+### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class`.
+Create a .env file in the project root with the following values:
+```
+(TODO: Update with actual default localhost values)
+API_ENDPOINT=http://localhost-api:53454
+CMS_ENDPOINT=http://localhost-cms:29348
+API_TOKEN=dev-42345454
+```
 
-## Build
+You can update this file rather than setting environment variables through your OS or CLI (.env file will not be checked in to git)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+### Run locally
 
-## Running unit tests
+```
+npm start
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+and visit [http://localhost:8080/](http://localhost:8080/)
 
-## Running end-to-end tests
+### Run tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). 
-Before running the tests make sure you are serving the app via `ng serve`.
+```
+npm test
+npm e2e
+```
 
-## Deploying to Github Pages
+## Deployment
 
-Run `ng github-pages:deploy` to deploy to Github Pages.
+### Build
 
-## Further help
-
-To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+(TODO: other environments needed?)
+```
+npm run build
+```
