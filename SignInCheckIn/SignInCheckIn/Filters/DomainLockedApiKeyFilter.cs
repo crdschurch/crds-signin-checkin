@@ -39,11 +39,13 @@ namespace SignInCheckIn.Filters
 
         public void ReloadKeys()
         {
+            _logger.Info("Reloading Domain-locked API keys...");
             _apiKeys.Clear();
             try
             {
                 _apiKeys.AddRange(_ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
                         .Search<DomainLockedApiKey>());
+                _logger.Info("Successfully reloaded Domain-locked API keys");
             }
             catch (Exception e)
             {
@@ -125,6 +127,26 @@ namespace SignInCheckIn.Filters
 
         private string GetRemoteHost(HttpRequestMessage request)
         {
+            if (request.Headers.Contains("X-Forwarded-For"))
+            {
+                _logger.Debug($"X-Forwarded-For: ({request.Headers.GetValues("X-Forwarded-For").First()})");
+            }
+
+            if (request.Headers.Referrer != null)
+            {
+                _logger.Debug($"Referer: ({request.Headers.Referrer.Host})");
+            }
+
+            if (request.Properties.ContainsKey("MS_HttpContext"))
+            {
+                _logger.Debug($"MS_HttpContext: ({((HttpContextWrapper)request.Properties["MS_HttpContext"]).Request.UserHostName})");
+            }
+
+            if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
+            {
+                _logger.Debug($"RemoteEndpointMessageProperty.Name: ({(RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name]})");
+            }
+
             // Try X-Forwarded-For first - this should be set if coming through apache mod_proxy (or any proxy/load-balancer)
             if (request.Headers.Contains("X-Forwarded-For"))
             {
