@@ -45,7 +45,7 @@ module.exports = {
       name: ['app', 'vendor', 'polyfills']
     }),
     new Dotenv({
-      // systemvars: true
+      systemvars: true
     }),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
