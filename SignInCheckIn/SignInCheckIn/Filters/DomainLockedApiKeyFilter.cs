@@ -127,6 +127,16 @@ namespace SignInCheckIn.Filters
 
         private string GetRemoteHost(HttpRequestMessage request)
         {
+            if (request.Headers.Host != null)
+            {
+                _logger.Debug($"Host: ({request.Headers.Host})");
+            }
+
+            if (request.Headers.Contains("Origin"))
+            {
+                _logger.Debug($"Origin: ({request.Headers.GetValues("Origin").First()})");
+            }
+
             if (request.Headers.Contains("X-Forwarded-For"))
             {
                 _logger.Debug($"X-Forwarded-For: ({request.Headers.GetValues("X-Forwarded-For").First()})");
@@ -147,20 +157,20 @@ namespace SignInCheckIn.Filters
                 _logger.Debug($"RemoteEndpointMessageProperty.Name: ({(RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name]})");
             }
 
-            // Try X-Forwarded-For first - this should be set if coming through apache mod_proxy (or any proxy/load-balancer)
+            // Try Referer first - this may be set if coming from a frontend like crossroads.net
+            if (request.Headers.Referrer != null)
+            {
+                var remoteHost = request.Headers.Referrer.Host;
+                _logger.Debug($"Found remote host {remoteHost} in Referrer header");
+                return remoteHost;
+            }
+
+            // Try X-Forwarded-For next - this should be set if coming through apache mod_proxy (or any proxy/load-balancer)
             if (request.Headers.Contains("X-Forwarded-For"))
             {
                 var xForwardedFor = request.Headers.GetValues("X-Forwarded-For").First();
                 var remoteHost = Dns.GetHostEntry(xForwardedFor).HostName;
                 _logger.Debug($"Found remote host {remoteHost} in X-Forwarded-For header");
-                return remoteHost;
-            }
-
-            // Try Referer next - this may be set if coming from a frontend like crossroads.net
-            if (request.Headers.Referrer != null)
-            {
-                var remoteHost = request.Headers.Referrer.Host;
-                _logger.Debug($"Found remote host {remoteHost} in Referrer header");
                 return remoteHost;
             }
 
