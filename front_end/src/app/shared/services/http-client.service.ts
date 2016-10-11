@@ -11,13 +11,13 @@ export class HttpClientService {
   }
 
   get(url: string, options?: RequestOptions) {
-    let headers = this.getRequestOption(options)
-    return this.http.get(url, headers);
+    let requestOptions = this.getRequestOption(options)
+    return this.http.get(url, requestOptions);
   }
 
   post(url:string, data:any, options?: RequestOptions) {
-    let headers = this.getRequestOption(options)
-    return this.http.post(url, data, headers);
+    let requestOptions = this.getRequestOption(options)
+    return this.http.post(url, data, requestOptions);
   }
 
   isLoggedIn(): boolean {
@@ -25,21 +25,19 @@ export class HttpClientService {
   }
 
   private getRequestOption(options?: RequestOptions):  RequestOptions {
-    let reqOptions = (options === undefined || options === null) ? new RequestOptions() : options;
-    reqOptions.headers = this.createAuthorizationHeader();
+    let reqOptions = options || new RequestOptions();
+    reqOptions.headers = this.createAuthorizationHeader(reqOptions.headers);
 
     return reqOptions;
   }
 
-  private createAuthorizationHeader() {
-    let headers =  new Headers();
+  private createAuthorizationHeader(headers?: Headers) {
+    let reqHeaders =  headers || new Headers();
+    reqHeaders.set('Authorization', this.authenticationToken);
+    reqHeaders.set('Content-Type', 'application/json');
+    reqHeaders.set('Access-Control-Allow-Origin', '*');
+    //reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN)
 
-    headers.set('Authorization', this.authenticationToken);
-
-    headers.set('Content-Type', 'application/json');
-
-    headers.set('Access-Control-Allow-Origin', '*');
-
-    return headers;
+    return reqHeaders;
   }
 }

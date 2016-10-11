@@ -9,7 +9,7 @@ export class SignInService {
   private url: string = '';
 
   constructor(private http: HttpClientService) {
-    this.url = `${process.env.API_ENDPOINT}/authenticate`;
+    this.url = `${process.env.ECHECK_API_ENDPOINT}/authenticate`;
   }
 
   logIn(username: string, password: string) {

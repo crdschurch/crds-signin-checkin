@@ -1,4 +1,4 @@
-﻿using Crossroads.Utilities.Interfaces;
+﻿using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
 namespace MinistryPlatform.Translation.Repositories

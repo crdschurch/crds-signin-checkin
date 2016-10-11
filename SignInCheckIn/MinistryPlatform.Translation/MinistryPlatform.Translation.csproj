@@ -71,9 +71,7 @@
     <Compile Include="Repositories\Interfaces\IApiUserRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAuthenticationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IMinistryPlatformRestRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IPersonRepository.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepository.cs" />
-    <Compile Include="Repositories\PersonRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Crossroads.Utilities\Crossroads.Utilities.csproj">
