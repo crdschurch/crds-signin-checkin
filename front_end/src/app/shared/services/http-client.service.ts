@@ -23,15 +23,25 @@ export class HttpClientService {
   }
 
   private getRequestOption(options?: RequestOptions):  RequestOptions {
-    let reqOptions = options === null ? new RequestOptions() : options;
+    let reqOptions = (options === undefined || options === null) ? new RequestOptions() : options;
     this.createAuthorizationHeader(reqOptions.headers);
 
     return reqOptions;
   }
 
-  private createAuthorizationHeader(headers: Headers) {
-    if (headers.has('Authorization')) {
-        headers.append('Authorization', this.authenticationToken);
+  private createAuthorizationHeader(headers?: Headers) {
+    headers = (headers === undefined || headers === null) ? new Headers() : headers;
+
+    if (!headers.has('Authorization')) {
+      headers.append('Authorization', this.authenticationToken);
+    }
+
+    if (!headers.has('Content-Type')) {
+      headers.append('Content-Type', 'application/json');
+    }
+
+    if (!headers.has('Access-Control-Allow-Origin')) {
+      headers.append('Access-Control-Allow-Origin', '*');
     }
   }
 }

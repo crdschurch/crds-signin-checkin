@@ -1,7 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
 
+import { HttpClientService } from './shared/services';
 import { AdminModule } from './admin';
 import { ChildCheckinModule } from './child-checkin';
 import { HomeModule } from './home';
@@ -15,6 +17,7 @@ import { routing } from './app.routes';
   imports: [
     BrowserModule,
     FormsModule,
+    HttpModule,
     HomeModule,
     ChildCheckinModule,
     AdminModule,
@@ -22,6 +25,7 @@ import { routing } from './app.routes';
   ],
   providers: [
     FormsModule,
+    HttpClientService
   ],
   bootstrap: [
     AppComponent
