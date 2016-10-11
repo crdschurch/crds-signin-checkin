@@ -198,6 +198,7 @@
     </Content>
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TransformOnBuild>true</TransformOnBuild>
     </None>
     <None Include="log4net.Debug.config">
       <DependentUpon>log4net.config</DependentUpon>
