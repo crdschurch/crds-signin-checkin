@@ -37,7 +37,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(HelloWorldOutputDto))]
-        [VersionedRoute("hello/greet", "2.0.0")]
+        [VersionedRoute(template: "hello/greet", minimumVersion: "2.0.0")]
         public IHttpActionResult Greet([FromBody] HelloWorldV2InputDto input)
         {
             if (input == null)
