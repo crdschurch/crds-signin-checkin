@@ -4,30 +4,25 @@
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['jasmine', 'angular-cli'],
+    frameworks: ['jasmine'],
     plugins: [
       require('karma-jasmine'),
       require('karma-phantomjs-launcher'),
       require('karma-teamcity-reporter'),
       require('karma-remap-istanbul'),
       require('karma-mocha-reporter'),
-      require('angular-cli/plugins/karma')
     ],
     files: [
-      { pattern: './src/test.ts', watched: false }
+      { pattern: '../src/test.ts', watched: false }
     ],
     preprocessors: {
-      './src/test.ts': ['angular-cli']
+      './karma-test-shim.js': ['webpack', 'sourcemap']
     },
     remapIstanbulReporter: {
       reports: {
         html: 'coverage',
         lcovonly: './coverage/coverage.lcov'
       }
-    },
-    angularCli: {
-      config: './angular-cli.json',
-      environment: 'dev'
     },
     // reporter(s) to use - set to 'teamcity' for ci server
     reporters: ['mocha'],

@@ -23,10 +23,14 @@ namespace SignInCheckIn.Services
 
             LoginReturn loginReturn = new LoginReturn
             {
-                userToken = authData["token"].ToString(),
-                userTokenExp = authData["exp"].ToString(),
-                refreshToken = authData["refreshToken"].ToString()
+                UserToken = authData["token"].ToString(),
+                UserTokenExp = authData["exp"].ToString(),
+                RefreshToken = authData["refreshToken"].ToString()
             };
+
+            var roles = _authenticationRepository.GetUserRolesFromToken(loginReturn.UserToken);
+
+            loginReturn.Roles = roles;
 
             return loginReturn;
         }
