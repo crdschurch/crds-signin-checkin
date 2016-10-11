@@ -54,6 +54,16 @@ npm start
 
 and visit [http://localhost:8080/](http://localhost:8080/)
 
+
+### Run locally with Hot Module Replacement
+
+```
+npm run server:dev:hmr
+
+```
+
+and visit [http://localhost:8080/](http://localhost:8080/)
+
 ### Run tests
 
 ```
