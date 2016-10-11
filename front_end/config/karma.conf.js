@@ -3,7 +3,7 @@
 
 module.exports = function (config) {
   config.set({
-    basePath: '',
+    basePath: './src',
     frameworks: ['jasmine'],
     plugins: [
       require('karma-jasmine'),
@@ -11,9 +11,11 @@ module.exports = function (config) {
       require('karma-teamcity-reporter'),
       require('karma-remap-istanbul'),
       require('karma-mocha-reporter'),
+      require('karma-webpack'),
+      require('karma-sourcemap-loader')
     ],
     files: [
-      { pattern: '../src/test.ts', watched: false }
+      { pattern: './test.js', watched: false }
     ],
     preprocessors: {
       './karma-test-shim.js': ['webpack', 'sourcemap']
