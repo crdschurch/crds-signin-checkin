@@ -54,7 +54,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr *ngFor="let events of events">
+              <span class="badge">{{event.EventId}} - {{event.EventTitle}}</span>
+            </tr>
+            <!-- <tr>
               <td>Service</td>
               <td>Saturday</td>
               <td>8/20/16</td>
@@ -77,7 +80,7 @@
               <td>8:30am</td>
               <td>Oakley</td>
               <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms']" class="btn btn-primary btn-sm">View</a></td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div><!--/col-sm-9 col-xs-12-->
