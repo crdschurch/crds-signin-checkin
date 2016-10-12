@@ -35,7 +35,6 @@ export class HttpClientService {
     let reqHeaders =  headers || new Headers();
     reqHeaders.set('Authorization', this.authenticationToken);
     reqHeaders.set('Content-Type', 'application/json');
-    reqHeaders.set('Access-Control-Allow-Origin', '*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
 
     return reqHeaders;
