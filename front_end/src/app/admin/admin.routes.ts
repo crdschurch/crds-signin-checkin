@@ -13,8 +13,8 @@ const adminRoutes: Routes = [
     children: [
       { path: 'sign-in', component: SignInComponent },
       { path: 'events', component: EventsComponent },
-      { path: 'rooms', component: RoomsComponent },
-      { path: 'room', component: RoomComponent }
+      { path: 'events/:eventId/rooms', component: RoomsComponent },
+      { path: 'events/:eventId/rooms/:roomId', component: RoomComponent }
     ]
   }
 ];
