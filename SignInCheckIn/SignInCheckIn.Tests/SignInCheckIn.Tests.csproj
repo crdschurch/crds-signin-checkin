@@ -137,6 +137,7 @@
   <ItemGroup>
     <Compile Include="ApiVersioning\SemanticVersionTest.cs" />
     <Compile Include="BuildTester.cs" />
+    <Compile Include="Filters\DomainLockedApiKeyFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\LoginServiceTest.cs" />
   </ItemGroup>
@@ -155,6 +156,7 @@
       <Name>SignInCheckIn</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

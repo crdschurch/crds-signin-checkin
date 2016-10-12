@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.ServiceModel.Channels;
-using System.Web;
 using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -19,6 +17,8 @@ namespace SignInCheckIn.Filters
     public class DomainLockedApiKeyFilter : ActionFilterAttribute
     {
         public const string ApiKeyHeader = "Crds-Api-Key";
+
+        public IReadOnlyList<DomainLockedApiKey> RegisteredKeys => _apiKeys.AsReadOnly();
 
         private readonly List<DomainLockedApiKey> _apiKeys = new List<DomainLockedApiKey>();
 
@@ -93,6 +93,14 @@ namespace SignInCheckIn.Filters
                 throw new HttpResponseException(actionContext.Response);
             }
 
+            if (!key.IsActive)
+            {
+                _logger.Debug($"API key '{apiKeyValue}' found in request, but matches an inactive/expired key - rejecting request");
+                AuditLog(endpoint, method, remoteHost, apiKeyValue, false);
+                actionContext.Response = CreateResponseMessage(HttpStatusCode.Forbidden, $"Inactive/expired API Key {apiKeyValue}");
+                throw new HttpResponseException(actionContext.Response);
+            }
+
             if (!key.Origins.Any())
             {
                 _logger.Debug($"API key '{apiKeyValue}' found in request, and matching key allows any origin - accepting request");
@@ -103,12 +111,16 @@ namespace SignInCheckIn.Filters
 
             var corsContext = new CorsRequestContext
             {
-                Host = remoteHost,
+                Host = actionContext.Request.Headers.Host,
                 Origin = remoteHost,
                 RequestUri = actionContext.Request.RequestUri,
             };
 
-            var policy = new CorsPolicy();
+            var policy = new CorsPolicy
+            {
+                AllowAnyHeader = true,
+                AllowAnyMethod = true
+            };
             key.Origins.ForEach(origin => policy.Origins.Add(origin));
 
             var result = _corsEngine.EvaluatePolicy(corsContext, policy);
@@ -144,7 +156,9 @@ namespace SignInCheckIn.Filters
                 return remoteHost;
             }
 
-            // No origin - we'll reject the request
+            // TODO - Look for iOS or Android app keys as well
+
+            // No host - we'll reject the request
             _logger.Debug("Could not find remote host in request");
             return null;
         }
@@ -181,5 +195,15 @@ namespace SignInCheckIn.Filters
 
         [JsonIgnore]
         public List<string> Origins { get; set; } = new List<string>();
+
+        public bool IsActive
+        {
+            get
+            {
+                var now = DateTime.Today.Date;
+                // Considering this key Active if current date is on or after the Start Date, and less than the End Date
+                return now >= StartDate.Date && (!EndDate.HasValue || now < EndDate.Value.Date);
+            }
+        }
     }
 }
