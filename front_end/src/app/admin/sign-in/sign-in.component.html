@@ -1,8 +1,10 @@
+<div class="alert alert-danger" role="alert" *ngIf="!success"><b>Error:</b> Sorry you do not have privileges</div>
+
 <div class='container'>
   <form #logInForm="ngForm" (ngSubmit)="onSubmit()">
     <div class='form-group'>
       <label for='username'>Username</label>
-      <input type='text' name='username' class='form-control' [(ngModel)]='user.username' #username="ngModel"  required/>
+      <input type='email' name='username' class='form-control' [(ngModel)]='user.username' #username="ngModel"  required/>
       <div [hidden]="username.valid || username.pristine" 
             class="alert alert-danger">
         Username is required
