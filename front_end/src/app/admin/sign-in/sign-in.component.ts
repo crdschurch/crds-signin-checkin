@@ -9,15 +9,14 @@ import { SignInService } from './sign-in.service';
   providers: [ SignInService ]
 })
 export class SignInComponent {
-  private errorMsg: string = '';
+  private success: boolean = true;
   private user: any = { username: '', password: '' };
 
   constructor(private signInService: SignInService, private router: Router) { }
 
   onSubmit() {
-    console.log("onSubmit", this)
     this.signInService.logIn(this.user.username, this.user.password).subscribe(
-      resp => this.router.navigate(['/child-checkin']),
-      error =>  this.errorMsg = error);
+      resp => this.router.navigate(['/admin/events']),
+      error =>  this.success = false);
   }
 }

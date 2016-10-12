@@ -11,8 +11,8 @@
       <span>eCheck</span>
     </a>
     <ul class="nav navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" [routerLink]="['/admin']">Manage Rooms</a>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/rooms">Manage Rooms</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/admin']">Manage Children</a>
@@ -26,8 +26,8 @@
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/admin']">Guest Check In</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/admin']">Events List</a>
+      <li class="nav-item active">
+        <a class="nav-link" routerLink="/admin/events">Events List</a>
       </li>
       <li class="pull-sm-right">
         <a href="#" class="btn btn-primary">Sign Out</a>
@@ -35,76 +35,114 @@
     </ul>
   </nav>
 
-  <nav class="subnav navbar navbar-light bg-faded">
-    <ul class="list-inline pull-xs-left lead m-b-0">
-      <li class="list-inline-item">
-        <strong>Site</strong> Oakley
-      </li>
-      <li class="list-inline-item">
-        <strong>Event Type</strong> Service
-      </li>
-      <li class="list-inline-item">
-        <strong>Date</strong> Saturday August 20, 2016
-      </li>
-      <li class="list-inline-item">
-        <strong>Event Time</strong> 4:30pm
-      </li>
-    </ul>
-    <div class="btn-group btn-group-sm pull-sm-right" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-secondary">Previous Event</button>
-      <button type="button" class="btn btn-secondary">Next Event</button>
-    </div>
-  </nav>
-
   <div class="container-fluid admin-content p-y-1">
     <div class="row">
-      <div class="col-sm-10">
+      <div class="col-sm-12 m-b-2">
         <h1>Events</h1>
+        <h4>Saturday August 20 - Friday August 26</h4>
       </div>
-      <div class="col-sm-2 text-sm-right p-b-1">
-        <strong>0</strong> of <strong>20</strong> rooms open
-        <a class="p-l-1">
-          <span class="icon icon-large">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-            <g>
-            </g>
-            	<path d="M18.286 16q0-1.893-1.339-3.232t-3.232-1.339-3.232 1.339-1.339 3.232 1.339 3.232 3.232 1.339 3.232-1.339 1.339-3.232zM27.429 14.054v3.964q0 0.214-0.143 0.411t-0.357 0.232l-3.304 0.5q-0.339 0.964-0.696 1.625 0.625 0.893 1.911 2.464 0.179 0.214 0.179 0.446t-0.161 0.411q-0.482 0.661-1.768 1.929t-1.679 1.268q-0.214 0-0.464-0.161l-2.464-1.929q-0.786 0.411-1.625 0.679-0.286 2.429-0.518 3.321-0.125 0.5-0.643 0.5h-3.964q-0.25 0-0.438-0.152t-0.205-0.384l-0.5-3.286q-0.875-0.286-1.607-0.661l-2.518 1.911q-0.179 0.161-0.446 0.161-0.25 0-0.446-0.196-2.25-2.036-2.946-3-0.125-0.179-0.125-0.411 0-0.214 0.143-0.411 0.268-0.375 0.911-1.188t0.964-1.259q-0.482-0.893-0.732-1.768l-3.268-0.482q-0.232-0.036-0.375-0.223t-0.143-0.42v-3.964q0-0.214 0.143-0.411t0.339-0.232l3.321-0.5q0.25-0.821 0.696-1.643-0.714-1.018-1.911-2.464-0.179-0.214-0.179-0.429 0-0.179 0.161-0.411 0.464-0.643 1.759-1.92t1.688-1.277q0.232 0 0.464 0.179l2.464 1.911q0.786-0.411 1.625-0.679 0.286-2.429 0.518-3.321 0.125-0.5 0.643-0.5h3.964q0.25 0 0.438 0.152t0.205 0.384l0.5 3.286q0.875 0.286 1.607 0.661l2.536-1.911q0.161-0.161 0.429-0.161 0.232 0 0.446 0.179 2.304 2.125 2.946 3.036 0.125 0.143 0.125 0.393 0 0.214-0.143 0.411-0.268 0.375-0.911 1.188t-0.964 1.259q0.464 0.893 0.732 1.75l3.268 0.5q0.232 0.036 0.375 0.223t0.143 0.42z" fill="#000000" />
-            </svg>
-          </span>
-        </a>
-      </div>
-    </div><!--/row-->
-    <div class="row">
-      <div class="col-xs-12">
+      <div class="col-md-9 col-sm-8 col-xs-12">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>Age Ranges</th>
-              <th>Room</th>
-              <th>Allow Sign In</th>
-              <th>Volunteers</th>
-              <th>Capacity</th>
-              <th>Signed In</th>
-              <th>Checked In</th>
-              <th>Kids/Vols Ratio</th>
+              <th>Event Type</th>
+              <th>Day</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Site</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><a href="#">Add</a></td>
-              <td>Nursery A<br /> K112</td>
-              <td>[]</td>
-              <td>[]</td>
-              <th>[]</th>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td><a href="#" class="btn btn-primary btn-sm">Alt Rooms</a></td>
+              <td>Service</td>
+              <td>Saturday</td>
+              <td>8/20/16</td>
+              <td>4:30pm</td>
+              <td>Oakley</td>
+              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms']" class="btn btn-primary btn-sm">View</a></td>
+            </tr>
+            <tr>
+              <td>Service</td>
+              <td>Saturday</td>
+              <td>8/20/16</td>
+              <td>6:15pm</td>
+              <td>Oakley</td>
+              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms']" class="btn btn-primary btn-sm">View</a></td>
+            </tr>
+            <tr>
+              <td>Service</td>
+              <td>Sunday</td>
+              <td>8/21/16</td>
+              <td>8:30am</td>
+              <td>Oakley</td>
+              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms']" class="btn btn-primary btn-sm">View</a></td>
             </tr>
           </tbody>
         </table>
-        </div><!--/col-xs-12-->
-
-    </div><!--/row-->
-  </div><!--/container-->
+      </div><!--/col-sm-9 col-xs-12-->
+      <div class="col-md-3 col-sm-4 col-xs-12">
+        <section class="sidebar-section m-b-2">
+          <select class="form-control">
+            <option>08/20/2016 - 08/26/2016</option>
+            <option>08/20/2016 - 08/26/2016</option>
+            <option>08/20/2016 - 08/26/2016</option>
+          </select>
+        </section>
+        <section class="sidebar-section m-b-1">
+          <label><strong>Site Filter</strong></label>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Florence
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Mason
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Oakley
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Oxford Uptown Westside
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Uptown
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Westside
+            </label>
+          </div>
+        </section>
+        <section class="sidebar-section m-b-1">
+          <label><strong>Event Filter</strong></label>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Childcare
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Service
+            </label>
+          </div>
+        </section>
+      </div><!--col-sm-3 col-xs-12-->
+    </div>
+  </div>
