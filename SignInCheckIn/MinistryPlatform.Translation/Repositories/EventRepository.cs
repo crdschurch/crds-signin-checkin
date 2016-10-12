@@ -49,19 +49,6 @@ namespace MinistryPlatform.Translation.Repositories
             // remove the trailing "OR " to avoid syntax error
             int place = dateOffsetSearchString.LastIndexOf("OR ");
             dateOffsetSearchString = dateOffsetSearchString.Remove(place, "OR ".Length).Insert(place, "");
-            //dateOffsetSearchString = dateOffsetSearchString.Replace('/', '-');
-
-
-            //string idList = "";
-
-            //foreach (var item in eventTypeIds)
-            //{
-            //    idList += "Event_Type_ID=" + item + " OR ";
-            //}
-
-            //// remove the trailing "OR " to avoid syntax error
-            //int place = idList.LastIndexOf("OR ");
-            //idList = idList.Remove(place, "OR ".Length).Insert(place, "");
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>("Event_Type_ID=6 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
