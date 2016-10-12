@@ -16,7 +16,7 @@ export class SignInComponent {
 
   onSubmit() {
     this.signInService.logIn(this.user.username, this.user.password).subscribe(
-      resp => this.router.navigate(['/child-checkin']),
+      resp => this.router.navigate(['/admin/events']),
       error =>  this.success = false);
   }
 }
