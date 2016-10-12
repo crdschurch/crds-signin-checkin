@@ -1,25 +1,33 @@
 <div class="alert alert-danger" role="alert" *ngIf="!success"><b>Error:</b> Sorry you do not have privileges</div>
 
 <div class='container'>
-  <form #logInForm="ngForm" (ngSubmit)="onSubmit()">
-    <div class='form-group'>
-      <label for='username'>Username</label>
-      <input type='email' name='username' class='form-control' [(ngModel)]='user.username' #username="ngModel"  required/>
-      <div [hidden]="username.valid || username.pristine" 
-            class="alert alert-danger">
-        Username is required
+  <div class="col-xs-6 offset-xs-3">
+    <br>
+    <br>
+    <br>
+    <form #logInForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class='form-group'>
+        <label for='username'>Username</label>
+        <input type='email' name='username' class='form-control' [(ngModel)]='user.username' #username="ngModel"  required/>
+        <div [hidden]="username.valid || username.pristine"
+              class="alert alert-danger">
+          Username is required
+        </div>
       </div>
-    </div>
 
-    <div class='form-group'>
-      <label for='password'>Username</label>
-      <input type='password' name='password' class='form-control' [(ngModel)]='user.password' #password="ngModel" required/>
-      <div [hidden]="password.valid || password.pristine" 
-            class="alert alert-danger">
-        Password is required
+      <div class='form-group'>
+        <label for='password'>Password</label>
+        <input type='password' name='password' class='form-control' [(ngModel)]='user.password' #password="ngModel" required/>
+        <div [hidden]="password.valid || password.pristine"
+              class="alert alert-danger">
+          Password is required
+        </div>
       </div>
-    </div>
 
-    <button type="submit" class="btn btn-default" [disabled]="!logInForm.form.valid">Submit</button>
-  </form>
+      <div class='form-group'>
+        <a href="" class="pull-xs-left">Reset Password</a>
+        <button type="submit" class="btn btn-default pull-xs-right" [disabled]="!logInForm.form.valid">Submit</button>
+      </div>
+    </form>
+  </div>
 </div>
