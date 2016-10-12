@@ -1,27 +1,25 @@
 import { Component } from '@angular/core';
 
-import { EventsService } from './events.service';
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'events',
   templateUrl: 'events.component.html',
-  providers: [ EventsService ]
+  providers: [ AdminService ]
 })
 export class EventsComponent {
   events: any[];
 
-  constructor(private eventsService: EventsService) { }
+  constructor(private adminService: AdminService) { }
 
-  getEvents(): void {
-    console.log("getEvents")
-    this.eventsService.getAll().subscribe(
+  private getData(): void {
+    this.adminService.getEvents().subscribe(
       events => {this.events = events},
       error => console.error(error)
     );
   }
   ngOnInit(): void {
-    console.log("init")
-    this.getEvents();
+    this.getData();
   }
 
 }

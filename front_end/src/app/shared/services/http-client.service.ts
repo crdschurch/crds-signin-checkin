@@ -15,7 +15,12 @@ export class HttpClientService {
     return this.http.get(url, requestOptions);
   }
 
-  post(url:string, data:any, options?: RequestOptions) {
+  put(url: string, data: any, options?: RequestOptions) {
+    let requestOptions = this.getRequestOption(options)
+    return this.http.put(url, data, requestOptions);
+  }
+
+  post(url: string, data: any, options?: RequestOptions) {
     let requestOptions = this.getRequestOption(options)
     return this.http.post(url, data, requestOptions);
   }
