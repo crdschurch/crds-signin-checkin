@@ -21,7 +21,7 @@
   * This is found in the MinistryPlatform admin interface, under Administration->Client API Keys
   * You will need a key that allows 'localhost' in the Allowed Domains
   * This key needs to be sent in a request header called 'Crds-Api-Key'
-    * This is automatically handled by the [HttpClientService.createAuthorizationHeader()](src/app/shared/services/http-client.service.ts) method 
+    * This is automatically handled by the [HttpClientService.createAuthorizationHeader()](src/app/shared/services/http-client.service.ts#L34) method 
 
 ### Install Dependencies
 ```
