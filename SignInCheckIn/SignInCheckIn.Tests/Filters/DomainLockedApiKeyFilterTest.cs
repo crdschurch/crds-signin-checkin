@@ -160,7 +160,7 @@ namespace SignInCheckIn.Tests.Filters
 
             CreateFixture();
             _httpActionContext.Request.Headers.Remove("Origin");
-            _httpActionContext.Request.Headers.Add("Origin", "http://localhost3/test");
+            _httpActionContext.Request.Headers.Referrer = new Uri("http://localhost3/test");
             _httpActionContext.Request.Headers.Add(DomainLockedApiKeyFilter.ApiKeyHeader, _activeGuid.ToString());
             _corsEngine.Setup(
                 mocked =>
