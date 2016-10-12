@@ -89,7 +89,7 @@ namespace MinistryPlatform.Translation.Repositories
 
                 });
 
-            var tokenUrl = ConfigurationManager.AppSettings["TokenURL"];
+            var tokenUrl = ConfigurationManager.AppSettings["UserInfoURL"];
             var message = client.PostAsync(tokenUrl, userCredentials);
             try
             {
