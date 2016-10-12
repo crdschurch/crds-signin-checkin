@@ -34,7 +34,8 @@ namespace SignInCheckIn.Services
                 {
                     EventId = eventItem.EventId,
                     EventTitle = eventItem.EventTitle,
-                    EventStartDate = eventItem.EventStartDate          
+                    EventStartDate = eventItem.EventStartDate,
+                    EventType = eventItem.EventType
                 });
             }
             
