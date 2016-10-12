@@ -15,7 +15,7 @@ export class EventsComponent {
   getEvents(): void {
     console.log("getEvents")
     this.eventsService.getAll().subscribe(
-      events => this.events = events,
+      events => {this.events = events},
       error => console.error(error)
     );
   }

@@ -54,33 +54,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let events of events">
-              <span class="badge">{{event.EventId}} - {{event.EventTitle}}</span>
-            </tr>
-            <!-- <tr>
-              <td>Service</td>
-              <td>Saturday</td>
-              <td>8/20/16</td>
-              <td>4:30pm</td>
-              <td>Oakley</td>
-              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms']" class="btn btn-primary btn-sm">View</a></td>
-            </tr>
-            <tr>
-              <td>Service</td>
-              <td>Saturday</td>
-              <td>8/20/16</td>
-              <td>6:15pm</td>
-              <td>Oakley</td>
-              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms']" class="btn btn-primary btn-sm">View</a></td>
-            </tr>
-            <tr>
-              <td>Service</td>
-              <td>Sunday</td>
-              <td>8/21/16</td>
-              <td>8:30am</td>
-              <td>Oakley</td>
-              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms']" class="btn btn-primary btn-sm">View</a></td>
-            </tr> -->
+            <!-- TODO: need to parse these fields -->
+          <tr *ngFor="let event of events">
+            <td>Service</td>
+            <td>Saturday {{event.EventTitle}}</td>
+            <td>8/20/16</td>
+            <td>4:30pm</td>
+            <td>Oakley</td>
+            <td class="text-xs-right">
+              <!-- <a href="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a> -->
+              <!-- <a [routerLink]="['/admin/events/event.EventId/rooms']" class="btn btn-primary btn-sm">View</a> -->
+              <!-- <a [routerLink]="['events', EventId]" class="btn btn-primary btn-sm">View</a> -->
+              <!-- <a [routerLink]="['/admin/events', EventId, 'room']" class="btn btn-primary btn-sm">View</a> -->
+              <a [routerLink]="['/admin/events', { eventId: event.EventId }]" class="btn btn-primary btn-sm">View</a>
+            </td>
+          </tr>
           </tbody>
         </table>
       </div><!--/col-sm-9 col-xs-12-->

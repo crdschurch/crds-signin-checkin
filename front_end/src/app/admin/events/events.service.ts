@@ -15,10 +15,6 @@ export class EventsService {
   getAll() {
     console.log("getAll 1")
     return this.http.get(this.url)
-                    // .map(res => res.json())
-                    // .map(res => res._body.json())
-                    // .map(res => console.log(res, res._body))
-                    // .map(res => console.log(res, res.json()))
                     .map(res => res.json())
                     .catch(this.handleError);
   }
