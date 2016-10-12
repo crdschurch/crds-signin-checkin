@@ -22,5 +22,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Event_Type")]
         public string EventType { get; set; }
+
+        [JsonProperty(PropertyName = "Congregation_Name")]
+        public string CongregationName { get; set; }
     }
 }
