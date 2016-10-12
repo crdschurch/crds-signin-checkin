@@ -168,6 +168,7 @@
     <Compile Include="Controllers\HelloWorldController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Filters\DomainLockedApiKeyFilter.cs" />
+    <Compile Include="Filters\DomainLockedApiKeyPolicyProviderFactory.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
