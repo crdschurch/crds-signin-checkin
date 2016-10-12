@@ -20,12 +20,10 @@ namespace SignInCheckIn.Services
 
         public List<EventDto> GetCheckinEvents()
         {
-            var startDate = DateTime.Now;
-            var endDate = DateTime.Now.AddDays(7);
             List<int> serviceTypeIds = new List<int>();
             serviceTypeIds.Add(1);
 
-            var mpEvents = _eventRepository.GetEvents(startDate, endDate, serviceTypeIds);
+            var mpEvents = _eventRepository.GetEvents();
             List<EventDto> returnEvents = new List<EventDto>();
 
             foreach (var eventItem in mpEvents)
