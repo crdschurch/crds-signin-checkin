@@ -29,7 +29,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_ID",
                 "Event_Title",
                 "Event_Start_Date",
-                "Event_Type_ID_Table.Event_Type"
+                "Event_Type_ID_Table.Event_Type",
+                "Congregation_ID_Table.Congregation_Name"
             };
 
             string dateOffsetSearchString = "";
@@ -53,7 +54,7 @@ namespace MinistryPlatform.Translation.Repositories
 
             // 99 is for development - "Oakley Service"
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpEventDto>("Events.Event_Type_ID=6 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
+                .Search<MpEventDto>("Events.Event_Type_ID=99 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
         }
     }
 }
