@@ -62,11 +62,7 @@
             <td>4:30pm</td>
             <td>Oakley</td>
             <td class="text-xs-right">
-              <!-- <a href="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a> -->
-              <!-- <a [routerLink]="['/admin/events/event.EventId/rooms']" class="btn btn-primary btn-sm">View</a> -->
-              <!-- <a [routerLink]="['events', EventId]" class="btn btn-primary btn-sm">View</a> -->
-              <!-- <a [routerLink]="['/admin/events', EventId, 'room']" class="btn btn-primary btn-sm">View</a> -->
-              <a [routerLink]="['/admin/events', { eventId: event.EventId }]" class="btn btn-primary btn-sm">View</a>
+              <a href="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
             </td>
           </tr>
           </tbody>
