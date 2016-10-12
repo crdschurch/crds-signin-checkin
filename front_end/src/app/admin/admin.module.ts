@@ -5,6 +5,7 @@ import { AdminComponent } from './admin.component';
 import { SignInComponent } from './sign-in';
 import { EventsComponent } from './events';
 import { RoomsComponent } from './rooms';
+import { RoomComponent } from './room';
 import { adminRouting } from './admin.routes';
 
 @NgModule({
@@ -16,7 +17,8 @@ import { adminRouting } from './admin.routes';
     AdminComponent,
     SignInComponent,
     EventsComponent,
-    RoomsComponent
+    RoomsComponent,
+    RoomComponent
   ],
 })
 

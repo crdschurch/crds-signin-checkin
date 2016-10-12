@@ -5,6 +5,7 @@ import { AdminComponent } from './admin.component';
 import { SignInComponent } from './sign-in';
 import { EventsComponent } from './events';
 import { RoomsComponent } from './rooms';
+import { RoomComponent } from './room';
 
 const adminRoutes: Routes = [
   {
@@ -12,7 +13,8 @@ const adminRoutes: Routes = [
     children: [
       { path: 'sign-in', component: SignInComponent },
       { path: 'events', component: EventsComponent },
-      { path: 'rooms', component: RoomsComponent }
+      { path: 'rooms', component: RoomsComponent },
+      { path: 'room', component: RoomComponent }
     ]
   }
 ];
