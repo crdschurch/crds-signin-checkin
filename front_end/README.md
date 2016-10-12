@@ -17,6 +17,9 @@
     * TBD
   * _Vim/vi_
     * Really? Why???
+* Acquire an API key to use when sending REST requests to the backend API.
+  * This is found in the MinistryPlatform admin interface, under Administration->Client API Keys
+  * You will need a key that allows 'localhost' in the Allowed Domains 
 
 ### Install Dependencies
 ```
