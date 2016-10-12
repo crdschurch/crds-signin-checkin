@@ -147,11 +147,19 @@ namespace SignInCheckIn.Filters
 
         private string GetRemoteHost(HttpRequestMessage request)
         {
-            // Just look at Origin for now - this will always exist from javascript/angular frontend, and even from Postman
+            // First look at Origin - this will almost always exist from javascript/angular frontend, and even from Postman
             if (request.Headers.Contains("Origin"))
             {
                 var origin = new Uri(request.Headers.GetValues("Origin").First());
-                var remoteHost = $"{origin.Host}";
+                var remoteHost = origin.Host;
+                _logger.Debug($"Found remote host {remoteHost} in Origin header");
+                return remoteHost;
+            }
+
+            // Now try referer - this should exist even when it is not a cross-origin request
+            if (request.Headers.Referrer != null)
+            {
+                var remoteHost = request.Headers.Referrer.Host;
                 _logger.Debug($"Found remote host {remoteHost} in Referrer header");
                 return remoteHost;
             }
