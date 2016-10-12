@@ -20,7 +20,7 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
         }
 
-        public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, List<int> eventTypeIds)
+        public List<MpEventDto> GetEvents()
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
