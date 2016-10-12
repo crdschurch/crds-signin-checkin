@@ -28,7 +28,8 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Event_ID",
                 "Event_Title",
-                "Event_Start_Date"
+                "Event_Start_Date",
+                "Event_Type_ID_Table.Event_Type"
             };
 
             string dateOffsetSearchString = "";
@@ -50,8 +51,9 @@ namespace MinistryPlatform.Translation.Repositories
             int place = dateOffsetSearchString.LastIndexOf("OR ");
             dateOffsetSearchString = dateOffsetSearchString.Remove(place, "OR ".Length).Insert(place, "");
 
+            // 99 is for development - "Oakley Service"
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpEventDto>("Event_Type_ID=99 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
+                .Search<MpEventDto>("Events.Event_Type_ID=6 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
         }
     }
 }

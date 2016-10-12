@@ -19,5 +19,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Event_Start_Date")]
         public DateTime EventStartDate { get; set; }
+
+        [JsonProperty(PropertyName = "Event_Type")]
+        public string EventType { get; set; }
     }
 }

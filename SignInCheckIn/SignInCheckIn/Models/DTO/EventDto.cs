@@ -10,5 +10,6 @@ namespace SignInCheckIn.Models.DTO
         public int EventId { get; set; }
         public string EventTitle { get; set; }
         public DateTime EventStartDate { get; set; }
+        public string EventType { get; set; }
     }
 }
