@@ -1,5 +1,6 @@
-import {Injectable} from '@angular/core';
-import {Http, Headers, RequestOptions} from '@angular/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
 @Injectable()
 export class HttpClientService {
@@ -11,18 +12,17 @@ export class HttpClientService {
   }
 
   get(url: string, options?: RequestOptions) {
-    let requestOptions = this.getRequestOption(options)
-    return this.http.get(url, requestOptions);
+    let requestOptions = this.getRequestOption(options);
+    return this.extractAuthToken(this.http.get(url, requestOptions));
   }
-
   put(url: string, data: any, options?: RequestOptions) {
     let requestOptions = this.getRequestOption(options)
-    return this.http.put(url, data, requestOptions);
+    return this.extractAuthToken(this.http.put(url, data, requestOptions));
   }
 
   post(url: string, data: any, options?: RequestOptions) {
-    let requestOptions = this.getRequestOption(options)
-    return this.http.post(url, data, requestOptions);
+    let requestOptions = this.getRequestOption(options);
+    return this.extractAuthToken(this.http.post(url, data, requestOptions));
   }
 
   isLoggedIn(): boolean {
@@ -31,6 +31,16 @@ export class HttpClientService {
 
   logOut(): void {
     this.authenticationToken = undefined;
+  }
+
+  private extractAuthToken(o: Observable<Response>): Observable<Response> {
+    o.subscribe((res: Response) => {
+      let body = res.json();
+      if (body != null && body.userToken) {
+        this.authenticationToken = body.userToken;
+      }
+    });
+    return o;
   }
 
   private getRequestOption(options?: RequestOptions):  RequestOptions {
@@ -44,6 +54,7 @@ export class HttpClientService {
     let reqHeaders =  headers || new Headers();
     reqHeaders.set('Authorization', this.authenticationToken);
     reqHeaders.set('Content-Type', 'application/json');
+    reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
 
     return reqHeaders;
