@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { AdminService } from '../admin.service';
 
 @Component({
