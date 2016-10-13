@@ -57,7 +57,17 @@
             <!-- TODO: need to parse these fields -->
           <tr *ngFor="let event of events">
             <td>Service</td>
-            <td>Saturday {{event.EventTitle}}</td>
+            <td>{{event.EventStartDate}}</td>
+            <td>{{event.EventStartDate}}</td>
+            <td>{{event.EventStartDate}}</td>
+            <td>{{event.EventSite}}</td>
+            <td class="text-xs-right">
+              <a href="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Service</td>
+            <td>Saturday</td>
             <td>8/20/16</td>
             <td>4:30pm</td>
             <td>Oakley</td>
