@@ -10,6 +10,10 @@ import { HomeModule } from './home';
 import { AppComponent } from './app.component';
 import { routing } from './app.routes';
 
+import {MomentModule} from 'angular2-moment';
+console.log(HttpModule)
+// console.log(MomentModule)
+
 @NgModule({
   declarations: [
     AppComponent
@@ -21,6 +25,7 @@ import { routing } from './app.routes';
     HomeModule,
     ChildCheckinModule,
     AdminModule,
+    MomentModule,
     routing
   ],
   providers: [
