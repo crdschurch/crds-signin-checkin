@@ -9,6 +9,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
     public interface IRoomRepository
     {
-        List<MpRoomDto> GetRoomsForEvent(int eventId, int congregationId);
+        List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId);
     }
 }

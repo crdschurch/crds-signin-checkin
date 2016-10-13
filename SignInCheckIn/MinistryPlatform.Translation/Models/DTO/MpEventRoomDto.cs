@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MinistryPlatform.Translation.Models.Attributes;
+using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
 {
+    [MpRestApiTable(Name = "Event_Rooms")]
     public class MpEventRoomDto
     {
+        [JsonProperty(PropertyName = "Event_Room_ID")]
         public int? EventRoomId { get; set; }
 
+        [JsonProperty(PropertyName = "Room_ID")]
         public int RoomId { get; set; }
 
+        [JsonProperty(PropertyName = "Event_ID")]
         public int EventId { get; set; }
 
         public string RoomName { get; set; }
