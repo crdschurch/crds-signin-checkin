@@ -63,8 +63,6 @@ describe('HttpClientService', () => {
     it('should call http.get() with proper URL and create new RequestOptions', () => {
       options.headers.set('this', 'should not be here');
       let response = fixture.get('/test/123');
-      backend.resolveAllConnections();
-      backend.verifyNoPendingRequests();
       response.subscribe((res: Response) => {
         expect(res.json()).toEqual(responseObject);
         expect(requestHeaders).toBeDefined();
@@ -81,8 +79,6 @@ describe('HttpClientService', () => {
     it('should set authentication token if sent in response', () => {
       responseObject.userToken = '98765';
       let response = fixture.get('/test/123');
-      backend.resolveAllConnections();
-      backend.verifyNoPendingRequests();
       response.subscribe(() => {
         expect(fixture.isLoggedIn()).toBeTruthy();
       });
