@@ -111,6 +111,16 @@ module.exports = function(config) {
       'ChromeTravisCi',
       'PhantomJS'
     ];
+    
+    configuration.autoWatch = false;
+    configuration.singleRun = true;
+  }
+
+  if(process.env.TEAMCITY_VERSION) {
+    configuration.reporters = [
+      'mocha',
+      'karma-teamcity-reporter'
+    ]
 
     configuration.autoWatch = false;
     configuration.singleRun = true;
