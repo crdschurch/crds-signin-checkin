@@ -23,7 +23,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<EventDto>))]
-        [Route("checkinevents")]
+        [Route("events")]
         public IHttpActionResult GetEvents()
         {
             try
