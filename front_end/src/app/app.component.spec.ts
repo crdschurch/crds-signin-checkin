@@ -13,7 +13,7 @@ describe('App: FrontEnd', () => {
   });
 
   it('should pass a Hello World test', async(() => {
-    expect("clown").toBeTruthy();
+    expect('clown').toBeTruthy();
   }));
 
 });
