@@ -56,5 +56,17 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>("Events.Event_Type_ID=99 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
         }
+
+
+        public MpEventDto GetEventById(int eventId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            var columnList = "Event_ID, Event_Title,Event_Start_Date,Event_Type_ID_Table.Event_Type," +
+                             "Congregation_ID_Table.Congregation_Name, Events.Congregation_ID";
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Get<MpEventDto>(eventId, columnList);
+        }
     }
 }

@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MinistryPlatform.Translation.Models.Attributes;
+using Newtonsoft.Json;
+
+namespace MinistryPlatform.Translation.Models.DTO
+{
+    [MpRestApiTable(Name = "Rooms")]
+    public class MpRoomDto
+    {
+        [JsonProperty(PropertyName = "Room_ID")]
+        public int RoomId { get; set; }
+    }
+}

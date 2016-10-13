@@ -85,6 +85,8 @@
     <Compile Include="Extensions\RestSharpExtensions.cs" />
     <Compile Include="Models\Attributes\MpRestApiTable.cs" />
     <Compile Include="Models\DTO\MpEventDto.cs" />
+    <Compile Include="Models\DTO\MpEventRoomDto.cs" />
+    <Compile Include="Models\DTO\MpRoomDto.cs" />
     <Compile Include="Repositories\ApiUserRepository.cs" />
     <Compile Include="Repositories\AuthenticationRepository.cs" />
     <Compile Include="Repositories\EventRepository.cs" />
@@ -92,7 +94,9 @@
     <Compile Include="Repositories\Interfaces\IAuthenticationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IEventRepository.cs" />
     <Compile Include="Repositories\Interfaces\IMinistryPlatformRestRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IRoomRepository.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepository.cs" />
+    <Compile Include="Repositories\RoomRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Crossroads.Utilities\Crossroads.Utilities.csproj">

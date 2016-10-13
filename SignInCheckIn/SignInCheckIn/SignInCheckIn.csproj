@@ -43,6 +43,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=5.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -161,6 +165,7 @@
     <Compile Include="ApiVersioning\SemanticVersion.cs" />
     <Compile Include="ApiVersioning\VersionConstraint.cs" />
     <Compile Include="ApiVersioning\Attributes\VersionedRoute.cs" />
+    <Compile Include="App_Start\AutoMapperConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -176,6 +181,7 @@
     <Compile Include="Models\Authentication\Credentials.cs" />
     <Compile Include="Models\Authentication\LoginReturn.cs" />
     <Compile Include="Models\DTO\EventDto.cs" />
+    <Compile Include="Models\DTO\EventRoomDto.cs" />
     <Compile Include="Models\HelloWorldInputDto.cs" />
     <Compile Include="Models\HelloWorldOutputDto.cs" />
     <Compile Include="Models\HelloWorldV2InputDto.cs" />
@@ -188,7 +194,9 @@
     <Compile Include="Services\Interfaces\IEventService.cs" />
     <Compile Include="Services\Interfaces\IHelloWorldService.cs" />
     <Compile Include="Services\Interfaces\ILoginService.cs" />
+    <Compile Include="Services\Interfaces\IRoomService.cs" />
     <Compile Include="Services\LoginService.cs" />
+    <Compile Include="Services\RoomService.cs" />
     <Compile Include="Util\HttpAuthResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
