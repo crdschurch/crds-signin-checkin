@@ -10,6 +10,7 @@ describe('HttpClientService', () => {
   let http: Http;
   let options: RequestOptions;
   let backend: MockBackend;
+  let responseObject: any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -25,7 +26,7 @@ describe('HttpClientService', () => {
   });
 
   describe('get method', () => {
-    let responseObject = { 'test': 123 };
+    responseObject = { 'test': 123 };
     let requestHeaders: Headers;
     let requestUrl: string;
     beforeEach(() => {
@@ -55,6 +56,7 @@ describe('HttpClientService', () => {
         expect(requestHeaders.get('Crds-Api-Key')).toEqual(process.env.ECHECK_API_TOKEN);
         expect(requestHeaders.get('this')).toEqual('should still be here');
         expect(requestUrl).toEqual('/test/123');
+        expect(fixture.isLoggedIn()).toBeFalsy();
       });
     });
 
@@ -72,6 +74,17 @@ describe('HttpClientService', () => {
         expect(requestHeaders.get('Crds-Api-Key')).toEqual(process.env.ECHECK_API_TOKEN);
         expect(requestHeaders.has('this')).toBeFalsy();
         expect(requestUrl).toEqual('/test/123');
+        expect(fixture.isLoggedIn()).toBeFalsy();
+      });
+    });
+
+    it('should set authentication token if sent in response', () => {
+      responseObject.userToken = '98765';
+      let response = fixture.get('/test/123');
+      backend.resolveAllConnections();
+      backend.verifyNoPendingRequests();
+      response.subscribe(() => {
+        expect(fixture.isLoggedIn()).toBeTruthy();
       });
     });
   });

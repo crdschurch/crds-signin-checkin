@@ -1,5 +1,6 @@
-import {Injectable} from '@angular/core';
-import {Http, Headers, RequestOptions} from '@angular/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
 @Injectable()
 export class HttpClientService {
@@ -11,17 +12,27 @@ export class HttpClientService {
   }
 
   get(url: string, options?: RequestOptions) {
-    let requestOptions = this.getRequestOption(options)
-    return this.http.get(url, requestOptions);
+    let requestOptions = this.getRequestOption(options);
+    return this.extractAuthToken(this.http.get(url, requestOptions));
   }
 
-  post(url:string, data:any, options?: RequestOptions) {
-    let requestOptions = this.getRequestOption(options)
-    return this.http.post(url, data, requestOptions);
+  post(url: string, data: any, options?: RequestOptions) {
+    let requestOptions = this.getRequestOption(options);
+    return this.extractAuthToken(this.http.post(url, data, requestOptions));
   }
 
   isLoggedIn(): boolean {
     return this.authenticationToken.length > 0;
+  }
+
+  private extractAuthToken(o: Observable<Response>): Observable<Response> {
+    o.subscribe((res: Response) => {
+      let body = res.json();
+      if (body != null && body.userToken) {
+        this.authenticationToken = body.userToken;
+      }
+    });
+    return o;
   }
 
   private getRequestOption(options?: RequestOptions):  RequestOptions {
