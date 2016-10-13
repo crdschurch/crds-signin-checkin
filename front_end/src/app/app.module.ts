@@ -21,7 +21,6 @@ import { routing } from './app.routes';
     HomeModule,
     ChildCheckinModule,
     AdminModule,
-    MomentModule,
     routing
   ],
   providers: [
