@@ -20,9 +20,6 @@ namespace SignInCheckIn.Services
 
         public List<EventDto> GetCheckinEvents()
         {
-            List<int> serviceTypeIds = new List<int>();
-            serviceTypeIds.Add(1);
-
             var mpEvents = _eventRepository.GetEvents();
             List<EventDto> returnEvents = new List<EventDto>();
 

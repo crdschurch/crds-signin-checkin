@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using MinistryPlatform.Translation.Models.DTO;
@@ -61,7 +62,9 @@ namespace MinistryPlatform.Translation.Repositories
 
             var eventRoomColumnList = new List<string>
             {
-                "Event_Room_ID"
+                "Event_Room_ID",
+                "Event_ID",
+                "Room_ID"
             };
 
             var eventRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
@@ -70,7 +73,7 @@ namespace MinistryPlatform.Translation.Repositories
             foreach (var room in rooms)
             {
                 // populate the room data on an existing room event, or add a new event room dto for that room in the return call
-                MpEventRoomDto tempDto = eventRooms.Where(r => r.RoomId == room.RoomId).FirstOrDefault();
+                MpEventRoomDto tempDto = eventRooms.FirstOrDefault(r => r.RoomId == room.RoomId);
 
                 if (tempDto == null)
                 {
@@ -89,6 +92,16 @@ namespace MinistryPlatform.Translation.Repositories
                     };
 
                     eventRooms.Add(newEventRoomDto);
+                }
+                else
+                {
+                    // populate room info on room event dto
+                    eventRooms.Where(x => x.RoomId == room.RoomId).All(x =>
+                    {
+                        x.RoomName = room.RoomName;
+                        x.RoomNumber = room.RoomNumber;
+                        return true;
+                    });
                 }
             }
 

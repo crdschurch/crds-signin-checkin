@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Castle.Components.DictionaryAdapter;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
+using SignInCheckIn.App_Start;
 using SignInCheckIn.Services;
 
 namespace SignInCheckIn.Tests.Services
@@ -22,6 +24,8 @@ namespace SignInCheckIn.Tests.Services
         [SetUp]
         public void SetUp()
         {
+            AutoMapperConfig.RegisterMappings();
+
             _eventRepository = new Mock<IEventRepository>();
             _roomRepository = new Mock<IRoomRepository>();
             _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object);
@@ -31,7 +35,6 @@ namespace SignInCheckIn.Tests.Services
         public void ShouldGetEventRooms()
         {
             // Arrange
-
             MpEventDto mpEventDto = new MpEventDto
             {
                 EventId = 1234567,

@@ -24,10 +24,13 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         public string RoomNumber { get; set; }
 
+        [JsonProperty(PropertyName = "Allow_Checkin")]
         public bool AllowSignIn { get; set; }
 
+        [JsonProperty(PropertyName = "Volunteers")]
         public int Volunteers { get; set; }
 
+        [JsonProperty(PropertyName = "Capacity")]
         public int Capacity { get; set; }
 
         public int SignedIn { get; set; }
