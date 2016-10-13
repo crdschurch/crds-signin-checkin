@@ -83,5 +83,18 @@ describe('HttpClientService', () => {
         expect(fixture.isLoggedIn()).toBeTruthy();
       });
     });
+
+    it('should send authentication token if logged in', () => {
+      responseObject.userToken = '98765';
+      let response = fixture.get('/test/123');
+      response.subscribe(() => {
+        expect(fixture.isLoggedIn()).toBeTruthy();
+        let r2 = fixture.get('/test/123');
+        r2.subscribe(() => {
+          expect(requestHeaders.has('Authorization')).toBeTruthy();
+          expect(requestHeaders.get('Authorization')).toEqual('98765');
+        });
+      });
+    });
   });
 });
