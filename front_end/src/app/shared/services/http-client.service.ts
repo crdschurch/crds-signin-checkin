@@ -29,6 +29,10 @@ export class HttpClientService {
     return this.authenticationToken.length > 0;
   }
 
+  logOut(): void {
+    this.authenticationToken = undefined;
+  }
+
   private getRequestOption(options?: RequestOptions):  RequestOptions {
     let reqOptions = options || new RequestOptions();
     reqOptions.headers = this.createAuthorizationHeader(reqOptions.headers);

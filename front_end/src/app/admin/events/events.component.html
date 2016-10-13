@@ -30,7 +30,7 @@
         <a class="nav-link" routerLink="/admin/events">Events List</a>
       </li>
       <li class="pull-sm-right">
-        <a href="#" class="btn btn-primary">Sign Out</a>
+        <a class="btn btn-primary" (click)="logout()">Sign Out</a>
       </li>
     </ul>
   </nav>
@@ -72,7 +72,7 @@
             <td>4:30pm</td>
             <td>Oakley</td>
             <td class="text-xs-right">
-              <a href="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
+              <a href="/admin/events/rooms" class="btn btn-primary btn-sm">View</a>
             </td>
           </tr>
           </tbody>
