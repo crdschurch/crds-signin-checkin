@@ -28,5 +28,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Congregation_ID")]
         public string CongregationId { get; set; }
+
+        [JsonProperty(PropertyName = "Location_ID")]
+        public int LocationId { get; set; }
     }
 }

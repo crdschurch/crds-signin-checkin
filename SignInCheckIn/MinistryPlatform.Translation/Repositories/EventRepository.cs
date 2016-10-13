@@ -63,7 +63,7 @@ namespace MinistryPlatform.Translation.Repositories
             var apiUserToken = _apiUserRepository.GetToken();
 
             var columnList = "Event_ID, Event_Title,Event_Start_Date,Event_Type_ID_Table.Event_Type," +
-                             "Congregation_ID_Table.Congregation_Name, Events.Congregation_ID";
+                             "Congregation_ID_Table.Congregation_Name, Events.Congregation_ID,Congregation_ID_Table.Location_ID";
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Get<MpEventDto>(eventId, columnList);

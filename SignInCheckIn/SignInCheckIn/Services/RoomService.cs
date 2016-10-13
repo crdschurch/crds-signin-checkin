@@ -26,7 +26,9 @@ namespace SignInCheckIn.Services
             var mpEvent = _eventRespository.GetEventById(eventId);
 
             // then, call the get rooms with the location id
-            //var rooms = _roomRepository.GetRoomsForEvent(eventId);
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+
+
 
             return null;
         }
