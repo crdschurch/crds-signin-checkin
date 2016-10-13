@@ -16,7 +16,7 @@ namespace SignInCheckIn
             UnityConfig.RegisterComponents();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            //AutoMapperConfig
+            AutoMapperConfig.RegisterMappings();
         }
     }
 }
