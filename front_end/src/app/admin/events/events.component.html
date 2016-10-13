@@ -54,7 +54,7 @@
             </tr>
           </thead>
           <tbody>
-            <!-- TODO: need to parse these fields -->
+            <!-- TODO: need to momentize these fields -->
           <tr *ngFor="let event of events">
             <td>Service</td>
             <td>{{event.EventStartDate}}</td>
@@ -65,19 +65,9 @@
               <a href="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
             </td>
           </tr>
-          <tr>
-            <td>Service</td>
-            <td>Saturday</td>
-            <td>8/20/16</td>
-            <td>4:30pm</td>
-            <td>Oakley</td>
-            <td class="text-xs-right">
-              <a href="/admin/events/rooms" class="btn btn-primary btn-sm">View</a>
-            </td>
-          </tr>
           </tbody>
         </table>
-      </div><!--/col-sm-9 col-xs-12-->
+      </div>
       <div class="col-md-3 col-sm-4 col-xs-12">
         <section class="sidebar-section m-b-2">
           <select class="form-control">
