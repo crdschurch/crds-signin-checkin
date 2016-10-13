@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using AutoMapper;
+using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Models.Json;
@@ -21,21 +23,19 @@ namespace SignInCheckIn.Services
         public List<EventDto> GetCheckinEvents()
         {
             var mpEvents = _eventRepository.GetEvents();
-            List<EventDto> returnEvents = new List<EventDto>();
 
-            foreach (var eventItem in mpEvents)
-            {
-                returnEvents.Add(new EventDto
-                {
-                    EventId = eventItem.EventId,
-                    EventTitle = eventItem.EventTitle,
-                    EventStartDate = eventItem.EventStartDate,
-                    EventType = eventItem.EventType,
-                    EventSite = eventItem.CongregationName
-                });
-            }
-            
-            return returnEvents;
+            //foreach (var eventItem in mpEvents)
+            //{
+            //    returnEvents.Add(new EventDto
+            //    {
+            //        EventId = eventItem.EventId,
+            //        EventTitle = eventItem.EventTitle,
+            //        EventStartDate = eventItem.EventStartDate,
+            //        EventType = eventItem.EventType,
+            //        EventSite = eventItem.CongregationName
+            //    });
+            //}
+            return Mapper.Map<List<MpEventDto>, List<EventDto>>(mpEvents);
         }
     }
 }

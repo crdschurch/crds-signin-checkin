@@ -27,7 +27,7 @@ namespace SignInCheckIn.Services
             var mpEvent = _eventRespository.GetEventById(eventId);
             var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
 
-            return (Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms));;
+            return Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
         }
     }
 }

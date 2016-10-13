@@ -25,31 +25,6 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
-
-
-
-
-            //// remove the trailing "OR " to avoid syntax error
-            //int place = dateOffsetSearchString.LastIndexOf("OR ");
-            //dateOffsetSearchString = dateOffsetSearchString.Remove(place, "OR ".Length).Insert(place, "");
-
-            //// 99 is for development - "Oakley Service"
-            //return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-            //    .Search<MpRoomDto>("Events.Event_Type_ID=99 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
-
-
-
-
-            // get the location off of an event
-            // Congregation_ID_Table_Location_ID_Table.[Location_ID] AS [Location ID]
-
-            // get the location off of a room
-            // Building_ID_Table_Location_ID_Table.[Location_ID] AS [Location ID]
-
-            // get event rooms for the event
-
-            // match event rooms
-
             var roomColumnList = new List<string>
             {
                 "Room_ID",
