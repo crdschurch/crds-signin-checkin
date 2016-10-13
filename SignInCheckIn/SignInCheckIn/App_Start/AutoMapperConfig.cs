@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using AutoMapper;
+﻿using AutoMapper;
+using MinistryPlatform.Translation.Models.DTO;
+using SignInCheckIn.Models.DTO;
 
 namespace SignInCheckIn.App_Start
 {
@@ -10,9 +8,12 @@ namespace SignInCheckIn.App_Start
     {
         public static void RegisterMappings()
         {
-            //Mapper.Map(M)
+            Mapper.Initialize(CreateMappings);
+        }
 
-            
+        private static void CreateMappings(IMapperConfigurationExpression config)
+        {
+            config.CreateMap<MpEventRoomDto, EventRoomDto>().ReverseMap();
         }
     }
 }
