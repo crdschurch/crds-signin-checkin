@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using AutoMapper;
 using MinistryPlatform.Translation.Models.DTO;
+using AutoMapper;
+using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
@@ -21,13 +23,10 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetLocationRoomsByEventId(int eventId)
         {
-            // first, need to get the event in order to get the location
             var mpEvent = _eventRespository.GetEventById(eventId);
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
 
-            // then, call the get rooms with the location id
-            //var rooms = _roomRepository.GetRoomsForEvent(eventId);
-
-            return null;
+            return Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
         }
 
         public EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom)

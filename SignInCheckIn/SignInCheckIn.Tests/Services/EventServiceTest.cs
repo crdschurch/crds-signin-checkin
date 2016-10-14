@@ -8,6 +8,7 @@ using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
+using SignInCheckIn.App_Start;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
 
@@ -22,6 +23,8 @@ namespace SignInCheckIn.Tests.Services
         [SetUp]
         public void SetUp()
         {
+            AutoMapperConfig.RegisterMappings();
+
             _eventRepository = new Mock<IEventRepository>();
             _fixture = new EventService(_eventRepository.Object);
         }

@@ -14,6 +14,7 @@ namespace SignInCheckIn.App_Start
         private static void CreateMappings(IMapperConfigurationExpression config)
         {
             config.CreateMap<MpEventRoomDto, EventRoomDto>().ReverseMap();
+            config.CreateMap<MpEventDto, EventDto>().ReverseMap();
         }
     }
 }

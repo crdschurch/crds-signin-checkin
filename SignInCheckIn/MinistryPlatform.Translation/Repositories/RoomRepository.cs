@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -31,44 +32,66 @@ namespace MinistryPlatform.Translation.Repositories
             };
         }
 
-        public List<MpRoomDto> GetRoomsForEvent(int eventId, int congregationId)
+        public List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
-            var columnList = new List<string>
+            var roomColumnList = new List<string>
             {
                 "Room_ID",
                 "Room_Name",
                 "Room_Number",
-                
-                //"Event_ID",
-                //"Event_Title",
-                //"Event_Start_Date",
-                //"Event_Type_ID_Table.Event_Type",
-                //"Congregation_ID_Table.Congregation_Name"
             };
 
+            var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, roomColumnList);
 
+            var eventRoomColumnList = new List<string>
+            {
+                "Event_Room_ID",
+                "Event_ID",
+                "Room_ID"
+            };
 
-            //// remove the trailing "OR " to avoid syntax error
-            //int place = dateOffsetSearchString.LastIndexOf("OR ");
-            //dateOffsetSearchString = dateOffsetSearchString.Remove(place, "OR ".Length).Insert(place, "");
+            var eventRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpEventRoomDto>("Event_ID=" + eventId, eventRoomColumnList);
 
-            //// 99 is for development - "Oakley Service"
-            //return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-            //    .Search<MpRoomDto>("Events.Event_Type_ID=99 AND [Allow_Check-in]=1 AND (" + dateOffsetSearchString + ")", columnList);
+            foreach (var room in rooms)
+            {
+                // populate the room data on an existing room event, or add a new event room dto for that room in the return call
+                MpEventRoomDto tempDto = eventRooms.FirstOrDefault(r => r.RoomId == room.RoomId);
 
-            // get the location off of an event
-            // Congregation_ID_Table_Location_ID_Table.[Location_ID] AS [Location ID]
+                if (tempDto == null)
+                {
+                    // create a new dto and it to the event rooms list, with default values
+                    MpEventRoomDto newEventRoomDto = new MpEventRoomDto
+                    {
+                        AllowSignIn = false,
+                        Capacity = 0,
+                        CheckedIn = 0,
+                        EventId = eventId,
+                        EventRoomId = null,
+                        RoomId = room.RoomId,
+                        RoomName = room.RoomName,
+                        SignedIn = 0,
+                        Volunteers = 0
+                    };
 
-            // get the location off of a room
-            // Building_ID_Table_Location_ID_Table.[Location_ID] AS [Location ID]
+                    eventRooms.Add(newEventRoomDto);
+                }
+                else
+                {
+                    // populate room info on room event dto
+                    eventRooms.Where(x => x.RoomId == room.RoomId).All(x =>
+                    {
+                        x.RoomName = room.RoomName;
+                        x.RoomNumber = room.RoomNumber;
+                        return true;
+                    });
+                }
+            }
 
-            // get event rooms for the event
-
-            // match event rooms 
-
-            throw new NotImplementedException();
+            return eventRooms;
         }
 
         public MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom)

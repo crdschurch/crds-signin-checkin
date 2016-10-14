@@ -21,5 +21,7 @@
         public int SignedIn { get; set; }
 
         public int CheckedIn { get; set; }
+
+        public string Label { get; set; }
     }
 }

@@ -91,19 +91,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr *ngFor="let room of rooms">
               <td><a href="#">Add</a></td>
-              <td>Nursery A<br /> K112</td>
+              <td>{{room.RoomName}}</td>
               <td>
                 <input class='tgl tgl-light' id='serving1' type='checkbox'>
                 <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
               </td>
-              <td>[]</td>
-              <th>[]</th>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms/864']" class="btn btn-primary btn-sm">Alt Rooms</a></td>
+              <td>{{room.Volunteers}}</td>
+              <td>{{room.Capacity}}</td>
+              <td>{{room.SignedIn}}</td>
+              <td>{{room.CheckedIn}}</td>
+              <td>-</td>
+              <td class="text-xs-right"><a href="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}" class="btn btn-primary btn-sm">Alt Rooms</a></td>
             </tr>
           </tbody>
         </table>
