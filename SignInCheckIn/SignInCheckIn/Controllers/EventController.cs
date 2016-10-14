@@ -15,10 +15,12 @@ namespace SignInCheckIn.Controllers
     public class EventController : ApiController
     {
         private readonly IEventService _eventService;
+        private readonly IRoomService _roomService;
 
-        public EventController(IEventService eventService)
+        public EventController(IEventService eventService, IRoomService roomService)
         {
             _eventService = eventService;
+            _roomService = roomService;
         }
 
         [HttpGet]
@@ -34,6 +36,23 @@ namespace SignInCheckIn.Controllers
             catch (Exception e)
             {
                 var apiError = new ApiErrorDto("Get Events", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(List<EventRoomDto>))]
+        [Route("events/{eventid}/rooms")]
+        public IHttpActionResult GetRoomsByEvent(int eventid)
+        {
+            try
+            {
+                var roomList = _roomService.GetLocationRoomsByEventId(eventid);
+                return this.Ok(roomList);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Get Room for Event " + eventid, e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }

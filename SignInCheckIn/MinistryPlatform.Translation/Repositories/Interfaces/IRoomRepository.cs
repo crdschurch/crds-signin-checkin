@@ -7,9 +7,8 @@ using MinistryPlatform.Translation.Models.DTO;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
-    public interface IEventRepository
+    public interface IRoomRepository
     {
-        List<MpEventDto> GetEvents();
-        MpEventDto GetEventById(int eventId);
+        List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId);
     }
 }
