@@ -30,7 +30,7 @@ export class HttpClientService {
   }
 
   logOut(): void {
-    this.authenticationToken = undefined;
+    this.authenticationToken = '';
   }
 
   private extractAuthToken(o: Observable<Response>): Observable<Response> {
