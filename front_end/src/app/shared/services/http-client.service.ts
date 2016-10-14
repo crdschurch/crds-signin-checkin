@@ -35,7 +35,7 @@ export class HttpClientService {
 
   private extractAuthToken(o: Observable<Response>): Observable<Response> {
     let sharable = o.share();
-    sharable.map((res: Response) => {
+    sharable.subscribe((res: Response) => {
       let body = res.json();
       if (body != null && body.userToken) {
         this.authenticationToken = body.userToken;
