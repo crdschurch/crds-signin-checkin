@@ -96,15 +96,7 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var tableName = GetTableName<T>();
             var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
-            var request = new RestRequest(url, method);
-
-            // This nonsense is needed because request.setJsonBody() does not honor Json name
-            // attributes on the object, so proper names are not sent to MP.
-            var jsonBody = JsonConvert.SerializeObject(new List<T> { record });
-            request.Parameters.Clear();
-            request.AddHeader("Accept", "application/json");
-            request.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
-            request.RequestFormat = DataFormat.Json;
+            var request = new RestRequest(url, method).SetJsonBody(record);
 
             AddAuthorization(request);
 

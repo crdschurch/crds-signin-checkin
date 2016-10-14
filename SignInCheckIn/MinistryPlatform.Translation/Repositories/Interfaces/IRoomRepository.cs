@@ -11,10 +11,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         List<MpRoomDto> GetRoomsForEvent(int eventId, int congregationId);
 
-        MpEventRoomDto GetEventRoom(int eventId, int eventRoomId);
-
-        MpEventRoomDto GetEventRoom(int eventRoomId);
-
         MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom);
     }
 }

@@ -84,20 +84,6 @@ namespace MinistryPlatform.Translation.Repositories
             }
 
             return response;
-            //return response?.EventRoomId == null ? null : GetEventRoom(response.EventRoomId.Value);
-        }
-
-        public MpEventRoomDto GetEventRoom(int eventId, int roomId)
-        {
-            var result =
-                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
-                    .Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns);
-            return result == null || !result.Any() ? null : result.First();
-        }
-
-        public MpEventRoomDto GetEventRoom(int eventRoomId)
-        {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).Get<MpEventRoomDto>(eventRoomId, _eventRoomColumns);
         }
     }
 }

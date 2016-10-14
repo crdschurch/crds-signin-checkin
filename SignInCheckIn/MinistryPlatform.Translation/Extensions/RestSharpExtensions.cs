@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace MinistryPlatform.Translation.Extensions
@@ -44,6 +46,26 @@ namespace MinistryPlatform.Translation.Extensions
             }
 
             throw new RestResponseException(errorMessage, response);
+        }
+
+        /// <summary>
+        /// This is a hack to set a Json body on a request, making sure the object is serialized properly according to Json attributes.  RestSharp's JSON serializer does not pay attention to attributes when serializing using request.AddJsonBody(), so objects do not get sent appropriately. Note that this will clear all previously set parameters on the request, so use with caution.
+        /// </summary>
+        /// <typeparam name="T">The type of object to serialize onto the body</typeparam>
+        /// <param name="request">The IRestRequest to set body on</param>
+        /// <param name="record">The object to serialize onto the request body</param>
+        /// <returns>The IRestRequest, in case you want to chain method calls</returns>
+        public static IRestRequest SetJsonBody<T>(this IRestRequest request, T record)
+        {
+            // This nonsense is needed because request.setJsonBody() does not honor Json name
+            // attributes on the object, so proper names are not sent to MP.
+            var jsonBody = JsonConvert.SerializeObject(new List<T> { record });
+            request.Parameters.Clear();
+            request.AddHeader("Accept", "application/json");
+            request.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
+            request.RequestFormat = DataFormat.Json;
+
+            return request;
         }
     }
 
