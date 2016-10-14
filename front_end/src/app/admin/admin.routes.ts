@@ -11,8 +11,10 @@ const adminRoutes: Routes = [
   {
     path: 'admin', component: AdminComponent,
     children: [
+      { path: 'dashboard', redirectTo: 'events' },
       { path: 'sign-in', component: SignInComponent },
       { path: 'events', component: EventsComponent },
+      // TODO: these should be children of events
       { path: 'events/:eventId/rooms', component: RoomsComponent },
       { path: 'events/:eventId/rooms/:roomId', component: RoomComponent }
     ]

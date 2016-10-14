@@ -1,6 +1,6 @@
-using AutoMapper;
 using FluentAssertions;
 using System.Collections.Generic;
+using AutoMapper;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
