@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
 import { User } from '../models/user';
@@ -36,9 +35,9 @@ export class HttpClientService {
     this.user.logOut();
   }
 
-  private extractAuthToken(o: Observable<Response>): Observable<Response> {
+  private extractAuthToken(o: any) {
     let sharable = o.share();
-    sharable.map((res: Response) => {
+    sharable.subscribe((res: Response) => {
       let body = res.json();
       if (body != null && body.userToken) {
         this.user.token = body.userToken;
