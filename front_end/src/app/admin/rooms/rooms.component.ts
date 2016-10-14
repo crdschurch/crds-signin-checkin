@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AdminService } from '../admin.service';
+import { Room } from '../models/room';
 
 @Component({
   selector: 'rooms',
@@ -9,7 +10,7 @@ import { AdminService } from '../admin.service';
   providers: [ AdminService ]
 })
 export class RoomsComponent {
-  rooms: any[];
+  rooms: Room[];
 
   constructor(
     private route: ActivatedRoute,
@@ -26,5 +27,9 @@ export class RoomsComponent {
   }
   ngOnInit(): void {
     this.getData();
+  }
+  addVolunteer(room: any): void {
+    console.log("addVolunteer", room);
+    true;
   }
 }
