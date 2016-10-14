@@ -40,7 +40,7 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Room_ID",
                 "Room_Name",
-                "Room_Number",
+                "Room_Number"
             };
 
             var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
@@ -50,7 +50,10 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Event_Room_ID",
                 "Event_ID",
-                "Room_ID"
+                "Room_ID",
+                "Capacity",
+                "Volunteers",
+                "Allow_CheckIn"
             };
 
             var eventRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
