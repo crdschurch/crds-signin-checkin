@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
+
+import { User } from '../models/user';
 
 @Injectable()
 export class HttpClientService {
   private http: Http;
-  private authenticationToken: string = '';
+  private user: User;
 
   constructor(http: Http) {
     this.http = http;
+    this.user = new User();
   }
 
   get(url: string, options?: RequestOptions) {
@@ -26,19 +28,25 @@ export class HttpClientService {
   }
 
   isLoggedIn(): boolean {
-    return this.authenticationToken.length > 0;
+    return this.user.isLoggedIn();
   }
 
   logOut(): void {
-    this.authenticationToken = '';
+    this.user.logOut();
   }
 
-  private extractAuthToken(o: Observable<Response>): Observable<Response> {
+  private extractAuthToken(o: any) {
     let sharable = o.share();
     sharable.subscribe((res: Response) => {
       let body = res.json();
       if (body != null && body.userToken) {
-        this.authenticationToken = body.userToken;
+        this.user.token = body.userToken;
+      }
+      if (body != null && body.refreshToken) {
+        this.user.refreshToken = body.refreshToken;
+      }
+      if (body != null && body.roles) {
+        this.user.roles = body.roles;
       }
     });
     return sharable;
@@ -53,7 +61,7 @@ export class HttpClientService {
 
   private createAuthorizationHeader(headers?: Headers) {
     let reqHeaders =  headers || new Headers();
-    reqHeaders.set('Authorization', this.authenticationToken);
+    reqHeaders.set('Authorization', this.user.token);
     reqHeaders.set('Content-Type', 'application/json');
     reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
