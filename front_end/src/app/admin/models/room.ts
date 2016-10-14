@@ -1,7 +1,7 @@
 export class Room {
-  EventRoomId: number;
-  RoomId: number;
-  EventId: number;
+  EventRoomId: string;
+  RoomId: string;
+  EventId: string;
   RoomName: string;
   RoomNumber: number;
   AllowSignIn: boolean;

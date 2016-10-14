@@ -20,34 +20,46 @@ export class RoomsComponent {
   private getData(): void {
     const eventId = this.route.snapshot.params['eventId'];
     this.adminService.getRooms(eventId).subscribe(
-      rooms => {this.rooms = rooms},
-      error => console.error(error)
+      (rooms: Room[]) => {this.rooms = rooms},
+      (error: any) => console.error(error)
     );
   }
   ngOnInit(): void {
     this.getData();
   }
 
-  removeVolunteer(room: any): void {
-    if(room.Volunteers > 0)
+  removeVolunteer(room: Room): void {
+    if(room.Volunteers > 0) {
       room.Volunteers--
-    true;
+      this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => {},
+        (error: any) => { room.Volunteers++ });
+    }
   }
 
-  addVolunteer(room: any): void {
+  addVolunteer(room: Room): void {
     room.Volunteers++
-    true;
+    this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => {},
+      (error: any) => { room.Volunteers-- });
   }
 
-  removeCapacity(room: any): void {
-    if(room.Capacity > 0)
+  removeCapacity(room: Room): void {
+    if(room.Capacity > 0) {
       room.Capacity--
-    true;
+      this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => {},
+        (error: any) => { room.Capacity++ });
+    }
   }
 
-  addCapacity(room: any): void {
+  addCapacity(room: Room): void {
     room.Capacity++
-    true;
+    this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => {},
+      (error: any) => { room.Capacity-- });
+  }
+
+  toggleAllowSignin(room: Room): void {
+    room.AllowSignIn = !room.AllowSignIn
+    this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => {},
+      (error: any) => { !room.AllowSignIn });
   }
 
 }
