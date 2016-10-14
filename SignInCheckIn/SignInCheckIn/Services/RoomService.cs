@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Web;
+using AutoMapper;
+using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
@@ -29,6 +28,13 @@ namespace SignInCheckIn.Services
             //var rooms = _roomRepository.GetRoomsForEvent(eventId);
 
             return null;
+        }
+
+        public EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom)
+        {
+            var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
+
+            return Mapper.Map<EventRoomDto>(response);
         }
     }
 }

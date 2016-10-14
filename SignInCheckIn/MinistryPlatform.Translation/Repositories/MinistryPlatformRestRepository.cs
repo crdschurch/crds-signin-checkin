@@ -27,10 +27,17 @@ namespace MinistryPlatform.Translation.Repositories
             return this;
         }
 
+        public T Get<T>(int recordId, List<string> selectColumns)
+        {
+            return Get<T>(recordId, string.Join(",", selectColumns.ToArray()));
+        }
+
         public T Get<T>(int recordId, string selectColumns = null)
         {
             var url = AddGetColumnSelection(string.Format("/tables/{0}/{1}", GetTableName<T>(), recordId), selectColumns);
             var request = new RestRequest(url, Method.GET);
+            request.RequestFormat = DataFormat.Json;
+            request.AddHeader("Accept", "application/json");
             AddAuthorization(request);
 
             var response = _ministryPlatformRestClient.Execute(request);
@@ -63,6 +70,54 @@ namespace MinistryPlatform.Translation.Repositories
             }
 
             return content.FirstOrDefault();
+        }
+
+        public T Create<T>(T objectToCreate, List<string> selectColumns)
+        {
+            return Create(objectToCreate, string.Join(",", selectColumns.ToArray()));
+        } 
+
+        public T Create<T>(T objectToCreate, string selectColumns = null)
+        {
+            return ExecutePutOrPost(objectToCreate, Method.POST, selectColumns);
+        }
+
+        public T Update<T>(T objectToUpdate, List<string> selectColumns)
+        {
+            return Update(objectToUpdate, string.Join(",", selectColumns.ToArray()));
+        }
+
+        public T Update<T>(T objectToUpdate, string selectColumns = null)
+        {
+            return ExecutePutOrPost(objectToUpdate, Method.PUT, selectColumns);
+        }
+
+        private T ExecutePutOrPost<T>(T record, Method method, string selectColumns)
+        {
+            var tableName = GetTableName<T>();
+            var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
+            var request = new RestRequest(url, method);
+
+            // This nonsense is needed because request.setJsonBody() does not honor Json name
+            // attributes on the object, so proper names are not sent to MP.
+            var jsonBody = JsonConvert.SerializeObject(new List<T> { record });
+            request.Parameters.Clear();
+            request.AddHeader("Accept", "application/json");
+            request.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
+            request.RequestFormat = DataFormat.Json;
+
+            AddAuthorization(request);
+
+            var response = _ministryPlatformRestClient.Execute(request);
+            _authToken.Value = null;
+            response.CheckForErrors($"Error {(method == Method.PUT ? "updating existing" : "creating new")} {tableName}");
+
+            var result = JsonConvert.DeserializeObject<List<T>>(response.Content);
+            if (result == null || !result.Any())
+            {
+                return default(T);
+            }
+            return result.First();
         }
 
         public List<List<T>> GetFromStoredProc<T>(string procedureName)
