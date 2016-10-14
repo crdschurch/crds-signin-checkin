@@ -37,5 +37,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         public int CheckedIn { get; set; }
 
+        [JsonProperty(PropertyName = "Label")]
+        public string Label { get; set; }
+
     }
 }
