@@ -53,8 +53,7 @@ export class HttpClientService {
 
   private createAuthorizationHeader(headers?: Headers) {
     let reqHeaders =  headers || new Headers();
-    // reqHeaders.set('Authorization', this.authenticationToken);
-    reqHeaders.set('Authorization', "AAEAAH_6mX6GmvyxioQBWpwnB9xgyfAZLkRBO-QGH8Bpb4gff-ooSKhPkw5cpaTR5xsvJ_rFD4wzg7s9gBUnvBtCT_PKApmRBfuOhM6_vBRFId4KR69mNEtNum6f_zYAAkAUWLC9rGaqfUx6o1BVIZrY7E8s3tokhzZJCOAt6kekssVXSavsMlB_o8rlqt4VWuPLjMWZUtYlJ3dLfyWeRQhvCeAMdltVee_5hDQxh5bFYGfxaL_78RnV1abI-lbIpSoSIlOH1i-Z31ABzxQC25SIUzDsJsogpUoaY4WH10WhhLN_tGWs1g49CyIbc66rv7qmiAbSRdgd8wANtTXZncIF2dLIAAAATGlmZXRpbWU9MTgwMCZDbGllbnRJZGVudGlmaWVyPWNsaWVudCZVc2VyPTQ4NjFhOTBjLWNhZjgtNGNjMy04ZGUxLWEyZjUwMzM1NDA3MyZTY29wZT1odHRwJTNBJTJGJTJGd3d3LnRoaW5rbWluaXN0cnkuY29tJTJGZGF0YXBsYXRmb3JtJTJGc2NvcGVzJTJGYWxsJnRzPTE0NzY0NjY2MjYmdD1Eb3ROZXRPcGVuQXV0aC5PQXV0aDIuQWNjZXNzVG9rZW4");
+    reqHeaders.set('Authorization', this.authenticationToken);
     reqHeaders.set('Content-Type', 'application/json');
     reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
