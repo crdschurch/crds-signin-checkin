@@ -4,7 +4,7 @@ export class User {
   roles: Array<string>;
 
   isLoggedIn(): boolean {
-    return this.token.length > 0;
+    return this.token !== null && this.token !== undefined && this.token.length > 0;
   }
 
   logOut(): void {

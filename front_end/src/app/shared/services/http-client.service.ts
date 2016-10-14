@@ -11,6 +11,7 @@ export class HttpClientService {
 
   constructor(http: Http) {
     this.http = http;
+    this.user = new User();
   }
 
   get(url: string, options?: RequestOptions) {
@@ -28,7 +29,7 @@ export class HttpClientService {
   }
 
   isLoggedIn(): boolean {
-    return this.user.token.length > 0;
+    return this.user.isLoggedIn();
   }
 
   logOut(): void {
@@ -36,7 +37,7 @@ export class HttpClientService {
   }
 
   private extractAuthToken(o: Observable<Response>): Observable<Response> {
-    o.map((res: Response) => {
+    o.subscribe((res: Response) => {
       let body = res.json();
       if (body != null && body.userToken) {
         this.user.token = body.userToken;
