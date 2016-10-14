@@ -19,8 +19,16 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         /// <param name="selectColumns">Optionally specify which columns to retrieve from MP.  This is a comma-separated list of column names.  If not specified, all columns will be retrieved.</param>
         /// <returns>An object representing the MP row for the ID, if found.</returns>
         T Get<T>(int recordId, string selectColumns = null);
+        T Get<T>(int recordId, List<string> selectColumns);
 
         T Get<T>(string tableName, int recordId, string columnName);
+
+        T Create<T>(T objectToCreate, List<string> selectColumns);
+        T Create<T>(T objectToCreate, string selectColumns = null);
+
+        T Update<T>(T objectToUpdate, List<string> selectColumns);
+        T Update<T>(T objectToUpdate, string selectColumns = null);
+
 
         /// <summary>
         /// Get results from a stored procedure in Ministry Platform

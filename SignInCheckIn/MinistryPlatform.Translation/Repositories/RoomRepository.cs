@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -13,12 +11,25 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
+        private readonly List<string> _eventRoomColumns;
 
         public RoomRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
         {
             _apiUserRepository = apiUserRepository;
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
+
+            _eventRoomColumns = new List<string>
+            {
+                "Event_Rooms.Event_Room_ID",
+                "Event_Rooms.Event_ID",
+                "Event_Rooms.Room_ID",
+                "Room_ID_Table.Room_Name",
+                "Room_ID_Table.Room_Number",
+                "Event_Rooms.Allow_Checkin",
+                "Event_Rooms.Volunteers",
+                "Event_Rooms.Capacity"
+            };
         }
 
         public List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId)
@@ -29,7 +40,7 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Room_ID",
                 "Room_Name",
-                "Room_Number",
+                "Room_Number"
             };
 
             var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
@@ -39,7 +50,10 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Event_Room_ID",
                 "Event_ID",
-                "Room_ID"
+                "Room_ID",
+                "Capacity",
+                "Volunteers",
+                "Allow_CheckIn"
             };
 
             var eventRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
@@ -83,5 +97,19 @@ namespace MinistryPlatform.Translation.Repositories
             return eventRooms;
         }
 
+        public MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom)
+        {
+            MpEventRoomDto response;
+            if (eventRoom.EventRoomId.HasValue)
+            {
+                response = _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Update(eventRoom, _eventRoomColumns);
+            }
+            else
+            {
+                response = _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Create(eventRoom, _eventRoomColumns);
+            }
+
+            return response;
+        }
     }
 }

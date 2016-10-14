@@ -85,6 +85,7 @@ describe('HttpClientService', () => {
     });
 
     it('should send authentication token if logged in', () => {
+      expect(fixture.isLoggedIn()).toBeFalsy();
       responseObject.userToken = '98765';
       let response = fixture.get('/test/123');
       response.subscribe(() => {
