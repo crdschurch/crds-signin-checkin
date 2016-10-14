@@ -43,4 +43,3 @@ export class AdminService {
     return Observable.throw(error.json().error || 'Server error');
   }
 }
-}

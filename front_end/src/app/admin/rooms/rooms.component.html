@@ -1,5 +1,4 @@
-<div class="wrapper" class="rooms">
-
+<div class="wrapper rooms">
   <nav class="navbar navbar-light bg-faded">
     <a class="navbar-brand m-r-2 hidden-sm-down" [routerLink]="['/admin']">
       <svg class="admin-logo" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
@@ -98,74 +97,40 @@
                 <input class='tgl tgl-light' id='serving1' type='checkbox'>
                 <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
               </td>
-              <td>{{room.Volunteers}}</td>
-              <td>{{room.Capacity}}</td>
+              <td>
+                <div class="number-stepper">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">-</button>
+                    </span>
+                    <input type="text" class="form-control text-xs-center" value="{{room.Volunteers}}">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">+</button>
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="number-stepper">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">-</button>
+                    </span>
+                    <input type="text" class="form-control text-xs-center" value="{{room.Capacity}}">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">+</button>
+                    </span>
+                  </div>
+                </div>
+              </td>
               <td>{{room.SignedIn}}</td>
               <td>{{room.CheckedIn}}</td>
               <td>-</td>
               <td class="text-xs-right"><a href="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}" class="btn btn-primary btn-sm">Alt Rooms</a></td>
-                    <input type="text" class="form-control text-xs-center" value="0">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">+</button>
-                    </span>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="number-stepper">
-                  <div class="input-group">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">-</button>
-                    </span>
-                    <input type="text" class="form-control text-xs-center" value="0">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">+</button>
-                    </span>
-                  </div>
-                </div>
-              </td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms/864']" class="btn btn-primary btn-sm">Alt Rooms</a></td>
-            </tr>
-            <tr>
-              <td><a href="#">Add</a></td>
-              <td>Nursery B<br /> K114</td>
-              <td>
-                <input class='tgl tgl-light' id='serving1' type='checkbox'>
-                <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
-              </td>
-              <td>
-                <div class="number-stepper">
-                  <div class="input-group">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">-</button>
-                    </span>
-                    <input type="text" class="form-control text-xs-center" value="0">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">+</button>
-                    </span>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="number-stepper">
-                  <div class="input-group">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">-</button>
-                    </span>
-                    <input type="text" class="form-control text-xs-center" value="0">
-                    <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">+</button>
-                    </span>
-                  </div>
-                </div>
-              </td>
             </tr>
           </tbody>
         </table>
-        </div><!--/col-xs-12-->
-
+      </div><!--/col-xs-12-->
     </div><!--/row-->
   </div><!--/container-->
+</div>
