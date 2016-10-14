@@ -1,4 +1,4 @@
-<div class="wrapper" class="dashboard">
+<div class="wrapper" class="rooms">
 
   <nav class="navbar navbar-light bg-faded">
     <a class="navbar-brand m-r-2 hidden-sm-down" [routerLink]="['/admin']">
@@ -94,13 +94,78 @@
             <tr>
               <td><a href="#">Add</a></td>
               <td>Nursery A<br /> K112</td>
-              <td>[]</td>
-              <td>[]</td>
-              <th>[]</th>
+              <td>
+                <input class='tgl tgl-light' id='serving1' type='checkbox'>
+                <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+              </td>
+              <td>
+                <div class="number-stepper">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">-</button>
+                    </span>
+                    <input type="text" class="form-control text-xs-center" value="0">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">+</button>
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="number-stepper">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">-</button>
+                    </span>
+                    <input type="text" class="form-control text-xs-center" value="0">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">+</button>
+                    </span>
+                  </div>
+                </div>
+              </td>
               <td>0</td>
               <td>0</td>
               <td>0</td>
-              <td><a href="#" class="btn btn-primary btn-sm">Alt Rooms</a></td>
+              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms/864']" class="btn btn-primary btn-sm">Alt Rooms</a></td>
+            </tr>
+            <tr>
+              <td><a href="#">Add</a></td>
+              <td>Nursery B<br /> K114</td>
+              <td>
+                <input class='tgl tgl-light' id='serving1' type='checkbox'>
+                <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+              </td>
+              <td>
+                <div class="number-stepper">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">-</button>
+                    </span>
+                    <input type="text" class="form-control text-xs-center" value="0">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">+</button>
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="number-stepper">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">-</button>
+                    </span>
+                    <input type="text" class="form-control text-xs-center" value="0">
+                    <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">+</button>
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="text-xs-right"><a [routerLink]="['/admin/events/123/rooms/864']" class="btn btn-primary btn-sm">Alt Rooms</a></td>
             </tr>
           </tbody>
         </table>

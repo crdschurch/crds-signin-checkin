@@ -14,7 +14,6 @@ export class SignInService {
 
   logIn(username: string, password: string) {
     let body = { username: username, password: password };
-
     return this.http.post(this.url, JSON.stringify(body))
                     .map(res => res.json())
                     .catch(this.handleError);

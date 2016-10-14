@@ -15,6 +15,10 @@ export class HttpClientService {
     let requestOptions = this.getRequestOption(options);
     return this.extractAuthToken(this.http.get(url, requestOptions));
   }
+  put(url: string, data: any, options?: RequestOptions) {
+    let requestOptions = this.getRequestOption(options)
+    return this.extractAuthToken(this.http.put(url, data, requestOptions));
+  }
 
   post(url: string, data: any, options?: RequestOptions) {
     let requestOptions = this.getRequestOption(options);
@@ -23,6 +27,10 @@ export class HttpClientService {
 
   isLoggedIn(): boolean {
     return this.authenticationToken.length > 0;
+  }
+
+  logOut(): void {
+    this.authenticationToken = undefined;
   }
 
   private extractAuthToken(o: Observable<Response>): Observable<Response> {
