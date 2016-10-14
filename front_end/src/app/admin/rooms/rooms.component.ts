@@ -27,8 +27,27 @@ export class RoomsComponent {
   ngOnInit(): void {
     this.getData();
   }
-  addVolunteer(room: any): void {
-    console.log("addVolunteer", room);
+
+  removeVolunteer(room: any): void {
+    if(room.Volunteers > 0)
+      room.Volunteers--
     true;
   }
+
+  addVolunteer(room: any): void {
+    room.Volunteers++
+    true;
+  }
+
+  removeCapacity(room: any): void {
+    if(room.Capacity > 0)
+      room.Capacity--
+    true;
+  }
+
+  addCapacity(room: any): void {
+    room.Capacity++
+    true;
+  }
+
 }

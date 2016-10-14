@@ -101,7 +101,7 @@
                 <div class="number-stepper">
                   <div class="input-group">
                     <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">-</button>
+                      <button class="btn btn-secondary" type="button" (click)="removeVolunteer(room)">-</button>
                     </span>
                     <input type="text" class="form-control text-xs-center" value="{{room.Volunteers}}">
                     <span class="input-group-btn">
@@ -114,11 +114,11 @@
                 <div class="number-stepper">
                   <div class="input-group">
                     <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">-</button>
+                      <button class="btn btn-secondary" type="button" (click)="removeCapacity(room)">-</button>
                     </span>
                     <input type="text" class="form-control text-xs-center" value="{{room.Capacity}}">
                     <span class="input-group-btn">
-                      <button class="btn btn-secondary" type="button">+</button>
+                      <button class="btn btn-secondary" type="button" (click)="addCapacity(room)">+</button>
                     </span>
                   </div>
                 </div>
