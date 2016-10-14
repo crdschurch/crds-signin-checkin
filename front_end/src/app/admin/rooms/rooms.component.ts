@@ -19,7 +19,6 @@ export class RoomsComponent {
 
   private getData(): void {
     const eventId = this.route.snapshot.params['eventId'];
-    console.log(eventId)
     this.adminService.getRooms(eventId).subscribe(
       rooms => {this.rooms = rooms},
       error => console.error(error)

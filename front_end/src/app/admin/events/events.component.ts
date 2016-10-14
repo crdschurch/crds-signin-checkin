@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { HttpClientService } from '../../shared/services';
-import { Router} from '@angular/router';
+import { Router } from '@angular/router';
+
+import { Event } from '../models/event';
 
 @Component({
   selector: 'events',
@@ -9,7 +11,7 @@ import { Router} from '@angular/router';
   providers: [ AdminService, HttpClientService ]
 })
 export class EventsComponent implements OnInit {
-  events: any[];
+  events: Event[];
 
   constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router) { }
 
