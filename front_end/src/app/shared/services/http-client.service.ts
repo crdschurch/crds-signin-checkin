@@ -19,7 +19,7 @@ export class HttpClientService {
     return this.extractAuthToken(this.http.get(url, requestOptions));
   }
   put(url: string, data: any, options?: RequestOptions) {
-    let requestOptions = this.getRequestOption(options)
+    let requestOptions = this.getRequestOption(options);
     return this.extractAuthToken(this.http.put(url, data, requestOptions));
   }
 
@@ -37,7 +37,8 @@ export class HttpClientService {
   }
 
   private extractAuthToken(o: Observable<Response>): Observable<Response> {
-    o.subscribe((res: Response) => {
+    let sharable = o.share();
+    sharable.map((res: Response) => {
       let body = res.json();
       if (body != null && body.userToken) {
         this.user.token = body.userToken;
@@ -49,7 +50,7 @@ export class HttpClientService {
         this.user.roles = body.roles;
       }
     });
-    return o;
+    return sharable;
   }
 
   private getRequestOption(options?: RequestOptions):  RequestOptions {

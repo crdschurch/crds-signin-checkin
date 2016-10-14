@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MinistryPlatform.Translation.Models.Attributes;
+using Newtonsoft.Json;
 using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 
@@ -11,7 +8,7 @@ namespace MinistryPlatform.Translation.Models.DTO
     [MpRestApiTable(Name = "Event_Rooms")]
     public class MpEventRoomDto
     {
-        [JsonProperty(PropertyName = "Event_Room_ID")]
+        [JsonProperty(PropertyName = "Event_Room_ID", NullValueHandling = NullValueHandling.Ignore)]
         public int? EventRoomId { get; set; }
 
         [JsonProperty(PropertyName = "Room_ID")]
@@ -20,8 +17,10 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Event_ID")]
         public int EventId { get; set; }
 
+        [JsonProperty(PropertyName = "Room_Name")]
         public string RoomName { get; set; }
 
+        [JsonProperty(PropertyName = "Room_Number")]
         public string RoomNumber { get; set; }
 
         [JsonProperty(PropertyName = "Allow_Checkin")]
@@ -40,5 +39,8 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Label")]
         public string Label { get; set; }
 
+        [JsonProperty(PropertyName = "Hidden")]
+        public bool Hidden { get; set; } = false;
+        
     }
 }
