@@ -9,7 +9,7 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
-        
+
         public EventRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
         {
@@ -17,7 +17,7 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
         }
 
-        public List<MpEventDto> GetEvents()
+        public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -30,12 +30,12 @@ namespace MinistryPlatform.Translation.Repositories
                 "Congregation_ID_Table.Congregation_Name"
             };
 
-            var currentTimeString = DateTime.Now.ToShortDateString();
-            var offsetTimeString = DateTime.Now.AddDays(6).ToShortDateString();
+            var startTimeString = startDate.ToShortDateString();
+            var endTimeString = endDate.ToShortDateString();
 
             // 99 is for development - "Oakley Service"
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpEventDto>($"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{currentTimeString}' AND [Event_Start_Date] <= '{offsetTimeString}'", columnList);
+                .Search<MpEventDto>($"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND [Location_ID] = {site}", columnList);
         }
 
 

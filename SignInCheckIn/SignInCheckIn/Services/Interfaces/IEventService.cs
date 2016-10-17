@@ -10,6 +10,6 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IEventService
     {
-        List<EventDto> GetCheckinEvents();
+        List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site);
     }
 }

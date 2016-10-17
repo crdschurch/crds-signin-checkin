@@ -9,7 +9,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
     public interface IEventRepository
     {
-        List<MpEventDto> GetEvents();
+        List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site);
         MpEventDto GetEventById(int eventId);
     }
 }
