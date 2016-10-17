@@ -1,83 +1,86 @@
-## crds_signin_checkin Angular 2 Front End code
+# FrontEnd
 
-## Prerequisites
+## Development
 
-We are using Angular-CLI for scaffolding and generating project resources.
+## Developer Setup
+* Make your editor aware of TypeScript typings
+  * _VSCode_
+    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at Git repo root)
+      * `"typescript.tsdk": "front_end/node_modules/typescript/lib"`
+    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at 'front_end' under Git repo root)
+      * `"typescript.tsdk": "node_modules/typescript/lib"`
+  * _IntelliJ/WebStorm_
+    * TBD
+  * _Atom_
+    * TBD
+  * _Sublime_
+    * TBD
+  * _Vim/vi_
+    * Really? Why???
+* Acquire an API key to use when sending REST requests to the backend API.
+  * This is found in the MinistryPlatform admin interface, under Administration->Client API Keys
+  * You will need a key that allows 'localhost' in the Allowed Domains
+  * This key needs to be sent in a request header called 'Crds-Api-Key'
+    * This is automatically handled by the [HttpClientService.createAuthorizationHeader()](src/app/shared/services/http-client.service.ts#L34) method 
 
-The project has dependencies that require **Node 4 or greater**.
-
-## Basics of Angualr-CLI Installation and usage
-
-**BEFORE YOU INSTALL:** please read the [prerequisites](#prerequisites)
-```bash
-npm install -g angular-cli
-ng --help
-
-ng serve
+### Install Dependencies
 ```
-Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-You can configure the default HTTP port and the one used by the LiveReload server with two command-line options :
-
-```bash
-ng serve --port 4201 --live-reload-port 49153
-```
-
-You can use the `ng generate` (or just `ng g`) command to generate Angular components:
-
-```
-You can find all possible blueprints in the table below:
-
-Scaffold  | Usage
----       | ---
-Component | `ng g component my-new-component`
-Directive | `ng g directive my-new-directive`
-Pipe      | `ng g pipe my-new-pipe`
-Service   | `ng g service my-new-service`
-
-You can generate a new route by with the following command (note the singular
-used in `hero`):
-
-```bash
-ng generate route hero
+npm install
 ```
 
-This will create a folder which will contain the hero component and related test and style files.
+### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-The generated route will also be registered with the parent component's `@RouteConfig` decorator. 
+Create a .env file in the project root with the following values.
 
-By default the route will be designated as a **lazy** route which means that it will be loaded into the browser when needed, not upfront as part of a bundle.
-
-In order to visually distinguish lazy routes from other routes the folder for the route will be prefixed with a `+` per the above example the folder will be named `+hero`.
-This is done in accordance with the [style guide](https://angular.io/styleguide#!#prefix-lazy-loaded-folders-with-).
-
-The default lazy nature of routes can be turned off via the lazy flag (`--lazy false`)
-
-There is an optional flag for `skip-router-generation` which will not add the route to the parent component's `@RouteConfig` decorator.
-
-### Creating a build
-
-```bash
-ng build
+_TODO: Tweak hostnames & ports depending on your actual environment setup_
 ```
 
-The build artifacts will be stored in the `dist/` directory.
+# To access local development API
+ECHECK_API_ENDPOINT=http://localhost:49390/api
+# To access integration API
+# ECHECK_API_ENDPOINT=https://echeck-int.crossroads.net/proxy/SignInCheckIn/api
 
-### Environments
+# To access local development CMS
+CRDS_CMS_ENDPOINT=http://localhost:81/
+# To access integration CMS
+# CRDS_CMS_ENDPOINT=https://contentint.crossroads.net/
 
-At build time, the `src/client/app/environment.ts` will be replaced by either
-`config/environment.dev.ts` or `config/environment.prod.ts`, depending on the
-current cli environment.
-
-Environment defaults to `dev`, but you can generate a production build via
-the `-prod` flag in either `ng build -prod` or `ng serve -prod`.
-
-### Running unit tests
-
-```bash
-ng test
+# Domain-locked API key - this will vary based on what ECHECK_API_ENDPOINT (local or int) is being used
+ECHECK_API_TOKEN=[get appropriate value from MinistryPlatform "Client API Keys" table]
 ```
 
-Tests will execute after a build is executed via [Karma](http://karma-runner.github.io/0.13/index.html)
+You can update this file rather than setting environment variables through your OS or CLI (.env file will not be checked in to git)
 
-If run with the watch argument `--watch` (shorthand `-w`) builds will run when source files have changed
-and tests will run after each successful build
+### Run locally
+
+```
+npm start
+```
+
+and visit [http://localhost:8080/](http://localhost:8080/)
+
+
+### Run locally with Hot Module Replacement
+
+```
+npm run server:dev:hmr
+
+```
+
+and visit [http://localhost:8080/](http://localhost:8080/)
+
+### Run tests
+
+```
+npm test
+npm e2e
+```
+
+## Deployment
+
+### Build
+
+(TODO: other environments needed?)
+```
+npm run build
+```

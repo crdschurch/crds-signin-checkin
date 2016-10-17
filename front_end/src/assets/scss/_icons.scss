@@ -1,0 +1,59 @@
+%icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+.icon svg {
+  @extend %icon;
+  width: 15px;
+  height: 15px;
+}
+
+.icon-small svg {
+  @extend %icon;
+  width: 10px;
+  height: 10px;
+}
+
+.icon-medium svg {
+  @extend %icon;
+  width: 19px;
+  height: 19px;
+}
+
+.icon-large svg {
+  @extend %icon;
+  width: 24px;
+  height: 24px;
+}
+
+.icon-xlarge svg {
+  @extend %icon;
+  width: 32px;
+  height: 32px;
+}
+
+.icon-xxlarge svg {
+  @extend %icon;
+  width: 48px;
+  height: 48px;
+}
+
+.icon-xxxlarge svg {
+  @extend %icon;
+  width: 64px;
+  height: 64px;
+}
+
+svg path.currentcolor {
+  stroke: currentcolor;
+  color: currentcolor;
+}
+svg path.fill {
+  fill: currentcolor;
+}
+
+.list-group-item {
+  .icon {
+    vertical-align: text-bottom;
+  }
+}
