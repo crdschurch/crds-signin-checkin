@@ -33,3 +33,4 @@ Thumbs.db
 
 # local environment variables
 .env
+.vscode/settings.json

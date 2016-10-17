@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+import { CookieService } from 'angular2-cookie/services/cookies.service';
+
 import { HttpClientService } from './shared/services';
 import { AdminModule } from './admin';
 import { ChildCheckinModule } from './child-checkin';
@@ -25,6 +27,7 @@ import { routing } from './app.routes';
   ],
   providers: [
     FormsModule,
+    CookieService,
     HttpClientService
   ],
   bootstrap: [
