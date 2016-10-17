@@ -57,9 +57,9 @@
             <!-- TODO: need to momentize these fields -->
           <tr *ngFor="let event of events">
             <td>Service</td>
-            <td>{{event.EventStartDate}}</td>
-            <td>{{event.EventStartDate}}</td>
-            <td>{{event.EventStartDate}}</td>
+            <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
+            <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
+            <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
             <td>{{event.EventSite}}</td>
             <td class="text-xs-right">
               <a routerLink="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
