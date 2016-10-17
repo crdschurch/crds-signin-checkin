@@ -4,6 +4,7 @@ import { TestBed, async, inject } from '@angular/core/testing';
 import { HttpClientService } from './http-client.service';
 import { Http, RequestOptions, Headers, Response, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
+import {CookieService, CookieOptions} from 'angular2-cookie/core';
 
 describe('HttpClientService', () => {
   let fixture: HttpClientService;
@@ -11,6 +12,7 @@ describe('HttpClientService', () => {
   let options: RequestOptions;
   let backend: MockBackend;
   let responseObject: any;
+  let cookie: CookieService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -22,7 +24,8 @@ describe('HttpClientService', () => {
     options = new RequestOptions();
     options.headers = new Headers();
     http = new Http(backend, options);
-    fixture = new HttpClientService(http);
+    cookie = new CookieService(new CookieOptions());
+    fixture = new HttpClientService(http, cookie);
   });
 
   describe('get method', () => {
@@ -42,6 +45,7 @@ describe('HttpClientService', () => {
     afterEach(() => {
       backend.resolveAllConnections();
       backend.verifyNoPendingRequests();
+      fixture.logOut();
     });
 
     it('should call http.get() with proper URL and use existing RequestOptions', () => {
