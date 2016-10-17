@@ -12,12 +12,13 @@ export class AdminService {
   constructor(private http: HttpClientService) {
   }
 
-  getEvents(startDate: string, endDate: string, site: string, eventType: string) {
+  getEvents(startDate: any, endDate: any, site: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
     let options = new RequestOptions({
-        search: new URLSearchParams(`site=${site}&eventType=${eventType}&startDate=${startDate}&endDate=${endDate}`)
+        search: new URLSearchParams(`site=${site}&startDate=${startDate}&endDate=${endDate}`)
     });
-    return this.http.get(url)
+    console.log(options)
+    return this.http.get(url, options)
                     .map(res => res.json())
                     .catch(this.handleError);
   }

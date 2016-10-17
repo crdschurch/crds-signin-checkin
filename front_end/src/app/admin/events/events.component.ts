@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 
 import { Event } from '../models/event';
 
+import * as moment from 'moment';
+
 @Component({
   selector: 'events',
   templateUrl: 'events.component.html',
@@ -16,7 +18,11 @@ export class EventsComponent implements OnInit {
   constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router) { }
 
   private getData(): void {
-    this.adminService.getEvents(undefined, undefined, undefined, undefined).subscribe(
+    // TODO these should come from dropdown
+    let startDate = moment().format("YYYY-MM-DD");
+    let endDate = moment().add(7, "days").format("YYYY-MM-DD");
+
+    this.adminService.getEvents(startDate, endDate, 34532324).subscribe(
       events => {this.events = events;},
       error => console.error(error)
     );
