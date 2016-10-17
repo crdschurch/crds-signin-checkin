@@ -16,7 +16,7 @@ export class EventsComponent implements OnInit {
   constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router) { }
 
   private getData(): void {
-    this.adminService.getEvents().subscribe(
+    this.adminService.getEvents(undefined, undefined, undefined, undefined).subscribe(
       events => {this.events = events;},
       error => console.error(error)
     );

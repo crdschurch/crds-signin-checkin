@@ -4,14 +4,19 @@ import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
 
+import { RequestOptions, URLSearchParams } from '@angular/http';
+
 @Injectable()
 export class AdminService {
 
   constructor(private http: HttpClientService) {
   }
 
-  getEvents() {
+  getEvents(startDate: string, endDate: string, site: string, eventType: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
+    let options = new RequestOptions({
+        search: new URLSearchParams(`site=${site}&eventType=${eventType}&startDate=${startDate}&endDate=${endDate}`)
+    });
     return this.http.get(url)
                     .map(res => res.json())
                     .catch(this.handleError);
