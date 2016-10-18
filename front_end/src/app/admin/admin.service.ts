@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
+import * as moment from 'moment';
 
 import { RequestOptions, URLSearchParams } from '@angular/http';
 
@@ -14,8 +15,10 @@ export class AdminService {
 
   getEvents(startDate: any, endDate: any, site: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
+    let formattedStartDate = moment(startDate).format("YYYY-MM-DD");
+    let formattedEndDate = moment(endDate).format("YYYY-MM-DD");
     let options = new RequestOptions({
-        search: new URLSearchParams(`site=${site}&startDate=${startDate}&endDate=${endDate}`)
+        search: new URLSearchParams(`site=${site}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
     });
     console.log(options)
     return this.http.get(url, options)
