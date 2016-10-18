@@ -35,7 +35,7 @@ namespace MinistryPlatform.Translation.Repositories
 
             // 99 is for development - "Oakley Service"
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpEventDto>($"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND [Location_ID] = {site}", columnList);
+                .Search<MpEventDto>($"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}", columnList);
         }
 
 
