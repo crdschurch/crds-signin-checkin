@@ -52,9 +52,6 @@ export class HttpClientService {
       if (body != null && body.refreshToken) {
         user.refreshToken = body.refreshToken;
       }
-      if (body != null && body.roles) {
-        user.roles = body.roles;
-      }
 
       this.user = user;
     });
