@@ -57,6 +57,7 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             Assert.IsNotNull(result);
+            Assert.AreEqual("Oakley", result[0].EventSite);
         }
     }
 }
