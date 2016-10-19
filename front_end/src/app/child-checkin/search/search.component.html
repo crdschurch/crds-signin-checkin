@@ -1,3 +1,5 @@
+<div class="alert alert-danger" role="alert" *ngIf="error">You must enter a valid 10 digit phone number.</div>
+
 <div>
   <router-outlet></router-outlet>
 </div>
@@ -20,11 +22,10 @@
 
   <div class="row">
     <div class="container-fluid col-md-8 offset-md-2">
-      <number-pad (addNumber)="setPhoneNumber($event)" (deleteNumber)="delete($event)" clearNumber="clear($event)"></number-pad>
-
+      <number-pad (addNumber)="setPhoneNumber($event)" (deleteNumber)="delete($event)" (clearNumber)="clear($event)"></number-pad>
       <div class="m-t-2">
         <a class="pull-xs-left pointer" (click)="showUnmatchedNumberModal.show()">Number not found (temporary link)</a>
-        <a class="btn btn-primary btn-lg pull-xs-right" href="#" routerLink="/child-checkin/results">Next &#10095;</a>
+        <a class="btn btn-primary btn-lg pull-xs-right" (click)="next()">Next &#10095;</a>
       </div><!--/m-t-1-->
     </div>
   </div>

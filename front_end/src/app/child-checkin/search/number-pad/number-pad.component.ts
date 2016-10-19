@@ -1,11 +1,11 @@
-import { Component, HostBinding, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'number-pad',
-  templateUrl: 'number-pad.component.html'
+  templateUrl: 'number-pad.component.html',
+  styleUrls: ['../../scss/_number-pad.scss', ]
 })
 export class NumberPadComponent {
-  @HostBinding('class.num-pad')
   @Output() addNumber: EventEmitter<any> = new EventEmitter();
   @Output() deleteNumber: EventEmitter<any> = new EventEmitter();
   @Output() clearNumber: EventEmitter<any> = new EventEmitter();
