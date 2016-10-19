@@ -5,9 +5,8 @@
 * Make your editor aware of [TypeScript typings](README_typescript.md)
 * Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
 
-```
-yarn install
-// or you can still npm install
+```sh
+yarn install # or you can still npm install
 ```
 
 * Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
@@ -31,29 +30,29 @@ ECHECK_API_TOKEN=[get appropriate value from MinistryPlatform "Client API Keys" 
 
 #### Run locally
 
-```
+```sh
 npm start
 ```
 
 
 #### Run locally with Hot Module Replacement
 
-```
+```sh
 npm run server:dev:hmr
 
 ```
 
 #### Run tests
 
-```
+```sh
 npm test
-npm e2e // no e2e yet
+npm e2e # no e2e yet
 ```
 
 ## Deployment
 
 #### Build
 
-```
+```sh
 npm run build
 ```
