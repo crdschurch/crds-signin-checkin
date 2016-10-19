@@ -13,9 +13,9 @@ yarn install
 
 ### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-Create a .env file in the project root with the following values.
+Create a .env file in the project root with the following values (copy .env.example to .env and fill out values).
 
-_TODO: Tweak hostnames & ports depending on your actual environment setup_
+_Tweak hostnames & ports depending on your actual environment setup_
 ```
 
 # To access local development API
@@ -56,14 +56,13 @@ and visit [http://localhost:8080/](http://localhost:8080/)
 
 ```
 npm test
-npm e2e
+npm e2e (none at the moment)
 ```
 
 ## Deployment
 
 ### Build
 
-(TODO: other environments needed?)
 ```
 npm run build
 ```
