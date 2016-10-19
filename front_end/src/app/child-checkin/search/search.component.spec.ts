@@ -1,24 +1,34 @@
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
 
-import { TestBed, async, inject } from '@angular/core/testing';
 import { SearchComponent } from './search.component';
+import { NumberPadComponent } from './number-pad';
 
-beforeEach(() => {
-  TestBed.configureTestingModule({
-    declarations: [ TwainComponent ],
-    providers:    [ TwainService ],
+let component: SearchComponent;
+let fixture: ComponentFixture<SearchComponent>;
+let de:      DebugElement;
+let el:      HTMLElement;
+
+describe('SearchComponent', () => {
+  beforeEach(() => {
+    return TestBed.configureTestingModule({
+      declarations: [ SearchComponent ],
+    })
+    .compileComponents().then(() => {
+      fixture = TestBed.createComponent(SearchComponent);
+      fixture.detectChanges();
+    });
   });
 
-  fixture = TestBed.createComponent(TwainComponent);
-  comp = fixture.componentInstance;
+  afterEach(() => {
+    fixture.destroy();
+  });
 
-  // TwainService actually injected into the component
-  twainService = fixture.debugElement.injector.get(TwainService);
+  it('should contain an input field of type tel', () => {
+    de = fixture.debugElement.query(By.css('num-pad-value'));
+    el = de.nativeElement;
+    expect(el.getAttribute('type')).toContain('type');
+  });
 
-  // Setup spy on the `getQuote` method
-  spy = spyOn(twainService, 'getQuote')
-        .and.returnValue(Promise.resolve(testQuote));
-
-  // Get the Twain quote element by CSS selector (e.g., by class name)
-  de = fixture.debugElement.query(By.css('.twain'));
-  el = de.nativeElement;
 });
