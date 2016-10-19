@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.ServiceModel.Channels;
-using System.Web;
 using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -19,6 +17,8 @@ namespace SignInCheckIn.Filters
     public class DomainLockedApiKeyFilter : ActionFilterAttribute
     {
         public const string ApiKeyHeader = "Crds-Api-Key";
+
+        public IReadOnlyList<DomainLockedApiKey> RegisteredKeys => _apiKeys.AsReadOnly();
 
         private readonly List<DomainLockedApiKey> _apiKeys = new List<DomainLockedApiKey>();
 
@@ -76,12 +76,28 @@ namespace SignInCheckIn.Filters
             var apiKeyValue = actionContext.Request.Headers.GetValues(ApiKeyHeader).First();
             _logger.Debug($"API key '{apiKeyValue}' found in request, will validate against known API keys");
 
+            if (remoteHost == null)
+            {
+                _logger.Debug("No remote host found in request, cannot verify - rejecting request");
+                AuditLog(endpoint, method, null, apiKeyValue, false);
+                actionContext.Response = CreateResponseMessage(HttpStatusCode.BadRequest, $"Cannot verify access for request origin");
+                throw new HttpResponseException(actionContext.Response);
+            }
+
             var key = _apiKeys.Find(k => k.Key.Equals(new Guid(apiKeyValue)));
             if (key == null)
             {
                 _logger.Debug($"API key '{apiKeyValue}' found in request, but does not match a known key - rejecting request");
                 AuditLog(endpoint, method, remoteHost, apiKeyValue, false);
                 actionContext.Response = CreateResponseMessage(HttpStatusCode.Forbidden, $"Unknown API Key {apiKeyValue}");
+                throw new HttpResponseException(actionContext.Response);
+            }
+
+            if (!key.IsActive)
+            {
+                _logger.Debug($"API key '{apiKeyValue}' found in request, but matches an inactive/expired key - rejecting request");
+                AuditLog(endpoint, method, remoteHost, apiKeyValue, false);
+                actionContext.Response = CreateResponseMessage(HttpStatusCode.Forbidden, $"Inactive/expired API Key {apiKeyValue}");
                 throw new HttpResponseException(actionContext.Response);
             }
 
@@ -95,12 +111,16 @@ namespace SignInCheckIn.Filters
 
             var corsContext = new CorsRequestContext
             {
-                Host = remoteHost,
+                Host = actionContext.Request.Headers.Host,
                 Origin = remoteHost,
                 RequestUri = actionContext.Request.RequestUri,
             };
 
-            var policy = new CorsPolicy();
+            var policy = new CorsPolicy
+            {
+                AllowAnyHeader = true,
+                AllowAnyMethod = true
+            };
             key.Origins.ForEach(origin => policy.Origins.Add(origin));
 
             var result = _corsEngine.EvaluatePolicy(corsContext, policy);
@@ -127,36 +147,16 @@ namespace SignInCheckIn.Filters
 
         private string GetRemoteHost(HttpRequestMessage request)
         {
-            if (request.Headers.Contains("X-Forwarded-For"))
+            // First look at Origin - this will almost always exist from javascript/angular frontend, and even from Postman
+            if (request.Headers.Contains("Origin"))
             {
-                _logger.Debug($"X-Forwarded-For: ({request.Headers.GetValues("X-Forwarded-For").First()})");
-            }
-
-            if (request.Headers.Referrer != null)
-            {
-                _logger.Debug($"Referer: ({request.Headers.Referrer.Host})");
-            }
-
-            if (request.Properties.ContainsKey("MS_HttpContext"))
-            {
-                _logger.Debug($"MS_HttpContext: ({((HttpContextWrapper)request.Properties["MS_HttpContext"]).Request.UserHostName})");
-            }
-
-            if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
-            {
-                _logger.Debug($"RemoteEndpointMessageProperty.Name: ({(RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name]})");
-            }
-
-            // Try X-Forwarded-For first - this should be set if coming through apache mod_proxy (or any proxy/load-balancer)
-            if (request.Headers.Contains("X-Forwarded-For"))
-            {
-                var xForwardedFor = request.Headers.GetValues("X-Forwarded-For").First();
-                var remoteHost = Dns.GetHostEntry(xForwardedFor).HostName;
-                _logger.Debug($"Found remote host {remoteHost} in X-Forwarded-For header");
+                var origin = new Uri(request.Headers.GetValues("Origin").First());
+                var remoteHost = origin.Host;
+                _logger.Debug($"Found remote host {remoteHost} in Origin header");
                 return remoteHost;
             }
 
-            // Try Referer next - this may be set if coming from a frontend like crossroads.net
+            // Now try referer - this should exist even when it is not a cross-origin request
             if (request.Headers.Referrer != null)
             {
                 var remoteHost = request.Headers.Referrer.Host;
@@ -164,24 +164,9 @@ namespace SignInCheckIn.Filters
                 return remoteHost;
             }
 
-            // Now try some more expensive stuff - get User Host Name from the request, if it is there
-            if (request.Properties.ContainsKey("MS_HttpContext"))
-            {
-                var remoteHost = ((HttpContextWrapper) request.Properties["MS_HttpContext"]).Request.UserHostName;
-                _logger.Debug($"Found remote host {remoteHost} in MS_HttpContext.Request.UserHostName");
-                return remoteHost;
-            }
+            // TODO - Look for iOS or Android app keys as well
 
-            // Ok, even more expensive - get the remote endpoint IP address, then lookup the associated hostname
-            if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
-            {
-                var requestEndpoint = (RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name];
-                var remoteHost = Dns.GetHostEntry(requestEndpoint.Address).HostName;
-                _logger.Debug($"Found remote host {remoteHost} in RemoteEndpointMessageProperty.Name");
-                return remoteHost;
-            }
-
-            // Last resort
+            // No host - we'll reject the request
             _logger.Debug("Could not find remote host in request");
             return null;
         }
@@ -218,5 +203,15 @@ namespace SignInCheckIn.Filters
 
         [JsonIgnore]
         public List<string> Origins { get; set; } = new List<string>();
+
+        public bool IsActive
+        {
+            get
+            {
+                var now = DateTime.Today.Date;
+                // Considering this key Active if current date is on or after the Start Date, and less than the End Date
+                return now >= StartDate.Date && (!EndDate.HasValue || now < EndDate.Value.Date);
+            }
+        }
     }
 }

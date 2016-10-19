@@ -35,7 +35,13 @@ namespace SignInCheckIn.Tests.Services
                 {"refreshToken", "456"}
             };
 
+            List<string> authRoles = new List<string>
+            {
+                "Kids Club Tools - CRDS"
+            };
+
             _authenticationRepository.Setup(m => m.Authenticate(username, password)).Returns(authData);
+            _authenticationRepository.Setup(m => m.GetUserRolesFromToken(authData["token"].ToString())).Returns(authRoles);
 
             // Act
             _fixture.Login(username, password);
