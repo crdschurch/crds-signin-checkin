@@ -1,21 +1,19 @@
 # FrontEnd
 
-## Development
-
 ## Developer Setup
 * Make your editor aware of [TypeScript typings](README_typescript.md)
 
-### Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
+* Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
+
 ```
 yarn install
 // or you can still npm install
 ```
 
-### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
+* Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-Create a .env file in the project root with the following values (copy .env.example to .env and fill out values).
+Create a .env file in the project root with the following values (copy .env.example to .env and fill out values)._Tweak hostnames & ports depending on your actual environment setup_
 
-_Tweak hostnames & ports depending on your actual environment setup_
 ```
 
 # To access local development API
@@ -32,27 +30,21 @@ CRDS_CMS_ENDPOINT=http://localhost:81/
 ECHECK_API_TOKEN=[get appropriate value from MinistryPlatform "Client API Keys" table]
 ```
 
-You can update this file rather than setting environment variables through your OS or CLI (.env file will not be checked in to git)
-
-### Run locally
+#### Run locally
 
 ```
 npm start
 ```
 
-and visit [http://localhost:8080/](http://localhost:8080/)
 
-
-### Run locally with Hot Module Replacement
+#### Run locally with Hot Module Replacement
 
 ```
 npm run server:dev:hmr
 
 ```
 
-and visit [http://localhost:8080/](http://localhost:8080/)
-
-### Run tests
+#### Run tests
 
 ```
 npm test
@@ -61,7 +53,7 @@ npm e2e (none at the moment)
 
 ## Deployment
 
-### Build
+#### Build
 
 ```
 npm run build
