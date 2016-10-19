@@ -3,24 +3,12 @@
 ## Development
 
 ## Developer Setup
-* Make your editor aware of TypeScript typings
-  * _VSCode_
-    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at Git repo root)
-      * `"typescript.tsdk": "front_end/node_modules/typescript/lib"`
-    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at 'front_end' under Git repo root)
-      * `"typescript.tsdk": "node_modules/typescript/lib"`
-  * _IntelliJ/WebStorm_
-    * TBD
-  * _Atom_
-    * TBD
-  * _Sublime_
-    * TBD
-  * _Vim/vi_
-    * Really? Why???
+* Make your editor aware of [TypeScript typings](README_typescript.md)
 
-### Install Dependencies
+### Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
 ```
-npm install
+yarn install
+// or you can still npm install
 ```
 
 ### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)

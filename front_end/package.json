@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "tslint \"src/**/*.ts\"",
-    "clean": " rimraf node_modules && npm install",
+    "clean": "yarn upgrade",
     "pree2e": "webdriver-manager update",
     "e2e": "protractor",
     "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
