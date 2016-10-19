@@ -24,11 +24,14 @@ namespace SignInCheckIn.Controllers
         [HttpGet]
         [ResponseType(typeof(List<EventDto>))]
         [Route("events")]
-        public IHttpActionResult GetEvents()
+        public IHttpActionResult GetEvents(
+            [FromUri(Name = "startDate")] DateTime startDate,
+            [FromUri(Name = "endDate")] DateTime endDate,
+            [FromUri(Name = "site")] int site )
         {
             try
             {
-                var eventList = _eventService.GetCheckinEvents();
+                var eventList = _eventService.GetCheckinEvents(startDate, endDate, site);
                 return this.Ok(eventList);
             }
             catch (Exception e)

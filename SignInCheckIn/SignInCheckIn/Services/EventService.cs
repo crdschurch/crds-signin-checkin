@@ -20,9 +20,9 @@ namespace SignInCheckIn.Services
             _eventRepository = eventRepository;
         }
 
-        public List<EventDto> GetCheckinEvents()
+        public List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site)
         {
-            var mpEvents = _eventRepository.GetEvents();
+            var mpEvents = _eventRepository.GetEvents(startDate, endDate, site);
 
             //foreach (var eventItem in mpEvents)
             //{

@@ -46,10 +46,13 @@ namespace SignInCheckIn.Tests.Services
 
             mpEventDtos.Add(testMpEventDto);
 
-            _eventRepository.Setup(m => m.GetEvents()).Returns(mpEventDtos);
+            DateTime start = new DateTime(2016, 10, 9);
+            DateTime end = new DateTime(2016, 10, 12);
+            int site = 1;
+            _eventRepository.Setup(m => m.GetEvents(start, end, site)).Returns(mpEventDtos);
 
             // Act
-            var result = _fixture.GetCheckinEvents();
+            var result = _fixture.GetCheckinEvents(start, end, site);
             _eventRepository.VerifyAll();
 
             // Assert
