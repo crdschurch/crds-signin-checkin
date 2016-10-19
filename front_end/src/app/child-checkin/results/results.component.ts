@@ -4,7 +4,7 @@ import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 @Component({
   selector: 'results',
   templateUrl: 'results.component.html',
-  styleUrls: ['../scss/_cards.scss', ]
+  styleUrls: ['../scss/_cards.scss', '../scss/_buttons.scss', ]
 })
 
 export class ResultsComponent {
