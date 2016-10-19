@@ -11,7 +11,7 @@ yarn install # or you can still npm install
 
 #### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-  * Create a .env file in the project root with the following values (copy .env.example to .env and fill out values).
+  * Create a .env file in the project root with the following values (copy _.env.example_ to _.env_ and fill out values).
   * see an [example](README_env.md)
 
 
