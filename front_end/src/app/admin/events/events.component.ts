@@ -4,6 +4,7 @@ import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
 
 import { Event } from '../models/event';
+import { Timeframe } from '../models/timeframe';
 
 import * as moment from 'moment';
 
@@ -14,11 +15,9 @@ import * as moment from 'moment';
 })
 export class EventsComponent implements OnInit {
   events: Event[];
-  startDate: any;
-  endDate: any;
-  currentWeekFilter: any;
-  weekFilters: any[];
   site: number;
+  currentWeekFilter: any;
+  weekFilters: Timeframe[];
 
   constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router) {
     // default to Oakley
