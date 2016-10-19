@@ -6,7 +6,9 @@
 #### Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
 
 ```sh
-yarn install # or you can still npm install
+# install yarn globally if you haven't
+npm install -g yarn
+yarn install
 ```
 
 #### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
