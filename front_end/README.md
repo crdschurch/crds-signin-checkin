@@ -47,7 +47,7 @@ npm run server:dev:hmr
 
 ```
 npm test
-npm e2e (none at the moment)
+npm e2e // no e2e yet
 ```
 
 ## Deployment
