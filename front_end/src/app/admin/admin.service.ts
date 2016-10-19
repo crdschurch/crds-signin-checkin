@@ -20,7 +20,6 @@ export class AdminService {
     let options = new RequestOptions({
         search: new URLSearchParams(`site=${site}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
     });
-    console.log(options)
     return this.http.get(url, options)
                     .map(res => res.json())
                     .catch(this.handleError);
