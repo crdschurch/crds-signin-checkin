@@ -2,6 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { MomentModule } from 'angular2-moment';
+
+import { CookieService } from 'angular2-cookie/services/cookies.service';
 
 import { HttpClientService } from './shared/services';
 import { AdminModule } from './admin';
@@ -21,10 +24,12 @@ import { routing } from './app.routes';
     HomeModule,
     ChildCheckinModule,
     AdminModule,
-    routing
+    routing,
+    MomentModule
   ],
   providers: [
     FormsModule,
+    CookieService,
     HttpClientService
   ],
   bootstrap: [

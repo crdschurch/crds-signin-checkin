@@ -1,8 +1,8 @@
 # FrontEnd
 
 ## Developer Setup
-* Make your editor aware of [TypeScript typings](README_typescript.md)
 
+* Make your editor aware of [TypeScript typings](README_typescript.md)
 * Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
 
 ```
@@ -15,7 +15,6 @@ yarn install
 Create a .env file in the project root with the following values (copy .env.example to .env and fill out values)._Tweak hostnames & ports depending on your actual environment setup_
 
 ```
-
 # To access local development API
 ECHECK_API_ENDPOINT=http://localhost:49390/api
 # To access integration API

@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Http;
+using SignInCheckIn.App_Start;
 
 namespace SignInCheckIn
 {
@@ -14,7 +15,8 @@ namespace SignInCheckIn
             AreaRegistration.RegisterAllAreas();
             UnityConfig.RegisterComponents();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);            
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            AutoMapperConfig.RegisterMappings();
         }
     }
 }

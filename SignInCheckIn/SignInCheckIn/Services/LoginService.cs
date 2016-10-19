@@ -35,6 +35,11 @@ namespace SignInCheckIn.Services
 
             var roles = _authenticationRepository.GetUserRolesFromToken(loginReturn.UserToken);
 
+            if (!roles.Contains("Kids Club Tools - CRDS"))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             loginReturn.Roles = roles;
 
             return loginReturn;
