@@ -1,3 +1,5 @@
+_Tweak hostnames & ports depending on your actual environment setup_
+
 ```
 # To access local development API
 ECHECK_API_ENDPOINT=http://localhost:49390/api

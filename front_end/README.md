@@ -2,16 +2,16 @@
 
 ## Developer Setup
 
-* Make your editor aware of [TypeScript typings](README_typescript.md)
-* Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
+#### Make your editor aware of [TypeScript typings](README_typescript.md)
+#### Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
 
 ```sh
 yarn install # or you can still npm install
 ```
 
-* Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
+#### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-  * Create a .env file in the project root with the following values (copy .env.example to .env and fill out values)._Tweak hostnames & ports depending on your actual environment setup_
+  * Create a .env file in the project root with the following values (copy .env.example to .env and fill out values).
   * see an [example](README_env.md)
 
 
