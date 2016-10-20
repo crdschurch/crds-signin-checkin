@@ -9,6 +9,14 @@
     border-color: $gray-dark;
     opacity: .9;
   }
+
+  a {
+    color: $brand-dkblue;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .round-plus {
@@ -21,9 +29,9 @@
   width: 2em;
   line-height: 2em;
   text-align: center;
-//  @extend .center-block;
-  // @extend .m-b-1;
   transition: background-color .3s ease-out;
+  display: block;
+  margin: 0 auto .5em;
 }
 
 a:hover {
