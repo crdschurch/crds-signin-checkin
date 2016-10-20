@@ -1,85 +1,36 @@
-<div class="wrapper" class="room">
-
-  <nav class="navbar navbar-light bg-faded">
-    <a class="navbar-brand m-r-2 hidden-sm-down" [routerLink]="['/admin']">
-      <svg class="admin-logo" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
-        <g fill="none" fill-rule="evenodd">
-          <path d="M22.414 0C10.037 0 0 10.034 0 22.42 0 34.8 10.037 44.843 22.414 44.843c12.38 0 22.425-10.042 22.425-22.425C44.84 10.033 34.792 0 22.412 0zm-.08 27.03l-7.856 7.863-4.69-4.702 7.85-7.853L9.91 14.61l4.695-4.707 7.73 7.734 7.85-7.852 4.7 4.7-7.844 7.85 8.015 8.023-4.702 4.702-8.018-8.03z" fill="#B05C30"/>
-          <path fill="#FFF" d="M22.334 27.03l-7.856 7.863-4.69-4.702 7.85-7.853L9.91 14.61l4.695-4.707 7.73 7.734 7.85-7.852 4.7 4.7-7.844 7.85 8.015 8.023-4.702 4.702"/>
-        </g>
-      </svg>
-      <span>eCheck</span>
-    </a>
-    <ul class="nav navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" [routerLink]="['/admin']">Manage Rooms</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/admin']">Manage Children</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/admin']">Reports</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/admin']">Registration</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/admin']">Guest Check In</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/admin']">Events List</a>
-      </li>
-      <li class="pull-sm-right">
-        <a href="#" class="btn btn-primary">Sign Out</a>
-      </li>
-    </ul>
-  </nav>
-
-  <nav class="subnav navbar navbar-light bg-faded">
-    <ul class="list-inline pull-xs-left lead m-b-0">
-      <li class="list-inline-item">
-        <strong>Site</strong> Oakley
-      </li>
-      <li class="list-inline-item">
-        <strong>Event Type</strong> Service
-      </li>
-      <li class="list-inline-item">
-        <strong>Date</strong> Saturday August 20, 2016
-      </li>
-      <li class="list-inline-item">
-        <strong>Event Time</strong> 4:30pm
-      </li>
-    </ul>
-    <div class="btn-group btn-group-sm pull-sm-right" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-secondary">Previous Event</button>
-      <button type="button" class="btn btn-secondary">Next Event</button>
+<td><a routerLink="/admin/events/{{EventId}}/rooms/{{RoomId}}">Add</a></td>
+<td>{{r.RoomName}}</td>
+<td>
+  <input class='tgl tgl-light' id='allow-signin-{{i}}' type='checkbox' (change)="toggleAllowSignin(room)" [checked]="AllowSignIn">
+  <label class='tgl-btn' attr.for='allow-signin-{{i}}' ><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+</td>
+<td>
+  <div class="number-stepper">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="removeVolunteer(room)">-</button>
+      </span>
+      <input type="text" class="form-control text-xs-center" value="{{Volunteers}}">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="addVolunteer(room)">+</button>
+      </span>
     </div>
-  </nav>
-
-  <div class="container-fluid admin-content p-y-1">
-    <div class="row">
-      <div class="col-sm-10">
-        <h1>Manage Room</h1>
-      </div>
-      <div class="col-sm-2 text-sm-right p-b-1">
-        <strong>0</strong> of <strong>20</strong> rooms open
-        <a class="p-l-1">
-          <span class="icon icon-large">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-            <g>
-            </g>
-            	<path d="M18.286 16q0-1.893-1.339-3.232t-3.232-1.339-3.232 1.339-1.339 3.232 1.339 3.232 3.232 1.339 3.232-1.339 1.339-3.232zM27.429 14.054v3.964q0 0.214-0.143 0.411t-0.357 0.232l-3.304 0.5q-0.339 0.964-0.696 1.625 0.625 0.893 1.911 2.464 0.179 0.214 0.179 0.446t-0.161 0.411q-0.482 0.661-1.768 1.929t-1.679 1.268q-0.214 0-0.464-0.161l-2.464-1.929q-0.786 0.411-1.625 0.679-0.286 2.429-0.518 3.321-0.125 0.5-0.643 0.5h-3.964q-0.25 0-0.438-0.152t-0.205-0.384l-0.5-3.286q-0.875-0.286-1.607-0.661l-2.518 1.911q-0.179 0.161-0.446 0.161-0.25 0-0.446-0.196-2.25-2.036-2.946-3-0.125-0.179-0.125-0.411 0-0.214 0.143-0.411 0.268-0.375 0.911-1.188t0.964-1.259q-0.482-0.893-0.732-1.768l-3.268-0.482q-0.232-0.036-0.375-0.223t-0.143-0.42v-3.964q0-0.214 0.143-0.411t0.339-0.232l3.321-0.5q0.25-0.821 0.696-1.643-0.714-1.018-1.911-2.464-0.179-0.214-0.179-0.429 0-0.179 0.161-0.411 0.464-0.643 1.759-1.92t1.688-1.277q0.232 0 0.464 0.179l2.464 1.911q0.786-0.411 1.625-0.679 0.286-2.429 0.518-3.321 0.125-0.5 0.643-0.5h3.964q0.25 0 0.438 0.152t0.205 0.384l0.5 3.286q0.875 0.286 1.607 0.661l2.536-1.911q0.161-0.161 0.429-0.161 0.232 0 0.446 0.179 2.304 2.125 2.946 3.036 0.125 0.143 0.125 0.393 0 0.214-0.143 0.411-0.268 0.375-0.911 1.188t-0.964 1.259q0.464 0.893 0.732 1.75l3.268 0.5q0.232 0.036 0.375 0.223t0.143 0.42z" fill="#000000" />
-            </svg>
-          </span>
-        </a>
-      </div>
-    </div><!--/row-->
-    <div class="row">
-      <div class="col-xs-12">
-
-        <div class="text-xs-center">Manage Rooms Stuff Here</div>
-
-      </div><!--/col-xs-12-->
-
-    </div><!--/row-->
-  </div><!--/container-->
+  </div>
+</td>
+<td>
+  <div class="number-stepper">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="removeCapacity(room)">-</button>
+      </span>
+      <input type="text" class="form-control text-xs-center" value="{{Capacity}}">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="addCapacity(room)">+</button>
+      </span>
+    </div>
+  </div>
+</td>
+<td>{{SignedIn}}</td>
+<td>{{CheckedIn}}</td>
+<td>-</td>
+<td class="text-xs-right"><a class="btn btn-primary btn-sm">Alt Rooms</a></td>
