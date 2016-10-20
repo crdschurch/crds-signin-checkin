@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { FormControl } from '@angular/forms';
 import { AdminService } from '../admin.service';
 import { Room } from './room';
 
@@ -10,15 +11,19 @@ import { Room } from './room';
 })
 export class RoomComponent {
   @Input() room: Room;
+  term = new FormControl();
 
-  // constructor() {
-  //   console.log(this)
-  // }
-
-  // constructor(
-  //   private route: ActivatedRoute,
-  //   private adminService: AdminService,
-  //   private service: AdminService) {}
+  constructor(
+    private adminService: AdminService) {
+      this.term.valueChanges
+         .debounceTime(400)
+         .subscribe(term => {
+           console.log("updateRoom", this)
+           this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).then(val => {
+             console.log("val", val);
+           })
+         });
+    }
   //
   // private getData(): void {
   //   const eventId = this.route.snapshot.params['eventId'];
@@ -31,5 +36,12 @@ export class RoomComponent {
   ngOnInit(): void {
     // this.getData();
     console.log("room component oninit", this)
+  }
+
+  addVolunteer(): void {
+    console.log("addVolunteer", this.room)
+    // room.Volunteers++
+    // this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
+    //   (error: any) => {});
   }
 }

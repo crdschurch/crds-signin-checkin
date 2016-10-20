@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { EventListComponent } from './event-list.component';
 import { RoomListComponent } from '../rooms/room-list.component';
@@ -16,7 +17,8 @@ import { eventsRouting } from './events.routes';
   imports: [
     eventsRouting,
     SharedModule,
-    MomentModule
+    MomentModule,
+    ReactiveFormsModule
   ],
   exports: [
     EventListComponent,

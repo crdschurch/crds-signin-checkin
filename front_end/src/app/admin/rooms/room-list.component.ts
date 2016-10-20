@@ -28,38 +28,38 @@ export class RoomListComponent {
     this.getData();
   }
 
-  removeVolunteer(room: Room): void {
-    if(room.Volunteers > 0) {
-      room.Volunteers--
-      this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
-        (error: any) => {});
-    }
-  }
-
-  addVolunteer(room: Room): void {
-    room.Volunteers++
-    this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
-      (error: any) => {});
-  }
-
-  removeCapacity(room: Room): void {
-    if(room.Capacity > 0) {
-      room.Capacity--
-      this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
-        (error: any) => {});
-    }
-  }
-
-  addCapacity(room: Room): void {
-    room.Capacity++
-    this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => {},
-      (error: any) => {});
-  }
-
-  toggleAllowSignin(room: Room): void {
-    room.AllowSignIn = !room.AllowSignIn
-    this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
-      (error: any) => {});
-  }
+  // removeVolunteer(room: Room): void {
+  //   if(room.Volunteers > 0) {
+  //     room.Volunteers--
+  //     this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
+  //       (error: any) => {});
+  //   }
+  // }
+  //
+  // addVolunteer(room: Room): void {
+  //   room.Volunteers++
+  //   this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
+  //     (error: any) => {});
+  // }
+  //
+  // removeCapacity(room: Room): void {
+  //   if(room.Capacity > 0) {
+  //     room.Capacity--
+  //     this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
+  //       (error: any) => {});
+  //   }
+  // }
+  //
+  // addCapacity(room: Room): void {
+  //   room.Capacity++
+  //   this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => {},
+  //     (error: any) => {});
+  // }
+  //
+  // toggleAllowSignin(room: Room): void {
+  //   room.AllowSignIn = !room.AllowSignIn
+  //   this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
+  //     (error: any) => {});
+  // }
 
 }
