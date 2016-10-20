@@ -11,11 +11,10 @@ import { Room } from './room';
 })
 export class RoomComponent {
   @Input() room: Room;
-  // volunteers = new FormControl();
 
   coolForm = new FormGroup({
-    volunteers: new FormControl(),
-    capacity: new FormControl()
+    Volunteers: new FormControl(),
+    Capacity: new FormControl()
   });
 
   constructor(
@@ -23,19 +22,13 @@ export class RoomComponent {
      this.coolForm.valueChanges
         .debounceTime(1000)
         .subscribe(props => {
-          console.log("c", this.room)
-          this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(val => {
-            console.log("val", val);
-          })
+          this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(val => {})
         });
     }
 
-  ngOnInit(): void {
-    console.log("room component oninit", this)
-  }
-
-  addVolunteer(): void { this.coolForm.controls["volunteers"].setValue(this.room.Volunteers++); }
-  removeVolunteer(): void { this.coolForm.controls["volunteers"].setValue(this.room.Volunteers--); }
-  addCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity++); }
-  removeCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity--); }
+  add(field): void { this.coolForm.controls[field].setValue(this.room[field]++); }
+  remove(field): void { this.coolForm.controls[field].setValue(this.room[field]--); }
+  // removeVolunteer(): void { this.coolForm.controls["volunteers"].setValue(this.room.Volunteers--); }
+  // addCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity++); }
+  // removeCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity--); }
 }
