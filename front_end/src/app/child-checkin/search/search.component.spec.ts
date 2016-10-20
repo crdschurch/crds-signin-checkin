@@ -1,34 +1,38 @@
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
+import { SharedModule } from '../../shared/shared.module';
 import { SearchComponent } from './search.component';
-import { NumberPadComponent } from './number-pad';
 
-let component: SearchComponent;
+let comp: SearchComponent;
 let fixture: ComponentFixture<SearchComponent>;
-let de:      DebugElement;
-let el:      HTMLElement;
+let de: DebugElement;
+let el: HTMLElement;
 
 describe('SearchComponent', () => {
   beforeEach(() => {
-    return TestBed.configureTestingModule({
-      declarations: [ SearchComponent ],
-    })
-    .compileComponents().then(() => {
-      fixture = TestBed.createComponent(SearchComponent);
-      fixture.detectChanges();
+    TestBed.configureTestingModule({
+      declarations: [ SearchComponent ], // declare the test component
+      imports: [ SharedModule ]
     });
-  });
 
-  afterEach(() => {
-    fixture.destroy();
-  });
+    fixture = TestBed.createComponent(SearchComponent);
 
-  it('should contain an input field of type tel', () => {
-    de = fixture.debugElement.query(By.css('num-pad-value'));
+    comp = fixture.componentInstance; // SearchComponent test instance
+
+    de = fixture.debugElement.query(By.css('input'));
     el = de.nativeElement;
-    expect(el.getAttribute('type')).toContain('type');
   });
 
+  it('should display input field to put telephone', () => {
+    fixture.detectChanges();
+    expect(el.attributes['type'].value).toEqual('tel');
+  });
+
+  it('should display a different test title', () => {
+    ///comp.title = 'Test Title';
+    fixture.detectChanges();
+    expect(el.textContent).toContain('Test Title');
+  });
 });
