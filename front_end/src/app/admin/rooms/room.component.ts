@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AdminService } from '../admin.service';
 import { Room } from './room';
@@ -9,11 +9,11 @@ import { Room } from './room';
   styleUrls: ['room.component.scss']
 })
 export class RoomComponent {
-  room: Room;
+  @Input() room: Room;
 
-  constructor() {
-    console.log(this)
-  }
+  // constructor() {
+  //   console.log(this)
+  // }
 
   // constructor(
   //   private route: ActivatedRoute,

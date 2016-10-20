@@ -90,7 +90,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let r of rooms; let i = index;" class="room">
+            <tr *ngFor="let r of rooms; let i = index;" class="room" [room]="r">
             </tr>
           </tbody>
         </table>
