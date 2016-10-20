@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../admin.service';
 import { Room } from './room';
 
@@ -11,13 +11,19 @@ import { Room } from './room';
 })
 export class RoomComponent {
   @Input() room: Room;
-  volunteers = new FormControl();
+  // volunteers = new FormControl();
+
+  coolForm = new FormGroup({
+    volunteers: new FormControl(),
+    capacity: new FormControl()
+  });
 
   constructor(
     private adminService: AdminService) {
-     this.volunteers.valueChanges
+     this.coolForm.valueChanges
         .debounceTime(1000)
         .subscribe(props => {
+          console.log("c", this.room)
           this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(val => {
             console.log("val", val);
           })
@@ -28,8 +34,8 @@ export class RoomComponent {
     console.log("room component oninit", this)
   }
 
-  addVolunteer(): void { this.volunteers.setValue(this.room.Volunteers++) }
-  removeVolunteer(): void { this.volunteers.setValue(this.room.Volunteers--) }
-  // addCapacity(): void { this.props.setValue(this.room.Capacity++) }
-  // removeCapacity(): void { this.props.setValue(this.room.Capacity--) }
+  addVolunteer(): void { this.coolForm.controls["volunteers"].setValue(this.room.Volunteers++); }
+  removeVolunteer(): void { this.coolForm.controls["volunteers"].setValue(this.room.Volunteers--); }
+  addCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity++); }
+  removeCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity--); }
 }

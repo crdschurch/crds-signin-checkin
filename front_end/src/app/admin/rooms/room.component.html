@@ -1,3 +1,5 @@
+<form [formGroup]="coolForm">
+
 <td><a routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}">Add</a></td>
 <td>{{room.RoomName}}</td>
 <td>
@@ -10,7 +12,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="removeVolunteer()">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" [formControl]="volunteers">
+      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="volunteers">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="addVolunteer()">+</button>
       </span>
@@ -23,7 +25,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="removeCapacity()">-</button>
       </span>
-      <input type="text" class="form-control text-xs-center" value="{{room.Capacity}}" >
+      <input type="text" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="capacity">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="addCapacity()">+</button>
       </span>
@@ -34,3 +36,5 @@
 <td>{{room.CheckedIn}}</td>
 <td>-</td>
 <td class="text-xs-right"><a class="btn btn-primary btn-sm">Alt Rooms</a></td>
+
+</form>
