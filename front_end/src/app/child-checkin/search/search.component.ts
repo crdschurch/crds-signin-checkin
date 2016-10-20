@@ -3,22 +3,13 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'search',
-  template: `
-          <input type="tel" class="num-pad-value col-xs-12"
-            readonly placeholder="Enter your phone number to check in your kids."
-            value="{{phoneNumber | phoneNumber}}">
-  `
+  templateUrl: 'search.component.html'
 })
 export class SearchComponent {
-  private phoneNumber: string = '';
-  private error: boolean = false;
+  phoneNumber: string = '';
+  error: boolean = false;
 
-  // constructor(private router: Router) {}
-  constructor() {}
-
-  get getPhoneNumber(): string {
-    return this.phoneNumber;
-  }
+  constructor(private router: Router) {}
 
   setPhoneNumber(num: string) {
     if (this.phoneNumber.length < 10) {
@@ -37,7 +28,7 @@ export class SearchComponent {
   next(): void {
     if (this.phoneNumber.length === 10) {
       this.error = false;
-      // this.router.navigate(['/child-checkin/results']);
+      this.router.navigate(['/child-checkin/results']);
     } else {
       this.error = true;
     }

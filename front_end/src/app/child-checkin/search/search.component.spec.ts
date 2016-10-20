@@ -1,38 +1,113 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { setupTestingRouter } from '@angular/router/testing';
 
-import { SharedModule } from '../../shared/shared.module';
 import { SearchComponent } from './search.component';
 
-let comp: SearchComponent;
-let fixture: ComponentFixture<SearchComponent>;
-let de: DebugElement;
-let el: HTMLElement;
+let fixture: SearchComponent;
+let routerStub: any = {
+  navigate(): void {
+  }
+};
 
 describe('SearchComponent', () => {
+
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [ SearchComponent ], // declare the test component
-      imports: [ SharedModule ]
+    fixture = new SearchComponent(routerStub);
+  });
+
+  describe('#constructor', () => {
+    it('should intialize to empty phone number', () => {
+      expect(fixture.phoneNumber).toEqual('');
+    });
+  });
+
+  describe('#setPhoneNumber', () => {
+    it('should add a number to the current phone number', () => {
+      fixture.setPhoneNumber('1');
+      expect(fixture.phoneNumber).toEqual('1');
+
+      fixture.setPhoneNumber('2');
+      fixture.setPhoneNumber('3');
+      expect(fixture.phoneNumber).toEqual('123');
+    });
+  });
+
+  describe('#delete', () => {
+    it('should not make null or undefined if deleting a blank string', () => {
+      fixture.delete();
+      expect(fixture.phoneNumber).toEqual('');
     });
 
-    fixture = TestBed.createComponent(SearchComponent);
+    it('should delete the last character', () => {
+      fixture.setPhoneNumber('1');
+      expect(fixture.phoneNumber).toEqual('1');
 
-    comp = fixture.componentInstance; // SearchComponent test instance
+      fixture.delete();
+      expect(fixture.phoneNumber).toEqual('');
 
-    de = fixture.debugElement.query(By.css('input'));
-    el = de.nativeElement;
+      fixture.setPhoneNumber('1');
+      fixture.setPhoneNumber('2');
+      fixture.setPhoneNumber('3');
+      expect(fixture.phoneNumber).toEqual('123');
+
+      fixture.delete();
+      expect(fixture.phoneNumber).toEqual('12');
+    });
   });
 
-  it('should display input field to put telephone', () => {
-    fixture.detectChanges();
-    expect(el.attributes['type'].value).toEqual('tel');
+  describe('#clear', () => {
+    it('should not make null or undefined if clearing a blank string', () => {
+      fixture.clear();
+      expect(fixture.phoneNumber).toEqual('');
+    });
+
+    it('should clear if any values', () => {
+      fixture.setPhoneNumber('1');
+      expect(fixture.phoneNumber).toEqual('1');
+
+      fixture.clear();
+      expect(fixture.phoneNumber).toEqual('');
+
+      fixture.setPhoneNumber('1');
+      fixture.setPhoneNumber('2');
+      fixture.setPhoneNumber('3');
+      expect(fixture.phoneNumber).toEqual('123');
+
+      fixture.clear();
+      expect(fixture.phoneNumber).toEqual('');
+    });
   });
 
-  it('should display a different test title', () => {
-    ///comp.title = 'Test Title';
-    fixture.detectChanges();
-    expect(el.textContent).toContain('Test Title');
+  describe('#next', () => {
+    it('should set to error if phone number is not 10 characters', () => {
+      fixture.setPhoneNumber('1');
+      fixture.setPhoneNumber('2');
+      fixture.setPhoneNumber('3');
+      fixture.next();
+      expect(fixture.error).toBeFalsy;
+    });
+
+    it('should not set an error if more than 10 characters', () => {
+      fixture.setPhoneNumber('1');
+      fixture.setPhoneNumber('2');
+      fixture.setPhoneNumber('3');
+      fixture.next();
+      expect(fixture.error).toBeTruthy;
+    });
   });
 });
+  // delete(): void {
+  //   this.phoneNumber = this.phoneNumber.slice(0, this.phoneNumber.length - 1);
+  // }
+
+  // clear(): void {
+  //   this.phoneNumber = '';
+  // }
+
+  // next(): void {
+  //   if (this.phoneNumber.length === 10) {
+  //     this.error = false;
+  //     this.router.navigate(['/child-checkin/results']);
+  //   } else {
+  //     this.error = true;
+  //   }
+  // }
