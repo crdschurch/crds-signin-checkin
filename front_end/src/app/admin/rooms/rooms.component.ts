@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AdminService } from '../admin.service';
-import { Room } from '../models/room';
+import { Room } from './room';
 
 @Component({
   selector: 'rooms',
