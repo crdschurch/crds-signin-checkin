@@ -4,12 +4,12 @@ import { AdminService } from '../admin.service';
 import { Room } from './room';
 
 @Component({
-  selector: 'rooms',
-  templateUrl: 'rooms.component.html',
-  styleUrls: ['rooms.component.scss'],
+  // selector: 'rooms',
+  templateUrl: 'room-list.component.html',
+  styleUrls: ['room-list.component.scss'],
   providers: [ AdminService ]
 })
-export class RoomsComponent {
+export class RoomListComponent {
   rooms: Room[];
 
   constructor(
