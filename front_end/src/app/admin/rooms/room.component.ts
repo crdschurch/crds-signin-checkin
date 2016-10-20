@@ -12,23 +12,26 @@ import { Room } from './room';
 export class RoomComponent {
   @Input() room: Room;
 
-  coolForm = new FormGroup({
+  roomForm = new FormGroup({
     Volunteers: new FormControl(),
-    Capacity: new FormControl()
+    Capacity: new FormControl(),
+    AllowSignIn: new FormControl()
   });
 
   constructor(
     private adminService: AdminService) {
-     this.coolForm.valueChanges
+     this.roomForm.valueChanges
         .debounceTime(1000)
         .subscribe(props => {
           this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(val => {})
         });
     }
 
-  add(field): void { this.coolForm.controls[field].setValue(this.room[field]++); }
-  remove(field): void { this.coolForm.controls[field].setValue(this.room[field]--); }
-  // removeVolunteer(): void { this.coolForm.controls["volunteers"].setValue(this.room.Volunteers--); }
-  // addCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity++); }
-  // removeCapacity(): void { this.coolForm.controls["capacity"].setValue(this.room.Capacity--); }
+  add(field): void { this.roomForm.controls[field].setValue(this.room[field]++); }
+  remove(field): void { this.roomForm.controls[field].setValue(this.room[field]--); }
+  toggle(field): void {
+    let newValue = !this.room[field]
+    console.log(field, newValue)
+    this.roomForm.controls[field].setValue(newValue);
+  }
 }
