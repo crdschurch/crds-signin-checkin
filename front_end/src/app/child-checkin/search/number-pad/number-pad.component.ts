@@ -12,15 +12,15 @@ export class NumberPadComponent {
 
   constructor() { }
 
-  setNumber(num: number): void {
+  setNumber(num: number) {
     this.addNumber.emit(num);
   }
 
-  delete(): void {
+  delete() {
     this.deleteNumber.emit();
   }
 
-  clear(): void {
+  clear() {
     this.clearNumber.emit();
   }
 }
