@@ -10,7 +10,8 @@ import { eventsRouting } from './events.routes';
 @NgModule({
   declarations: [
     EventListComponent,
-    RoomsComponent
+    RoomsComponent,
+    RoomComponent
   ],
   imports: [
     eventsRouting,
@@ -19,7 +20,8 @@ import { eventsRouting } from './events.routes';
   ],
   exports: [
     EventListComponent,
-    RoomsComponent
+    RoomsComponent,
+    RoomComponent
   ]
 })
 

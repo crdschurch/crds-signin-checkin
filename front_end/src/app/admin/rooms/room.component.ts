@@ -23,7 +23,8 @@ export class RoomComponent {
   //     error => console.error(error)
   //   );
   // }
-  // ngOnInit(): void {
-  //   this.getData();
-  // }
+  ngOnInit(): void {
+    // this.getData();
+    console.log("room component oninit")
+  }
 }
