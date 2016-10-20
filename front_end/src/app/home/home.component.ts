@@ -10,7 +10,7 @@ export class HomeComponent {
   constructor(private router: Router) { }
 
   goToChildCheckin() {
-    this.router.navigate(['/child-checkin']);
+    this.router.navigate(['/child-checkin/search']);
   }
 
   goToAdminTools() {

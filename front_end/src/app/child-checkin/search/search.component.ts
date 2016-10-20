@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'search',
-  templateUrl: 'search.component.html',
-  styleUrls: ['../scss/_number-pad.scss', ]
+  templateUrl: 'search.component.html'
 })
 export class SearchComponent {
-  private phoneNumber: string = '';
+  phoneNumber: string = '';
+  error: boolean = false;
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   setPhoneNumber(num: string) {
     if (this.phoneNumber.length < 10) {
@@ -22,5 +23,14 @@ export class SearchComponent {
 
   clear(): void {
     this.phoneNumber = '';
+  }
+
+  next(): void {
+    if (this.phoneNumber.length === 10) {
+      this.error = false;
+      this.router.navigate(['/child-checkin/results']);
+    } else {
+      this.error = true;
+    }
   }
 }
