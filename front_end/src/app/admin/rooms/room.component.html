@@ -2,17 +2,17 @@
 <td>{{room.RoomName}}</td>
 <td [formGroup]="roomForm">
   <input class='tgl tgl-light' id='allow-signin-{{room.RoomId}}' type='checkbox' (change)="toggle('AllowSignIn')" [checked]="room.AllowSignIn" formControlName="AllowSignIn">
-  <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' ><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+  <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' (click)="toggleClick()" [ngClass]="{'disabled': pending }"><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
 </td>
 <td [formGroup]="roomForm">
   <div class="number-stepper">
     <div class="input-group">
       <span class="input-group-btn">
-        <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')">-</button>
+        <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')" [disabled]="pending">-</button>
       </span>
       <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" readonly>
       <span class="input-group-btn">
-        <button class="btn btn-secondary" type="button" (click)="add('Volunteers')">+</button>
+        <button class="btn btn-secondary" type="button" (click)="add('Volunteers')" [disabled]="pending">+</button>
       </span>
     </div>
   </div>
@@ -21,11 +21,11 @@
   <div class="number-stepper">
     <div class="input-group">
       <span class="input-group-btn">
-        <button class="btn btn-secondary" type="button" (click)="remove('Capacity')">-</button>
+        <button class="btn btn-secondary" type="button" (click)="remove('Capacity')" [disabled]="pending">-</button>
       </span>
       <input type="number" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="Capacity" readonly>
       <span class="input-group-btn">
-        <button class="btn btn-secondary" type="button" (click)="add('Capacity')">+</button>
+        <button class="btn btn-secondary" type="button" (click)="add('Capacity')" [disabled]="pending">+</button>
       </span>
     </div>
   </div>
