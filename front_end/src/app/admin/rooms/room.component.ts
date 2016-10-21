@@ -30,8 +30,15 @@ export class RoomComponent {
   add(field): void { this.roomForm.controls[field].setValue(this.room[field]++); }
   remove(field): void { this.roomForm.controls[field].setValue(this.room[field]--); }
   toggle(field): void {
-    let newValue = !this.room[field]
-    console.log(field, newValue)
-    this.roomForm.controls[field].setValue(newValue);
+    // let newValue = !this.room[field]
+    // console.log(field, newValue)
+    // this.roomForm.controls[field].setValue(newValue);
+    this.room[field] = !this.room[field]
+    this.roomForm.controls[field].setValue(this.room[field]);
   }
+  // toggleAllowSignin(room: Room): void {
+  //   room.AllowSignIn = !room.AllowSignIn
+  //   this.adminService.updateRoom(room.EventId, room.RoomId, room).subscribe((room: Room) => { room = room },
+  //     (error: any) => {});
+  // }
 }
