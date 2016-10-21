@@ -77,6 +77,23 @@ namespace SignInCheckIn.Controllers
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });
+        }
+
+        [HttpGet]
+        [ResponseType(typeof (List<AgeGradeDto>))]
+        [Route("events/{eventId:int}/rooms/{roomId:int}/{eventRoomId:int?}")]
+        public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromUri] int eventRoomId)
+        {
+            try
+            {
+                return Authorized(token => Ok(_roomService.GetEventRoomAgesAndGrades(token, eventId, roomId, eventRoomId)),
+                                  () => Ok(_roomService.GetEventRoomAgesAndGrades(null, eventId, roomId, eventRoomId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting ages and grades for event {eventId}, room {roomId}, eventRoom {eventRoomId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
 
         }
     }

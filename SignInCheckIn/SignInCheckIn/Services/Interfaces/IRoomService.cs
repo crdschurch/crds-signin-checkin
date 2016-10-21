@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using SignInCheckIn.Models.DTO;
 
 namespace SignInCheckIn.Services.Interfaces
@@ -11,5 +7,6 @@ namespace SignInCheckIn.Services.Interfaces
     {
         List<EventRoomDto> GetLocationRoomsByEventId(int eventId);
         EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom);
+        List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, int? eventRoomId = null);
     }
 }

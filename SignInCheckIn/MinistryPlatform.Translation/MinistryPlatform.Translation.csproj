@@ -88,13 +88,18 @@
   <ItemGroup>
     <Compile Include="Extensions\RestSharpExtensions.cs" />
     <Compile Include="Models\Attributes\MpRestApiTable.cs" />
+    <Compile Include="Models\DTO\MpAttributeTypeDto.cs" />
+    <Compile Include="Models\DTO\MpAttributeDto.cs" />
     <Compile Include="Models\DTO\MpEventDto.cs" />
     <Compile Include="Models\DTO\MpEventRoomDto.cs" />
     <Compile Include="Models\DTO\MpRoomDto.cs" />
+    <Compile Include="Models\DTO\MpAgeRangeDto.cs" />
     <Compile Include="Repositories\ApiUserRepository.cs" />
+    <Compile Include="Repositories\AttributeRepository.cs" />
     <Compile Include="Repositories\AuthenticationRepository.cs" />
     <Compile Include="Repositories\EventRepository.cs" />
     <Compile Include="Repositories\Interfaces\IApiUserRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IAttributeRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAuthenticationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IEventRepository.cs" />
     <Compile Include="Repositories\Interfaces\IMinistryPlatformRestRepository.cs" />
