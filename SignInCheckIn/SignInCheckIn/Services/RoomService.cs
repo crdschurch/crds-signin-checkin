@@ -11,9 +11,10 @@ namespace SignInCheckIn.Services
 {
     public class RoomService : IRoomService
     {
-        private readonly IEventRepository _eventRespository;
+        private readonly IEventRepository _eventRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly IAttributeRepository _attributeRepository;
+        private readonly IGroupRepository _groupRepository;
 
         private readonly int _kcAgesAttributeTypeId;
         private readonly int _kcGradesAttributeTypeId;
@@ -21,11 +22,12 @@ namespace SignInCheckIn.Services
         private readonly int _kcNurseryAgesAttributeTypeId;
         private readonly int _kcNurseryAgeAttributeId;
 
-        public RoomService(IEventRepository eventRepository, IRoomRepository roomRepository, IAttributeRepository attributeRepository)
+        public RoomService(IEventRepository eventRepository, IRoomRepository roomRepository, IAttributeRepository attributeRepository, IGroupRepository groupRepository)
         {
-            _eventRespository = eventRepository;
+            _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
+            _groupRepository = groupRepository;
 
             // TODO Get rid of hard-coded IDs, pull from config file
             _kcAgesAttributeTypeId = 102;
@@ -37,7 +39,7 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetLocationRoomsByEventId(int eventId)
         {
-            var mpEvent = _eventRespository.GetEventById(eventId);
+            var mpEvent = _eventRepository.GetEventById(eventId);
             var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
 
             return Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
@@ -57,7 +59,20 @@ namespace SignInCheckIn.Services
             var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_kcBirthMonthsAttributeTypeId, authenticationToken);
             var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_kcNurseryAgesAttributeTypeId, authenticationToken);
 
-            // TODO Need to get existing room reservations to set 'Selected' properly when we need to edit
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
+            if (eventGroups.Any())
+            {
+                eventGroups = eventGroups.FindAll(e => e.HasRoomReservation() && e.RoomReservation.RoomId == roomId);
+                if (eventGroups.Any())
+                {
+                    var groups = _groupRepository.GetGroups(authenticationToken, eventGroups.Select(e => e.Group.Id), true);
+
+                    eventGroups.ForEach(e =>
+                    {
+                        e.Group = groups.Find(g => g.Id == e.Group.Id);
+                    });
+                }
+            }
 
             var response = new List<AgeGradeDto>();
             var maxSort = 0;
@@ -67,15 +82,14 @@ namespace SignInCheckIn.Services
                 {
                     Id = a.Id,
                     Name = a.Name,
-                    // TODO This will be true if ALL ranges are selected for the room reservation
+                    // TODO This should be true if ALL ranges are selected for the room reservation
                     Selected = false,
                     SortOrder = a.SortOrder,
                     Ranges = (a.Id == _kcNurseryAgeAttributeId ? nurseryMonths : birthMonths).Select(r => new AgeGradeDto.AgeRangeDto
                     {
                         Id = r.Id,
                         Name = r.Name,
-                        // TODO This will be true if this particular range is selected for the room reservation
-                        Selected = false,
+                        Selected = eventGroups.Exists(e => (a.Id == _kcNurseryAgeAttributeId ? e.Group.NurseryMonth.Id : e.Group.BirthMonth.Id) == r.Id),
                         SortOrder = r.SortOrder,
                         TypeId = a.Type.Id
                     }).OrderBy(r => r.SortOrder).ToList(),
@@ -90,8 +104,7 @@ namespace SignInCheckIn.Services
                 {
                     Id = g.Id,
                     Name = g.Name,
-                    // TODO This will be true if the Grade is selected
-                    Selected = false,
+                    Selected = eventGroups.Exists(e => g.Id == e.Group.AgeRange.Id),
                     SortOrder = g.SortOrder + maxSort,
                     TypeId = g.Type.Id
                 });

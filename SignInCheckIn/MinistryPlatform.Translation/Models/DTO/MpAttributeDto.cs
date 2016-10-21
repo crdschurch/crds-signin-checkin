@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -33,23 +32,16 @@ namespace MinistryPlatform.Translation.Models.DTO
                 return;
             }
 
-            if (Type == null)
-            {
-                MapAttributeType();
-            }
+            MapAttributeType();
         }
 
         private void MapAttributeType()
         {
-            Type = new MpAttributeTypeDto();
-            if (_unmappedData.ContainsKey("Attribute_Type_ID"))
+            Type = new MpAttributeTypeDto
             {
-                Type.Id = _unmappedData["Attribute_Type_ID"].Value<int>();
-            }
-            if (_unmappedData.ContainsKey("Attribute_Type_Name"))
-            {
-                Type.Name = _unmappedData["Attribute_Type_Name"].Value<string>();
-            }
+                Id = _unmappedData.GetUnmappedDataField<int>("Attribute_Type_ID"),
+                Name = _unmappedData.GetUnmappedDataField<string>("Attribute_Type_Name")
+            };
         }
     }
 }
