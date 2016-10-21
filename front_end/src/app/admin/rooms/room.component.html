@@ -10,7 +10,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers">
+      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" readonly>
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Volunteers')">+</button>
       </span>
@@ -23,7 +23,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Capacity')">-</button>
       </span>
-      <input type="text" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="Capacity">
+      <input type="number" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="Capacity" readonly>
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Capacity')">+</button>
       </span>
