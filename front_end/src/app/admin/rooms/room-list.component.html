@@ -1,5 +1,4 @@
-<div class="wrapper" class="room">
-
+<div class="wrapper rooms">
   <nav class="navbar navbar-light bg-faded">
     <a class="navbar-brand m-r-2 hidden-sm-down" [routerLink]="['/admin']">
       <svg class="admin-logo" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
@@ -30,7 +29,7 @@
         <a class="nav-link" [routerLink]="['/admin']">Events List</a>
       </li>
       <li class="pull-sm-right">
-        <a href="#" class="btn btn-primary">Sign Out</a>
+        <a class="btn btn-primary">Sign Out</a>
       </li>
     </ul>
   </nav>
@@ -59,7 +58,7 @@
   <div class="container-fluid admin-content p-y-1">
     <div class="row">
       <div class="col-sm-10">
-        <h1>Manage Room</h1>
+        <h1>Manage Rooms</h1>
       </div>
       <div class="col-sm-2 text-sm-right p-b-1">
         <strong>0</strong> of <strong>20</strong> rooms open
@@ -76,10 +75,26 @@
     </div><!--/row-->
     <div class="row">
       <div class="col-xs-12">
-
-        <div class="text-xs-center">Manage Rooms Stuff Here</div>
-
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Age Ranges</th>
+              <th>Room</th>
+              <th>Allow Sign In</th>
+              <th>Volunteers</th>
+              <th>Capacity</th>
+              <th>Signed In</th>
+              <th>Checked In</th>
+              <th>Kids/Vols Ratio</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of rooms; let i = index;" class="room" [room]="r">
+            </tr>
+          </tbody>
+        </table>
       </div><!--/col-xs-12-->
-
     </div><!--/row-->
   </div><!--/container-->
+</div>

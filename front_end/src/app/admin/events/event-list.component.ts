@@ -3,17 +3,17 @@ import { AdminService } from '../admin.service';
 import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
 
-import { Event } from '../models/event';
+import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
 
 import * as moment from 'moment';
 
 @Component({
   selector: 'events',
-  templateUrl: 'events.component.html',
+  templateUrl: 'event-list.component.html',
   providers: [ AdminService, HttpClientService ]
 })
-export class EventsComponent implements OnInit {
+export class EventListComponent implements OnInit {
   events: Event[];
   site: number;
   currentWeekFilter: any;

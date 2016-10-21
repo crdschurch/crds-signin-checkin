@@ -1,0 +1,36 @@
+<td><a routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}">Add</a></td>
+<td>{{room.RoomName}}</td>
+<td>
+  <input class='tgl tgl-light' id='allow-signin-{{room.RoomId}}' type='checkbox' (change)="toggleAllowSignin(room)" [checked]="AllowSignIn">
+  <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' ><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+</td>
+<td>
+  <div class="number-stepper">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="removeVolunteer(room)">-</button>
+      </span>
+      <input type="text" class="form-control text-xs-center" value="{{room.Volunteers}}">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="addVolunteer(room)">+</button>
+      </span>
+    </div>
+  </div>
+</td>
+<td>
+  <div class="number-stepper">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="removeCapacity(room)">-</button>
+      </span>
+      <input type="text" class="form-control text-xs-center" value="{{room.Capacity}}">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="addCapacity(room)">+</button>
+      </span>
+    </div>
+  </div>
+</td>
+<td>{{room.SignedIn}}</td>
+<td>{{room.CheckedIn}}</td>
+<td>-</td>
+<td class="text-xs-right"><a class="btn btn-primary btn-sm">Alt Rooms</a></td>

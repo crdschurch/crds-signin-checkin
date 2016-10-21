@@ -1,15 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AdminService } from '../admin.service';
+import { Room } from './room';
 
 @Component({
-  selector: 'room',
+  selector: '.room',
   templateUrl: 'room.component.html',
   styleUrls: ['room.component.scss']
 })
 export class RoomComponent {
-  // room: any;
-  //
+  @Input() room: Room;
+
+  // constructor() {
+  //   console.log(this)
+  // }
+
   // constructor(
   //   private route: ActivatedRoute,
   //   private adminService: AdminService,
@@ -23,7 +28,8 @@ export class RoomComponent {
   //     error => console.error(error)
   //   );
   // }
-  // ngOnInit(): void {
-  //   this.getData();
-  // }
+  ngOnInit(): void {
+    // this.getData();
+    console.log("room component oninit", this)
+  }
 }

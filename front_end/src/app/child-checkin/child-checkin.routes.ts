@@ -2,10 +2,10 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ChildCheckinComponent } from './child-checkin.component';
-import { SearchComponent } from './search';
 import { ResultsComponent } from './results';
 import { GuestComponent } from './guest';
 import { AssignmentComponent } from './assignment';
+import { searchRoutes } from './search/search.routes';
 
 const childCheckinRoutes: Routes = [
   {
@@ -13,8 +13,8 @@ const childCheckinRoutes: Routes = [
     component: ChildCheckinComponent,
     children: [
       {
-        path: '',
-        component: SearchComponent
+        path: 'search',
+        children: [...searchRoutes]
       },
       {
         path: 'results',
@@ -29,7 +29,7 @@ const childCheckinRoutes: Routes = [
         component: AssignmentComponent
       }
     ]
-  }
+  }, 
 ];
 
 export const childCheckinRouting: ModuleWithProviders = RouterModule.forChild(childCheckinRoutes);
