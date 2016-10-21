@@ -4,7 +4,6 @@ import { AdminService } from '../admin.service';
 import { Room } from './room';
 
 @Component({
-  // selector: 'rooms',
   templateUrl: 'room-list.component.html',
   styleUrls: ['room-list.component.scss'],
   providers: [ AdminService ]

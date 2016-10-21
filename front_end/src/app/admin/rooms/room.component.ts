@@ -7,7 +7,8 @@ import { Room } from './room';
 @Component({
   selector: '.room',
   templateUrl: 'room.component.html',
-  styleUrls: ['room.component.scss']
+  styleUrls: ['room.component.scss'],
+  providers: [ AdminService ]
 })
 export class RoomComponent implements OnInit {
   @Input() room: Room;
