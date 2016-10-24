@@ -3,18 +3,18 @@ import { AdminService } from '../admin.service';
 import { Group } from './group';
 
 @Component({
-  selector: '.group',
+  selector: '.groupy',
   templateUrl: 'room-group.component.html',
   styleUrls: ['room-group.component.scss'],
   providers: [ AdminService ]
 })
 export class RoomGroupComponent implements OnInit {
-  group: Group[];
+  group: any;
 
   constructor( private adminService: AdminService) {
   }
 
   ngOnInit() {
-    console.log("RoomGroupComponent inited")
+    console.log("RoomGroupComponent inited", this)
   }
 }

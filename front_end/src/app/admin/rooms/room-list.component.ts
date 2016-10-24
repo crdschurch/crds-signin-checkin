@@ -13,8 +13,7 @@ export class RoomListComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private adminService: AdminService,
-    private service: AdminService) {}
+    private adminService: AdminService) {}
 
   private getData(): void {
     const eventId = this.route.snapshot.params['eventId'];

@@ -46,6 +46,13 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  getRoomGroups(eventId: string, roomId: string, eventRoomId: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}?eventroomid=${eventRoomId}`;
+    return this.http.get(url)
+                    .map(res => res.json())
+                    .catch(this.handleError);
+  }
+
   private handleError (error: any) {
     console.error(error);
     return Observable.throw(error.json().error || 'Server error');
