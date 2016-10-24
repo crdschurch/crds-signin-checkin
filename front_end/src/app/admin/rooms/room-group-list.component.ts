@@ -24,7 +24,6 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("RoomGroupListComponent init")
     this.getData()
   }
 }

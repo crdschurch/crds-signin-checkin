@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { Group } from './group';
 
@@ -8,13 +8,10 @@ import { Group } from './group';
   styleUrls: ['room-group.component.scss'],
   providers: [ AdminService ]
 })
-export class RoomGroupComponent implements OnInit {
+export class RoomGroupComponent {
   @Input() group: Group;
 
   constructor( private adminService: AdminService) {
   }
 
-  ngOnInit() {
-    console.log("RoomGroupComponent inited", this)
-  }
 }
