@@ -1,6 +1,8 @@
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var AssetsPlugin = require('assets-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 var helpers = require('./helpers');
 var Dotenv = require('dotenv-webpack');
 
@@ -41,6 +43,11 @@ module.exports = {
   },
 
   plugins: [
+    new AssetsPlugin({
+      path: helpers.root('dist'),
+      filename: 'webpack-assets.json',
+      prettyPrint: true
+    }),
     new webpack.optimize.CommonsChunkPlugin({
       name: ['app', 'vendor', 'polyfills']
     }),
@@ -49,6 +56,22 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
-    })
+    }),
+  /*
+   * Plugin: CopyWebpackPlugin
+   * Description: Copy files and directories in webpack.
+   *
+   * Copies project static assets.
+   *
+   * See: https://www.npmjs.com/package/copy-webpack-plugin
+   */
+  new CopyWebpackPlugin([{
+      from: 'src/assets',
+      to: 'assets',
+    },
+    // {
+    //   from: 'src/meta',
+    // },
+  ]),
   ]
 };
