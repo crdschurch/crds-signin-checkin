@@ -56,7 +56,11 @@ namespace SignInCheckIn.Services
         {
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_kcAgesAttributeTypeId, authenticationToken);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_kcGradesAttributeTypeId, authenticationToken);
-            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_kcBirthMonthsAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_kcBirthMonthsAttributeTypeId, authenticationToken).Select(a =>
+            {
+                a.Name = a.Name.Substring(0, 3);
+                return a;
+            }).ToList();
             var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_kcNurseryAgesAttributeTypeId, authenticationToken);
 
             var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
