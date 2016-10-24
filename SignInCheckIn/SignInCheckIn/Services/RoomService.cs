@@ -2,6 +2,7 @@
 using System.Linq;
 using AutoMapper;
 using MinistryPlatform.Translation.Extensions;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
@@ -15,26 +16,19 @@ namespace SignInCheckIn.Services
         private readonly IRoomRepository _roomRepository;
         private readonly IAttributeRepository _attributeRepository;
         private readonly IGroupRepository _groupRepository;
+        private readonly KidsClubGroupAttributesConfiguration _groupAttributesConfig;
 
-        private readonly int _kcAgesAttributeTypeId;
-        private readonly int _kcGradesAttributeTypeId;
-        private readonly int _kcBirthMonthsAttributeTypeId;
-        private readonly int _kcNurseryAgesAttributeTypeId;
-        private readonly int _kcNurseryAgeAttributeId;
-
-        public RoomService(IEventRepository eventRepository, IRoomRepository roomRepository, IAttributeRepository attributeRepository, IGroupRepository groupRepository)
+        public RoomService(IEventRepository eventRepository,
+                           IRoomRepository roomRepository,
+                           IAttributeRepository attributeRepository,
+                           IGroupRepository groupRepository,
+                           KidsClubGroupAttributesConfiguration groupAttributesConfig)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
             _groupRepository = groupRepository;
-
-            // TODO Get rid of hard-coded IDs, pull from config file
-            _kcAgesAttributeTypeId = 102;
-            _kcGradesAttributeTypeId = 104;
-            _kcBirthMonthsAttributeTypeId = 103;
-            _kcNurseryAgesAttributeTypeId = 105;
-            _kcNurseryAgeAttributeId = 9014;
+            _groupAttributesConfig = groupAttributesConfig;
         }
 
         public List<EventRoomDto> GetLocationRoomsByEventId(int eventId)
@@ -54,14 +48,12 @@ namespace SignInCheckIn.Services
 
         public List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
-            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_kcAgesAttributeTypeId, authenticationToken);
-            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_kcGradesAttributeTypeId, authenticationToken);
-            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_kcBirthMonthsAttributeTypeId, authenticationToken).Select(a =>
-            {
-                a.Name = a.Name.Substring(0, 3);
-                return a;
-            }).ToList();
-            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_kcNurseryAgesAttributeTypeId, authenticationToken);
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.NurseryAgesAttributeTypeId, authenticationToken);
+
+            birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
             var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
             if (eventGroups.Any())
@@ -87,13 +79,13 @@ namespace SignInCheckIn.Services
                     Id = a.Id,
                     Name = a.Name,
                     SortOrder = a.SortOrder,
-                    Ranges = (a.Id == _kcNurseryAgeAttributeId ? nurseryMonths : birthMonths).Select(r => new AgeGradeDto.AgeRangeDto
+                    Ranges = (a.Id == _groupAttributesConfig.NurseryAgeAttributeId ? nurseryMonths : birthMonths).Select(r => new AgeGradeDto.AgeRangeDto
                     {
                         Id = r.Id,
                         Name = r.Name,
-                        Selected = a.Id == _kcNurseryAgeAttributeId
-                            ? eventGroups.HasMatchingNurseryMonth(r.Id)
-                            : eventGroups.HasMatchingAgeGroupBirthMonth(r.Id),
+                        Selected = a.Id == _groupAttributesConfig.NurseryAgeAttributeId ?
+                            eventGroups.HasMatchingNurseryMonth(r.Id) : 
+                            eventGroups.HasMatchingBirthMonth(a.Id, r.Id),
                         SortOrder = r.SortOrder,
                         TypeId = a.Type.Id
                     }).OrderBy(r => r.SortOrder).ToList(),

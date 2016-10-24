@@ -99,6 +99,7 @@
     <Compile Include="Models\DTO\MpGroupDto.cs" />
     <Compile Include="Models\DTO\MpRoomDto.cs" />
     <Compile Include="Models\DTO\MpAgeRangeDto.cs" />
+    <Compile Include="Models\KidsClubGroupAttributesConfiguration.cs" />
     <Compile Include="Repositories\ApiUserRepository.cs" />
     <Compile Include="Repositories\AttributeRepository.cs" />
     <Compile Include="Repositories\AuthenticationRepository.cs" />

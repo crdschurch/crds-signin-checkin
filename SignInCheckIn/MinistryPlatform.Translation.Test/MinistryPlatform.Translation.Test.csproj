@@ -112,6 +112,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Extensions\JsonUnmappedDataExtensionsTest.cs" />
+    <Compile Include="Extensions\MpEventGroupDtoExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepositoryTest.cs" />
     <Compile Include="Repositories\RoomRepositoryTest.cs" />

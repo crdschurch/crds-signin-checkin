@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using MinistryPlatform.Translation.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -26,11 +25,6 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         protected virtual void ProcessUnmappedData(IDictionary<string, JToken> unmappedData, StreamingContext context)
         {
-        }
-
-        protected T GetUnmappedField<T>(string fieldName)
-        {
-            return _unmappedData.GetUnmappedDataField<T>(fieldName);
         }
     }
 }
