@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace SignInCheckIn.Models.DTO
 {
@@ -11,6 +12,7 @@ namespace SignInCheckIn.Models.DTO
         public int SortOrder { get; set; }
         public int TypeId { get; set; }
 
+#region Selected Property
         private bool _selected;
 
         public bool Selected
@@ -24,7 +26,9 @@ namespace SignInCheckIn.Models.DTO
                 }
             }
         }
+#endregion
 
+        [JsonIgnore]
         public bool HasRanges => Ranges != null && Ranges.Any();
 
         public class AgeRangeDto

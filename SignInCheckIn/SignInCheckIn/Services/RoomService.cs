@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
@@ -86,12 +87,9 @@ namespace SignInCheckIn.Services
                     {
                         Id = r.Id,
                         Name = r.Name,
-                        Selected =
-                            eventGroups.Exists(
-                                e =>
-                                    a.Id == _kcNurseryAgeAttributeId
-                                        ? e.Group.HasNurseryMonth() && e.Group.NurseryMonth.Id == r.Id
-                                        : !e.Group.HasNurseryMonth() && e.Group.BirthMonth.Id == r.Id),
+                        Selected = a.Id == _kcNurseryAgeAttributeId
+                            ? eventGroups.HasMatchingNurseryMonth(r.Id)
+                            : eventGroups.HasMatchingAgeGroupBirthMonth(r.Id),
                         SortOrder = r.SortOrder,
                         TypeId = a.Type.Id
                     }).OrderBy(r => r.SortOrder).ToList(),
@@ -106,7 +104,7 @@ namespace SignInCheckIn.Services
                 {
                     Id = g.Id,
                     Name = g.Name,
-                    Selected = eventGroups.Exists(e => g.Id == e.Group.AgeRange.Id),
+                    Selected = eventGroups.HasMatchingGradeGroup(g.Id),
                     SortOrder = g.SortOrder + maxSort,
                     TypeId = g.Type.Id
                 });
