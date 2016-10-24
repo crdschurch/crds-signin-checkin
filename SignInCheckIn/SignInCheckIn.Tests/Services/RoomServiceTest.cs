@@ -16,6 +16,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IEventRepository> _eventRepository;
         private Mock<IRoomRepository> _roomRepository;
         private Mock<IAttributeRepository> _attributeRepository;
+        private Mock<IGroupRepository> _groupRepository;
 
         private RoomService _fixture;
 
@@ -27,8 +28,9 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository = new Mock<IEventRepository>(MockBehavior.Strict);
             _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
             _attributeRepository = new Mock<IAttributeRepository>(MockBehavior.Strict);
+            _groupRepository = new Mock<IGroupRepository>(MockBehavior.Strict);
 
-            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object);
+            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object);
         }
 
         public void ShouldGetEventRooms()
