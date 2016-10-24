@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
-    public class CheckinRepository : ICheckinRepository
+    public class ChildCheckinRepository : IChildCheckinRepository
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
 
-        public CheckinRepository(IApiUserRepository apiUserRepository,
+        public ChildCheckinRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
         {
             _apiUserRepository = apiUserRepository;

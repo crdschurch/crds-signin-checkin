@@ -3,7 +3,7 @@ using MinistryPlatform.Translation.Models.DTO;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
-    public interface ICheckinRepository
+    public interface IChildCheckinRepository
     {
         List<MpParticipantDto> GetChildrenByPhoneNumber(string phoneNumber);
     }
