@@ -26,7 +26,7 @@ export class RoomComponent implements OnInit {
       this.roomForm.controls[field].setValue(this.room[field]--);
     }
   }
-  toggle(field, event) {
+  toggle(field) {
     this.room[field] = !this.room[field]
     this.roomForm.controls[field].setValue(this.room[field]);
   }
