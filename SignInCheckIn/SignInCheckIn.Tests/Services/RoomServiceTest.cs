@@ -1,6 +1,8 @@
 using FluentAssertions;
 using System.Collections.Generic;
 using AutoMapper;
+using Crossroads.Utilities.Services.Interfaces;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -17,6 +19,13 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IRoomRepository> _roomRepository;
         private Mock<IAttributeRepository> _attributeRepository;
         private Mock<IGroupRepository> _groupRepository;
+        private Mock<IApplicationConfiguration> _applicationConfiguration;
+
+        private const int AgesAttributeTypeId = 123;
+        private const int BirthMonthsAttributeTypeId = 456;
+        private const int GradesAttributeTypeId = 789;
+        private const int NurseryAgeAttributeId = 234;
+        private const int NurseryAgesAttributeTypeId = 567;
 
         private RoomService _fixture;
 
@@ -29,8 +38,14 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
             _attributeRepository = new Mock<IAttributeRepository>(MockBehavior.Strict);
             _groupRepository = new Mock<IGroupRepository>(MockBehavior.Strict);
+            _applicationConfiguration = new Mock<IApplicationConfiguration>();
+            _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgeAttributeId).Returns(NurseryAgeAttributeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgesAttributeTypeId).Returns(NurseryAgesAttributeTypeId);
 
-            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object);
+            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object);
         }
 
         public void ShouldGetEventRooms()
@@ -109,6 +124,20 @@ namespace SignInCheckIn.Tests.Services
 
             Assert.IsNotNull(result);
             result.ShouldBeEquivalentTo(newEventRoom);
+        }
+
+        [Test]
+        public void TestGetEventRoomAgesAndGradesNoEventGroups()
+        {
+            // TODO Finish this test
+            var ages = new List<MpAttributeDto>
+            {
+                new MpAttributeDto
+                {
+
+                }
+            };
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, null)).Returns(ages);
         }
     }
 }

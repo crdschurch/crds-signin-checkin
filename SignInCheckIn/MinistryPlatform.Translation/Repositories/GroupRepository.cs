@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using MinistryPlatform.Translation.Models;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -11,9 +11,10 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly IApiUserRepository _apiUserRepository;
         private readonly List<string> _attributeColumns;
-        private readonly KidsClubGroupAttributesConfiguration _kcGroupAttributesConfiguration;
+        private readonly List<string> _groupColumns;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public GroupRepository(IMinistryPlatformRestRepository ministryPlatformRestRepository, IApiUserRepository apiUserRepository, KidsClubGroupAttributesConfiguration kcGroupAttributesConfig)
+        public GroupRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IApplicationConfiguration applicationConfiguration)
         {
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
             _apiUserRepository = apiUserRepository;
@@ -27,13 +28,19 @@ namespace MinistryPlatform.Translation.Repositories
                 "Attribute_ID_Table_Attribute_Type_ID_Table.[Attribute_Type]"
             };
 
-            _kcGroupAttributesConfiguration = kcGroupAttributesConfig;
+            _groupColumns = new List<string>
+            {
+                "Groups.Group_ID",
+                "Groups.Group_Name"
+            };
+
+            _applicationConfiguration = applicationConfiguration;
         }
 
         public MpGroupDto GetGroup(string authenticationToken, int groupId, bool includeAttributes = false)
         {
             var token = authenticationToken ?? _apiUserRepository.GetToken();
-            var group =  _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpGroupDto>(groupId);
+            var group =  _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpGroupDto>(groupId, _groupColumns);
             return SetKidsClubGroupAttributes(group, includeAttributes, token);
         }
 
@@ -41,7 +48,7 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var token = authenticationToken ?? _apiUserRepository.GetToken();
             var searchString = $"Group_ID IN ({string.Join(",", groupIds)})";
-            var groups =  _ministryPlatformRestRepository.UsingAuthenticationToken(token).Search<MpGroupDto>(searchString);
+            var groups =  _ministryPlatformRestRepository.UsingAuthenticationToken(token).Search<MpGroupDto>(searchString, _groupColumns);
 
             return groups.Select(g => SetKidsClubGroupAttributes(g, includeAttributes, token)).ToList();
         }
@@ -59,10 +66,10 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 return group;
             }
-            group.AgeRange = attributes.Find(a => a.Type.Id == _kcGroupAttributesConfiguration.AgesAttributeTypeId);
-            group.Grade = attributes.Find(a => a.Type.Id == _kcGroupAttributesConfiguration.GradesAttributeTypeId);
-            group.BirthMonth = attributes.Find(a => a.Type.Id == _kcGroupAttributesConfiguration.BirthMonthsAttributeTypeId);
-            group.NurseryMonth = attributes.Find(a => a.Type.Id == _kcGroupAttributesConfiguration.NurseryAgesAttributeTypeId);
+            group.AgeRange = attributes.Find(a => a.Type.Id == _applicationConfiguration.AgesAttributeTypeId);
+            group.Grade = attributes.Find(a => a.Type.Id == _applicationConfiguration.GradesAttributeTypeId);
+            group.BirthMonth = attributes.Find(a => a.Type.Id == _applicationConfiguration.BirthMonthsAttributeTypeId);
+            group.NurseryMonth = attributes.Find(a => a.Type.Id == _applicationConfiguration.NurseryAgesAttributeTypeId);
 
             return group;
 

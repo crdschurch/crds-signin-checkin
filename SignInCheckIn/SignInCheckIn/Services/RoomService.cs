@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Extensions;
-using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
@@ -16,19 +16,19 @@ namespace SignInCheckIn.Services
         private readonly IRoomRepository _roomRepository;
         private readonly IAttributeRepository _attributeRepository;
         private readonly IGroupRepository _groupRepository;
-        private readonly KidsClubGroupAttributesConfiguration _groupAttributesConfig;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
         public RoomService(IEventRepository eventRepository,
                            IRoomRepository roomRepository,
                            IAttributeRepository attributeRepository,
                            IGroupRepository groupRepository,
-                           KidsClubGroupAttributesConfiguration groupAttributesConfig)
+                           IApplicationConfiguration applicationConfiguration)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
             _groupRepository = groupRepository;
-            _groupAttributesConfig = groupAttributesConfig;
+            _applicationConfiguration = applicationConfiguration;
         }
 
         public List<EventRoomDto> GetLocationRoomsByEventId(int eventId)
@@ -48,10 +48,10 @@ namespace SignInCheckIn.Services
 
         public List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
-            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.AgesAttributeTypeId, authenticationToken);
-            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.GradesAttributeTypeId, authenticationToken);
-            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.BirthMonthsAttributeTypeId, authenticationToken);
-            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_groupAttributesConfig.NurseryAgesAttributeTypeId, authenticationToken);
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
 
             birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
@@ -79,11 +79,11 @@ namespace SignInCheckIn.Services
                     Id = a.Id,
                     Name = a.Name,
                     SortOrder = a.SortOrder,
-                    Ranges = (a.Id == _groupAttributesConfig.NurseryAgeAttributeId ? nurseryMonths : birthMonths).Select(r => new AgeGradeDto.AgeRangeDto
+                    Ranges = (a.Id == _applicationConfiguration.NurseryAgeAttributeId ? nurseryMonths : birthMonths).Select(r => new AgeGradeDto.AgeRangeDto
                     {
                         Id = r.Id,
                         Name = r.Name,
-                        Selected = a.Id == _groupAttributesConfig.NurseryAgeAttributeId ?
+                        Selected = a.Id == _applicationConfiguration.NurseryAgeAttributeId ?
                             eventGroups.HasMatchingNurseryMonth(r.Id) : 
                             eventGroups.HasMatchingBirthMonth(a.Id, r.Id),
                         SortOrder = r.SortOrder,

@@ -32,7 +32,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var eventList = _eventService.GetCheckinEvents(startDate, endDate, site);
-                return this.Ok(eventList);
+                return Ok(eventList);
             }
             catch (Exception e)
             {
@@ -49,7 +49,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var roomList = _roomService.GetLocationRoomsByEventId(eventid);
-                return this.Ok(roomList);
+                return Ok(roomList);
             }
             catch (Exception e)
             {

@@ -1,8 +1,8 @@
 ﻿using Crossroads.Utilities.Services.Interfaces;
 
-namespace MinistryPlatform.Translation.Models
+namespace Crossroads.Utilities.Services
 {
-    public class KidsClubGroupAttributesConfiguration
+    public class ApplicationConfiguration : IApplicationConfiguration
     {
         public int AgesAttributeTypeId { get; }
         public int GradesAttributeTypeId { get; }
@@ -10,7 +10,7 @@ namespace MinistryPlatform.Translation.Models
         public int NurseryAgesAttributeTypeId { get; }
         public int NurseryAgeAttributeId { get; }
 
-        public KidsClubGroupAttributesConfiguration(IConfigurationWrapper configurationWrapper)
+        public ApplicationConfiguration(IConfigurationWrapper configurationWrapper)
         {
             AgesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubAgesAttributeTypeId");
             GradesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubGradesAttributeTypeId");
