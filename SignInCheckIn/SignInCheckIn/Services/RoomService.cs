@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using MinistryPlatform.Translation.Models.DTO;
@@ -52,7 +51,7 @@ namespace SignInCheckIn.Services
             return Mapper.Map<EventRoomDto>(response);
         }
 
-        public List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, int? eventRoomId)
+        public List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_kcAgesAttributeTypeId, authenticationToken);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_kcGradesAttributeTypeId, authenticationToken);
@@ -82,14 +81,17 @@ namespace SignInCheckIn.Services
                 {
                     Id = a.Id,
                     Name = a.Name,
-                    // TODO This should be true if ALL ranges are selected for the room reservation
-                    Selected = false,
                     SortOrder = a.SortOrder,
                     Ranges = (a.Id == _kcNurseryAgeAttributeId ? nurseryMonths : birthMonths).Select(r => new AgeGradeDto.AgeRangeDto
                     {
                         Id = r.Id,
                         Name = r.Name,
-                        Selected = eventGroups.Exists(e => (a.Id == _kcNurseryAgeAttributeId ? e.Group.NurseryMonth.Id : e.Group.BirthMonth.Id) == r.Id),
+                        Selected =
+                            eventGroups.Exists(
+                                e =>
+                                    a.Id == _kcNurseryAgeAttributeId
+                                        ? e.Group.HasNurseryMonth() && e.Group.NurseryMonth.Id == r.Id
+                                        : !e.Group.HasNurseryMonth() && e.Group.BirthMonth.Id == r.Id),
                         SortOrder = r.SortOrder,
                         TypeId = a.Type.Id
                     }).OrderBy(r => r.SortOrder).ToList(),

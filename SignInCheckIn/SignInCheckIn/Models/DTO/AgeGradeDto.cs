@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SignInCheckIn.Models.DTO
 {
@@ -7,9 +8,24 @@ namespace SignInCheckIn.Models.DTO
         public int Id { get; set; }
         public string Name { get; set; }
         public List<AgeRangeDto> Ranges { get; set; }
-        public bool Selected { get; set; }
         public int SortOrder { get; set; }
         public int TypeId { get; set; }
+
+        private bool _selected;
+
+        public bool Selected
+        {
+            get { return HasRanges ? !Ranges.Exists(r => !r.Selected) : _selected; }
+            set
+            {
+                if (!HasRanges)
+                {
+                    _selected = value;
+                }
+            }
+        }
+
+        public bool HasRanges => Ranges != null && Ranges.Any();
 
         public class AgeRangeDto
         {
