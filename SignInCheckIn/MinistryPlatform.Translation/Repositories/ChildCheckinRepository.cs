@@ -86,7 +86,7 @@ namespace MinistryPlatform.Translation.Repositories
 
             foreach (var child in otherChildren)
             {
-                if (children.Where(x => x.ContactId == child.ContactId).Any())
+                if (!children.Exists(x => x.ContactId == child.ContactId))
                 {
                     children.Add(child);
                 }
