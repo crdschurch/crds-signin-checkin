@@ -1,11 +1,12 @@
 @import '../../../assets/scss/_bootstrap.scss';
+@import '../../../assets/scss/_variables.scss';
 
-button {
+.btn-default {
   width: 65px;
-  float: left;
   margin-right: 15px;
-  background-color: #e4dfdf;
+  background-color: $gray-lighter;
+
   &.selected {
-    @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+    @include button-variant($btn-primary-color, $brand-primary, $brand-primary);
   }
 }

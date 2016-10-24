@@ -1,6 +1,6 @@
 <div class="wrapper rooms">
   <nav class="navbar navbar-light bg-faded">
-    <a class="navbar-brand m-r-2 hidden-sm-down" [routerLink]="['/admin']">
+    <a class="navbar-brand mr-2 hidden-sm-down" [routerLink]="['/admin']">
       <svg class="admin-logo" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
         <g fill="none" fill-rule="evenodd">
           <path d="M22.414 0C10.037 0 0 10.034 0 22.42 0 34.8 10.037 44.843 22.414 44.843c12.38 0 22.425-10.042 22.425-22.425C44.84 10.033 34.792 0 22.412 0zm-.08 27.03l-7.856 7.863-4.69-4.702 7.85-7.853L9.91 14.61l4.695-4.707 7.73 7.734 7.85-7.852 4.7 4.7-7.844 7.85 8.015 8.023-4.702 4.702-8.018-8.03z" fill="#B05C30"/>
@@ -28,14 +28,14 @@
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/admin']">Events List</a>
       </li>
-      <li class="pull-sm-right">
+      <li class="float-sm-right">
         <a class="btn btn-primary">Sign Out</a>
       </li>
     </ul>
   </nav>
 
   <nav class="subnav navbar navbar-light bg-faded">
-    <ul class="list-inline pull-xs-left lead m-b-0">
+    <ul class="list-inline float-xs-left lead mb-0">
       <li class="list-inline-item">
         <strong>Site</strong> Oakley
       </li>
@@ -49,13 +49,13 @@
         <strong>Event Time</strong> 4:30pm
       </li>
     </ul>
-    <div class="btn-group btn-group-sm pull-sm-right" role="group" aria-label="Basic example">
+    <div class="btn-group btn-group-sm float-sm-right" role="group">
       <button type="button" class="btn btn-secondary">Previous Event</button>
       <button type="button" class="btn btn-secondary">Next Event</button>
     </div>
   </nav>
 
-  <div class="container-fluid admin-content p-y-1">
+  <div class="container-fluid admin-content py-1">
     <div class="row">
       <div class="col-sm-10">
         <h1>Manage Room</h1>
@@ -66,7 +66,7 @@
           <span class="col-sm-8 col-md-10">K112</span>
         </div>
       </div>
-      <div class="col-sm-2 text-sm-right p-b-1">
+      <div class="col-sm-2 text-sm-right pb-1">
         <strong>0</strong> of <strong>20</strong> rooms open
         <a class="p-l-1">
           <span class="icon icon-large">
