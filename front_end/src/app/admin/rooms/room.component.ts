@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../admin.service';
 import { Room } from './room';
@@ -22,17 +21,17 @@ export class RoomComponent implements OnInit {
     this.roomForm.controls[field].setValue(this.room[field]++);
   }
   remove(field) {
-    if(this.room[field] >= 1) {
+    if (this.room[field] >= 1) {
       this.roomForm.controls[field].setValue(this.room[field]--);
     }
   }
   toggle(field) {
-    this.room[field] = !this.room[field]
+    this.room[field] = !this.room[field];
     this.roomForm.controls[field].setValue(this.room[field]);
   }
 
   toggleClick() {
-    if(this.pending) {
+    if (this.pending) {
       return false;
     }
   }
@@ -53,7 +52,7 @@ export class RoomComponent implements OnInit {
         this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(room => {
           this.room = room;
           this.pending = false;
-        })
+        });
       });
   }
 }
