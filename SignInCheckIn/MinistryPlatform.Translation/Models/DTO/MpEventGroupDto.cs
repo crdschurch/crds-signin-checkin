@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -27,19 +28,19 @@ namespace MinistryPlatform.Translation.Models.DTO
         {
             Event = new MpEventDto
             {
-                EventId = GetUnmappedField<int>("Event_ID")
+                EventId = unmappedData.GetUnmappedDataField<int>("Event_ID")
             };
 
             Group = new MpGroupDto
             {
-                Id = GetUnmappedField<int>("Group_ID")
+                Id = unmappedData.GetUnmappedDataField<int>("Group_ID")
             };
 
             RoomReservation = new MpEventRoomDto
             {
-                EventRoomId = GetUnmappedField<int>("Event_Room_ID"),
-                EventId = GetUnmappedField<int>("Event_ID"),
-                RoomId = GetUnmappedField<int>("Room_ID")
+                EventRoomId = unmappedData.GetUnmappedDataField<int>("Event_Room_ID"),
+                EventId = unmappedData.GetUnmappedDataField<int>("Event_ID"),
+                RoomId = unmappedData.GetUnmappedDataField<int>("Room_ID")
             };
         }
     }
