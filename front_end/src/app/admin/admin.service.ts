@@ -46,8 +46,8 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  getRoomGroups(eventId: string, roomId: string, eventRoomId: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}?eventroomid=${eventRoomId}`;
+  getRoomGroups(eventId: string, roomId: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.get(url)
                     .map(res => res.json())
                     .catch(this.handleError);

@@ -9,7 +9,7 @@ import { Group } from './group';
   providers: [ AdminService ]
 })
 export class RoomGroupListComponent implements OnInit {
-  groups: any[];
+  groups: Group[];
 
   constructor( private adminService: AdminService, private route: ActivatedRoute) {
   }
@@ -17,14 +17,14 @@ export class RoomGroupListComponent implements OnInit {
   private getData(): void {
     const eventId = this.route.snapshot.params['eventId'];
     const roomId = this.route.snapshot.params['roomId'];
-    const eventRoomId = "4587226"
-    this.adminService.getRoomGroups(eventId, roomId, eventRoomId).subscribe(
+    this.adminService.getRoomGroups(eventId, roomId).subscribe(
       groups => {this.groups = groups;},
       error => console.error(error)
     );
   }
 
   ngOnInit() {
+    console.log("RoomGroupListComponent init")
     this.getData()
   }
 }
