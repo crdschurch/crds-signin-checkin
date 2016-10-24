@@ -65,6 +65,9 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         /// <returns>An List of objects representing the matching MP rows for the search, if found.</returns>
         List<T> Search<T>(string searchString, List<string> columns);
 
+        List<T> SearchTable<T>(string tableName, string searchString = null, string selectColumns = null);
+        List<T> SearchTable<T>(string tableName, string searchString, List<string> selectColumns);
+
         int PostStoredProc(string procedureName, Dictionary<string, object> parameters);
 
         void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields);

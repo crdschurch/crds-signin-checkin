@@ -1,0 +1,10 @@
+﻿using System.Collections.Generic;
+using MinistryPlatform.Translation.Models.DTO;
+
+namespace MinistryPlatform.Translation.Repositories.Interfaces
+{
+    public interface ICheckinRepository
+    {
+        List<MpParticipantDto> GetChildrenByPhoneNumber(string phoneNumber);
+    }
+}

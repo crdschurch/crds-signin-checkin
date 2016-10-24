@@ -75,7 +75,7 @@ namespace MinistryPlatform.Translation.Repositories
         public T Create<T>(T objectToCreate, List<string> selectColumns)
         {
             return Create(objectToCreate, string.Join(",", selectColumns.ToArray()));
-        } 
+        }
 
         public T Create<T>(T objectToCreate, string selectColumns = null)
         {
@@ -167,11 +167,11 @@ namespace MinistryPlatform.Translation.Repositories
             return result.TrimEnd('&');
         }
 
-        public List<T> Search<T>(string searchString = null, string selectColumns = null)
+        public List<T> SearchTable<T>(string tableName, string searchString = null, string selectColumns = null)
         {
             var search = string.IsNullOrWhiteSpace(searchString) ? string.Empty : string.Format("?$filter={0}", searchString);
 
-            var url = AddColumnSelection(string.Format("/tables/{0}{1}", GetTableName<T>(), search), selectColumns);
+            var url = AddColumnSelection(string.Format("/tables/{0}{1}", tableName, search), selectColumns);
             var request = new RestRequest(url, Method.GET);
             AddAuthorization(request);
 
@@ -184,14 +184,19 @@ namespace MinistryPlatform.Translation.Repositories
             return content;
         }
 
+        public List<T> SearchTable<T>(string tableName, string searchString, List<string> selectColumns)
+        {
+            return SearchTable<T>(tableName, searchString, selectColumns == null ? null : string.Join(",", selectColumns));
+        }
+
+        public List<T> Search<T>(string searchString = null, string selectColumns = null)
+        {
+            return SearchTable<T>(GetTableName<T>(), searchString, selectColumns);
+        }
+
         public List<T> Search<T>(string searchString, List<string> columns)
         {
-            string selectColumns = null;
-            if (columns != null)
-            {
-                selectColumns = string.Join(",", columns);
-            }
-            return Search<T>(searchString, selectColumns);
+            return SearchTable<T>(GetTableName<T>(), searchString, columns);
         }
 
         public void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields)
