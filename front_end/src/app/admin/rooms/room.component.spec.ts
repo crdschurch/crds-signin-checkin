@@ -4,7 +4,7 @@ import { Room } from './room';
 let fixture: RoomComponent;
 let adminServiceStub: any = {};
 
-fdescribe('RoomComponent', () => {
+describe('RoomComponent', () => {
 
   beforeEach(() => {
     fixture = new RoomComponent(adminServiceStub);
