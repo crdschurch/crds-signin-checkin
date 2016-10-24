@@ -1,6 +1,9 @@
 @import '../../../assets/scss/_bootstrap.scss';
 
 button {
+  width: 65px;
+  float: left;
+  margin-right: 15px;
   background-color: #e4dfdf;
   &.selected {
     @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
