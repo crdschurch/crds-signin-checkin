@@ -1,1 +1,7 @@
-bob {{group.Id}}
+<td>{{group.Name}}</td>
+<td>
+  <button class="btn btn-default btn-sm">All</button>
+  <button class="btn btn-default btn-sm" *ngFor="let range of group.Ranges" [ngClass]="{'selected': range.Selected }">
+    {{range.Name | slice:0:3 }}
+  </button>
+</td>
