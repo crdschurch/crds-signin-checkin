@@ -14,7 +14,6 @@ export class AdminComponent {
     missionService.missionAnnounced$.subscribe(
       astronaut => {
         this.theString = `${astronaut} confirmed the mission`
-        console.log(`${astronaut} confirmed the mission`)
       });
   }
 }

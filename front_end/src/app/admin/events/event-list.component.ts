@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
-import { Subscription }   from 'rxjs/Subscription';
 
 import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
@@ -15,15 +14,11 @@ import * as moment from 'moment';
   templateUrl: 'event-list.component.html',
   providers: [ AdminService, HttpClientService ]
 })
-export class EventListComponent implements OnInit, OnDestroy {
+export class EventListComponent implements OnInit {
   events: Event[];
   site: number;
   currentWeekFilter: any;
   weekFilters: Timeframe[];
-  subscription: Subscription;
-  mission = '<no mission announced>';
-  confirmed = false;
-  announced = false;
   @Input() astronaut: string;
 
   constructor(private adminService: AdminService,
@@ -71,11 +66,6 @@ export class EventListComponent implements OnInit, OnDestroy {
   logout(): void {
     this.httpClientService.logOut();
     this.router.navigate(['/admin/sign-in']);
-  }
-
-  ngOnDestroy() {
-    // prevent memory leak when component destroyed
-    this.subscription.unsubscribe();
   }
 
 }
