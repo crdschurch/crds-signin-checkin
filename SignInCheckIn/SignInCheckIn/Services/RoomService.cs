@@ -46,8 +46,10 @@ namespace SignInCheckIn.Services
             return Mapper.Map<EventRoomDto>(response);
         }
 
-        public List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
+        public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
+            var response = Mapper.Map<EventRoomDto>(_roomRepository.GetEventRoom(eventId, roomId));
+
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
@@ -60,15 +62,17 @@ namespace SignInCheckIn.Services
             // Get current event groups with a room reservation for this room
             var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventId, roomId);
 
-            var response = new List<AgeGradeDto>();
+            var agesAndGrades = new List<AgeGradeDto>();
 
             // Add age ranges (including selected groups) to the response
-            response.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventGroups));
+            agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventGroups));
 
-            var maxSort = response.Select(r => r.SortOrder).Last();
+            var maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
 
             // Add grade ranges (including selected groups) to the response
-            response.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
+            agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
+
+            response.AssignedGroups = agesAndGrades;
 
             return response;
         }
@@ -119,7 +123,7 @@ namespace SignInCheckIn.Services
             return response;
         }
 
-        private static List<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
+        private static IEnumerable<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
         {
             var response = new List<AgeGradeDto>();
             grades.OrderBy(g => g.SortOrder).ToList().ForEach(g =>

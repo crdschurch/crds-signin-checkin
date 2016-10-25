@@ -26,7 +26,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID_Table.Room_Number",
                 "Event_Rooms.Allow_Checkin",
                 "Event_Rooms.Volunteers",
-                "Event_Rooms.Capacity"
+                "Event_Rooms.Capacity",
+                "Event_Rooms.Label"
             };
         }
 
@@ -108,6 +109,13 @@ namespace MinistryPlatform.Translation.Repositories
             }
 
             return response;
+        }
+
+        public MpEventRoomDto GetEventRoom(int eventId, int roomId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
         }
     }
 }

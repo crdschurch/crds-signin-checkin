@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.DTO;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
@@ -12,5 +8,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId);
 
         MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom);
+
+        MpEventRoomDto GetEventRoom(int eventId, int roomId);
     }
 }
