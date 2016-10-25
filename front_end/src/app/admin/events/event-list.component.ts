@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
+import { Subscription }   from 'rxjs/Subscription';
 
 import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
+import { HeaderService } from '../header/header.service';
 
 import * as moment from 'moment';
 
@@ -13,13 +15,21 @@ import * as moment from 'moment';
   templateUrl: 'event-list.component.html',
   providers: [ AdminService, HttpClientService ]
 })
-export class EventListComponent implements OnInit {
+export class EventListComponent implements OnInit, OnDestroy {
   events: Event[];
   site: number;
   currentWeekFilter: any;
   weekFilters: Timeframe[];
+  subscription: Subscription;
+  mission = '<no mission announced>';
+  confirmed = false;
+  announced = false;
+  @Input() astronaut: string;
 
-  constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router) {
+  constructor(private adminService: AdminService,
+              private httpClientService: HttpClientService,
+              private router: Router,
+              private missionService: HeaderService) {
     // default to Oakley
     this.site = 1;
     this.weekFilters = [];
@@ -32,6 +42,14 @@ export class EventListComponent implements OnInit {
     this.weekFilters.push(this.getWeekObject(2))
     // default to current week
     this.currentWeekFilter = this.weekFilters[0];
+
+
+    this.subscription = missionService.missionAnnounced$.subscribe(
+      mission => {
+        this.mission = mission;
+        this.announced = true;
+        this.confirmed = false;
+    });
   }
 
   private getData(): void {
@@ -49,6 +67,11 @@ export class EventListComponent implements OnInit {
     }
   }
 
+  confirm() {
+    this.confirmed = true;
+    this.missionService.confirmMission(this.astronaut);
+  }
+
   ngOnInit(): void {
     this.getData();
   }
@@ -56,6 +79,11 @@ export class EventListComponent implements OnInit {
   logout(): void {
     this.httpClientService.logOut();
     this.router.navigate(['/admin/sign-in']);
+  }
+
+  ngOnDestroy() {
+    // prevent memory leak when component destroyed
+    this.subscription.unsubscribe();
   }
 
 }
