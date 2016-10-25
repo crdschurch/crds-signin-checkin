@@ -5,6 +5,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { EventListComponent } from './event-list.component';
 import { RoomListComponent } from '../rooms/room-list.component';
+import { RoomGroupListComponent } from '../rooms/room-group-list.component';
+import { RoomGroupComponent } from '../rooms/room-group.component';
 import { RoomComponent } from '../rooms/room.component';
 import { eventsRouting } from './events.routes';
 
@@ -12,6 +14,8 @@ import { eventsRouting } from './events.routes';
   declarations: [
     EventListComponent,
     RoomListComponent,
+    RoomGroupListComponent,
+    RoomGroupComponent,
     RoomComponent
   ],
   imports: [
@@ -23,6 +27,8 @@ import { eventsRouting } from './events.routes';
   exports: [
     EventListComponent,
     RoomListComponent,
+    RoomGroupListComponent,
+    RoomGroupComponent,
     RoomComponent
   ]
 })
