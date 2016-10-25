@@ -9,10 +9,11 @@ import { HeaderService } from './header/header.service';
   encapsulation: ViewEncapsulation.None
 })
 export class AdminComponent {
+  theString: string;
   constructor(private missionService: HeaderService) {
-    missionService.missionConfirmed$.subscribe(
+    missionService.missionAnnounced$.subscribe(
       astronaut => {
-        // this.history.push(`${astronaut} confirmed the mission`);
+        this.theString = `${astronaut} confirmed the mission`
         console.log(`${astronaut} confirmed the mission`)
       });
   }

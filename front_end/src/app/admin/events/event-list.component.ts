@@ -46,9 +46,10 @@ export class EventListComponent implements OnInit, OnDestroy {
 
     this.subscription = missionService.missionAnnounced$.subscribe(
       mission => {
+        // console.log("sub bob")
         this.mission = mission;
-        this.announced = true;
-        this.confirmed = false;
+        // this.announced = true;
+        // this.confirmed = false;
     });
   }
 
@@ -67,9 +68,8 @@ export class EventListComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirm() {
-    this.confirmed = true;
-    this.missionService.confirmMission(this.astronaut);
+  announce() {
+    this.missionService.announceMission("bob");
   }
 
   ngOnInit(): void {
