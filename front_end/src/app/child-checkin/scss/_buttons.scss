@@ -1,11 +1,16 @@
 @import '../../../assets/scss/_variables.scss';
 
 .btn-primary {
+  color: #fff;
   background: $brand-primary;
   border-color: $brand-primary;
 
   &:hover {
     background: lighten($brand-primary, 15%);
     border-color: lighten($brand-primary, 15%);
+  }
+
+  &a:not([href]):not([tabindex]) {
+    color: #fff;
   }
 }

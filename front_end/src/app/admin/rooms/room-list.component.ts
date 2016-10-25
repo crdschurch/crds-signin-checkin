@@ -4,7 +4,6 @@ import { AdminService } from '../admin.service';
 import { Room } from './room';
 
 @Component({
-  // selector: 'rooms',
   templateUrl: 'room-list.component.html',
   styleUrls: ['room-list.component.scss'],
   providers: [ AdminService ]
@@ -14,8 +13,7 @@ export class RoomListComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private adminService: AdminService,
-    private service: AdminService) {}
+    private adminService: AdminService) {}
 
   private getData(): void {
     const eventId = this.route.snapshot.params['eventId'];
