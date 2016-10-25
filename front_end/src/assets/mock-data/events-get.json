@@ -1,0 +1,13 @@
+[{
+    'EventId': 4525323,
+    'EventTitle': 'John Test Event 10-11-16',
+    'EventStartDate': '2016-10-29T09:30:00',
+    'EventType': 'Service - Oakley',
+    'EventSite': 'Oakley'
+}, {
+    'EventId': 4525342,
+    'EventTitle': '(t) Jim Test Service',
+    'EventStartDate': '2016-10-29T16:30:00',
+    'EventType': 'Service - Oakley',
+    'EventSite': 'Oakley'
+}];
