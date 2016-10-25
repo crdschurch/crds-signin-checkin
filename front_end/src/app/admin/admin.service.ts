@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { RequestOptions, URLSearchParams } from '@angular/http';
 
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
 import * as moment from 'moment';
-
-import { RequestOptions, URLSearchParams } from '@angular/http';
+import { Room } from './rooms/room'
+import { Group } from './rooms/group'
 
 @Injectable()
 export class AdminService {
@@ -32,7 +33,7 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  updateRoom(eventId: string, roomId: string, body: any) {
+  updateRoom(eventId: string, roomId: string, body: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.put(url, body)
                     .map(res => res.json())
@@ -42,6 +43,13 @@ export class AdminService {
   getRoomGroups(eventId: string, roomId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.get(url)
+                    .map(res => res.json())
+                    .catch(this.handleError);
+  }
+
+  updateRoomGroup(eventId: string, roomId: string, group: Group) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
+    return this.http.put(url, group)
                     .map(res => res.json())
                     .catch(this.handleError);
   }

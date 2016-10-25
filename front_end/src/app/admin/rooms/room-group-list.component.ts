@@ -10,14 +10,16 @@ import { Group } from './group';
 })
 export class RoomGroupListComponent implements OnInit {
   groups: Group[];
+  eventId: string;
+  roomId: string;
 
   constructor( private adminService: AdminService, private route: ActivatedRoute) {
   }
 
   private getData(): void {
-    const eventId = this.route.snapshot.params['eventId'];
-    const roomId = this.route.snapshot.params['roomId'];
-    this.adminService.getRoomGroups(eventId, roomId).subscribe(
+    this.eventId = this.route.snapshot.params['eventId'];
+    this.roomId = this.route.snapshot.params['roomId'];
+    this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       groups => {this.groups = groups;},
       error => console.error(error)
     );
