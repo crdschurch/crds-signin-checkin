@@ -10,7 +10,7 @@ import * as _ from 'lodash'
   styleUrls: ['room-group.component.scss'],
   providers: [ AdminService ]
 })
-export class RoomGroupComponent implements OnChanges {
+export class RoomGroupComponent {
   @Input() group: Group;
   @Input() eventId: string;
   @Input() roomId: string;
@@ -41,14 +41,6 @@ export class RoomGroupComponent implements OnChanges {
       const allSelected = _.every(group.Ranges, ['Selected', true]);
       if (allSelected) group.Selected = true;
     }
-  }
-
-  ngOnInit() {
-
-  }
-
-  ngOnChanges(changes) {
-      console.log(changes);
   }
 
 }
