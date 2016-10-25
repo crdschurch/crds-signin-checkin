@@ -4,4 +4,8 @@ export class Range {
   Selected: boolean;
   SortOrder: number;
   TypeId: number;
+
+  toggleSelected() {
+    this.Selected = !this.Selected;
+  }
 }

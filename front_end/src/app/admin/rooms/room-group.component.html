@@ -1,7 +1,10 @@
 <td>{{group.Name}}</td>
 <td>
-  <button class="btn btn-default btn-sm" (click)="toggleAll(group)">All</button>
-  <button class="btn btn-default btn-sm" *ngFor="let range of group.Ranges" (click)="toggleRange(range)" [ngClass]="{'selected': range.Selected }">
+  <button class="btn btn-default btn-sm" (click)="toggleAll(group)" [ngClass]="{'selected': group.Selected }">
+    <!-- All -->
+    {{ group.Selected ? 'None' : 'All' }}
+  </button>
+  <button class="btn btn-default btn-sm" *ngFor="let range of group.Ranges" (click)="toggleRange(range, group)" [ngClass]="{'selected': range.Selected }">
     {{range.Name}}
   </button>
 </td>

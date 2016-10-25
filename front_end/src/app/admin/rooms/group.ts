@@ -6,5 +6,9 @@ export class Group {
   Selected: boolean;
   SortOrder: number;
   TypeId: number;
-  Ranges: [Range]
+  Ranges: [Range];
+
+  toggleSelected() {
+    this.Selected = !this.Selected;
+  }
 }
