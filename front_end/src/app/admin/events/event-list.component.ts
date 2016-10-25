@@ -29,7 +29,7 @@ export class EventListComponent implements OnInit, OnDestroy {
   constructor(private adminService: AdminService,
               private httpClientService: HttpClientService,
               private router: Router,
-              private missionService: HeaderService) {
+              private headerService: HeaderService) {
     // default to Oakley
     this.site = 1;
     this.weekFilters = [];
@@ -43,14 +43,6 @@ export class EventListComponent implements OnInit, OnDestroy {
     // default to current week
     this.currentWeekFilter = this.weekFilters[0];
 
-
-    this.subscription = missionService.missionAnnounced$.subscribe(
-      mission => {
-        // console.log("sub bob")
-        this.mission = mission;
-        // this.announced = true;
-        // this.confirmed = false;
-    });
   }
 
   private getData(): void {
@@ -69,7 +61,7 @@ export class EventListComponent implements OnInit, OnDestroy {
   }
 
   announce() {
-    this.missionService.announceMission("bob");
+    this.headerService.announceMission("bob");
   }
 
   ngOnInit(): void {
