@@ -2,6 +2,7 @@
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using System.Linq;
+using Crossroads.Utilities.Services.Interfaces;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -9,12 +10,15 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
         public ChildCheckinRepository(IApiUserRepository apiUserRepository,
-            IMinistryPlatformRestRepository ministryPlatformRestRepository)
+            IMinistryPlatformRestRepository ministryPlatformRestRepository,
+            IApplicationConfiguration applicationConfiguration)
         {
             _apiUserRepository = apiUserRepository;
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
+            _applicationConfiguration = applicationConfiguration;
         }
 
         public List<MpParticipantDto> GetChildrenByPhoneNumber(string phoneNumber)
@@ -24,6 +28,7 @@ namespace MinistryPlatform.Translation.Repositories
             if (householdId == -1) return new List<MpParticipantDto>();
             var children = GetChildParticpantsByPrimaryHousehold(householdId);
             GetChildParticpantsByOtherHousehold(householdId, children);
+            children = GetOnlyKidsClubChildren(children);
 
             return children;
         }
@@ -42,7 +47,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var household = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                Search<MpContactDto>($"Household_Position_ID_Table.[Household_Position_ID] IN (1,3,4) AND ([Mobile_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}')", columnList);
+                Search<MpContactDto>($"Household_Position_ID_Table.[Household_Position_ID] IN ({_applicationConfiguration.HouseHoldIdsThatCanCheckIn}) AND ([Mobile_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}')", columnList);
 
             if (household == null || !household.Any())
             {
@@ -68,7 +73,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2", columnList);
+                        Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList);
         }
 
         private void GetChildParticpantsByOtherHousehold(int householdId, List<MpParticipantDto> children)
@@ -87,7 +92,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var otherChildren = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                                    SearchTable<MpParticipantDto>("Contact_Households", $"Household_Position_ID_Table.[Household_Position_ID] = 2  AND Household_ID_Table.[Household_ID] = {householdId}", columnList);
+                                    SearchTable<MpParticipantDto>("Contact_Households", $"Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}  AND Household_ID_Table.[Household_ID] = {householdId}", columnList);
 
             foreach (var child in otherChildren)
             {
@@ -96,6 +101,30 @@ namespace MinistryPlatform.Translation.Repositories
                     children.Add(child);
                 }
             }
+        }
+
+        private List<MpParticipantDto> GetOnlyKidsClubChildren(List<MpParticipantDto> children)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            var columnList = new List<string>
+            {
+                "Participant_ID_Table.Participant_ID",
+                "Participant_ID_Table_Contact_ID_Table.Contact_ID",
+                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID",
+                "Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
+                "Participant_ID_Table_Contact_ID_Table.First_Name",
+                "Participant_ID_Table_Contact_ID_Table.Last_Name",
+                "Participant_ID_Table_Contact_ID_Table.Date_of_Birth",
+                "Group_ID_Table_Congregation_ID_Table.Congregation_ID",
+                "Group_ID_Table_Group_Type_ID_Table.Group_Type_ID",
+                "Group_ID_Table_Ministry_ID_Table.Ministry_ID"
+            };
+
+            var participantIds = string.Join(",", children.Select(x => x.ParticipantId));
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                        SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongretationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId}", columnList);
         }
     }
 }
