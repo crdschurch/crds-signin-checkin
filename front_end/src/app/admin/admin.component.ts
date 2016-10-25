@@ -1,5 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HeaderService } from './header/header.service';
+import { Event } from './events/event';
 
 @Component({
   selector: 'admin',
@@ -9,11 +10,18 @@ import { HeaderService } from './header/header.service';
   encapsulation: ViewEncapsulation.None
 })
 export class AdminComponent {
-  theString: string;
-  constructor(private missionService: HeaderService) {
-    missionService.missionAnnounced$.subscribe(
-      astronaut => {
-        this.theString = `${astronaut} confirmed the mission`
+  event: any;
+  mission: any;
+  constructor(private headerService: HeaderService) {
+    headerService.eventAnnounced$.subscribe(
+      event => {
+        console.log("announce event admin component")
+        this.event = event
+      });
+    headerService.missionAnnounced$.subscribe(
+      mission => {
+        console.log("announce mission admin component")
+        this.mission = event
       });
   }
 }

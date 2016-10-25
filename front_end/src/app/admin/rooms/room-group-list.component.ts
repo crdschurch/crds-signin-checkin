@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdminService } from '../admin.service';
+import { HeaderService } from '../header/header.service';
 import { Group } from './group';
 import { Room } from './room';
 import { Event } from '../events/event';
@@ -8,13 +9,13 @@ import { Event } from '../events/event';
 @Component({
   templateUrl: 'room-group-list.component.html',
   styleUrls: ['room-group-list.component.scss'],
-  providers: [ AdminService ]
+  providers: [ AdminService, HeaderService ]
 })
 export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
 
-  constructor( private adminService: AdminService, private route: ActivatedRoute) {
+  constructor( private adminService: AdminService, private route: ActivatedRoute, private headerService: HeaderService) {
   }
 
   private getData(): void {
@@ -25,7 +26,11 @@ export class RoomGroupListComponent implements OnInit {
       error => console.error(error)
     );
     this.adminService.getEvent(eventId).subscribe(
-      event => { this.event = event; },
+      event => {
+        this.event = event;
+        this.headerService.announceMission("Jorge");
+        this.headerService.announceEvent(event);
+      },
       error => console.error(error)
     );
   }
@@ -44,6 +49,10 @@ export class RoomGroupListComponent implements OnInit {
 
   isReady(): boolean {
     return this.event !== undefined && this.room !== undefined;
+  }
+
+  clicky() {
+    this.headerService.announceMission("clickkkk");
   }
 
   ngOnInit() {

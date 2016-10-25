@@ -19,7 +19,6 @@ export class EventListComponent implements OnInit {
   site: number;
   currentWeekFilter: any;
   weekFilters: Timeframe[];
-  @Input() astronaut: string;
 
   constructor(private adminService: AdminService,
               private httpClientService: HttpClientService,
