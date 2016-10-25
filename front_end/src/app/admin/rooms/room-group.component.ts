@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { Range } from './range';
 import { Group } from './group';
@@ -26,8 +26,7 @@ export class RoomGroupComponent {
           range.Selected = newState;
       }
     }
-    this.adminService.updateRoomGroup(this.eventId, this.roomId, group).subscribe(room => {
-    });
+    // this.adminService.updateRoom(this.eventId, this.roomId, group).subscribe(room => {});
   }
 
   toggleRange(range: Range, group: Group) {
@@ -41,6 +40,7 @@ export class RoomGroupComponent {
       const allSelected = _.every(group.Ranges, ['Selected', true]);
       if (allSelected) group.Selected = true;
     }
+    // this.adminService.updateRoom(this.eventId, this.roomId, group).subscribe(room => {});
   }
 
 }

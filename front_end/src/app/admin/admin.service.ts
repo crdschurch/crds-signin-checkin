@@ -47,13 +47,6 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  updateRoomGroup(eventId: string, roomId: string, group: Group) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
-    return this.http.put(url, group)
-                    .map(res => res.json())
-                    .catch(this.handleError);
-  }
-
   private handleError (error: any) {
     console.error(error);
     return Observable.throw(error.json().error || 'Server error');
