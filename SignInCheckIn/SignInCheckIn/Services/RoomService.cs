@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
@@ -119,7 +120,7 @@ namespace SignInCheckIn.Services
             return response;
         }
 
-        private static List<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
+        private static IEnumerable<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
         {
             var response = new List<AgeGradeDto>();
             grades.OrderBy(g => g.SortOrder).ToList().ForEach(g =>
@@ -135,5 +136,11 @@ namespace SignInCheckIn.Services
             });
             return response;
         }
+
+        public List<AgeGradeDto> UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, List<AgeGradeDto> agesAndGrades)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

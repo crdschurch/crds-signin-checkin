@@ -94,7 +94,22 @@ namespace SignInCheckIn.Controllers
                 var apiError = new ApiErrorDto($"Error getting ages and grades for event {eventId}, room {roomId}", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
+        }
 
+        [HttpPut]
+        [ResponseType(typeof(List<AgeGradeDto>))]
+        [Route("events/{eventId:int}/rooms/{roomId:int}")]
+        public IHttpActionResult UpdateEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromBody] List<AgeGradeDto> agesAndGrades)
+        {
+            try
+            {
+                return Authorized(token => Ok(_roomService.UpdateEventRoomAgesAndGrades(token, eventId, roomId, agesAndGrades)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error updating ages and grades for event {eventId}, room {roomId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
         }
     }
 }
