@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AdminComponent } from './admin.component';
 import { SignInComponent } from './sign-in';
-import { EventListComponent } from './events/event-list.component';
 
 import { eventsRoutes } from './events/events.routes';
 

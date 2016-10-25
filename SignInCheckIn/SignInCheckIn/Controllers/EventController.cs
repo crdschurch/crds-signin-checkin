@@ -32,7 +32,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var eventList = _eventService.GetCheckinEvents(startDate, endDate, site);
-                return this.Ok(eventList);
+                return Ok(eventList);
             }
             catch (Exception e)
             {
@@ -49,7 +49,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var roomList = _roomService.GetLocationRoomsByEventId(eventid);
-                return this.Ok(roomList);
+                return Ok(roomList);
             }
             catch (Exception e)
             {
@@ -77,6 +77,23 @@ namespace SignInCheckIn.Controllers
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });
+        }
+
+        [HttpGet]
+        [ResponseType(typeof (List<AgeGradeDto>))]
+        [Route("events/{eventId:int}/rooms/{roomId:int}")]
+        public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId)
+        {
+            try
+            {
+                return Authorized(token => Ok(_roomService.GetEventRoomAgesAndGrades(token, eventId, roomId)),
+                                  () => Ok(_roomService.GetEventRoomAgesAndGrades(null, eventId, roomId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting ages and grades for event {eventId}, room {roomId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
 
         }
     }

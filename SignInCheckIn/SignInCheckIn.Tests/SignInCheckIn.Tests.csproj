@@ -166,6 +166,10 @@
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Crossroads.Utilities\Crossroads.Utilities.csproj">
+      <Project>{837BC104-F8ED-4C38-A441-D1F5DC1E0F44}</Project>
+      <Name>Crossroads.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MinistryPlatform.Translation\MinistryPlatform.Translation.csproj">
       <Project>{9ca5c91a-96e5-4968-b4ce-213b581b33f6}</Project>
       <Name>MinistryPlatform.Translation</Name>
