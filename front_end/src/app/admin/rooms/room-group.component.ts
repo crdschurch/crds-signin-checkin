@@ -14,4 +14,12 @@ export class RoomGroupComponent {
   constructor( private adminService: AdminService) {
   }
 
+  toggleAll(group) {
+    console.log(`toggle all`, group)
+  }
+
+  toggleRange(range) {
+    console.log(`toggle range`, range)
+  }
+
 }
