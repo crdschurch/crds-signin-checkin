@@ -112,6 +112,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Repositories\ChildCheckinRepositoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepositoryTest.cs" />
     <Compile Include="Repositories\RoomRepositoryTest.cs" />

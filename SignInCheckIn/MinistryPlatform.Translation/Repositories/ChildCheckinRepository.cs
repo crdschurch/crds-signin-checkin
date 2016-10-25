@@ -44,7 +44,12 @@ namespace MinistryPlatform.Translation.Repositories
             var household = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                 Search<MpContactDto>($"Household_Position_ID_Table.[Household_Position_ID] IN (1,3,4) AND ([Mobile_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}')", columnList);
 
-            return household?.First().HouseholdId ?? -1;
+            if (household == null || !household.Any())
+            {
+                return -1;
+            }
+
+            return household.First().HouseholdId;
         }
 
         private List<MpParticipantDto> GetChildParticpantsByPrimaryHousehold(int householdId)
