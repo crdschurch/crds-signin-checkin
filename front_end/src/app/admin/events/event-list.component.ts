@@ -54,7 +54,7 @@ export class EventListComponent implements OnInit, OnDestroy {
 
   private getData(): void {
     this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
-      events => {this.events = events;},
+      events => { this.events = events; },
       error => console.error(error)
     );
   }
@@ -62,8 +62,8 @@ export class EventListComponent implements OnInit, OnDestroy {
   private getWeekObject(offset = 0): any {
     // add one day so it starts on monday rather than sunday
     return {
-        start: moment().add(offset, "weeks").startOf("week").add(1, "day"),
-        end: moment().add(offset, "weeks").endOf("week").add(1, "day")
+        start: moment().add(offset, 'weeks').startOf('week').add(1, 'day'),
+        end: moment().add(offset, 'weeks').endOf('week').add(1, 'day')
     }
   }
 

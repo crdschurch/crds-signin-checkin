@@ -35,18 +35,18 @@
   </nav>
 
   <nav class="subnav navbar navbar-light bg-faded">
-    <ul class="list-inline float-xs-left lead mb-0">
+    <ul class="list-inline float-xs-left lead mb-0" *ngIf="isReady()">
       <li class="list-inline-item">
-        <strong>Site</strong> Oakley
+        <strong>Site</strong> {{getEvent().EventSite}}
       </li>
       <li class="list-inline-item">
-        <strong>Event Type</strong> Service
+        <strong>Event Type</strong> {{getEvent().EventType}}
       </li>
       <li class="list-inline-item">
-        <strong>Date</strong> Saturday August 20, 2016
+        <strong>Date</strong> {{getEvent().EventStartDate | amDateFormat:'M/D/YYYY'}}
       </li>
       <li class="list-inline-item">
-        <strong>Event Time</strong> 4:30pm
+        <strong>Event Time</strong> {{getEvent().EventStartDate | amDateFormat:'h:mma'}}
       </li>
     </ul>
     <div class="btn-group btn-group-sm float-sm-right" role="group">
@@ -90,11 +90,11 @@
       <div class="col-sm-12 lead">
         <div class="row">
           <strong class="col-sm-4 col-md-2">Age Ranges</strong>
-          <span class="col-sm-8 col-md-10">Nursery: 0-1, 1-2, 2-3</span>
+          <span class="col-sm-8 col-md-10">{{getRoom().getSelectionDescription()}}</span>
         </div>
         <div class="row">
           <strong class="col-sm-4 col-md-2">Room Number</strong>
-          <span class="col-sm-8 col-md-10">K112</span>
+          <span class="col-sm-8 col-md-10">{{getRoom().getRoomNumber()}}</span>
         </div>
       </div>
     </div>
@@ -107,7 +107,7 @@
     </div>
     <table class="table groups">
       <tbody>
-        <tr *ngFor="let g of groups;" class="group" [group]="g" ></tr>
+        <tr *ngFor="let g of getGroups();" class="group" [group]="g" ></tr>
       </tbody>
     </table>
   </div>
