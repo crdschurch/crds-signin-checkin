@@ -48,13 +48,33 @@ namespace SignInCheckIn.Services
 
         public List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
+            // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
             var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
             var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
 
+            // Frontend wants months like "Jan" and "Feb", not "January" and "February" - trim them down here, but we may want to move this to frontend in the future
             birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
+            // Get current event groups with a room reservation for this room
+            var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventId, roomId);
+
+            var response = new List<AgeGradeDto>();
+
+            // Add age ranges (including selected groups) to the response
+            response.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventGroups));
+
+            var maxSort = response.Select(r => r.SortOrder).Last();
+
+            // Add grade ranges (including selected groups) to the response
+            response.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
+
+            return response;
+        }
+
+        private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, int eventId, int roomId)
+        {
             var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
             if (eventGroups.Any())
             {
@@ -69,9 +89,12 @@ namespace SignInCheckIn.Services
                     });
                 }
             }
+            return eventGroups;
+        }
 
+        private IEnumerable<AgeGradeDto> GetAgeRangesAndCurrentSelections(IEnumerable<MpAttributeDto> ages, List<MpAttributeDto> nurseryMonths, List<MpAttributeDto> birthMonths, List<MpEventGroupDto> eventGroups)
+        {
             var response = new List<AgeGradeDto>();
-            var maxSort = 0;
             ages.OrderBy(a => a.SortOrder).ToList().ForEach(a =>
             {
                 response.Add(new AgeGradeDto
@@ -84,16 +107,21 @@ namespace SignInCheckIn.Services
                         Id = r.Id,
                         Name = r.Name,
                         Selected = a.Id == _applicationConfiguration.NurseryAgeAttributeId ?
-                            eventGroups.HasMatchingNurseryMonth(r.Id) : 
+                            eventGroups.HasMatchingNurseryMonth(r.Id) :
                             eventGroups.HasMatchingBirthMonth(a.Id, r.Id),
                         SortOrder = r.SortOrder,
                         TypeId = a.Type.Id
                     }).OrderBy(r => r.SortOrder).ToList(),
                     TypeId = a.Type.Id
                 });
-                maxSort = a.SortOrder;
             });
 
+            return response;
+        }
+
+        private static List<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
+        {
+            var response = new List<AgeGradeDto>();
             grades.OrderBy(g => g.SortOrder).ToList().ForEach(g =>
             {
                 response.Add(new AgeGradeDto
@@ -105,7 +133,6 @@ namespace SignInCheckIn.Services
                     TypeId = g.Type.Id
                 });
             });
-
             return response;
         }
     }
