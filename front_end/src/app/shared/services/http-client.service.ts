@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
-import { Router } from '@angular/router';
 import { CookieService } from 'angular2-cookie/core';
 
 import { User } from '../models/user';
