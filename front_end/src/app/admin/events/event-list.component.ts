@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
@@ -18,19 +18,6 @@ export class EventListComponent implements OnInit {
 
   constructor(private adminService: AdminService,
               private headerService: HeaderService) {
-    // default to Oakley
-    this.site = 1;
-    this.weekFilters = [];
-
-    // current week
-    this.weekFilters.push(this.getWeekObject())
-    // next week
-    this.weekFilters.push(this.getWeekObject(1))
-    // two weeks from now
-    this.weekFilters.push(this.getWeekObject(2))
-    // default to current week
-    this.currentWeekFilter = this.weekFilters[0];
-
   }
 
   private getData() {
@@ -50,7 +37,23 @@ export class EventListComponent implements OnInit {
     }
   }
 
+  private createWeekFilters() {
+    // default to Oakley
+    this.site = 1;
+    this.weekFilters = [];
+
+    // current week
+    this.weekFilters.push(this.getWeekObject())
+    // next week
+    this.weekFilters.push(this.getWeekObject(1))
+    // two weeks from now
+    this.weekFilters.push(this.getWeekObject(2))
+    // default to current week
+    this.currentWeekFilter = this.weekFilters[0];
+  }
+
   ngOnInit() {
+    this.createWeekFilters();
     this.getData();
   }
 

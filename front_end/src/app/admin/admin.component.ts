@@ -1,7 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HeaderService } from './header/header.service';
 import { AdminService } from './admin.service';
-import { Event } from './events/event';
 
 @Component({
   selector: 'admin',
