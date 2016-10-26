@@ -8,7 +8,6 @@ namespace SignInCheckIn.Services.Interfaces
         List<EventRoomDto> GetLocationRoomsByEventId(int eventId);
         EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom);
         EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId);
-
-        List<AgeGradeDto> UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, List<AgeGradeDto> agesAndGrades);
+        EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom);
     }
 }

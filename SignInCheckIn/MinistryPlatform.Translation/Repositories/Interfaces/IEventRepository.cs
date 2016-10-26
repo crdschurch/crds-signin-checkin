@@ -10,5 +10,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpEventDto GetEventById(int eventId);
 
         List<MpEventGroupDto> GetEventGroupsForEvent(int eventId);
+        void DeleteEventGroups(string authenticationToken, IEnumerable<int> eventGroupIds);
     }
 }

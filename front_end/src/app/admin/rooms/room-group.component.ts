@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { Range } from './range';
 import { Group } from './group';
+import { Room } from './room';
 import * as _ from 'lodash'
 
 @Component({
@@ -14,6 +15,7 @@ export class RoomGroupComponent {
   @Input() group: Group;
   @Input() eventId: string;
   @Input() roomId: string;
+  @Input() room: Room;
 
   constructor( private adminService: AdminService) {
   }
@@ -26,7 +28,7 @@ export class RoomGroupComponent {
           range.Selected = newState;
       }
     }
-    // this.adminService.updateRoom(this.eventId, this.roomId, group).subscribe(room => {});
+    this.adminService.updateRoomGroups(this.eventId, this.roomId, this.room).subscribe(room => {});
   }
 
   toggleRange(range: Range, group: Group) {
@@ -40,7 +42,8 @@ export class RoomGroupComponent {
       const allSelected = _.every(group.Ranges, ['Selected', true]);
       if (allSelected) group.Selected = true;
     }
-    // this.adminService.updateRoom(this.eventId, this.roomId, group).subscribe(room => {});
+    console.log(this.eventId, this.roomId, this.room)
+    this.adminService.updateRoomGroups(this.eventId, this.roomId, this.room).subscribe(room => {});
   }
 
 }

@@ -97,7 +97,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof (EventRoomDto))]
-        [Route("events/{eventId:int}/rooms/{roomId:int}")]
+        [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
         public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId)
         {
             try
@@ -113,13 +113,13 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPut]
-        [ResponseType(typeof(List<AgeGradeDto>))]
-        [Route("events/{eventId:int}/rooms/{roomId:int}")]
-        public IHttpActionResult UpdateEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromBody] List<AgeGradeDto> agesAndGrades)
+        [ResponseType(typeof(EventRoomDto))]
+        [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
+        public IHttpActionResult UpdateEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromBody] EventRoomDto eventRoom)
         {
             try
             {
-                return Authorized(token => Ok(_roomService.UpdateEventRoomAgesAndGrades(token, eventId, roomId, agesAndGrades)));
+                return Authorized(token => Ok(_roomService.UpdateEventRoomAgesAndGrades(token, eventId, roomId, eventRoom)));
             }
             catch (Exception e)
             {

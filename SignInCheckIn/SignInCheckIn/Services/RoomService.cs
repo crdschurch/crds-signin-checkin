@@ -137,7 +137,10 @@ namespace SignInCheckIn.Services
                             eventGroups.HasMatchingNurseryMonth(r.Id) :
                             eventGroups.HasMatchingBirthMonth(a.Id, r.Id),
                         SortOrder = r.SortOrder,
-                        TypeId = a.Type.Id
+                        TypeId = a.Type.Id,
+                        EventGroupIds = a.Id == _applicationConfiguration.NurseryAgeAttributeId ?
+                            eventGroups.GetMatchingNurseryMonths(r.Id).Select(g => g.Group.Id).ToList() :
+                            eventGroups.GetMatchingBirthMonths(a.Id, r.Id).Select(g => g.Group.Id).ToList()
                     }).OrderBy(r => r.SortOrder).ToList(),
                     TypeId = a.Type.Id
                 });
@@ -157,16 +160,38 @@ namespace SignInCheckIn.Services
                     Name = g.Name,
                     Selected = eventGroups.HasMatchingGradeGroup(g.Id),
                     SortOrder = g.SortOrder + maxSort,
-                    TypeId = g.Type.Id
+                    TypeId = g.Type.Id,
+                    EventGroupId = eventGroups.GetMatchingGradeGroups(g.Id).Select(e => e.Group.Id).FirstOrDefault()
                 });
             });
             return response;
         }
 
-        public List<AgeGradeDto> UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, List<AgeGradeDto> agesAndGrades)
+        public EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom)
         {
-            throw new NotImplementedException();
+            var current = GetEventRoomAgesAndGrades(authenticationToken, eventId, roomId);
+
+            // Check to see if anything is selected
+            if (!eventRoom.AssignedGroups.Exists(g => g.Selected))
+            {
+                // If current has a room reservation, then delete all event groups for the room reservation
+                if (current.EventRoomId.HasValue)
+                {
+                    DeleteCurrentEventGroupsForRoomReservation(authenticationToken, current);
+                }
+
+                return eventRoom;
+            }
+
+            return eventRoom;
         }
 
+        private void DeleteCurrentEventGroupsForRoomReservation(string authenticationToken, EventRoomDto eventRoom)
+        {
+            var ageGroupsToDelete = eventRoom.AssignedGroups.FindAll(g => g.Selected && !g.HasRanges).Select(g => g.EventGroupId);
+            var gradeGroupsToDelete = eventRoom.AssignedGroups.FindAll(g => g.Selected && g.HasRanges).Select(g => g.Ranges.FindAll(r => r.Selected).SelectMany(r => r.EventGroupIds)).SelectMany(g => g);
+
+            _eventRepository.DeleteEventGroups(authenticationToken, ageGroupsToDelete.Concat(gradeGroupsToDelete));
+        }
     }
 }
