@@ -49,8 +49,15 @@ export class AdminService {
   }
 
   getRoomGroups(eventId: string, roomId: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
     return this.http.get(url)
+                    .map(res => Room.fromJson(res.json()))
+                    .catch(this.handleError);
+  }
+
+  updateRoomGroups(eventId: string, roomId: string, body: Room) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
+    return this.http.put(url, body)
                     .map(res => Room.fromJson(res.json()))
                     .catch(this.handleError);
   }

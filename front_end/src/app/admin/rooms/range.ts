@@ -1,7 +1,7 @@
 export class Range {
   Id: number;
   Name: string;
-  Selected: number;
+  Selected: boolean;
   SortOrder: number;
   TypeId: number;
 

@@ -97,7 +97,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof (EventRoomDto))]
-        [Route("events/{eventId:int}/rooms/{roomId:int}")]
+        [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
         public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId)
         {
             try
@@ -114,7 +114,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(EventRoomDto))]
-        [Route("events/{eventId:int}/rooms/{roomId:int}")]
+        [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
         public IHttpActionResult UpdateEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromBody] EventRoomDto eventRoom)
         {
             try
