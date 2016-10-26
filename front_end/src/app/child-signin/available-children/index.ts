@@ -1,1 +1,1 @@
-export { AvailableChildrenComponent } from './available-children.component';
+export { AvailableChildrenModule } from './available-children.module';

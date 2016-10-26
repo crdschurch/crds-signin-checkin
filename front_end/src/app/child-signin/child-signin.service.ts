@@ -21,6 +21,7 @@ export class ChildSigninService {
     const url = `${this.url}/children/${pipe.transform(phoneNumber, true)}`;
 
     if (this.childrenAvailable.length === 0) {
+      debugger;
       return this.http.get(url)
                   .map((response) => {
                     for (let kid of response.json()) {
@@ -33,6 +34,7 @@ export class ChildSigninService {
                   })
                   .catch(this.handleError);
     } else {
+      debugger;
       return Observable.of(this.childrenAvailable);
     }
   }

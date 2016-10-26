@@ -31,7 +31,7 @@ export class SearchComponent {
     if (this.phoneNumber.length === 10) {
       this.error = false;
       this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe(() => {
-        this.router.navigate(['/child-signin/available-children']);
+        this.router.navigate(['/child-signin/available-children', this.phoneNumber]);
       });
     } else {
       this.error = true;

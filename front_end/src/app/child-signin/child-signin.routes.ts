@@ -2,10 +2,10 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ChildSigninComponent } from './child-signin.component';
-import { AvailableChildrenComponent } from './available-children';
 import { GuestComponent } from './guest';
 import { AssignmentComponent } from './assignment';
 import { searchRoutes } from './search/search.routes';
+import { availableChildrenRoutes } from './available-children/available-children.routes';
 
 const childSigninRoutes: Routes = [
   {
@@ -17,8 +17,8 @@ const childSigninRoutes: Routes = [
         children: [...searchRoutes]
       },
       {
-        path: 'available-children',
-        component: AvailableChildrenComponent
+        path: 'available-children/:phoneNumber',
+        children: [...availableChildrenRoutes]
       },
       {
         path: 'guest',
