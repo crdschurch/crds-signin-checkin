@@ -8,12 +8,12 @@ import { PhoneNumberPipe } from '../shared/pipes/phoneNumber.pipe';
 import { Child } from '../shared/models/child';
 
 @Injectable()
-export class ChildCheckinService {
+export class ChildSigninService {
   private url: string = '';
   private childrenAvailable: Array<Child> = [];
 
   constructor(private http: HttpClientService) {
-    this.url = `${process.env.ECHECK_API_ENDPOINT}/checkin`;
+    this.url = `${process.env.ECHECK_API_ENDPOINT}/signin`;
   }
 
   getChildrenByPhoneNumber(phoneNumber: string) {

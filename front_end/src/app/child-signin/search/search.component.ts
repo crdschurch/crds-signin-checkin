@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ChildCheckinService } from '../child-checkin.service';
+import { ChildSigninService } from '../child-signin.service';
 
 @Component({
   selector: 'search',
@@ -11,7 +11,7 @@ export class SearchComponent {
   phoneNumber: string = '';
   error: boolean = false;
 
-  constructor(private router: Router, private childCheckinService: ChildCheckinService) {}
+  constructor(private router: Router, private childSigninService: ChildSigninService) {}
 
   setPhoneNumber(num: string) {
     if (this.phoneNumber.length < 10) {
@@ -30,8 +30,8 @@ export class SearchComponent {
   next(): void {
     if (this.phoneNumber.length === 10) {
       this.error = false;
-      this.childCheckinService.getChildrenByPhoneNumber(this.phoneNumber).subscribe(() => {
-        this.router.navigate(['/child-checkin/results']);
+      this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe(() => {
+        this.router.navigate(['/child-signin/available-children']);
       });
     } else {
       this.error = true;

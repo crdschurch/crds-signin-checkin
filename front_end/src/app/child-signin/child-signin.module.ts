@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 
-import { ChildCheckinComponent } from './child-checkin.component';
+import { ChildSigninComponent } from './child-signin.component';
 import { SearchModule } from './search';
-import { ResultsComponent } from './results';
+import { AvailableChildrenComponent } from './available-children';
 import { GuestComponent } from './guest';
 import { AssignmentComponent } from './assignment';
-import { childCheckinRouting } from './child-checkin.routes';
+import { childSigninRouting } from './child-signin.routes';
 
 @NgModule({
   declarations: [
-    ChildCheckinComponent,
-    ResultsComponent,
+    ChildSigninComponent,
+    AvailableChildrenComponent,
     GuestComponent,
     AssignmentComponent,
   ],
   imports: [
     SharedModule,
     SearchModule,
-    childCheckinRouting
+    childSigninRouting
   ],
 })
 
-export class ChildCheckinModule { }
+export class ChildSigninModule { }
