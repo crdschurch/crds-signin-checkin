@@ -6,13 +6,13 @@ using Crossroads.Utilities.Services.Interfaces;
 
 namespace MinistryPlatform.Translation.Repositories
 {
-    public class ChildCheckinRepository : IChildCheckinRepository
+    public class ChildSigninRepository : IChildSigninRepository
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildCheckinRepository(IApiUserRepository apiUserRepository,
+        public ChildSigninRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository,
             IApplicationConfiguration applicationConfiguration)
         {

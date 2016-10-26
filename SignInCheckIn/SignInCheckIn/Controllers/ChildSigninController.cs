@@ -8,23 +8,23 @@ using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Controllers
 {
-    public class ChildCheckinController : ApiController
+    public class ChildSigninController : ApiController
     {
-        private readonly IChildCheckinService _childCheckinService;
+        private readonly IChildSigninService _childSigninService;
 
-        public ChildCheckinController(IChildCheckinService childCheckinService)
+        public ChildSigninController(IChildSigninService childSigninService)
         {
-            _childCheckinService = childCheckinService;
+            _childSigninService = childSigninService;
         }
 
         [HttpGet]
         [ResponseType(typeof(List<ParticipantDto>))]
-        [Route("checkin/children/{phoneNumber}")]
+        [Route("signin/children/{phoneNumber}")]
         public IHttpActionResult GetEvents(string phoneNumber)
         {
             try
             {
-                var children = _childCheckinService.GetChildrenByPhoneNumber(phoneNumber);
+                var children = _childSigninService.GetChildrenByPhoneNumber(phoneNumber);
                 return Ok(children);
             }
             catch (Exception e)

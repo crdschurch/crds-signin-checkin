@@ -155,7 +155,7 @@
     <Compile Include="Controllers\MPAuthTestExtensions.cs" />
     <Compile Include="Filters\DomainLockedApiKeyFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ChildCheckinServiceTest.cs" />
+    <Compile Include="Services\ChildSigninServiceTest.cs" />
     <Compile Include="Services\EventServiceTest.cs" />
     <Compile Include="Services\LoginServiceTest.cs" />
     <Compile Include="Services\RoomServiceTest.cs" />

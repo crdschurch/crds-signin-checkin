@@ -10,18 +10,18 @@ using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Services
 {
-    public class ChildCheckinService : IChildCheckinService
+    public class ChildSigninService : IChildSigninService
     {
-        private readonly IChildCheckinRepository _childCheckinRepository;
+        private readonly IChildSigninRepository _childSigninRepository;
 
-        public ChildCheckinService(IChildCheckinRepository childCheckinRepository)
+        public ChildSigninService(IChildSigninRepository childSigninRepository)
         {
-            _childCheckinRepository = childCheckinRepository;
+            _childSigninRepository = childSigninRepository;
         }
 
         public List<ParticipantDto> GetChildrenByPhoneNumber(string phoneNumber)
         {
-            var mpChildren = _childCheckinRepository.GetChildrenByPhoneNumber(phoneNumber);
+            var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
             return Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
         }
     }

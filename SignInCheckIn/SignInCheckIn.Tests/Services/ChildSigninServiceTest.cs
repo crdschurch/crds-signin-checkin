@@ -10,19 +10,19 @@ using SignInCheckIn.Services;
 
 namespace SignInCheckIn.Tests.Services
 {
-    public class ChildCheckinServiceTest
+    public class ChildSigninServiceTest
     {
-        private Mock<IChildCheckinRepository> _childCheckinRepository;
+        private Mock<IChildSigninRepository> _childCheckinRepository;
 
-        private ChildCheckinService _fixture;
+        private ChildSigninService _fixture;
 
         [SetUp]
         public void SetUp()
         {
             AutoMapperConfig.RegisterMappings();
 
-            _childCheckinRepository = new Mock<IChildCheckinRepository>();
-            _fixture = new ChildCheckinService(_childCheckinRepository.Object);
+            _childCheckinRepository = new Mock<IChildSigninRepository>();
+            _fixture = new ChildSigninService(_childCheckinRepository.Object);
         }
 
         [Test]

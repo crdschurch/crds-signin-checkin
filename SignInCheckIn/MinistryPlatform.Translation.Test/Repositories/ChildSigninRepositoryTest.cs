@@ -9,9 +9,9 @@ using NUnit.Framework;
 
 namespace MinistryPlatform.Translation.Test.Repositories
 {
-    public class ChildCheckinRepositoryTest
+    public class ChildSigninRepositoryTest
     {
-        private ChildCheckinRepository _fixture;
+        private ChildSigninRepository _fixture;
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
@@ -27,7 +27,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _ministryPlatformRestRepository = new Mock<IMinistryPlatformRestRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>(MockBehavior.Default);
-            _fixture = new ChildCheckinRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
+            _fixture = new ChildSigninRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
 
             _householdColumns = new List<string>
             {
