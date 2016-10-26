@@ -64,5 +64,11 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
                 .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId}", _eventGroupsColumns);
         }
+
+        public void DeleteEventGroups(string authenticationToken, IEnumerable<int> eventGroupIds)
+        {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpEventGroupDto>(eventGroupIds);
+        }
     }
 }

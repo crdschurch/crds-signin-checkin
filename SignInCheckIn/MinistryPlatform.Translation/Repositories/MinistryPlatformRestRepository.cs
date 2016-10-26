@@ -199,6 +199,25 @@ namespace MinistryPlatform.Translation.Repositories
             return SearchTable<T>(GetTableName<T>(), searchString, columns);
         }
 
+        public void Delete<T>(int recordId)
+        {
+            Delete<T>(new[] {recordId});
+        }
+
+        public void Delete<T>(IEnumerable<int> recordIds)
+        {
+            var url = $"/tables/{GetTableName<T>()}";
+            var request = new RestRequest(url, Method.DELETE);
+            AddAuthorization(request);
+            recordIds.ToList().ForEach(id =>
+            {
+                request.AddQueryParameter("id", id+"");
+            });
+
+            var response = _ministryPlatformRestClient.Execute(request);
+            response.CheckForErrors($"Error deleting {GetTableName<T>()}", true);
+        }
+
         public void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields)
         {
             var url = string.Format("/tables/{0}", tableName);

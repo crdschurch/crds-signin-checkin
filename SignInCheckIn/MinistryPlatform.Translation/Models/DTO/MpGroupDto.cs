@@ -28,6 +28,8 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonIgnore]
         public MpAttributeDto NurseryMonth { get; set; }
 
+        public int SortOrder { get; set; }
+
         public bool HasAgeRange()
         {
             return AgeRange != null; 

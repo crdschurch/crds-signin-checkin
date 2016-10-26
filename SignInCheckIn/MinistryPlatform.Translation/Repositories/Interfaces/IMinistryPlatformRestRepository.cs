@@ -71,5 +71,8 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         int PostStoredProc(string procedureName, Dictionary<string, object> parameters);
 
         void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields);
+
+        void Delete<T>(IEnumerable<int> recordIds);
+        void Delete<T>(int recordId);
     }
 }
