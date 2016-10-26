@@ -26,14 +26,7 @@ import { eventsRouting } from './events.routes';
     MomentModule,
     ReactiveFormsModule
   ],
-  exports: [
-    EventListComponent,
-    RoomListComponent,
-    RoomGroupListComponent,
-    RoomGroupComponent,
-    HeaderComponent,
-    RoomComponent
-  ]
+  exports: []
 })
 
 export class EventsModule { }
