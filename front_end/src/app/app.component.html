@@ -1,1 +1,10 @@
+<div class="crossroads-growl">
+  <toaster-container [toasterconfig]="toasterConfig1"></toaster-container>
+  <!--<toaster-container ></toaster-container>-->
+  <!--<toaster-container [toasterconfig]="Config2"></toaster-container>-->
+</div>
+
+<button (click)="addToast('generalError')">Add Toast</button>
+<!--<button (click)="popToast('noServingOpportunities')">Add Toast</button>-->
 <router-outlet></router-outlet>
+

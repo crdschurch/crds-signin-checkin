@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
+import { RootService } from '../../shared/services';
 
 import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
@@ -11,7 +12,7 @@ import * as moment from 'moment';
 @Component({
   selector: 'events',
   templateUrl: 'event-list.component.html',
-  providers: [ AdminService, HttpClientService ]
+  providers: [ AdminService, HttpClientService]
 })
 export class EventListComponent implements OnInit {
   events: Event[];
@@ -19,7 +20,7 @@ export class EventListComponent implements OnInit {
   currentWeekFilter: any;
   weekFilters: Timeframe[];
 
-  constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router) {
+  constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router, private rootService: RootService) {
     // default to Oakley
     this.site = 1;
     this.weekFilters = [];
@@ -36,9 +37,14 @@ export class EventListComponent implements OnInit {
 
   private getData(): void {
     this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
-      events => {this.events = events;},
-      error => console.error(error)
+      events => {this.events = events; },
+      error => { 
+        console.error(error);
+        this.rootService.announceEvent('generalError');
+      }
     );
+
+    
   }
 
   private getWeekObject(offset = 0): any {
