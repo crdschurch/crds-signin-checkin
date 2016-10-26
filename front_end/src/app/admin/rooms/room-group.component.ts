@@ -42,7 +42,6 @@ export class RoomGroupComponent {
       const allSelected = _.every(group.Ranges, ['Selected', true]);
       if (allSelected) group.Selected = true;
     }
-    console.log(this.eventId, this.roomId, this.room)
     this.adminService.updateRoomGroups(this.eventId, this.roomId, this.room).subscribe(room => {});
   }
 
