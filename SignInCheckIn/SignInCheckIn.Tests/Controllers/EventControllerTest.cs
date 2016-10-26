@@ -78,38 +78,51 @@ namespace SignInCheckIn.Tests.Controllers
         [Test]
         public void TestGetEventRoomAgesAndGradesWithAuth()
         {
-            //const int eventId = 123;
-            //const int roomId = 456;
-            //var agesAndGrades = new List<AgeGradeDto>
-            //{
-            //    new AgeGradeDto()
-            //};
+            const int eventId = 123;
+            const int roomId = 456;
+            var eventRoom = new EventRoomDto
+            {
+                AssignedGroups = new List<AgeGradeDto>()
+            };
 
-            //_roomService.Setup(mocked => mocked.GetEventRoomAgesAndGrades(_auth, eventId, roomId)).Returns(agesAndGrades);
+            _roomService.Setup(mocked => mocked.GetEventRoomAgesAndGrades(_auth, eventId, roomId)).Returns(eventRoom);
 
-            //var result = _fixture.GetEventRoomAgesAndGrades(eventId, roomId);
-            //_roomService.VerifyAll();
-            //result.Should().BeOfType<OkNegotiatedContentResult<List<AgeGradeDto>>>();
-            //((OkNegotiatedContentResult<List<AgeGradeDto>>) result).Content.Should().BeSameAs(agesAndGrades);
+            var result = _fixture.GetEventRoomAgesAndGrades(eventId, roomId);
+            _roomService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<EventRoomDto>>();
+            ((OkNegotiatedContentResult<EventRoomDto>)result).Content.Should().BeSameAs(eventRoom);
         }
 
         [Test]
         public void TestGetEventRoomAgesAndGradesWithoutAuth()
         {
-            //const int eventId = 123;
-            //const int roomId = 456;
-            //var agesAndGrades = new List<AgeGradeDto>
-            //{
-            //    new AgeGradeDto()
-            //};
+            const int eventId = 123;
+            const int roomId = 456;
+            var eventRoom = new EventRoomDto
+            {
+                AssignedGroups = new List<AgeGradeDto>()
+            };
 
-            //_roomService.Setup(mocked => mocked.GetEventRoomAgesAndGrades(null, eventId, roomId)).Returns(agesAndGrades);
+            _roomService.Setup(mocked => mocked.GetEventRoomAgesAndGrades(null, eventId, roomId)).Returns(eventRoom);
 
-            //_fixture.RemoveAuthorization();
-            //var result = _fixture.GetEventRoomAgesAndGrades(eventId, roomId);
-            //_roomService.VerifyAll();
-            //result.Should().BeOfType<OkNegotiatedContentResult<List<AgeGradeDto>>>();
-            //((OkNegotiatedContentResult<List<AgeGradeDto>>)result).Content.Should().BeSameAs(agesAndGrades);
+            _fixture.RemoveAuthorization();
+            var result = _fixture.GetEventRoomAgesAndGrades(eventId, roomId);
+            _roomService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<EventRoomDto>>();
+            ((OkNegotiatedContentResult<EventRoomDto>)result).Content.Should().BeSameAs(eventRoom);
+        }
+
+        [Test]
+        public void TestGetEvent()
+        {
+            const int eventId = 123;
+            var e = new EventDto();
+            _eventService.Setup(mocked => mocked.GetEvent(eventId)).Returns(e);
+
+            var result = _fixture.GetEvent(eventId);
+            _eventService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<EventDto>>();
+            ((OkNegotiatedContentResult<EventDto>)result).Content.Should().BeSameAs(e);
         }
     }
 }

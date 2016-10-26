@@ -10,5 +10,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom);
 
         MpEventRoomDto GetEventRoom(int eventId, int roomId);
+
+        MpRoomDto GetRoom(int roomId);
     }
 }

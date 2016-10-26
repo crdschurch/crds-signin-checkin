@@ -149,216 +149,257 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void TestGetEventRoomAgesAndGradesNoEventGroups()
         {
-            //const string token = "token 123";
-            //const int eventId = 12345;
-            //const int roomId = 67890;
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            const string token = "token 123";
+            const int eventId = 12345;
+            const int roomId = 67890;
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            //_eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns((List<MpEventGroupDto>)null);
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
 
-            //var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            //result.Should().NotBeNull();
-            //result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            //Assert.IsFalse(result.Exists(x => x.Selected));
-            //result.ForEach(x =>
-            //{
-            //    Assert.IsFalse(x.HasRanges && x.Ranges.Exists(y => y.Selected));
-            //    if (x.Id == NurseryAgeAttributeId)
-            //    {
-            //        var i = 0;
-            //        Assert.IsTrue(x.HasRanges);
-            //        _nurseryMonthList.OrderBy(m => m.SortOrder).ToList().ForEach(m =>
-            //        {
-            //            Assert.AreEqual(m.Name, x.Ranges[i].Name);
-            //            Assert.AreEqual(m.Id, x.Ranges[i].Id);
-            //            Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
-            //            i++;
-            //        });
-            //    } else if (x.TypeId == AgesAttributeTypeId)
-            //    {
-            //        var i = 0;
-            //        Assert.IsTrue(x.HasRanges);
-            //        _birthMonthList.OrderBy(m => m.SortOrder).ToList().ForEach(m =>
-            //        {
-            //            Assert.AreEqual(m.Name.Substring(0, 3), x.Ranges[i].Name);
-            //            Assert.AreEqual(m.Id, x.Ranges[i].Id);
-            //            Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
-            //            i++;
-            //        });
-            //    } else if (x.TypeId == GradesAttributeTypeId)
-            //    {
-            //        Assert.IsFalse(x.HasRanges);
-            //    }
-            //    else
-            //    {
-            //        Assert.Fail($"Unexpected age/grade Id: {x.Id}, Name: {x.Name}");
-            //    }
-            //});
+            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns((List<MpEventGroupDto>)null);
+
+            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
+            result.Should().NotBeNull();
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
+            assignedGroups.ForEach(x =>
+            {
+                Assert.IsFalse(x.HasRanges && x.Ranges.Exists(y => y.Selected));
+                if (x.Id == NurseryAgeAttributeId)
+                {
+                    var i = 0;
+                    Assert.IsTrue(x.HasRanges);
+                    _nurseryMonthList.OrderBy(m => m.SortOrder).ToList().ForEach(m =>
+                    {
+                        Assert.AreEqual(m.Name, x.Ranges[i].Name);
+                        Assert.AreEqual(m.Id, x.Ranges[i].Id);
+                        Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
+                        i++;
+                    });
+                }
+                else if (x.TypeId == AgesAttributeTypeId)
+                {
+                    var i = 0;
+                    Assert.IsTrue(x.HasRanges);
+                    _birthMonthList.OrderBy(m => m.SortOrder).ToList().ForEach(m =>
+                    {
+                        Assert.AreEqual(m.Name.Substring(0, 3), x.Ranges[i].Name);
+                        Assert.AreEqual(m.Id, x.Ranges[i].Id);
+                        Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
+                        i++;
+                    });
+                }
+                else if (x.TypeId == GradesAttributeTypeId)
+                {
+                    Assert.IsFalse(x.HasRanges);
+                }
+                else
+                {
+                    Assert.Fail($"Unexpected age/grade Id: {x.Id}, Name: {x.Name}");
+                }
+            });
         }
 
         [Test]
         public void TestGetEventRoomAgesAndGradesWithNurseryEventGroups()
         {
-            //const string token = "token 123";
-            //const int eventId = 12345;
-            //const int roomId = 67890;
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            const string token = "token 123";
+            const int eventId = 12345;
+            const int roomId = 67890;
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            //var events = new List<MpEventGroupDto>
-            //{
-            //    new MpEventGroupDto
-            //    {
-            //        Event = new MpEventDto
-            //        {
-            //            EventId  = eventId
-            //        },
-            //        Group = new MpGroupDto
-            //        {
-            //            Id = 98765,
-            //            AgeRange = new MpAttributeDto
-            //            {
-            //                Id = NurseryAgeAttributeId,
-            //                Type = new MpAttributeTypeDto
-            //                {
-            //                    Id = AgesAttributeTypeId
-            //                }
-            //            },
-            //            NurseryMonth = _nurseryMonthList[0]
-            //        },
-            //        RoomReservation = new MpEventRoomDto
-            //        {
-            //            RoomId = roomId
-            //        }
-            //    }
-            //};
+            var events = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    Event = new MpEventDto
+                    {
+                        EventId  = eventId
+                    },
+                    Group = new MpGroupDto
+                    {
+                        Id = 98765,
+                        AgeRange = new MpAttributeDto
+                        {
+                            Id = NurseryAgeAttributeId,
+                            Type = new MpAttributeTypeDto
+                            {
+                                Id = AgesAttributeTypeId
+                            }
+                        },
+                        NurseryMonth = _nurseryMonthList[0]
+                    },
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        RoomId = roomId
+                    }
+                }
+            };
 
-            //_eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
-            //_groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
-            //{
-            //    events[0].Group
-            //});
+            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
+            _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
+            {
+                events[0].Group
+            });
 
-            //var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            //_groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
-            //result.Should().NotBeNull();
-            //result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            //Assert.IsFalse(result.Exists(x => x.Selected));
-            //Assert.IsTrue(result.Exists(x => x.Id == NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _nurseryMonthList[0].Id)));
-            //Assert.IsFalse(result.Exists(x => x.Id != NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
+
+            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
+            result.Should().NotBeNull();
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+
+            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
+            assignedGroups.Should().NotBeNull();
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
+            Assert.IsTrue(assignedGroups.Exists(x => x.Id == NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _nurseryMonthList[0].Id)));
+            Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
 
         [Test]
         public void TestGetEventRoomAgesAndGradesWithAgeEventGroups()
         {
-            //const string token = "token 123";
-            //const int eventId = 12345;
-            //const int roomId = 67890;
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            const string token = "token 123";
+            const int eventId = 12345;
+            const int roomId = 67890;
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            //var events = new List<MpEventGroupDto>
-            //{
-            //    new MpEventGroupDto
-            //    {
-            //        Event = new MpEventDto
-            //        {
-            //            EventId  = eventId
-            //        },
-            //        Group = new MpGroupDto
-            //        {
-            //            Id = 98765,
-            //            AgeRange = new MpAttributeDto
-            //            {
-            //                Id = NurseryAgeAttributeId + 1,
-            //                Type = new MpAttributeTypeDto
-            //                {
-            //                    Id = AgesAttributeTypeId
-            //                }
-            //            },
-            //            BirthMonth = _birthMonthList[0]
-            //        },
-            //        RoomReservation = new MpEventRoomDto
-            //        {
-            //            RoomId = roomId
-            //        }
-            //    }
-            //};
+            var events = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    Event = new MpEventDto
+                    {
+                        EventId  = eventId
+                    },
+                    Group = new MpGroupDto
+                    {
+                        Id = 98765,
+                        AgeRange = new MpAttributeDto
+                        {
+                            Id = NurseryAgeAttributeId + 1,
+                            Type = new MpAttributeTypeDto
+                            {
+                                Id = AgesAttributeTypeId
+                            }
+                        },
+                        BirthMonth = _birthMonthList[0]
+                    },
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        RoomId = roomId
+                    }
+                }
+            };
 
-            //_eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
-            //_groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
-            //{
-            //    events[0].Group
-            //});
+            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
+            _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
+            {
+                events[0].Group
+            });
 
-            //var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            //_groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
-            //result.Should().NotBeNull();
-            //result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            //Assert.IsFalse(result.Exists(x => x.Selected));
-            //Assert.IsTrue(result.Exists(x => x.Id == NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _birthMonthList[0].Id)));
-            //Assert.IsFalse(result.Exists(x => x.Id != NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
+
+            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
+            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
+            result.Should().NotBeNull();
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
+            Assert.IsTrue(assignedGroups.Exists(x => x.Id == NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _birthMonthList[0].Id)));
+            Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
 
         [Test]
         public void TestGetEventRoomAgesAndGradesWithGradeEventGroups()
         {
-            //const string token = "token 123";
-            //const int eventId = 12345;
-            //const int roomId = 67890;
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            //_attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            const string token = "token 123";
+            const int eventId = 12345;
+            const int roomId = 67890;
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            //var events = new List<MpEventGroupDto>
-            //{
-            //    new MpEventGroupDto
-            //    {
-            //        Event = new MpEventDto
-            //        {
-            //            EventId  = eventId
-            //        },
-            //        Group = new MpGroupDto
-            //        {
-            //            Id = 98765,
-            //            Grade = new MpAttributeDto
-            //            {
-            //                Id = _gradeList[0].Id,
-            //                Type = new MpAttributeTypeDto
-            //                {
-            //                    Id = GradesAttributeTypeId
-            //                }
-            //            },
-            //        },
-            //        RoomReservation = new MpEventRoomDto
-            //        {
-            //            RoomId = roomId
-            //        }
-            //    }
-            //};
+            var events = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    Event = new MpEventDto
+                    {
+                        EventId  = eventId
+                    },
+                    Group = new MpGroupDto
+                    {
+                        Id = 98765,
+                        Grade = new MpAttributeDto
+                        {
+                            Id = _gradeList[0].Id,
+                            Type = new MpAttributeTypeDto
+                            {
+                                Id = GradesAttributeTypeId
+                            }
+                        },
+                    },
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        RoomId = roomId
+                    }
+                }
+            };
 
-            //_eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
-            //_groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
-            //{
-            //    events[0].Group
-            //});
+            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
+            _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
+            {
+                events[0].Group
+            });
 
-            //var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            //_groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
-            //result.Should().NotBeNull();
-            //result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            //var selected = result.FindAll(x => x.Selected);
-            //Assert.IsTrue(selected.Count == 1);
-            //Assert.AreEqual(_gradeList[0].Id, selected[0].Id);
-            //Assert.IsFalse(result.Exists(x => x.Id != _gradeList[0].Id && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
+
+            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
+            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
+            result.Should().NotBeNull();
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            var selected = assignedGroups.FindAll(x => x.Selected);
+            Assert.IsTrue(selected.Count == 1);
+            Assert.AreEqual(_gradeList[0].Id, selected[0].Id);
+            Assert.IsFalse(assignedGroups.Exists(x => x.Id != _gradeList[0].Id && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
 
     }
