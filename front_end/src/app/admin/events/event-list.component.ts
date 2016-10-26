@@ -54,10 +54,6 @@ export class EventListComponent implements OnInit {
     }
   }
 
-  announce() {
-    this.headerService.announceMission("bob");
-  }
-
   ngOnInit(): void {
     this.getData();
   }

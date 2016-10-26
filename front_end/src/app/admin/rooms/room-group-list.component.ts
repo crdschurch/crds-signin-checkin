@@ -9,7 +9,7 @@ import { Event } from '../events/event';
 @Component({
   templateUrl: 'room-group-list.component.html',
   styleUrls: ['room-group-list.component.scss'],
-  providers: [ AdminService, HeaderService ]
+  providers: [ AdminService ]
 })
 export class RoomGroupListComponent implements OnInit {
   private room: Room;
@@ -28,7 +28,6 @@ export class RoomGroupListComponent implements OnInit {
     this.adminService.getEvent(eventId).subscribe(
       event => {
         this.event = event;
-        this.headerService.announceMission("Jorge");
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
@@ -49,10 +48,6 @@ export class RoomGroupListComponent implements OnInit {
 
   isReady(): boolean {
     return this.event !== undefined && this.room !== undefined;
-  }
-
-  clicky() {
-    this.headerService.announceMission("clickkkk");
   }
 
   ngOnInit() {

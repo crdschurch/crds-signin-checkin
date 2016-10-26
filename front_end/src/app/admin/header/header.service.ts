@@ -14,10 +14,6 @@ export class HeaderService {
   eventAnnounced$ = this.eventSource.asObservable();
 
   // Service message commands
-  announceMission(mission: string) {
-    this.missionAnnouncedSource.next(mission);
-  }
-
   announceEvent(event: any) {
     console.log("announced event", event)
     this.eventSource.next(event);

@@ -11,17 +11,12 @@ import { Event } from './events/event';
 })
 export class AdminComponent {
   event: any;
-  mission: any;
+
   constructor(private headerService: HeaderService) {
     headerService.eventAnnounced$.subscribe(
       event => {
         console.log("announce event admin component")
         this.event = event
-      });
-    headerService.missionAnnounced$.subscribe(
-      mission => {
-        console.log("announce mission admin component")
-        this.mission = event
       });
   }
 }
