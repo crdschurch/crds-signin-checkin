@@ -1,7 +1,11 @@
 td {
   input[type=number] {
-    max-width: 80px;
+    $width: 70px;
+    width: $width;
+    // this is necessary for firefox
+    max-width: $width;
     background: #fff;
+    -moz-appearance: textfield;
     &::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
       -webkit-appearance: none;
       margin: 0;
