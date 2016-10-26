@@ -2,12 +2,12 @@ import { Component, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 @Component({
-  selector: 'results',
-  templateUrl: 'results.component.html',
+  selector: 'available-childre',
+  templateUrl: 'available-children.component.html',
   styleUrls: ['../scss/_cards.scss', '../scss/_buttons.scss', ]
 })
 
-export class ResultsComponent {
+export class AvailableChildrenComponent {
 
   private cb1: boolean = true;
   private cb2: boolean = true;

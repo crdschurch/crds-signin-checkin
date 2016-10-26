@@ -8,7 +8,7 @@ import { CookieService } from 'angular2-cookie/services/cookies.service';
 
 import { HttpClientService } from './shared/services';
 import { AdminModule } from './admin';
-import { ChildCheckinModule } from './child-checkin';
+import { ChildSigninModule } from './child-signin';
 import { HomeModule } from './home';
 import { AppComponent } from './app.component';
 import { routing } from './app.routes';
@@ -22,7 +22,7 @@ import { routing } from './app.routes';
     FormsModule,
     HttpModule,
     HomeModule,
-    ChildCheckinModule,
+    ChildSigninModule,
     AdminModule,
     routing,
     MomentModule
