@@ -157,13 +157,22 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
+
             _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns((List<MpEventGroupDto>)null);
 
             var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
             result.Should().NotBeNull();
-            result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            Assert.IsFalse(result.Exists(x => x.Selected));
-            result.ForEach(x =>
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
+            assignedGroups.ForEach(x =>
             {
                 Assert.IsFalse(x.HasRanges && x.Ranges.Exists(y => y.Selected));
                 if (x.Id == NurseryAgeAttributeId)
@@ -177,7 +186,8 @@ namespace SignInCheckIn.Tests.Services
                         Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
                         i++;
                     });
-                } else if (x.TypeId == AgesAttributeTypeId)
+                }
+                else if (x.TypeId == AgesAttributeTypeId)
                 {
                     var i = 0;
                     Assert.IsTrue(x.HasRanges);
@@ -188,7 +198,8 @@ namespace SignInCheckIn.Tests.Services
                         Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
                         i++;
                     });
-                } else if (x.TypeId == GradesAttributeTypeId)
+                }
+                else if (x.TypeId == GradesAttributeTypeId)
                 {
                     Assert.IsFalse(x.HasRanges);
                 }
@@ -244,13 +255,24 @@ namespace SignInCheckIn.Tests.Services
                 events[0].Group
             });
 
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
+
             var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
             result.Should().NotBeNull();
-            result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            Assert.IsFalse(result.Exists(x => x.Selected));
-            Assert.IsTrue(result.Exists(x => x.Id == NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _nurseryMonthList[0].Id)));
-            Assert.IsFalse(result.Exists(x => x.Id != NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+
+            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
+            assignedGroups.Should().NotBeNull();
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
+            Assert.IsTrue(assignedGroups.Exists(x => x.Id == NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _nurseryMonthList[0].Id)));
+            Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
 
         [Test]
@@ -298,13 +320,23 @@ namespace SignInCheckIn.Tests.Services
                 events[0].Group
             });
 
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
+
             var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
             _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
             result.Should().NotBeNull();
-            result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            Assert.IsFalse(result.Exists(x => x.Selected));
-            Assert.IsTrue(result.Exists(x => x.Id == NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _birthMonthList[0].Id)));
-            Assert.IsFalse(result.Exists(x => x.Id != NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
+            Assert.IsTrue(assignedGroups.Exists(x => x.Id == NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _birthMonthList[0].Id)));
+            Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
 
         [Test]
@@ -351,14 +383,23 @@ namespace SignInCheckIn.Tests.Services
                 events[0].Group
             });
 
+            var eventRoom = new MpEventRoomDto
+            {
+                RoomName = "the room"
+            };
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
+
             var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
             _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
             result.Should().NotBeNull();
-            result.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            var selected = result.FindAll(x => x.Selected);
+            result.RoomName.Should().Be("the room");
+            var assignedGroups = result.AssignedGroups;
+            assignedGroups.Should().NotBeNull();
+            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
+            var selected = assignedGroups.FindAll(x => x.Selected);
             Assert.IsTrue(selected.Count == 1);
             Assert.AreEqual(_gradeList[0].Id, selected[0].Id);
-            Assert.IsFalse(result.Exists(x => x.Id != _gradeList[0].Id && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
+            Assert.IsFalse(assignedGroups.Exists(x => x.Id != _gradeList[0].Id && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
 
     }
