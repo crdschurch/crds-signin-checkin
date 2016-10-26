@@ -21,14 +21,10 @@ export class AvailableChildrenComponent implements OnInit {
 
  ngOnInit() {
    this.route.params.forEach((params: Params) => {
-     debugger;
       let phoneNumber = params['phoneNumber'];
 
       this.childSigninService.getChildrenByPhoneNumber(phoneNumber).
-        subscribe(childrenAvailable => {
-          debugger;
-          this.childrenAvailable = childrenAvailable;
-        });
+        subscribe(childrenAvailable => this.childrenAvailable = childrenAvailable);
     });
  }
 
