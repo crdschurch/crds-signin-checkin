@@ -9,14 +9,4 @@ import { Event } from './events/event';
   providers: [ HeaderService ],
   encapsulation: ViewEncapsulation.None
 })
-export class AdminComponent {
-  event: any;
-
-  constructor(private headerService: HeaderService) {
-    headerService.eventAnnounced$.subscribe(
-      event => {
-        console.log("announce event admin component")
-        this.event = event
-      });
-  }
-}
+export class AdminComponent {}
