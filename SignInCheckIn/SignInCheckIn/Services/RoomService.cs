@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
@@ -48,7 +49,8 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
-            var response = Mapper.Map<EventRoomDto>(_roomRepository.GetEventRoom(eventId, roomId));
+            // Get the EventRoom, or the Room if no EventRoom
+            var response = GetEventRoom(eventId, roomId);
 
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
@@ -75,6 +77,27 @@ namespace SignInCheckIn.Services
             response.AssignedGroups = agesAndGrades;
 
             return response;
+        }
+
+        private EventRoomDto GetEventRoom(int eventId, int roomId)
+        {
+            var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            if (eventRoom == null)
+            {
+                var room = _roomRepository.GetRoom(roomId);
+                if (room == null)
+                {
+                    throw new ApplicationException($"Could not locate room with id {roomId}");
+                }
+
+                eventRoom = new MpEventRoomDto
+                {
+                    RoomId = room.RoomId,
+                    RoomName = room.RoomName,
+                    RoomNumber = room.RoomNumber
+                };
+            }
+            return Mapper.Map<EventRoomDto>(eventRoom);
         }
 
         private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, int eventId, int roomId)
