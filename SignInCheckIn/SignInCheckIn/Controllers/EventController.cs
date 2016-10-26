@@ -42,6 +42,22 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
+        [ResponseType(typeof (EventRoomDto))]
+        [Route("events/{eventid}")]
+        public IHttpActionResult GetEvent([FromUri] int eventId)
+        {
+            try
+            {
+                return Ok(_eventService.GetEvent(eventId));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Could not get event by ID {eventId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
         [ResponseType(typeof(List<EventRoomDto>))]
         [Route("events/{eventid}/rooms")]
         public IHttpActionResult GetRoomsByEvent(int eventid)
@@ -80,7 +96,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof (List<AgeGradeDto>))]
+        [ResponseType(typeof (EventRoomDto))]
         [Route("events/{eventId:int}/rooms/{roomId:int}")]
         public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId)
         {
@@ -94,7 +110,22 @@ namespace SignInCheckIn.Controllers
                 var apiError = new ApiErrorDto($"Error getting ages and grades for event {eventId}, room {roomId}", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
+        }
 
+        [HttpPut]
+        [ResponseType(typeof(List<AgeGradeDto>))]
+        [Route("events/{eventId:int}/rooms/{roomId:int}")]
+        public IHttpActionResult UpdateEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromBody] List<AgeGradeDto> agesAndGrades)
+        {
+            try
+            {
+                return Authorized(token => Ok(_roomService.UpdateEventRoomAgesAndGrades(token, eventId, roomId, agesAndGrades)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error updating ages and grades for event {eventId}, room {roomId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
         }
     }
 }

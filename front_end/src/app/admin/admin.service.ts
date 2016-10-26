@@ -4,6 +4,8 @@ import { RequestOptions, URLSearchParams } from '@angular/http';
 
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
+import { Event } from './events/event';
+import { Room } from './rooms/room';
 import * as moment from 'moment';
 import { Room } from './rooms/room'
 import { Group } from './rooms/group'
@@ -12,6 +14,13 @@ import { Group } from './rooms/group'
 export class AdminService {
 
   constructor(private http: HttpClientService) {
+  }
+
+  getEvent(eventId: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}`;
+    return this.http.get(url)
+                    .map(res => Event.fromJson(res.json()))
+                    .catch(this.handleError);
   }
 
   getEvents(startDate: any, endDate: any, site: number) {
@@ -43,7 +52,7 @@ export class AdminService {
   getRoomGroups(eventId: string, roomId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.get(url)
-                    .map(res => res.json())
+                    .map(res => Room.fromJson(res.json()))
                     .catch(this.handleError);
   }
 

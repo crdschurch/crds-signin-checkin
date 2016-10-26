@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AdminService } from '../admin.service';
 import { Room } from './room';
 
@@ -8,7 +8,7 @@ import { Room } from './room';
   styleUrls: ['room-list.component.scss'],
   providers: [ AdminService ]
 })
-export class RoomListComponent {
+export class RoomListComponent implements OnInit {
   rooms: Room[];
 
   constructor(
@@ -18,7 +18,7 @@ export class RoomListComponent {
   private getData(): void {
     const eventId = this.route.snapshot.params['eventId'];
     this.adminService.getRooms(eventId).subscribe(
-      (rooms: Room[]) => {this.rooms = rooms},
+      (rooms: Room[]) => { this.rooms = rooms; },
       (error: any) => console.error(error)
     );
   }
