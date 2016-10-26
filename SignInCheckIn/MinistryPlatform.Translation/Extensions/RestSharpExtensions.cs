@@ -67,6 +67,16 @@ namespace MinistryPlatform.Translation.Extensions
 
             return request;
         }
+
+        public static IRestRequest AddQueryParameterIfSpecified(this IRestRequest request, string name, string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return request;
+            }
+            request.AddQueryParameter(name, value);
+            return request;
+        }
     }
 
     public class RestResponseException : Exception

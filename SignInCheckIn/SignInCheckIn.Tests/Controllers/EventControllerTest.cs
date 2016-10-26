@@ -1,4 +1,6 @@
-﻿using System.Web.Http.Results;
+﻿using System.Collections.Generic;
+using System.Web.Http.Results;
+using FluentAssertions;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
@@ -71,6 +73,56 @@ namespace SignInCheckIn.Tests.Controllers
             var result = (OkNegotiatedContentResult<EventRoomDto>) response;
             Assert.IsNotNull(result.Content);
             Assert.AreSame(newEventRoom, result.Content);
+        }
+
+        [Test]
+        public void TestGetEventRoomAgesAndGradesWithAuth()
+        {
+            const int eventId = 123;
+            const int roomId = 456;
+            var eventRoom = new EventRoomDto
+            {
+                AssignedGroups = new List<AgeGradeDto>()
+            };
+
+            _roomService.Setup(mocked => mocked.GetEventRoomAgesAndGrades(_auth, eventId, roomId)).Returns(eventRoom);
+
+            var result = _fixture.GetEventRoomAgesAndGrades(eventId, roomId);
+            _roomService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<EventRoomDto>>();
+            ((OkNegotiatedContentResult<EventRoomDto>)result).Content.Should().BeSameAs(eventRoom);
+        }
+
+        [Test]
+        public void TestGetEventRoomAgesAndGradesWithoutAuth()
+        {
+            const int eventId = 123;
+            const int roomId = 456;
+            var eventRoom = new EventRoomDto
+            {
+                AssignedGroups = new List<AgeGradeDto>()
+            };
+
+            _roomService.Setup(mocked => mocked.GetEventRoomAgesAndGrades(null, eventId, roomId)).Returns(eventRoom);
+
+            _fixture.RemoveAuthorization();
+            var result = _fixture.GetEventRoomAgesAndGrades(eventId, roomId);
+            _roomService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<EventRoomDto>>();
+            ((OkNegotiatedContentResult<EventRoomDto>)result).Content.Should().BeSameAs(eventRoom);
+        }
+
+        [Test]
+        public void TestGetEvent()
+        {
+            const int eventId = 123;
+            var e = new EventDto();
+            _eventService.Setup(mocked => mocked.GetEvent(eventId)).Returns(e);
+
+            var result = _fixture.GetEvent(eventId);
+            _eventService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<EventDto>>();
+            ((OkNegotiatedContentResult<EventDto>)result).Content.Should().BeSameAs(e);
         }
     }
 }

@@ -17,5 +17,10 @@ namespace SignInCheckIn.Tests.Controllers
             controller.Request.Headers.Authorization = new AuthenticationHeaderValue(authType, authToken);
             controller.RequestContext = new HttpRequestContext();
         }
+
+        public static void RemoveAuthorization(this MPAuth controller)
+        {
+            controller.Request = new HttpRequestMessage();
+        }
     }
 }

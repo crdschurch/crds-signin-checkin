@@ -1,7 +1,5 @@
 ﻿using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
-using MinistryPlatform.Translation.Models.Attributes;
-using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
 {

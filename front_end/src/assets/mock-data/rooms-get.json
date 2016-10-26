@@ -1,0 +1,49 @@
+[{
+    'EventRoomId': 4587206,
+    'RoomId': 185,
+    'EventId': 4525323,
+    'RoomName': 'Coffee Kiosk',
+    'RoomNumber': null,
+    'AllowSignIn': false,
+    'Volunteers': 37,
+    'Capacity': 13,
+    'SignedIn': 0,
+    'CheckedIn': 0,
+    'Label': null
+}, {
+    'EventRoomId': 4587207,
+    'RoomId': 238,
+    'EventId': 4525323,
+    'RoomName': 'Oakley Equipment',
+    'RoomNumber': null,
+    'AllowSignIn': true,
+    'Volunteers': 16,
+    'Capacity': 2,
+    'SignedIn': 0,
+    'CheckedIn': 0,
+    'Label': null
+}, {
+    'EventRoomId': 4587208,
+    'RoomId': 245,
+    'EventId': 4525323,
+    'RoomName': 'KC TEST MIGRATION',
+    'RoomNumber': null,
+    'AllowSignIn': true,
+    'Volunteers': 9,
+    'Capacity': 1,
+    'SignedIn': 0,
+    'CheckedIn': 0,
+    'Label': null
+}, {
+    'EventRoomId': 4587209,
+    'RoomId': 1812,
+    'EventId': 4525323,
+    'RoomName': 'Fireplace Room',
+    'RoomNumber': null,
+    'AllowSignIn': false,
+    'Volunteers': 0,
+    'Capacity': 1,
+    'SignedIn': 0,
+    'CheckedIn': 0,
+    'Label': null
+}];

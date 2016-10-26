@@ -6,13 +6,14 @@ import { RootService } from '../../shared/services';
 
 import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
+import { HeaderService } from '../header/header.service';
 
 import * as moment from 'moment';
 
 @Component({
   selector: 'events',
   templateUrl: 'event-list.component.html',
-  providers: [ AdminService, HttpClientService]
+  providers: [ AdminService, HttpClientService ]
 })
 export class EventListComponent implements OnInit {
   events: Event[];
@@ -20,7 +21,29 @@ export class EventListComponent implements OnInit {
   currentWeekFilter: any;
   weekFilters: Timeframe[];
 
-  constructor(private adminService: AdminService, private httpClientService: HttpClientService, private router: Router, private rootService: RootService) {
+  constructor(private adminService: AdminService,
+              private headerService: HeaderService,
+private httpClientService: HttpClientService, private router: Router, private rootService: RootService) {
+  }
+
+  private getData() {
+    this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
+      events => {
+        this.events = events;
+      },
+      error => console.error(error)
+    );
+  }
+
+  private getWeekObject(offset = 0): any {
+    // add one day so it starts on monday rather than sunday
+    return {
+        start: moment().add(offset, 'weeks').startOf('week').add(1, 'day'),
+        end: moment().add(offset, 'weeks').endOf('week').add(1, 'day')
+    }
+  }
+
+  private createWeekFilters() {
     // default to Oakley
     this.site = 1;
     this.weekFilters = [];
@@ -37,14 +60,9 @@ export class EventListComponent implements OnInit {
 
   private getData(): void {
     this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
-      events => {this.events = events; },
-      error => { 
-        console.error(error);
-        this.rootService.announceEvent('generalError');
-      }
+      events => {this.events = events;},
+      error => console.error(error)
     );
-
-    
   }
 
   private getWeekObject(offset = 0): any {
@@ -56,7 +74,10 @@ export class EventListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getData();
+    
+
+this.createWeekFilters();
+this.getData();
   }
 
   logout(): void {

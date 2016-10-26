@@ -65,8 +65,10 @@
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\ApplicationConfiguration.cs" />
     <Compile Include="Services\ConfigurationWrapper.cs" />
     <Compile Include="Services\EnvironmentVariableTypeConverter.cs" />
+    <Compile Include="Services\Interfaces\IApplicationConfiguration.cs" />
     <Compile Include="Services\Interfaces\IConfigurationWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
