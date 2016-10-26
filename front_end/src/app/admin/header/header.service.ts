@@ -6,13 +6,13 @@ import { Event }    from '../events/event';
 export class HeaderService {
 
   // Observable sources
-  private eventSource = new Subject<any>();
+  private eventSource = new Subject<Event>();
 
   // Observable streams
   eventAnnounced$ = this.eventSource.asObservable();
 
   // Service message commands
-  announceEvent(event: any) {
+  announceEvent(event: Event) {
     this.eventSource.next(event);
   }
 }

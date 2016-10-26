@@ -1,8 +1,5 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { AdminService } from '../admin.service';
-import { HttpClientService } from '../../shared/services';
-import { Router } from '@angular/router';
-
 import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
 import { HeaderService } from '../header/header.service';
@@ -11,8 +8,7 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'events',
-  templateUrl: 'event-list.component.html',
-  providers: [ AdminService, HttpClientService ]
+  templateUrl: 'event-list.component.html'
 })
 export class EventListComponent implements OnInit {
   events: Event[];
@@ -21,8 +17,6 @@ export class EventListComponent implements OnInit {
   weekFilters: Timeframe[];
 
   constructor(private adminService: AdminService,
-              private httpClientService: HttpClientService,
-              private router: Router,
               private headerService: HeaderService) {
     // default to Oakley
     this.site = 1;
@@ -39,9 +33,11 @@ export class EventListComponent implements OnInit {
 
   }
 
-  private getData(): void {
+  private getData() {
     this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
-      events => { this.events = events; },
+      events => {
+        this.events = events;
+      },
       error => console.error(error)
     );
   }
@@ -54,13 +50,8 @@ export class EventListComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getData();
-  }
-
-  logout(): void {
-    this.httpClientService.logOut();
-    this.router.navigate(['/admin/sign-in']);
   }
 
 }
