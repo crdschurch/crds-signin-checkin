@@ -14,6 +14,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
 
         private List<string> _eventRoomColumns;
+        private List<string> _roomColumns;
 
         [SetUp]
         public void SetUp()
@@ -30,7 +31,15 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Room_ID_Table.Room_Number",
                 "Event_Rooms.Allow_Checkin",
                 "Event_Rooms.Volunteers",
-                "Event_Rooms.Capacity"
+                "Event_Rooms.Capacity",
+                "Event_Rooms.Label"
+            };
+
+            _roomColumns = new List<string>
+            {
+                "Room_ID",
+                "Room_Name",
+                "Room_Number"
             };
 
             _fixture = new RoomRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
@@ -93,6 +102,48 @@ namespace MinistryPlatform.Translation.Test.Repositories
             Assert.IsNotNull(result);
             Assert.AreSame(updated, result);
         }
+
+        [Test]
+        public void TestGetEventRoom()
+        {
+            const int eventId = 123;
+            const int roomId = 456;
+            const string token = "token 123";
+            var eventRoom = new MpEventRoomDto();
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns))
+                .Returns(new List<MpEventRoomDto>
+                {
+                    eventRoom
+                });
+
+            var result = _fixture.GetEventRoom(eventId, roomId);
+            _ministryPlatformRestRepository.VerifyAll();
+            _apiUserRepository.VerifyAll();
+
+            Assert.AreSame(eventRoom, result);
+        }
+
+        public void TestGetRoom()
+        {
+            const int roomId = 456;
+            const string token = "token 123";
+            var room = new MpRoomDto();
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpRoomDto>(roomId, _roomColumns))
+                .Returns(room);
+
+            var result = _fixture.GetRoom(roomId);
+            _ministryPlatformRestRepository.VerifyAll();
+            _apiUserRepository.VerifyAll();
+
+            Assert.AreSame(room, result);
+        }
+
 
     }
 }

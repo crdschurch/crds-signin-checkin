@@ -1,4 +1,6 @@
-﻿namespace SignInCheckIn.Models.DTO
+﻿using System.Collections.Generic;
+
+namespace SignInCheckIn.Models.DTO
 {
     public class EventRoomDto
     {
@@ -23,5 +25,7 @@
         public int CheckedIn { get; set; }
 
         public string Label { get; set; }
+
+        public List<AgeGradeDto> AssignedGroups { get; set; }
     }
 }
