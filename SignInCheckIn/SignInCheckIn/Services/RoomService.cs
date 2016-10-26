@@ -47,8 +47,11 @@ namespace SignInCheckIn.Services
             return Mapper.Map<EventRoomDto>(response);
         }
 
-        public List<AgeGradeDto> GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
+        public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
+            // Get the EventRoom, or the Room if no EventRoom
+            var response = GetEventRoom(eventId, roomId);
+
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
@@ -61,17 +64,40 @@ namespace SignInCheckIn.Services
             // Get current event groups with a room reservation for this room
             var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventId, roomId);
 
-            var response = new List<AgeGradeDto>();
+            var agesAndGrades = new List<AgeGradeDto>();
 
             // Add age ranges (including selected groups) to the response
-            response.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventGroups));
+            agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventGroups));
 
-            var maxSort = response.Select(r => r.SortOrder).Last();
+            var maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
 
             // Add grade ranges (including selected groups) to the response
-            response.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
+            agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
+
+            response.AssignedGroups = agesAndGrades;
 
             return response;
+        }
+
+        private EventRoomDto GetEventRoom(int eventId, int roomId)
+        {
+            var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            if (eventRoom == null)
+            {
+                var room = _roomRepository.GetRoom(roomId);
+                if (room == null)
+                {
+                    throw new ApplicationException($"Could not locate room with id {roomId}");
+                }
+
+                eventRoom = new MpEventRoomDto
+                {
+                    RoomId = room.RoomId,
+                    RoomName = room.RoomName,
+                    RoomNumber = room.RoomNumber
+                };
+            }
+            return Mapper.Map<EventRoomDto>(eventRoom);
         }
 
         private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, int eventId, int roomId)
