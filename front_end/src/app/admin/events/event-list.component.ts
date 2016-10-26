@@ -23,7 +23,9 @@ export class EventListComponent implements OnInit {
 
   constructor(private adminService: AdminService,
               private headerService: HeaderService,
-private httpClientService: HttpClientService, private router: Router, private rootService: RootService) {
+              private httpClientService: HttpClientService, 
+              private router: Router, 
+              private rootService: RootService) {
   }
 
   private getData() {
@@ -31,7 +33,7 @@ private httpClientService: HttpClientService, private router: Router, private ro
       events => {
         this.events = events;
       },
-      error => console.error(error)
+      error => { console.error(error); this.rootService.announceEvent('generalError'); }
     );
   }
 
@@ -58,26 +60,24 @@ private httpClientService: HttpClientService, private router: Router, private ro
     this.currentWeekFilter = this.weekFilters[0];
   }
 
-  private getData(): void {
-    this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
-      events => {this.events = events;},
-      error => console.error(error)
-    );
-  }
+  // private getData(): void {
+  //   this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
+  //     events => {this.events = events;},
+  //     error => console.error(error)
+  //   );
+  // }
 
-  private getWeekObject(offset = 0): any {
-    // add one day so it starts on monday rather than sunday
-    return {
-        start: moment().add(offset, "weeks").startOf("week").add(1, "day"),
-        end: moment().add(offset, "weeks").endOf("week").add(1, "day")
-    }
-  }
+  // private getWeekObject(offset = 0): any {
+  //   // add one day so it starts on monday rather than sunday
+  //   return {
+  //       start: moment().add(offset, "weeks").startOf("week").add(1, "day"),
+  //       end: moment().add(offset, "weeks").endOf("week").add(1, "day")
+  //   }
+  // }
 
   ngOnInit(): void {
-    
-
-this.createWeekFilters();
-this.getData();
+    this.createWeekFilters();
+    this.getData();
   }
 
   logout(): void {
