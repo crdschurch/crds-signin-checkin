@@ -42,7 +42,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof (List<EventRoomDto>))]
+        [ResponseType(typeof (EventRoomDto))]
         [Route("events/{eventid}")]
         public IHttpActionResult GetEvent([FromUri] int eventId)
         {
@@ -96,7 +96,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof (List<AgeGradeDto>))]
+        [ResponseType(typeof (EventRoomDto))]
         [Route("events/{eventId:int}/rooms/{roomId:int}")]
         public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId)
         {
