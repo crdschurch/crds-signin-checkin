@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { SignInService } from './sign-in.service';
 
 @Component({
-  selector: 'sign-in',
   templateUrl: 'sign-in.component.html',
   providers: [ SignInService ]
 })
