@@ -5,6 +5,7 @@ export const routes: Routes = [
   { path: '', loadChildren: 'app/home/home.module#HomeModule'},
   { path: 'child-checkin/search', loadChildren: 'app/child-checkin/child-checkin.module#ChildCheckinModule' },
   { path: 'admin', loadChildren: 'app/admin/admin.module#AdminModule' },
+  { path: 'setup', loadChildren: 'app/setup/setup.module#SetupModule' },
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
