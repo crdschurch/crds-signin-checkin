@@ -1,5 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
+
+import { ChildSigninService } from '../child-signin.service';
+import { Child } from '../../shared/models/child';
 
 @Component({
   selector: 'available-childre',
@@ -7,24 +11,24 @@ import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
   styleUrls: ['../scss/_cards.scss', '../scss/_buttons.scss', ]
 })
 
-export class AvailableChildrenComponent {
-
-  private cb1: boolean = true;
-  private cb2: boolean = true;
-  private cb3: boolean = false;
-  private cb4: boolean = true;
-  private cb5: boolean = true;
-  private cb6: boolean = true;
-  private cb7: boolean = true;
-  private cb8: boolean = true;
-  private cb9: boolean = true;
-  private cb10: boolean = true;
-
+export class AvailableChildrenComponent implements OnInit {
+  private childrenAvailable: Array<Child> = [];
   private serving1: boolean = true;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
-  public showServiceSelectModal(): void {
-    this.serviceSelectModal.show();
+ constructor(private childSigninService: ChildSigninService, private route: ActivatedRoute) { }
+
+ ngOnInit() {
+   this.route.params.forEach((params: Params) => {
+      let phoneNumber = params['phoneNumber'];
+
+      this.childSigninService.getChildrenByPhoneNumber(phoneNumber).
+        subscribe(childrenAvailable => this.childrenAvailable = childrenAvailable);
+    });
+ }
+
+ public showServiceSelectModal(): void {
+   this.serviceSelectModal.show();
   }
 }

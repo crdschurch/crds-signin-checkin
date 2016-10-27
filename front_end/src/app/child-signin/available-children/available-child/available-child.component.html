@@ -1,9 +1,7 @@
-<div class="card" [class.unchecked]="!cb1">
-  <div class="card-block">
-    <h4 class="card-title">James Kerstanoff <span class="label label-info">Guest</span></h4>
-    <p class="text-muted">DOB: 4/23/2012</p>
-    <span class="tgl-inline-label">Sign In:</span>
-    <input class='tgl tgl-light' id='cb1' type='checkbox' checked [(ngModel)]="cb1">
-    <label class='tgl-btn' for='cb1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
-  </div>
-</div><!--/card-->
+<div class="card-block">
+  <h4 class="card-title">{{child.name()}}</h4>
+  <p class="text-muted">DOB: {{child.DateOfBirth}}</p>
+  <span class="tgl-inline-label">Sign In:</span>
+  <input class='tgl tgl-light' id='cb1' type='checkbox' checked [(ngModel)]="child.signIn">
+  <label class='tgl-btn' for='cb1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+</div>

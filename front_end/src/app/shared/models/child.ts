@@ -13,6 +13,6 @@ export class Child {
   }
 
   name(): string {
-    return `${this.FirstName} ${this.LastName}`
+    return `${this.FirstName} ${this.LastName}`;
   }
 }
