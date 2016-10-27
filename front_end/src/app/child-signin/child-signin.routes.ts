@@ -29,7 +29,7 @@ const childSigninRoutes: Routes = [
         component: AssignmentComponent
       }
     ]
-  }, 
+  }
 ];
 
 export const childSigninRouting: ModuleWithProviders = RouterModule.forChild(childSigninRoutes);

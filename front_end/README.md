@@ -39,6 +39,12 @@ npm test
 npm e2e # no e2e yet
 ```
 
+#### Run linter
+
+```sh
+npm run lint
+```
+
 ## Deployment
 
 #### Build
