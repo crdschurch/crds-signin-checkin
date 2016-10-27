@@ -1,8 +1,7 @@
 import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {ToasterModule, ToasterService,BodyOutputType,Toast,ToasterConfig} from 'angular2-toaster/angular2-toaster';
+import { ToasterModule, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { ContentService, RootService } from './shared/services';
-import { ContentBlock } from './shared/models/contentBlock';
 
 @Component({
   selector: 'app-root',
@@ -15,21 +14,24 @@ export class AppComponent implements OnInit {
 
   private viewContainerRef: ViewContainerRef;
 
-  public toasterConfig1: ToasterConfig = 
+  public customToasterConfig: ToasterConfig =
     new ToasterConfig({
       positionClass: 'toast-top-center'
     });
 
     event: any;
 
-  constructor(private router: Router, viewContainerRef: ViewContainerRef, 
-    private contentService:ContentService, private toasterService: ToasterService, private rootService: RootService) {
+  constructor(private router: Router,
+              viewContainerRef: ViewContainerRef,
+              private contentService: ContentService,
+              private toasterService: ToasterService,
+              private rootService: RootService) {
 
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
 
     rootService.eventAnnounced$.subscribe(
-      event => { 
+      event => {
         this.addToast(event);
       });
   }

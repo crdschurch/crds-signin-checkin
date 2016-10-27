@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-//import { Event } from '../events/event';
+// import { Event } from '../events/event';
 
 @Injectable()
   export class RootService {

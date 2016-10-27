@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MomentModule } from 'angular2-moment';
-import {ToasterModule,ToasterService,ToasterConfig} from 'angular2-toaster/angular2-toaster';
+import { ToasterModule } from 'angular2-toaster/angular2-toaster';
 
 import { CookieService } from 'angular2-cookie/services/cookies.service';
 
@@ -45,6 +45,6 @@ import { routing } from './app.routes';
     AppComponent
   ]
 })
-export class AppModule { 
-  
+export class AppModule {
+
 }

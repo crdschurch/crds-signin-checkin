@@ -12,8 +12,7 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'events',
-  templateUrl: 'event-list.component.html',
-  providers: [ AdminService, HttpClientService ]
+  templateUrl: 'event-list.component.html'
 })
 export class EventListComponent implements OnInit {
   events: Event[];
@@ -23,8 +22,8 @@ export class EventListComponent implements OnInit {
 
   constructor(private adminService: AdminService,
               private headerService: HeaderService,
-              private httpClientService: HttpClientService, 
-              private router: Router, 
+              private httpClientService: HttpClientService,
+              private router: Router,
               private rootService: RootService) {
   }
 
