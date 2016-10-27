@@ -8,5 +8,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         MpGroupDto GetGroup(string authenticationToken, int groupId, bool includeAttributes = false);
         List<MpGroupDto> GetGroups(string authenticationToken, IEnumerable<int> groupIds, bool includeAttributes = false);
+        List<MpGroupDto> GetGroupsByAttribute(string authenticationToken, IEnumerable<MpAttributeDto> attributes);
     }
 }

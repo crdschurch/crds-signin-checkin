@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.Attributes;
@@ -82,6 +83,16 @@ namespace MinistryPlatform.Translation.Repositories
             return ExecutePutOrPost(objectToCreate, Method.POST, selectColumns);
         }
 
+        public List<T> Create<T>(List<T> objectsToCreate, List<string> selectColumns)
+        {
+            return Create(objectsToCreate, string.Join(",", selectColumns.ToArray()));
+        }
+
+        public List<T> Create<T>(List<T> objectsToCreate, string selectColumns = null)
+        {
+            return ExecutePutOrPost(objectsToCreate, Method.PUT, selectColumns);
+        }
+
         public T Update<T>(T objectToUpdate, List<string> selectColumns)
         {
             return Update(objectToUpdate, string.Join(",", selectColumns.ToArray()));
@@ -110,6 +121,26 @@ namespace MinistryPlatform.Translation.Repositories
                 return default(T);
             }
             return result.First();
+        }
+
+        private List<T> ExecutePutOrPost<T>(List<T> records, Method method, string selectColumns)
+        {
+            var tableName = GetTableName<T>();
+            var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
+            var request = new RestRequest(url, method).SetJsonBody(records);
+
+            AddAuthorization(request);
+
+            var response = _ministryPlatformRestClient.Execute(request);
+            _authToken.Value = null;
+            response.CheckForErrors($"Error {(method == Method.PUT ? "updating existing" : "creating new")} {tableName}");
+
+            var result = JsonConvert.DeserializeObject<List<T>>(response.Content);
+            if (result == null || !result.Any())
+            {
+                return default(List<T>);
+            }
+            return result;
         }
 
         public List<List<T>> GetFromStoredProc<T>(string procedureName)

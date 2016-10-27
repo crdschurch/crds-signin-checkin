@@ -25,6 +25,9 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         T Create<T>(T objectToCreate, List<string> selectColumns);
         T Create<T>(T objectToCreate, string selectColumns = null);
+        List<T> Create<T>(List<T> objectsToCreate, List<string> selectColumns);
+        List<T> Create<T>(List<T> objectsToCreate, string selectColumns = null);
+
 
         T Update<T>(T objectToUpdate, List<string> selectColumns);
         T Update<T>(T objectToUpdate, string selectColumns = null);
