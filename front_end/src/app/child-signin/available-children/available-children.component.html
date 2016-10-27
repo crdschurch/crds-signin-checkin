@@ -12,8 +12,8 @@
           </a>
         </div>
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
-        <div class="card" [class.unchecked]="!cb1">
-          <available-child *ngFor="let child of childrenAvailable" [child]="child">
+        <div class="card" *ngFor="let kid of childrenAvailable" >
+          <available-child [child]="kid" >
           </available-child>
         </div><!--/card-->
       </div><!--/eqWrap-->

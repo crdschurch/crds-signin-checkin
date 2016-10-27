@@ -29,6 +29,6 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  public showServiceSelectModal(): void {
-    this.serviceSelectModal.show();
+   this.serviceSelectModal.show();
   }
 }
