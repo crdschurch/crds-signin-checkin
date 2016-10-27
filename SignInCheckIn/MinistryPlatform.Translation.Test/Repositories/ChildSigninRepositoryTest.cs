@@ -149,8 +149,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubMinistryId).Returns(2);
-            _applicationConfiguration.Setup(mocked => mocked.KidsClubCongretationId).Returns(5);
-            _applicationConfiguration.Setup(mocked => mocked.HeadOfHouseHoldId).Returns(1);
+            _applicationConfiguration.Setup(mocked => mocked.KidsClubCongregationId).Returns(5);
+            _applicationConfiguration.Setup(mocked => mocked.HeadOfHouseholdId).Returns(1);
             _applicationConfiguration.Setup(mocked => mocked.OtherAdultId).Returns(3);
             _applicationConfiguration.Setup(mocked => mocked.AdultChildId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.MinorChildId).Returns(2);
@@ -235,8 +235,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubMinistryId).Returns(2);
-            _applicationConfiguration.Setup(mocked => mocked.KidsClubCongretationId).Returns(5);
-            _applicationConfiguration.Setup(mocked => mocked.HeadOfHouseHoldId).Returns(1);
+            _applicationConfiguration.Setup(mocked => mocked.KidsClubCongregationId).Returns(5);
+            _applicationConfiguration.Setup(mocked => mocked.HeadOfHouseholdId).Returns(1);
             _applicationConfiguration.Setup(mocked => mocked.OtherAdultId).Returns(3);
             _applicationConfiguration.Setup(mocked => mocked.AdultChildId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.MinorChildId).Returns(2);
@@ -266,8 +266,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubMinistryId).Returns(2);
-            _applicationConfiguration.Setup(mocked => mocked.KidsClubCongretationId).Returns(5);
-            _applicationConfiguration.Setup(mocked => mocked.HeadOfHouseHoldId).Returns(1);
+            _applicationConfiguration.Setup(mocked => mocked.KidsClubCongregationId).Returns(5);
+            _applicationConfiguration.Setup(mocked => mocked.HeadOfHouseholdId).Returns(1);
             _applicationConfiguration.Setup(mocked => mocked.OtherAdultId).Returns(3);
             _applicationConfiguration.Setup(mocked => mocked.AdultChildId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.MinorChildId).Returns(2);

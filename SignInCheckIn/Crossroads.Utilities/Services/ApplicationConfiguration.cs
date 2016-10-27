@@ -12,9 +12,9 @@ namespace Crossroads.Utilities.Services
 
         public int KidsClubGroupTypeId { get; }
         public int KidsClubMinistryId { get; }
-        public int KidsClubCongretationId { get; }
+        public int KidsClubCongregationId { get; }
 
-        public int HeadOfHouseHoldId { get; }
+        public int HeadOfHouseholdId { get; }
         public int OtherAdultId { get; }
         public int AdultChildId { get; }
         public int MinorChildId { get; }
@@ -31,13 +31,13 @@ namespace Crossroads.Utilities.Services
 
             KidsClubGroupTypeId = configurationWrapper.GetConfigIntValue("KidsClubGroupTypeId");
             KidsClubMinistryId = configurationWrapper.GetConfigIntValue("KidsClubMinistryId");
-            KidsClubCongretationId = configurationWrapper.GetConfigIntValue("KidsClubCongretationId");
+            KidsClubCongregationId = configurationWrapper.GetConfigIntValue("KidsClubCongregationId");
 
-            HeadOfHouseHoldId = configurationWrapper.GetConfigIntValue("HeadOfHouseHoldId");
+            HeadOfHouseholdId = configurationWrapper.GetConfigIntValue("HeadOfHouseholdId");
             OtherAdultId = configurationWrapper.GetConfigIntValue("OtherAdultId");
             AdultChildId = configurationWrapper.GetConfigIntValue("AdultChildId");
             MinorChildId = configurationWrapper.GetConfigIntValue("MinorChildId");
-            HouseHoldIdsThatCanCheckIn = $"{HeadOfHouseHoldId},{OtherAdultId},{AdultChildId}";
+            HouseHoldIdsThatCanCheckIn = $"{HeadOfHouseholdId},{OtherAdultId},{AdultChildId}";
         }
     }
 }
