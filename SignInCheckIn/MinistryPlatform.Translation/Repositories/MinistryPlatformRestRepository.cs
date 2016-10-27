@@ -75,7 +75,7 @@ namespace MinistryPlatform.Translation.Repositories
         public T Create<T>(T objectToCreate, List<string> selectColumns)
         {
             return Create(objectToCreate, string.Join(",", selectColumns.ToArray()));
-        } 
+        }
 
         public T Create<T>(T objectToCreate, string selectColumns = null)
         {
