@@ -10,6 +10,7 @@ import { Child } from '../shared/models/child';
 @Injectable()
 export class ChildSigninService {
   private url: string = '';
+  private phoneNumber: string = '';
   private childrenAvailable: Array<Child> = [];
 
   constructor(private http: HttpClientService) {
@@ -20,7 +21,11 @@ export class ChildSigninService {
     let pipe = new PhoneNumberPipe();
     const url = `${this.url}/children/${pipe.transform(phoneNumber, true)}`;
 
-    if (this.childrenAvailable.length === 0) {
+   if (this.childrenAvailable.length > 0 && this.phoneNumber === phoneNumber) {
+      return Observable.of(this.childrenAvailable);
+    } else {
+      this.phoneNumber = phoneNumber;
+      this.childrenAvailable = [];
       return this.http.get(url)
                   .map((response) => {
                     for (let kid of response.json()) {
@@ -32,8 +37,6 @@ export class ChildSigninService {
                     return this.childrenAvailable;
                   })
                   .catch(this.handleError);
-    } else {
-      return Observable.of(this.childrenAvailable);
     }
   }
 
