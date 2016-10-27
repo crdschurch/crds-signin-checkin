@@ -17,7 +17,7 @@ export class HeaderComponent {
               private router: Router) {
     headerService.eventAnnounced$.subscribe(
       event => {
-        this.event = event
+        this.event = event;
       });
   }
 

@@ -41,7 +41,7 @@ export class EventListComponent implements OnInit {
     return {
         start: moment().add(offset, 'weeks').startOf('week').add(1, 'day'),
         end: moment().add(offset, 'weeks').endOf('week').add(1, 'day')
-    }
+    };
   }
 
   private createWeekFilters() {
@@ -50,11 +50,11 @@ export class EventListComponent implements OnInit {
     this.weekFilters = [];
 
     // current week
-    this.weekFilters.push(this.getWeekObject())
+    this.weekFilters.push(this.getWeekObject());
     // next week
-    this.weekFilters.push(this.getWeekObject(1))
+    this.weekFilters.push(this.getWeekObject(1));
     // two weeks from now
-    this.weekFilters.push(this.getWeekObject(2))
+    this.weekFilters.push(this.getWeekObject(2));
     // default to current week
     this.currentWeekFilter = this.weekFilters[0];
   }
