@@ -6,7 +6,7 @@ import { ChildSigninService } from '../child-signin.service';
 import { Child } from '../../shared/models/child';
 
 @Component({
-  selector: 'available-childre',
+  selector: 'available-children',
   templateUrl: 'available-children.component.html',
   styleUrls: ['../scss/_cards.scss', '../scss/_buttons.scss', ]
 })
