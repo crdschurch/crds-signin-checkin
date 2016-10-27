@@ -29,7 +29,7 @@ const childCheckinRoutes: Routes = [
         component: AssignmentComponent
       }
     ]
-  }, 
+  }
 ];
 
 export const childCheckinRouting: ModuleWithProviders = RouterModule.forChild(childCheckinRoutes);
