@@ -25,7 +25,7 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var householdId = GetHouseholdIdByPhoneNumber(phoneNumber);
 
-            if (householdId == -1) return new List<MpParticipantDto>();
+            if (householdId == null) return new List<MpParticipantDto>();
             var children = GetChildParticpantsByPrimaryHousehold(householdId);
             GetChildParticpantsByOtherHousehold(householdId, children);
             children = GetOnlyKidsClubChildren(children);
@@ -33,7 +33,7 @@ namespace MinistryPlatform.Translation.Repositories
             return children;
         }
 
-        private int GetHouseholdIdByPhoneNumber(string phoneNumber)
+        private int? GetHouseholdIdByPhoneNumber(string phoneNumber)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -51,13 +51,13 @@ namespace MinistryPlatform.Translation.Repositories
 
             if (household == null || !household.Any())
             {
-                return -1;
+                return null;
             }
 
             return household.First().HouseholdId;
         }
 
-        private List<MpParticipantDto> GetChildParticpantsByPrimaryHousehold(int householdId)
+        private List<MpParticipantDto> GetChildParticpantsByPrimaryHousehold(int? householdId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -76,7 +76,7 @@ namespace MinistryPlatform.Translation.Repositories
                         Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList);
         }
 
-        private void GetChildParticpantsByOtherHousehold(int householdId, List<MpParticipantDto> children)
+        private void GetChildParticpantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 

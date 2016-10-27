@@ -76,7 +76,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
-        public void TestGetChildrenByPhoneNumberWithHousholdPhone()
+        public void TestGetChildrenByPhoneNumberWithHouseholdPhone()
         {
             var phoneNumber = "812-812-8877";
             var primaryHouseholdId = 123;
