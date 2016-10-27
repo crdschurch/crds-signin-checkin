@@ -19,7 +19,7 @@ export class SetupComponent implements OnInit {
     const machineGuid = this.route.snapshot.queryParams['machine'];
     if (machineGuid) {
       this.setupService.getMachineConfiguration(machineGuid).subscribe(
-        machineConfig => { this.machineConfig = machineConfig; },
+        machineConfig => { console.log(machineConfig);this.machineConfig = machineConfig; },
         error => {console.error(error)}
       );
     }
