@@ -17,6 +17,8 @@ namespace SignInCheckIn.App_Start
             config.CreateMap<MpEventDto, EventDto>().ForMember(dest => dest.EventSite,
                     opts => opts.MapFrom(src => src.CongregationName)).ReverseMap().ForMember(dest => dest.CongregationName,
                     opts => opts.MapFrom(src => src.EventSite));
+
+            config.CreateMap<MpKioskConfigDto, KioskConfigDto>().ReverseMap();
         }
     }
 }
