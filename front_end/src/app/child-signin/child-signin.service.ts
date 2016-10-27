@@ -31,6 +31,7 @@ export class ChildSigninService {
                     for (let kid of response.json()) {
                       let child = Object.create(Child.prototype);
                       Object.assign(child, kid);
+                      child.signIn = true;
                       this.childrenAvailable.push(child);
                     }
 
