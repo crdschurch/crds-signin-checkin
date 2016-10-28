@@ -147,24 +147,24 @@ namespace MinistryPlatform.Translation.Repositories
 
             var columnList = new List<string>
             {
-                "Event_Participants_ID_Table.Event_Participant_ID",
-                "Event_Participants_ID_Table.Event_ID",
-                "Event_Participants_ID_Table.Participant_ID",
-                "Event_Participants_ID_Table.Participation_Status_ID",
-                "Event_Participants_ID_Table.Time_In",
-                "Event_Participants_ID_Table.Time_Confirmed",
-                "Event_Participants_ID_Table.Time_Out",
-                "Event_Participants_ID_Table.Notes",
-                "Event_Participants_ID_Table.Domain_ID",
-                "Event_Participants_ID_Table.Group_Participant_ID",
-                "Event_Participants_ID_Table.Check-in_Station",
-                "Event_Participants_ID_Table.Group_ID",
-                "Event_Participants_ID_Table.Room_ID",
-                "Event_Participants_ID_Table.Call_Parents",
-                "Event_Participants_ID_Table.Group_Role_ID",
-                "Event_Participants_ID_Table.Response_ID",
-                "Event_Participants_ID_Table.Opportunity_ID",
-                "Event_Participants_ID_Table.Registrant_Message_Sent"
+                "Event_Participant_ID",
+                "Event_ID",
+                "Participant_ID",
+                "Participation_Status_ID",
+                "Time_In",
+                "Time_Confirmed",
+                "Time_Out",
+                "Notes",
+                "Domain_ID",
+                "Group_Participant_ID",
+                "[Check-in_Station]",
+                "Group_ID",
+                "Room_ID",
+                "Call_Parents",
+                "Group_Role_ID",
+                "Response_ID",
+                "Opportunity_ID",
+                "Registrant_Message_Sent"
             };
 
             var objects = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
