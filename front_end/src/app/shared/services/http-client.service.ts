@@ -41,14 +41,15 @@ export class HttpClientService {
   }
 
   private extractAuthToken(o: any) {
-    console.log(o);
     let sharable = o.share();
     sharable.subscribe((res: Response) => {
-      console.log(res);
       let user = this.user;
-      user.token = res.headers['Crds-Mp-Auth-Token'];
-      user.refreshToken = res.headers['Crds-Mp-Refresh-Token'];
-
+      if (res.headers.get('Authorization')) {
+        user.token = res.headers.get('Authorization');
+      };
+      if (res.headers.get('RefreshToken')) {
+        user.refreshToken = res.headers.get('RefreshToken');
+      }
       this.user = user;
     });
     return sharable;
@@ -63,18 +64,17 @@ export class HttpClientService {
 
   private createAuthorizationHeader(headers?: Headers) {
     let reqHeaders =  headers || new Headers();
-    reqHeaders.set('Crds-Mp-Auth-Token', this.user.token);
-    reqHeaders.set('Crds-Mp-Refresh-Token', this.user.refreshToken);
+    reqHeaders.set('Authorization', this.user.token);
+    reqHeaders.set('RefreshToken', this.user.refreshToken);
     reqHeaders.set('Content-Type', 'application/json');
     reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
 
-    console.log(this.cookie.getObject(MachineConfiguration.COOKIE_NAME))
     const machineConfig = MachineConfiguration.fromJson( this.cookie.getObject(MachineConfiguration.COOKIE_NAME) );
-    console.log(machineConfig)
     if (machineConfig && machineConfig.CongregationId) {
-      reqHeaders.set('Site_Id', machineConfig.CongregationId.toString());
+      reqHeaders.set('Crds-Site-Id', machineConfig.CongregationId.toString());
     }
+
     return reqHeaders;
   }
 
