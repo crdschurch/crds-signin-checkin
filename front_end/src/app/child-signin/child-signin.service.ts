@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { RequestOptions, URLSearchParams } from '@angular/http';
 import '../rxjs-operators';
@@ -16,7 +17,7 @@ export class ChildSigninService {
   private childrenAvailable: Array<Child> = [];
   private event: Event;
 
-  constructor(private http: HttpClientService) {
+  constructor(private http: HttpClientService, private router: Router) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/signin`;
   }
 
@@ -39,7 +40,9 @@ export class ChildSigninService {
                     for (let kid of response.json().Participants) {
                       let child = Object.create(Child.prototype);
                       Object.assign(child, kid);
-                      child.signIn = true;
+                      // set all selected to true
+                      // TODO: backend should probably do this
+                      child.Selected = true;
                       this.childrenAvailable.push(child);
                     }
 
@@ -52,7 +55,11 @@ export class ChildSigninService {
   signInChildren(eventParticipants: EventParticipants) {
     const url = `${this.url}/children`;
     return this.http.post(url, eventParticipants)
-                    .map(res => EventParticipants.fromJson(res.json()))
+                    // .map(res => EventParticipants.fromJson(res.json()))
+                    .map(res => {
+                      console.log("success!")
+                      this.router.navigate(['/child-signin/assignment'])
+                    })
                     .catch(this.handleError);
   }
 

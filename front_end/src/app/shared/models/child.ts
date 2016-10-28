@@ -6,7 +6,7 @@ export class Child {
   FirstName: string;
   LastName: string;
   DateOfBirth: Date;
-  signIn: boolean;
+  Selected: boolean;
 
   static fromJson(json: any): Child {
     let c = new Child();
@@ -17,7 +17,7 @@ export class Child {
     c.FirstName = json.FirstName;
     c.LastName = json.LastName;
     c.DateOfBirth = json.DateOfBirth;
-    c.signIn = json.signIn;
+    c.Selected = json.Selected;
     return c;
   }
 
