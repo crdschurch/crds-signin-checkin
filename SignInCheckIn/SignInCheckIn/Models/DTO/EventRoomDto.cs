@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace SignInCheckIn.Models.DTO
 {
@@ -28,10 +27,5 @@ namespace SignInCheckIn.Models.DTO
         public string Label { get; set; }
 
         public List<AgeGradeDto> AssignedGroups { get; set; }
-
-        public bool HasSelections()
-        {
-            return AssignedGroups != null && AssignedGroups.Any() && AssignedGroups.Exists(g => g.Selected);
-        }
     }
 }
