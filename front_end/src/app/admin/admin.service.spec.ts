@@ -6,6 +6,7 @@ import { HttpClientService } from '../shared/services/http-client.service';
 import { Http, RequestOptions, Headers, Response } from '@angular/http';
 import { MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
+import { Room } from './rooms/room';
 
 describe('AdminService', () => {
   let fixture: AdminService;
@@ -45,9 +46,12 @@ describe('AdminService', () => {
   });
 
   it('should successfully update a Room', () => {
-    let responseObject = http.get('assets/mock-data/rooms-update.json');
-    fixture.updateRoom('4525323', '185', responseObject).subscribe((res: Response) => {
-      expect(res.json()).toEqual(responseObject);
+    let responseObject = http.get('assets/mock-data/rooms-update.json')
+          .map(res => Room.fromJson(res.json()))
+          .subscribe((room: Room) => {
+            fixture.updateRoom('4525323', '185', room).subscribe((res: Response) => {
+            expect(res.json()).toEqual(responseObject);
+          });
     });
   });
 

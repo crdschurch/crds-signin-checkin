@@ -1,6 +1,6 @@
 @import '../../../assets/scss/_variables.scss';
 
-table.groups {
+table.groups.months {
   tr {
     &:nth-of-type(1), &:nth-of-type(6)  {
       border-bottom: 3px solid darken($table-border-color, 5%);
