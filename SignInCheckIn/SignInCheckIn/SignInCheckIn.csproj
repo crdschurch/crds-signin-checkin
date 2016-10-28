@@ -173,6 +173,7 @@
     <Compile Include="Controllers\ChildSigninController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\HelloWorldController.cs" />
+    <Compile Include="Controllers\KioskController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Exceptions\Models\ApiErrorDto.cs" />
     <Compile Include="Filters\DomainLockedApiKeyFilter.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Models\DTO\AgeGradeDto.cs" />
     <Compile Include="Models\DTO\EventDto.cs" />
     <Compile Include="Models\DTO\EventRoomDto.cs" />
+    <Compile Include="Models\DTO\KioskConfigDto.cs" />
     <Compile Include="Models\DTO\ParticipantEventMapDto.cs" />
     <Compile Include="Models\HelloWorldInputDto.cs" />
     <Compile Include="Models\HelloWorldOutputDto.cs" />
@@ -199,8 +201,10 @@
     <Compile Include="Services\Interfaces\IChildSigninService.cs" />
     <Compile Include="Services\Interfaces\IEventService.cs" />
     <Compile Include="Services\Interfaces\IHelloWorldService.cs" />
+    <Compile Include="Services\Interfaces\IKioskService.cs" />
     <Compile Include="Services\Interfaces\ILoginService.cs" />
     <Compile Include="Services\Interfaces\IRoomService.cs" />
+    <Compile Include="Services\KioskService.cs" />
     <Compile Include="Services\LoginService.cs" />
     <Compile Include="Services\RoomService.cs" />
     <Compile Include="Util\HttpAuthResult.cs" />
@@ -321,7 +325,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
   <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
