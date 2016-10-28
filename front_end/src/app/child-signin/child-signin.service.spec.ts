@@ -52,7 +52,7 @@ describe('ChildSigninService', () => {
       httpClientService.logOut();
     });
 
-    it('should get and then cash them when called again', () => {
+    it('should get and then cache them when called again', () => {
       responseObject = http.get('assets/mock-data/available-children-get.json');
       let response = http.get( `${process.env.ECHECK_API_ENDPOINT}/signin/children/8128128123`);
       fixture.getChildrenByPhoneNumber('8128128123');
@@ -62,5 +62,17 @@ describe('ChildSigninService', () => {
         expect(requestHeaders).toBeDefined();
       });
     });
+
+    // it('should sign in children to backend', () => {
+    //   responseObject = http.get('assets/mock-data/available-children-post.json');
+    //   let response = http.post( `${process.env.ECHECK_API_ENDPOINT}/signin/children`, responseObject);
+    //   // fixture.getChildrenByPhoneNumber('8128128123');
+    //
+    //   response.subscribe((res: Response) => {
+    //     expect(res.json()).toEqual(responseObject);
+    //     expect(requestHeaders).toBeDefined();
+    //   });
+    // });
+
   });
 });
