@@ -33,5 +33,22 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpPost]
+        //[ResponseType(typeof(List<ParticipantDto>))]
+        [Route("signin/children/signin")]
+        public IHttpActionResult SigninParticipants(ParticipantEventMapDto participantEventMapDto)
+        {
+            try
+            {
+                _childSigninService.SigninParticipants(participantEventMapDto);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Sign In Participants", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }
