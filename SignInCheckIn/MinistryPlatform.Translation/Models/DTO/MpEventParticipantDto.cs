@@ -1,4 +1,5 @@
-﻿using MinistryPlatform.Translation.Models.Attributes;
+﻿using System;
+using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
@@ -18,46 +19,46 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty("Participant_ID")]
         public int ParticipantId { get; set; }
 
-        [JsonProperty("Participant_Status_ID")]
+        [JsonProperty("Participation_Status_ID")]
         public int ParticipantStatusId { get; set; }
 
         [JsonProperty("Time_In")]
-        public int TimeIn { get; set; }
+        public DateTime? TimeIn { get; set; } = null;
 
         [JsonProperty("Time_Confirmed")]
-        public int TimeConfirmed { get; set; }
+        public DateTime? TimeConfirmed { get; set; } = null;
 
         [JsonProperty("Time_Out")]
-        public int TimeOut { get; set; }
+        public DateTime? TimeOut { get; set; } = null;
 
         [JsonProperty("Notes")]
         public int Notes { get; set; }
 
         [JsonProperty("Group_Participant_ID")]
-        public int GroupParticipantId { get; set; }
+        public int? GroupParticipantId { get; set; }
 
         [JsonProperty("Check-in_Station")]
-        public int CheckinStation { get; set; }
+        public int? CheckinStation { get; set; }
 
         [JsonProperty("Group_ID")]
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
 
         [JsonProperty("Room_ID")]
-        public int RoomId { get; set; }
+        public int? RoomId { get; set; }
 
         [JsonProperty("Call_Parents")]
-        public int CallParents { get; set; }
+        public bool CallParents { get; set; }
 
         [JsonProperty("Group_Role_ID")]
-        public int GroupRoleId { get; set; }
+        public int? GroupRoleId { get; set; }
 
         [JsonProperty("Response_ID")]
-        public int ResponseId { get; set; }
+        public int? ResponseId { get; set; }
 
         [JsonProperty("Opportunity_ID")]
-        public int OpportunityId { get; set; }
+        public int? OpportunityId { get; set; }
 
         [JsonProperty("Registrant_Message_Sent")]
-        public int RegistrantMessageSent { get; set; }
+        public bool RegistrantMessageSent { get; set; }
     }
 }
