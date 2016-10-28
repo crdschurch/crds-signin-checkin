@@ -156,6 +156,7 @@
     <Compile Include="Filters\DomainLockedApiKeyFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EventServiceTest.cs" />
+    <Compile Include="Services\KioskServiceTest.cs" />
     <Compile Include="Services\LoginServiceTest.cs" />
     <Compile Include="Services\RoomServiceTest.cs" />
   </ItemGroup>
