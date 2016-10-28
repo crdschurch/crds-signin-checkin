@@ -13,7 +13,7 @@ import { Child } from '../../shared/models/child';
 
 export class AvailableChildrenComponent implements OnInit {
   private childrenAvailable: Array<Child> = [];
-  private serving1: boolean = true;
+  private isServing: boolean = true;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
@@ -26,6 +26,10 @@ export class AvailableChildrenComponent implements OnInit {
       this.childSigninService.getChildrenByPhoneNumber(phoneNumber).
         subscribe(childrenAvailable => this.childrenAvailable = childrenAvailable);
     });
+ }
+
+ signIn() {
+   console.log(this.childrenAvailable);
  }
 
  public showServiceSelectModal(): void {

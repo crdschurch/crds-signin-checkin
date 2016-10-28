@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Practices.ObjectBuilder2;
 
 namespace SignInCheckIn.Models.DTO
 {
@@ -11,5 +12,6 @@ namespace SignInCheckIn.Models.DTO
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public bool Selected { get; set; } = false;
     }
 }
