@@ -126,5 +126,45 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                         SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId}", columnList);
         }
+
+        public void CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
+        {
+            var token = _apiUserRepository.GetToken();
+
+            var columnList = new List<string>
+            {
+                "Event_Participants_ID_Table.Event_Participant_ID",
+                "Event_Participants_ID_Table.Event_ID",
+                "Event_Participants_ID_Table.Participant_ID",
+                "Event_Participants_ID_Table.Participation_Status_ID",
+                "Event_Participants_ID_Table.Time_In",
+                "Event_Participants_ID_Table.Time_Confirmed",
+                "Event_Participants_ID_Table.Time_Out",
+                "Event_Participants_ID_Table.Notes",
+                "Event_Participants_ID_Table.Domain_ID",
+                "Event_Participants_ID_Table.Group_Participant_ID",
+                "Event_Participants_ID_Table.Check-in_Station",
+                "Event_Participants_ID_Table.Group_ID",
+                "Event_Participants_ID_Table.Room_ID",
+                "Event_Participants_ID_Table.Call_Parents",
+                "Event_Participants_ID_Table.Group_Role_ID",
+                "Event_Participants_ID_Table.Response_ID",
+                "Event_Participants_ID_Table.Opportunity_ID",
+                "Event_Participants_ID_Table.Registrant_Message_Sent"
+            };
+
+            var objects = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
+        }
+
+        //public List<T> Create<T>(List<T> objectsToCreate, List<string> selectColumns)
+        //{
+        //    return Create(objectsToCreate, string.Join(",", selectColumns.ToArray()));
+        //}
+
+        //public List<MpEventGroupDto> CreateEventGroups(string authenticationToken, List<MpEventGroupDto> eventGroups)
+        //{
+        //    var token = authenticationToken ?? _apiUserRepository.GetToken();
+        //    return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventGroups, _eventGroupsColumns);
+        //}
     }
 }

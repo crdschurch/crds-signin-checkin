@@ -29,21 +29,26 @@ namespace SignInCheckIn.Services
 
         public void SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
-            var mpEvent = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
+            //var mpEvent = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
 
-            var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-mpEvent.EarlyCheckinPeriod);
-            var endSigninWindow = mpEvent.EventStartDate.AddMinutes(mpEvent.LateCheckinPeriod);
+            //var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-mpEvent.EarlyCheckinPeriod);
+            //var endSigninWindow = mpEvent.EventStartDate.AddMinutes(mpEvent.LateCheckinPeriod);
 
-            if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
-            {
-                throw new Exception("Sign-In Not Available For Event " + mpEvent.EventId);
-            }
+            //if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
+            //{
+            //    throw new Exception("Sign-In Not Available For Event " + mpEvent.EventId);
+            //}
 
-            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
-            {
+            //List<MpEventParticipantDto> mpEventParticipantDtoList = new List<MpEventParticipantDto>();
 
-                // status should be set to arrived 
-            }
+            //// Status ID of 3 = "Attended"
+            //foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
+            //{
+            //    MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
+            //    {
+            //        EventId = participantEventMapDto.CurrentEvent.EventId,
+            //    }
+            //}
         }
     }
 }
