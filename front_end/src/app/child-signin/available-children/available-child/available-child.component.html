@@ -2,6 +2,6 @@
   <h4 class="card-title">{{child.name()}}</h4>
   <p class="text-muted">DOB: {{child.DateOfBirth}}</p>
   <span class="tgl-inline-label">Sign In:</span>
-  <input class='tgl tgl-light' id='child-signin-{{child.ContactId}}' type='checkbox' [(ngModel)]='child.signIn' (ngModelChange)='change($event)'>
+  <input class='tgl tgl-light' id='child-signin-{{child.ContactId}}' type='checkbox' [(ngModel)]='child.signIn'>
   <label class='tgl-btn' attr.for='child-signin-{{child.ContactId}}' ><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
 </div>

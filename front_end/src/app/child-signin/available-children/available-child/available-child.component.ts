@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { Child } from '../../../shared/models/child';
 
@@ -8,18 +8,6 @@ import { Child } from '../../../shared/models/child';
   styleUrls: ['../../scss/_cards.scss', '../../scss/_buttons.scss', ]
 })
 
-export class AvailableChildComponent implements OnInit {
+export class AvailableChildComponent {
   @Input() child: Child;
-  @Output() sharedVarChange = new EventEmitter();
-  @Input() sharedVar: string = 'George';
-
-  ngOnInit() {
-    console.log(this)
-    this.sharedVarChange.emit("innnnnit");
-  }
-
-  change() {
-    console.log("change");
-    this.sharedVarChange.emit("bob");
-  }
 }
