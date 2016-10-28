@@ -12,6 +12,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApiUserRepository _apiUserRepository;
         private readonly List<string> _attributeColumns;
         private readonly List<string> _groupColumns;
+        private readonly List<string> _groupAttributeColumns;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
         public GroupRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IApplicationConfiguration applicationConfiguration)
@@ -34,6 +35,13 @@ namespace MinistryPlatform.Translation.Repositories
                 "Groups.Group_Name"
             };
 
+            _groupAttributeColumns = new List<string>
+            {
+                "Group_Attributes.Group_ID",
+                "Group_ID_Table.Group_Name"
+            };
+            _groupAttributeColumns.AddRange(_attributeColumns);
+
             _applicationConfiguration = applicationConfiguration;
         }
 
@@ -51,6 +59,18 @@ namespace MinistryPlatform.Translation.Repositories
             var groups =  _ministryPlatformRestRepository.UsingAuthenticationToken(token).Search<MpGroupDto>(searchString, _groupColumns);
 
             return groups.Select(g => SetKidsClubGroupAttributes(g, includeAttributes, token)).ToList();
+        }
+
+        public List<MpGroupDto> GetGroupsByAttribute(string authenticationToken, IEnumerable<MpAttributeDto> attributes, bool includeAttributes = false)
+        {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var searchString = string.Join(" OR ",
+                                           attributes.Select(
+                                               a => $"(Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {a.Type.Id} AND Group_Attributes.Attribute_ID = {a.Id})")
+                                               .ToList());
+            var groups = _ministryPlatformRestRepository.UsingAuthenticationToken(token).SearchTable<MpGroupDto>("Group_Attributes", searchString, _groupAttributeColumns);
+            var response = groups.Select(g => SetKidsClubGroupAttributes(g, includeAttributes, token)).ToList();
+            return response;
         }
 
         private MpGroupDto SetKidsClubGroupAttributes(MpGroupDto group, bool includeAttributes, string token)
