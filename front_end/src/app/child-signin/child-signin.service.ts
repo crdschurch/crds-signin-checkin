@@ -5,16 +5,23 @@ import '../rxjs-operators';
 
 import { HttpClientService } from '../shared/services';
 import { PhoneNumberPipe } from '../shared/pipes/phoneNumber.pipe';
+import { EventParticipants } from '../shared/models/eventParticipants';
 import { Child } from '../shared/models/child';
+import { Event } from '../admin/events/event';
 
 @Injectable()
 export class ChildSigninService {
   private url: string = '';
   private phoneNumber: string = '';
   private childrenAvailable: Array<Child> = [];
+  private event: Event;
 
   constructor(private http: HttpClientService) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/signin`;
+  }
+
+  getEvent() {
+    return this.event;
   }
 
   getChildrenByPhoneNumber(phoneNumber: string) {
@@ -28,7 +35,8 @@ export class ChildSigninService {
       this.childrenAvailable = [];
       return this.http.get(url)
                   .map((response) => {
-                    for (let kid of response.json()) {
+                    this.event = response.json().CurrentEvent;
+                    for (let kid of response.json().Participants) {
                       let child = Object.create(Child.prototype);
                       Object.assign(child, kid);
                       child.signIn = true;
@@ -39,6 +47,13 @@ export class ChildSigninService {
                   })
                   .catch(this.handleError);
     }
+  }
+
+  signInChildren(eventParticipants: EventParticipants) {
+    const url = `${this.url}/children`;
+    return this.http.post(url, eventParticipants)
+                    .map(res => EventParticipants.fromJson(res.json()))
+                    .catch(this.handleError);
   }
 
   private handleError (error: any) {

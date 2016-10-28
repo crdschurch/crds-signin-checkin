@@ -1,10 +1,11 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { ChildSigninService } from '../child-signin.service';
 import { Child } from '../../shared/models/child';
-import { AdminService } from '../../admin/admin.service';
+import { RootService } from '../../shared/services';
+import { EventParticipants } from '../../shared/models/eventParticipants';
 
 @Component({
   selector: 'available-children',
@@ -18,7 +19,10 @@ export class AvailableChildrenComponent implements OnInit {
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
- constructor(private childSigninService: ChildSigninService, private route: ActivatedRoute, private adminService: AdminService) { }
+ constructor( private childSigninService: ChildSigninService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private rootService: RootService) { }
 
  ngOnInit() {
    this.route.params.forEach((params: Params) => {
@@ -30,10 +34,16 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  signIn() {
-   console.log(this.childrenAvailable, this.adminService);
-   // send to api
-  //  this.adminService.signInChildren
-   // if successful, go to /child-signin/assignment
+   const event = this.childSigninService.getEvent();
+   const children = this.childrenAvailable
+   const eventParticipants = EventParticipants.fromJson({ CurrentEvent: event, Participants: children });
+   this.childSigninService.signInChildren(eventParticipants).subscribe((availableChildren) => {
+     if (availableChildren.length > 0) {
+       this.router.navigate(['/child-signin/assignment']);
+     } else {
+       this.rootService.announceEvent('generalError');
+     }
+   });
  }
 
  public showServiceSelectModal(): void {
