@@ -16,6 +16,7 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IRestClient _ministryPlatformRestClient;
         private readonly ThreadLocal<string> _authToken = new ThreadLocal<string>();
+        private const string DeleteRecordsStoredProcName = "api_crds_Delete_Table_Rows";
 
         public MinistryPlatformRestRepository(IRestClient ministryPlatformRestClient)
         {
@@ -237,16 +238,14 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void Delete<T>(IEnumerable<int> recordIds)
         {
-            var url = $"/tables/{GetTableName<T>()}";
-            var request = new RestRequest(url, Method.DELETE);
-            AddAuthorization(request);
-            recordIds.ToList().ForEach(id =>
+            var parms = new Dictionary<string, object>
             {
-                request.AddQueryParameter("id", id+"");
-            });
+                {"@TableName", GetTableName<T>()},
+                {"@PrimaryKeyColumnName", GetPrimaryKeyColumnName<T>()},
+                {"@IdentifiersToDelete", string.Join(",", recordIds)}
+            };
 
-            var response = _ministryPlatformRestClient.Execute(request);
-            response.CheckForErrors($"Error deleting {GetTableName<T>()}", true);
+            PostStoredProc(DeleteRecordsStoredProcName, parms);
         }
 
         public void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields)
@@ -273,10 +272,20 @@ namespace MinistryPlatform.Translation.Repositories
             var table = typeof(T).GetAttribute<MpRestApiTable>();
             if (table == null)
             {
-                throw new NoTableDefinitionException(typeof(T));
+                throw new NoTableDefinitionException<T>();
             }
 
             return table.Name;
+        }
+
+        private static string GetPrimaryKeyColumnName<T>()
+        {
+            var primaryKey = typeof (T).GetProperties().ToList().Select(p => p.GetAttribute<MpRestApiPrimaryKey>()).FirstOrDefault();
+            if (primaryKey == null)
+            {
+                throw new NoPrimaryKeyDefinitionException<T>();
+            }
+            return primaryKey.Name;
         }
 
         private static string AddColumnSelection(string url, string selectColumns)
@@ -290,8 +299,14 @@ namespace MinistryPlatform.Translation.Repositories
         }
     }
 
-    public class NoTableDefinitionException : Exception
+    public class NoTableDefinitionException<T> : Exception
     {
-        public NoTableDefinitionException(Type t) : base(string.Format("No RestApiTable attribute specified on type {0}", t)) { }
+        public NoTableDefinitionException() : base($"No RestApiTable attribute specified on type {typeof(T)}") { }
     }
+
+    public class NoPrimaryKeyDefinitionException<T> : Exception
+    {
+        public NoPrimaryKeyDefinitionException() : base($"No RestApiPrimaryKey attribute specified on type {typeof(T)}") { }
+    }
+
 }
