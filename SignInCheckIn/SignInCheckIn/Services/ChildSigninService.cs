@@ -21,10 +21,26 @@ namespace SignInCheckIn.Services
             _eventRepository = eventRepository;
         }
 
-        public List<ParticipantDto> GetChildrenByPhoneNumber(string phoneNumber)
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
         {
+            var currentEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, siteId);
+
+            if (!(currentEvents).Any())
+            {
+                throw new Exception("No current events for site");
+            }
+
             var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
-            return Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
+            var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
+            var eventDto = Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = childrenDtos,
+                CurrentEvent = eventDto
+            };
+
+            return participantEventMapDto;
         }
 
         public void SigninParticipants(ParticipantEventMapDto participantEventMapDto)

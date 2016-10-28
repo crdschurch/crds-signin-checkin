@@ -30,6 +30,7 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void ShouldGetChildrenByPhoneNumber()
         {
+            var siteId = 1;
             var phoneNumber = "812-812-8877";
             var primaryHouseholdId = 123;
 
@@ -49,30 +50,31 @@ namespace SignInCheckIn.Tests.Services
 
             _childCheckinRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
             
-            var result = _fixture.GetChildrenByPhoneNumber(phoneNumber);
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childCheckinRepository.VerifyAll();
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(mpParticipantDto[0].ParticipantId, result[0].ParticipantId);
-            Assert.AreEqual(mpParticipantDto[0].ContactId, result[0].ContactId);
+            Assert.AreEqual(mpParticipantDto[0].ParticipantId, result.Participants[0].ParticipantId);
+            Assert.AreEqual(mpParticipantDto[0].ContactId, result.Participants[0].ContactId);
         }
 
         [Test]
         public void ShouldNotGetChildrenByPhoneNumber()
         {
+            var siteId = 1;
             var phoneNumber = "812-812-8877";
 
             List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>();
 
             _childCheckinRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
 
-            var result = _fixture.GetChildrenByPhoneNumber(phoneNumber);
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childCheckinRepository.VerifyAll();
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(false, result.Any());
+            Assert.AreEqual(false, result.Participants.Any());
         }
     }
 }
