@@ -41,17 +41,13 @@ export class HttpClientService {
   }
 
   private extractAuthToken(o: any) {
+    console.log(o);
     let sharable = o.share();
     sharable.subscribe((res: Response) => {
+      console.log(res);
       let user = this.user;
-      let body = res.json();
-
-      if (body != null && body.userToken) {
-        user.token = body.userToken;
-      }
-      if (body != null && body.refreshToken) {
-        user.refreshToken = body.refreshToken;
-      }
+      user.token = res.headers['Crds-Mp-Auth-Token'];
+      user.refreshToken = res.headers['Crds-Mp-Refresh-Token'];
 
       this.user = user;
     });
@@ -67,7 +63,8 @@ export class HttpClientService {
 
   private createAuthorizationHeader(headers?: Headers) {
     let reqHeaders =  headers || new Headers();
-    reqHeaders.set('Authorization', this.user.token);
+    reqHeaders.set('Crds-Mp-Auth-Token', this.user.token);
+    reqHeaders.set('Crds-Mp-Refresh-Token', this.user.refreshToken);
     reqHeaders.set('Content-Type', 'application/json');
     reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
