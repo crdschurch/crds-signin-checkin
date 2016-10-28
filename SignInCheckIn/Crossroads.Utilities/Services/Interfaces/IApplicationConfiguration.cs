@@ -13,5 +13,15 @@ namespace Crossroads.Utilities.Services.Interfaces
         int BirthMonthsAttributeTypeId { get; }
         int NurseryAgesAttributeTypeId { get; }
         int NurseryAgeAttributeId { get; }
+
+        int KidsClubGroupTypeId { get; }
+        int KidsClubMinistryId { get; }
+        int KidsClubCongregationId { get; }
+
+        int HeadOfHouseholdId { get; }
+        int OtherAdultId { get; }
+        int AdultChildId { get; }
+        int MinorChildId { get; }
+        string HouseHoldIdsThatCanCheckIn { get; }
     }
 }

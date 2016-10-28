@@ -1,0 +1,69 @@
+<div class="container card-container text-xs-left mt-3 pb-2">
+  <div class="row">
+    <div class="col-md-12">
+
+      <div class="eqWrap">
+        <div class="card text-xs-center">
+          <a routerLink="/child-signin/guest">
+          <div class="card-block">
+            <span class="round-plus">+</span>
+            <h4 class="card-title text-uppercase">Add A Guest</h4>
+          </div>
+          </a>
+        </div>
+        <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
+        <div class="card" *ngFor="let kid of childrenAvailable" >
+          <available-child [child]="kid" >
+          </available-child>
+        </div><!--/card-->
+      </div><!--/eqWrap-->
+
+    </div>
+  </div>
+</div>
+<div class="fade-out"></div>
+
+<footer class="footer pt-1 sticky-footer">
+  <div class="container-fluid">
+    <div class="row">
+
+      <div class="col-xs-4 pb-1">
+        <a  class="btn btn-primary btn-lg float-xs-left" href="#" routerLink="/child-signin/search">&#10094; Back</a>
+      </div>
+
+      <div class="col-xs-4 text-xs-center serving-question-cont">
+        <span class="tgl-inline-label">Are you serving today?</span>
+        <input class='tgl tgl-light' id='serving1' type='checkbox' [(ngModel)]="serving1" (click)="showServiceSelectModal.show()">
+        <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+      </div>
+
+      <div class="col-xs-4 pb-1">
+        <a class="btn btn-primary btn-lg float-xs-right" href="#" routerLink="/child-signin/assignment">Next &#10095;</a>
+      </div>
+
+    </div>
+  </div>
+</footer>
+
+<div bsModal #showServiceSelectModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="serviceSelectModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <button type="button" class="close mr-1 mt-1" (click)="showServiceSelectModal.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="modal-body">
+        <h5 class="m-b-3">
+          How many services will your children be in Kids’ Club?
+        </h5>
+        <div class="row m-b-3">
+          <div class="col-sm-4 offset-sm-2">
+            <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block py-3">1 HOUR</a>
+          </div>
+          <div class="col-sm-4">
+            <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block py-3">2 HOURS</a>
+          </div>
+        </div><!--/row-->
+      </div><!--/modal-body-->
+    </div><!--/modal-content-->
+  </div><!--/modal-dialog-->
+</div><!--/modal-->
