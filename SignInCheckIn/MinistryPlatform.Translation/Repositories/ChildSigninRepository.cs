@@ -29,8 +29,7 @@ namespace MinistryPlatform.Translation.Repositories
             var children = GetChildParticpantsByPrimaryHousehold(householdId);
             GetChildParticpantsByOtherHousehold(householdId, children);
             children = GetOnlyKidsClubChildren(children);
-
-            return children;
+            return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
         private int? GetHouseholdIdByPhoneNumber(string phoneNumber)
@@ -125,6 +124,21 @@ namespace MinistryPlatform.Translation.Repositories
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                         SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId}", columnList);
+        }
+
+        private class MpParticipantDtoComparer : IEqualityComparer<MpParticipantDto>
+        {
+            // Consider them equal if participant id and contact id are the same
+            public bool Equals(MpParticipantDto x, MpParticipantDto y)
+            {
+                return x.ParticipantId == y.ParticipantId && x.ContactId == y.ContactId;
+            }
+
+            // Hash code is a hash of participant id and contact id
+            public int GetHashCode(MpParticipantDto obj)
+            {
+                return $"{obj.ParticipantId}{obj.ContactId}".GetHashCode();
+            }
         }
     }
 }
