@@ -25,12 +25,8 @@ import { routing } from './app.routes';
     FormsModule,
     HttpModule,
     HomeModule,
-<<<<<<< HEAD
     SetupModule,
-    ChildCheckinModule,
-=======
     ChildSigninModule,
->>>>>>> development
     AdminModule,
     routing,
     MomentModule,
