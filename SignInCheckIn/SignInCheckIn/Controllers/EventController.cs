@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
-using crds_angular.Security;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
+using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Controllers
 {
-    public class EventController : MPAuth
+    public class EventController : MpAuth
     {
         private readonly IEventService _eventService;
         private readonly IRoomService _roomService;

@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
-using SignInCheckIn.Filters;
 
 namespace SignInCheckIn.Util
 {
@@ -14,8 +13,8 @@ namespace SignInCheckIn.Util
         private readonly string _refreshToken;
         private readonly IHttpActionResult _result;
 
-        public const string AuthorizationTokenHeaderName = "Crds-Mp-Auth-Token";
-        public const string RefreshTokenHeaderName = "Crds-Mp-Refresh-Token";
+        public const string AuthorizationTokenHeaderName = "Authorization";
+        public const string RefreshTokenHeaderName = "RefreshToken";
 
         public HttpAuthResult(IHttpActionResult result, string token, string refreshToken)
         {
