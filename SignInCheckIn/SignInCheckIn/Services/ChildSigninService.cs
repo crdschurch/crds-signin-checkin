@@ -21,29 +21,50 @@ namespace SignInCheckIn.Services
             _eventRepository = eventRepository;
         }
 
-        public List<ParticipantDto> GetChildrenByPhoneNumber(string phoneNumber)
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
         {
+            var currentEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, siteId);
+
+            if (!(currentEvents).Any())
+            {
+                throw new Exception("No current events for site");
+            }
+
             var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
-            return Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
+            var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
+            var eventDto = Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = childrenDtos,
+                CurrentEvent = eventDto
+            };
+
+            return participantEventMapDto;
         }
 
         public void SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
-            var mpEvent = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
+            //var mpEvent = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
 
-            var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-mpEvent.EarlyCheckinPeriod);
-            var endSigninWindow = mpEvent.EventStartDate.AddMinutes(mpEvent.LateCheckinPeriod);
+            //var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-mpEvent.EarlyCheckinPeriod);
+            //var endSigninWindow = mpEvent.EventStartDate.AddMinutes(mpEvent.LateCheckinPeriod);
 
-            if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
-            {
-                throw new Exception("Sign-In Not Available For Event " + mpEvent.EventId);
-            }
+            //if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
+            //{
+            //    throw new Exception("Sign-In Not Available For Event " + mpEvent.EventId);
+            //}
 
-            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
-            {
+            //List<MpEventParticipantDto> mpEventParticipantDtoList = new List<MpEventParticipantDto>();
 
-                // status should be set to arrived 
-            }
+            //// Status ID of 3 = "Attended"
+            //foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
+            //{
+            //    MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
+            //    {
+            //        EventId = participantEventMapDto.CurrentEvent.EventId,
+            //    }
+            //}
         }
     }
 }

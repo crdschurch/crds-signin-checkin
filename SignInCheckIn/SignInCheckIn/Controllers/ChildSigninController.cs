@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
 using SignInCheckIn.Exceptions.Models;
@@ -18,13 +19,25 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof(List<ParticipantDto>))]
+        [ResponseType(typeof(ParticipantEventMapDto))]
         [Route("signin/children/{phoneNumber}")]
-        public IHttpActionResult GetEvents(string phoneNumber)
+        public IHttpActionResult GetChildrenAndEvent(string phoneNumber)
         {
             try
             {
-                var children = _childSigninService.GetChildrenByPhoneNumber(phoneNumber);
+                IEnumerable<string> headerValues;
+                int siteId = 0;
+                if (Request.Headers.TryGetValues("Site_Id", out headerValues))
+                {
+                    siteId = Int32.Parse(headerValues.FirstOrDefault());
+                }
+
+                if (siteId == 0)
+                {
+                    throw new Exception("Site Id is Invalid");
+                }
+
+                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
                 return Ok(children);
             }
             catch (Exception e)

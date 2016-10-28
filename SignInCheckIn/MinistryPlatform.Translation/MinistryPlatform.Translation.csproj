@@ -90,6 +90,7 @@
     <Compile Include="Extensions\MpEventGroupDtoExtensions.cs" />
     <Compile Include="Extensions\RestSharpExtensions.cs" />
     <Compile Include="Models\Attributes\MpRestApiTable.cs" />
+    <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
     <Compile Include="Models\DTO\MpParticipantDto.cs" />
     <Compile Include="Models\DTO\MpContactDto.cs" />
     <Compile Include="Models\DTO\MpAttributeTypeDto.cs" />
