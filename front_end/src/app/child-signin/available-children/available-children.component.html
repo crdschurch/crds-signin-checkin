@@ -13,7 +13,7 @@
         </div>
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
         <div class="card" *ngFor="let kid of childrenAvailable" >
-          <available-child [child]="kid" >
+          <available-child [child]="kid">
           </available-child>
         </div><!--/card-->
       </div><!--/eqWrap-->
@@ -33,12 +33,12 @@
 
       <div class="col-xs-4 text-xs-center serving-question-cont">
         <span class="tgl-inline-label">Are you serving today?</span>
-        <input class='tgl tgl-light' id='serving1' type='checkbox' [(ngModel)]="serving1" (click)="showServiceSelectModal.show()">
-        <label class='tgl-btn' for='serving1'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+        <input class='tgl tgl-light' id='isServing' type='checkbox' [(ngModel)]="isServing" (click)="showServiceSelectModal.show()">
+        <label class='tgl-btn' for='isServing'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
       </div>
 
       <div class="col-xs-4 pb-1">
-        <a class="btn btn-primary btn-lg float-xs-right" href="#" routerLink="/child-signin/assignment">Next &#10095;</a>
+        <a class="btn btn-primary btn-lg float-xs-right" (click)="signIn()">Next &#10095;</a>
       </div>
 
     </div>

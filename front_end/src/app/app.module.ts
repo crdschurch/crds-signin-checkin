@@ -9,6 +9,7 @@ import { CookieService } from 'angular2-cookie/services/cookies.service';
 
 import { HttpClientService } from './shared/services';
 import { ContentService, RootService } from './shared/services';
+import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin';
 import { ChildSigninModule } from './child-signin';
 import { HomeModule } from './home';
@@ -40,6 +41,7 @@ import { routing } from './app.routes';
     CookieService,
     HttpClientService,
     ContentService,
+    AdminService,
     RootService,
     ToasterModule
   ],
