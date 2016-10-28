@@ -63,12 +63,12 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  signInChildren(children: Child[]) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
-    return this.http.put(url, body)
-                    .map(res => Room.fromJson(res.json()))
-                    .catch(this.handleError);
-  }
+  // signInChildren(children: Child[]) {
+  //   const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
+  //   return this.http.put(url, body)
+  //                   .map(res => Room.fromJson(res.json()))
+  //                   .catch(this.handleError);
+  // }
 
   private handleError (error: any) {
     console.error(error);
