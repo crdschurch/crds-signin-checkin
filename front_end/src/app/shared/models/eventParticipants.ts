@@ -9,13 +9,11 @@ export class EventParticipants {
     if (!json) {
       return new EventParticipants();
     }
-    console.log("json", json);
 
     let eventParticipants = new EventParticipants();
     eventParticipants.CurrentEvent = Event.fromJson(json.CurrentEvent);
     eventParticipants.Participants = [];
     for (let p of json.Participants) {
-      console.log(p);
       eventParticipants.Participants.push(Child.fromJson(p));
     }
     return eventParticipants;

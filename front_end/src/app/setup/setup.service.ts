@@ -16,7 +16,6 @@ export class SetupService {
     return this.http.get(url)
                     .map(res => {
                         this.setMachineConfigCookie(res.json());
-                        console.log(this.getMachineConfigCookie())
                         return this.getMachineConfigCookie();
                     })
                     .catch(err => console.error(err));

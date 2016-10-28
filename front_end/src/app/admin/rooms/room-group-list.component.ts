@@ -29,7 +29,6 @@ export class RoomGroupListComponent implements OnInit {
     this.roomId = this.route.snapshot.params['roomId'];
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
-        console.log("room", room)
         this.room = room;
       },
       error => console.error(error)
