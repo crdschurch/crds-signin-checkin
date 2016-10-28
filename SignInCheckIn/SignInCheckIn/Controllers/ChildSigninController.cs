@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -25,11 +24,10 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                IEnumerable<string> headerValues;
-                int siteId = 0;
-                if (Request.Headers.TryGetValues("Site_Id", out headerValues))
+                var siteId = 0;
+                if (Request.Headers.Contains("Crds-Site-Id"))
                 {
-                    siteId = Int32.Parse(headerValues.FirstOrDefault());
+                    siteId = int.Parse(Request.Headers.GetValues("Crds-Site-Id").First());
                 }
 
                 if (siteId == 0)
