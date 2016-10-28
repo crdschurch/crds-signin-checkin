@@ -1,0 +1,31 @@
+﻿using System;
+using MinistryPlatform.Translation.Models.Attributes;
+using Newtonsoft.Json;
+
+namespace MinistryPlatform.Translation.Models.DTO
+{
+    [MpRestApiTable(Name = "Participants")]
+    public class MpParticipantDto
+    {
+        [JsonProperty(PropertyName = "Participant_ID")]
+        public int ParticipantId { get; set; }
+
+        [JsonProperty(PropertyName = "Contact_ID")]
+        public int ContactId { get; set; }
+
+        [JsonProperty(PropertyName = "Household_ID")]
+        public int HouseholdId { get; set; }
+
+        [JsonProperty(PropertyName = "Household_Position_ID")]
+        public int HouseholdPositionId { get; set; }
+
+        [JsonProperty(PropertyName = "First_Name")]
+        public string FirstName { get; set; }
+
+        [JsonProperty(PropertyName = "Last_Name")]
+        public string LastName { get; set; }
+
+        [JsonProperty(PropertyName = "Date_of_Birth")]
+        public DateTime DateOfBirth { get; set; }
+    }
+}

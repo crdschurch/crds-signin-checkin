@@ -57,19 +57,19 @@ export class AppComponent implements OnInit {
   }
 
   activeStep1() {
-    return this.router.url === '/child-checkin';
+    return this.router.url === '/child-signin';
   }
 
   activeStep2() {
-    return this.router.url === '/child-checkin/results';
+    return this.router.url === '/child-signin/results';
   }
 
   activeStep3() {
-    return this.router.url === '/child-checkin/assignment';
+    return this.router.url === '/child-signin/assignment';
   }
 
   inRoom() {
-    return this.router.url === '/child-checkin/room';
+    return this.router.url === '/child-signin/room';
   }
 
   addToast(contentBlockTitle) {

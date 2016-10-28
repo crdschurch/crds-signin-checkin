@@ -1,24 +1,24 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ChildCheckinComponent } from './child-checkin.component';
-import { ResultsComponent } from './results';
+import { ChildSigninComponent } from './child-signin.component';
 import { GuestComponent } from './guest';
 import { AssignmentComponent } from './assignment';
 import { searchRoutes } from './search/search.routes';
+import { availableChildrenRoutes } from './available-children/available-children.routes';
 
-const childCheckinRoutes: Routes = [
+const childSigninRoutes: Routes = [
   {
-    path: 'child-checkin',
-    component: ChildCheckinComponent,
+    path: 'child-signin',
+    component: ChildSigninComponent,
     children: [
       {
         path: 'search',
         children: [...searchRoutes]
       },
       {
-        path: 'results',
-        component: ResultsComponent
+        path: 'available-children/:phoneNumber',
+        children: [...availableChildrenRoutes]
       },
       {
         path: 'guest',
@@ -32,4 +32,4 @@ const childCheckinRoutes: Routes = [
   }
 ];
 
-export const childCheckinRouting: ModuleWithProviders = RouterModule.forChild(childCheckinRoutes);
+export const childSigninRouting: ModuleWithProviders = RouterModule.forChild(childSigninRoutes);

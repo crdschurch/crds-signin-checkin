@@ -112,6 +112,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Repositories\ChildSigninRepositoryTest.cs" />
     <Compile Include="Extensions\JsonUnmappedDataExtensionsTest.cs" />
     <Compile Include="Extensions\MpEventGroupDtoExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

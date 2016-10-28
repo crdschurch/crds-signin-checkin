@@ -74,22 +74,4 @@ describe('SearchComponent', () => {
       expect(fixture.phoneNumber).toEqual('');
     });
   });
-
-  describe('#next', () => {
-    it('should set to error if phone number is not 10 characters', () => {
-      fixture.setPhoneNumber('1');
-      fixture.setPhoneNumber('2');
-      fixture.setPhoneNumber('3');
-      fixture.next();
-      expect(fixture.error).toBeFalsy;
-    });
-
-    it('should not set an error if more than 10 characters', () => {
-      fixture.setPhoneNumber('1');
-      fixture.setPhoneNumber('2');
-      fixture.setPhoneNumber('3');
-      fixture.next();
-      expect(fixture.error).toBeTruthy;
-    });
-  });
 });
