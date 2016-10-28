@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
-using MinistryPlatform.Translation.Extensions;
-using MinistryPlatform.Translation.Models.Attributes;
+﻿using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace MinistryPlatform.Translation.Models.DTO
 {
     [MpRestApiTable(Name = "Event_Groups")]
     public class MpEventGroupDto : MpBaseDto
     {
+        [MpRestApiPrimaryKey("Event_Group_ID")]
         [JsonProperty("Event_Group_ID")]
         public int Id { get; set; }
         [JsonIgnore]
