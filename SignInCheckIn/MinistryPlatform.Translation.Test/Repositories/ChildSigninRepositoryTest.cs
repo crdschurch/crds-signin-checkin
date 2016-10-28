@@ -119,6 +119,16 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     FirstName = "First2",
                     LastName = "Last2",
                     DateOfBirth = new DateTime()
+                },
+                new MpParticipantDto
+                {
+                    ParticipantId = 13,
+                    ContactId = 1444,
+                    HouseholdId = otherHouseholdId,
+                    HouseholdPositionId = 2,
+                    FirstName = "First2",
+                    LastName = "Last2",
+                    DateOfBirth = new DateTime()
                 }
             };
 
@@ -134,6 +144,17 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     LastName = "Last1",
                     DateOfBirth = new DateTime()
                 },
+                new MpParticipantDto
+                {
+                    ParticipantId = 13,
+                    ContactId = 1444,
+                    HouseholdId = otherHouseholdId,
+                    HouseholdPositionId = 2,
+                    FirstName = "First2",
+                    LastName = "Last2",
+                    DateOfBirth = new DateTime()
+                },
+                // Add a duplicate - this one should not appear in the final list
                 new MpParticipantDto
                 {
                     ParticipantId = 13,
