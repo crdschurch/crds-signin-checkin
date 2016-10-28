@@ -12,8 +12,9 @@
           </a>
         </div>
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
+        <span>sharedVarParent: {{sharedVarParent}}</span>
         <div class="card" *ngFor="let kid of childrenAvailable" >
-          <available-child [child]="kid" >
+          <available-child [child]="kid" [(sharedVar)]="sharedVarParent">
           </available-child>
         </div><!--/card-->
       </div><!--/eqWrap-->

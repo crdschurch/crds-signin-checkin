@@ -2,6 +2,7 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
+import { AvailableChildComponent } from './available-child/available-child.component';
 import { ChildSigninService } from '../child-signin.service';
 import { Child } from '../../shared/models/child';
 
@@ -14,6 +15,7 @@ import { Child } from '../../shared/models/child';
 export class AvailableChildrenComponent implements OnInit {
   private childrenAvailable: Array<Child> = [];
   private serving1: boolean = true;
+  sharedVarParent = 'harold';
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
