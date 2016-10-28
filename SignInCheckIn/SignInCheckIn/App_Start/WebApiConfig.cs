@@ -31,9 +31,6 @@ namespace SignInCheckIn
             // Add a filter to verify domain-locked API keys
             var domainLockedApiKeyFilter = (DomainLockedApiKeyFilter)config.DependencyResolver.GetService(typeof(DomainLockedApiKeyFilter));
             config.Filters.Add(domainLockedApiKeyFilter);
-
-            // Add a filter to add mp auth and refresh token headers to response
-            config.Filters.Add(new MinistryPlatformAuthTokenResponseHeaderFilter());
         }
     }
 }

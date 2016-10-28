@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
+using SignInCheckIn.Filters;
 
 namespace SignInCheckIn.Util
 {
     public class HttpAuthResult : IHttpActionResult
     {
-        private readonly String _token;
-        private readonly String _refreshToken;
+        private readonly string _token;
+        private readonly string _refreshToken;
         private readonly IHttpActionResult _result;
+
+        public const string AuthorizationTokenHeaderName = "Crds-Mp-Auth-Token";
+        public const string RefreshTokenHeaderName = "Crds-Mp-Refresh-Token";
 
         public HttpAuthResult(IHttpActionResult result, string token, string refreshToken)
         {
@@ -27,9 +29,9 @@ namespace SignInCheckIn.Util
             return Task.Run(() =>
             {
                 var response = _result.ExecuteAsync(cancellationToken).Result;
-                response.Headers.Add("Access-Control-Expose-Headers", "sessionId, refreshToken");
-                response.Headers.Add("sessionId", _token);
-                response.Headers.Add("refreshToken", _refreshToken);
+                response.Headers.Add("Access-Control-Expose-Headers", new [] { AuthorizationTokenHeaderName , RefreshTokenHeaderName });
+                response.Headers.Add(AuthorizationTokenHeaderName, _token);
+                response.Headers.Add(RefreshTokenHeaderName, _refreshToken);
                 return response;
             },
             cancellationToken);

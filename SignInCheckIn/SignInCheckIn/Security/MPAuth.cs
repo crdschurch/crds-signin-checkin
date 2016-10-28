@@ -18,6 +18,7 @@ using System.Threading;
 //using Microsoft.Owin;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using SignInCheckIn.Filters;
 using SignInCheckIn.Util;
 
 namespace crds_angular.Security
@@ -58,7 +59,7 @@ namespace crds_angular.Security
             {
                 IEnumerable<string> refreshTokens;
                 var authorized = "";
-                if (Request.Headers.TryGetValues("RefreshToken", out refreshTokens) && refreshTokens.Any())
+                if (Request.Headers.TryGetValues(HttpAuthResult.RefreshTokenHeaderName, out refreshTokens) && refreshTokens.Any())
                 {
                     var authData = _authenticationRepository.RefreshToken(refreshTokens.FirstOrDefault());
                     if (authData != null)
@@ -70,7 +71,7 @@ namespace crds_angular.Security
                     }
                 }
 
-                authorized = Request.Headers.GetValues("Authorization").FirstOrDefault();
+                authorized = Request.Headers.GetValues(HttpAuthResult.AuthorizationTokenHeaderName).FirstOrDefault();
                 if (authorized != null && (authorized != "null" || authorized != ""))
                 {
                     return actionWhenAuthorized(authorized);
