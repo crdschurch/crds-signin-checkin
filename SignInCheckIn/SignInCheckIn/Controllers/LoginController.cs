@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Description;
 using log4net;
+using SignInCheckIn.Filters;
 using SignInCheckIn.Models.Authentication;
 using SignInCheckIn.Services.Interfaces;
 
@@ -26,8 +27,10 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var loginReturn = _loginService.Login(cred.Username, cred.Password);
+                Request.Properties[MinistryPlatformAuthTokenResponseHeaderFilter.AuthorizationTokenHeaderName] = loginReturn.UserToken;
+                Request.Properties[MinistryPlatformAuthTokenResponseHeaderFilter.RefreshTokenHeaderName] = loginReturn.RefreshToken;
 
-                return this.Ok(loginReturn);
+                return Ok(loginReturn);
             }
             catch (Exception e)
             {
