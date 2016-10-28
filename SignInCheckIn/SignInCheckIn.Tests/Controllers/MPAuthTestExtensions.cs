@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http.Controllers;
-using crds_angular.Security;
+using SignInCheckIn.Security;
 
 namespace SignInCheckIn.Tests.Controllers
 {
@@ -11,14 +11,14 @@ namespace SignInCheckIn.Tests.Controllers
         public const string AuthType = "Bearer";
         public const string AuthToken = "tok123";
 
-        public static void SetupAuthorization(this MPAuth controller, string authType, string authToken)
+        public static void SetupAuthorization(this MpAuth controller, string authType, string authToken)
         {
             controller.Request = new HttpRequestMessage();
             controller.Request.Headers.Authorization = new AuthenticationHeaderValue(authType, authToken);
             controller.RequestContext = new HttpRequestContext();
         }
 
-        public static void RemoveAuthorization(this MPAuth controller)
+        public static void RemoveAuthorization(this MpAuth controller)
         {
             controller.Request = new HttpRequestMessage();
         }
