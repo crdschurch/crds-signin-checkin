@@ -222,32 +222,25 @@ namespace SignInCheckIn.Services
 
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
         {
+            // Create a list of attributes corresponding to the selected groups
             var attributes = GetMpAttributesForSelectedAges(selectedGroups).ToList();
             if (!attributes.Any())
             {
                 return;
             }
 
+            // Now get all the groups matching these attributes - but then need to filter it further, as there could be "extras"
+            // in this result.  For instance, looking for groups with the January birth month attribute is going to return 
+            // Nursery January groups, as well as Ages 1-5 January groups.  So since GetGroupsByAttribute gets us a superset of
+            // what we need, do a FindAll to get only those that have the same age range.  Could have potentially done this
+            // in the group repository, but would have made that method more complex.
             var groups =
-                _groupRepository.GetGroupsByAttribute(authenticationToken, attributes, true);
-
-            //if (isAgeGroup)
-            //{
-            //    foreach (var g in groups)
-            //    {
-            //        if (g.HasAgeRange() && selectedGroups.Exists(s => s.))
-            //        {
-            //            selectedGroups.
-            //        }
-            //    }
-            //}
-
-            var foundGroups = groups.FindAll(g => isAgeGroup ? g.HasAgeRange() && selectedGroups.Exists(sg => sg.Id == g.AgeRange.Id) : g.HasGrade());
-
-            var forThisRoom = foundGroups.Select(g => new MpEventGroupDto {EventId = eventRoom.EventId, GroupId = g.Id, RoomReservationId = eventRoom.EventRoomId})
+                _groupRepository.GetGroupsByAttribute(authenticationToken, attributes, true)
+                    .FindAll(g => isAgeGroup ? g.HasAgeRange() && selectedGroups.Exists(sg => sg.Id == g.AgeRange.Id) : g.HasGrade())
+                    .Select(g => new MpEventGroupDto {EventId = eventRoom.EventId, GroupId = g.Id, RoomReservationId = eventRoom.EventRoomId})
                     .ToList();
 
-            _eventRepository.CreateEventGroups(authenticationToken, forThisRoom);
+            _eventRepository.CreateEventGroups(authenticationToken, groups);
         }
 
         private static IEnumerable<MpAttributeDto> GetMpAttributesForSelectedAges(List<AgeGradeDto> ages)
