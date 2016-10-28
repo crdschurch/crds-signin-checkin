@@ -90,7 +90,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<T> Create<T>(List<T> objectsToCreate, string selectColumns = null)
         {
-            return ExecutePutOrPost(objectsToCreate, Method.PUT, selectColumns);
+            return ExecutePutOrPost(objectsToCreate, Method.POST, selectColumns);
         }
 
         public T Update<T>(T objectToUpdate, List<string> selectColumns)

@@ -40,11 +40,11 @@ namespace MinistryPlatform.Translation.Models.DTO
             set { RoomReservation.EventRoomId = value; }
         }
 
-        [JsonProperty("Room_ID")]
-        public int RoomId
+        [JsonProperty("Room_ID", NullValueHandling = NullValueHandling.Ignore)]
+        public int? RoomId
         {
-            get { return RoomReservation.RoomId; }
-            set { RoomReservation.RoomId = value; }
+            get { return RoomReservation.RoomId == 0 ? (int?)null : RoomReservation.RoomId; }
+            set { RoomReservation.RoomId = value ?? 0; }
         }
 
         public bool HasRoomReservation()

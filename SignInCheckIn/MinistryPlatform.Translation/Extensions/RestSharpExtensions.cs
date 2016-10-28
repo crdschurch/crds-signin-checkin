@@ -1,5 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using RestSharp;
@@ -58,8 +60,10 @@ namespace MinistryPlatform.Translation.Extensions
         public static IRestRequest SetJsonBody<T>(this IRestRequest request, T record)
         {
             // This nonsense is needed because request.setJsonBody() does not honor Json name
-            // attributes on the object, so proper names are not sent to MP.
-            var jsonBody = JsonConvert.SerializeObject(new List<T> { record });
+            // attributes on the object, so proper names are not sent to MP. If the input
+            // record is already a collection of some sort, just serialize it onto the body,
+            // otherwise create a new collection containing the single record.
+            var jsonBody = record.GetType().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof (ICollection<>)) ? JsonConvert.SerializeObject(record) : JsonConvert.SerializeObject(new List<T> {record});
             request.Parameters.Clear();
             request.AddHeader("Accept", "application/json");
             request.AddParameter("application/json", jsonBody, ParameterType.RequestBody);

@@ -92,6 +92,7 @@ namespace SignInCheckIn.Services
 
                 eventRoom = new MpEventRoomDto
                 {
+                    EventId = eventId,
                     RoomId = room.RoomId,
                     RoomName = room.RoomName,
                     RoomNumber = room.RoomNumber
@@ -137,7 +138,7 @@ namespace SignInCheckIn.Services
                             eventGroups.HasMatchingNurseryMonth(r.Id) :
                             eventGroups.HasMatchingBirthMonth(a.Id, r.Id),
                         SortOrder = r.SortOrder,
-                        TypeId = a.Type.Id,
+                        TypeId = r.Type.Id,
                         EventGroupIds = a.Id == _applicationConfiguration.NurseryAgeAttributeId ?
                             eventGroups.GetMatchingNurseryMonths(r.Id).Select(g => g.Group.Id).ToList() :
                             eventGroups.GetMatchingBirthMonths(a.Id, r.Id).Select(g => g.Group.Id).ToList()
@@ -173,13 +174,18 @@ namespace SignInCheckIn.Services
             DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventId, roomId);
 
             // Check to see if anything is selected on input - if not, nothing else to do
-            if (!eventRoom.AssignedGroups.Exists(g => g.Selected))
+            if (!eventRoom.AssignedGroups.Exists(g => g.Selected || g.HasSelectedRanges))
             {
                 return eventRoom;
             }
 
             // Get the existing eventRoom, if any
-            var existingEventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            var existingEventRoom = _roomRepository.GetEventRoom(eventId, roomId) ?? new MpEventRoomDto
+            {
+                EventId = eventId,
+                RoomId = roomId,
+                AllowSignIn = true
+            };
 
             // Create the room reservation, if needed
             if (!existingEventRoom.EventRoomId.HasValue)
@@ -191,32 +197,57 @@ namespace SignInCheckIn.Services
             }
 
             // Create nursery event groups
-            CreateEventGroups(authenticationToken, eventRoom, eventRoom.AssignedGroups.FindAll(
-                    g => g.Selected && g.TypeId == _applicationConfiguration.AgesAttributeTypeId && g.Id == _applicationConfiguration.NurseryAgeAttributeId));
+            CreateEventGroups(authenticationToken,
+                              eventRoom,
+                              eventRoom.AssignedGroups.FindAll(
+                                  g =>
+                                      (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
+                                      g.Id == _applicationConfiguration.NurseryAgeAttributeId), true);
 
             // Create age event groups
-            CreateEventGroups(authenticationToken, eventRoom, eventRoom.AssignedGroups.FindAll(
-                    g => g.Selected && g.TypeId == _applicationConfiguration.AgesAttributeTypeId && g.Id != _applicationConfiguration.NurseryAgeAttributeId));
+            CreateEventGroups(authenticationToken,
+                              eventRoom,
+                              eventRoom.AssignedGroups.FindAll(
+                                  g =>
+                                      (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
+                                      g.Id != _applicationConfiguration.NurseryAgeAttributeId), true);
 
             // Create grade event groups
-            CreateEventGroups(authenticationToken, eventRoom, eventRoom.AssignedGroups.FindAll(g => g.Selected && g.TypeId == _applicationConfiguration.GradesAttributeTypeId));
+            CreateEventGroups(authenticationToken,
+                              eventRoom,
+                              eventRoom.AssignedGroups.FindAll(g => (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.GradesAttributeTypeId), false);
 
             return eventRoom;
         }
 
-        private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups)
+        private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
         {
-            var attributes = GetMpAttributesForSelectedAges(selectedGroups);
-
-            var groups = _groupRepository.GetGroupsByAttribute(authenticationToken, attributes).Select(g => new MpEventGroupDto
+            var attributes = GetMpAttributesForSelectedAges(selectedGroups).ToList();
+            if (!attributes.Any())
             {
-                EventId = eventRoom.EventId,
-                RoomId = eventRoom.RoomId,
-                RoomReservationId = eventRoom.EventRoomId,
-                GroupId = g.Id
-            }).ToList();
+                return;
+            }
 
-            _eventRepository.CreateEventGroups(authenticationToken, groups);
+            var groups =
+                _groupRepository.GetGroupsByAttribute(authenticationToken, attributes, true);
+
+            //if (isAgeGroup)
+            //{
+            //    foreach (var g in groups)
+            //    {
+            //        if (g.HasAgeRange() && selectedGroups.Exists(s => s.))
+            //        {
+            //            selectedGroups.
+            //        }
+            //    }
+            //}
+
+            var foundGroups = groups.FindAll(g => isAgeGroup ? g.HasAgeRange() && selectedGroups.Exists(sg => sg.Id == g.AgeRange.Id) : g.HasGrade());
+
+            var forThisRoom = foundGroups.Select(g => new MpEventGroupDto {EventId = eventRoom.EventId, GroupId = g.Id, RoomReservationId = eventRoom.EventRoomId})
+                    .ToList();
+
+            _eventRepository.CreateEventGroups(authenticationToken, forThisRoom);
         }
 
         private static IEnumerable<MpAttributeDto> GetMpAttributesForSelectedAges(List<AgeGradeDto> ages)
@@ -232,7 +263,7 @@ namespace SignInCheckIn.Services
                 }
             });
 
-            var selectedRanges = ages.FindAll(a => a.Selected && a.HasRanges).Select(a => a.Ranges.FindAll(r => r.Selected).Select(r => new MpAttributeDto
+            var selectedRanges = ages.FindAll(a => a.HasSelectedRanges).Select(a => a.Ranges.FindAll(r => r.Selected).Select(r => new MpAttributeDto
             {
                 Id = r.Id,
                 Name = r.Name,
@@ -240,7 +271,7 @@ namespace SignInCheckIn.Services
                 Type = new MpAttributeTypeDto
                 {
                     Id = r.TypeId,
-                    Name = r.Name
+                    Name = a.Name
                 }
             })).SelectMany(x =>
             {
@@ -256,7 +287,7 @@ namespace SignInCheckIn.Services
             var currentEventGroups = _eventRepository.GetEventGroupsForEventRoom(eventId, roomId);
             if (currentEventGroups.Any())
             {
-                _eventRepository.DeleteEventGroups(authenticationToken, currentEventGroups.Select(g => g.RoomReservation.EventRoomId.GetValueOrDefault()));
+                _eventRepository.DeleteEventGroups(authenticationToken, currentEventGroups.Select(g => g.Id));
             }
         }
     }

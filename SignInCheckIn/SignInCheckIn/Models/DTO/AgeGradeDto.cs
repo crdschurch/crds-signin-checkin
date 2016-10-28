@@ -32,6 +32,9 @@ namespace SignInCheckIn.Models.DTO
         [JsonIgnore]
         public bool HasRanges => Ranges != null && Ranges.Any();
 
+        [JsonIgnore]
+        public bool HasSelectedRanges => HasRanges && Ranges.Exists(r => r.Selected);
+
         public class AgeRangeDto
         {
             public int Id { get; set; }

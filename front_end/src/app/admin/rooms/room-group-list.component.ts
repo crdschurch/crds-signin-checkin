@@ -12,6 +12,9 @@ import { Event } from '../events/event';
   styleUrls: ['room-group-list.component.scss']
 })
 export class RoomGroupListComponent implements OnInit {
+  groups: Group[];
+  eventId: string;
+  roomId: string;
   private room: Room;
   private event: Event;
 
@@ -22,13 +25,16 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   private getData(): void {
-    const eventId = this.route.snapshot.params['eventId'];
-    const roomId = this.route.snapshot.params['roomId'];
-    this.adminService.getRoomGroups(eventId, roomId).subscribe(
-      room => { this.room = room; },
+    this.eventId = this.route.snapshot.params['eventId'];
+    this.roomId = this.route.snapshot.params['roomId'];
+    this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
+      room => {
+        console.log("room", room)
+        this.room = room;
+      },
       error => console.error(error)
     );
-    this.adminService.getEvent(eventId).subscribe(
+    this.adminService.getEvent(this.eventId).subscribe(
       event => {
         this.event = event;
         this.headerService.announceEvent(event);
