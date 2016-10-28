@@ -11,6 +11,7 @@ namespace SignInCheckIn.Models.DTO
         public List<AgeRangeDto> Ranges { get; set; }
         public int SortOrder { get; set; }
         public int TypeId { get; set; }
+        public int EventGroupId { get; set; }
 
 #region Selected Property
         private bool _selected;
@@ -31,6 +32,9 @@ namespace SignInCheckIn.Models.DTO
         [JsonIgnore]
         public bool HasRanges => Ranges != null && Ranges.Any();
 
+        [JsonIgnore]
+        public bool HasSelectedRanges => HasRanges && Ranges.Exists(r => r.Selected);
+
         public class AgeRangeDto
         {
             public int Id { get; set; }
@@ -38,6 +42,7 @@ namespace SignInCheckIn.Models.DTO
             public bool Selected { get; set; }
             public int SortOrder { get; set; }
             public int TypeId { get; set; }
+            public List<int> EventGroupIds { get; set; }
         }
     }
 }

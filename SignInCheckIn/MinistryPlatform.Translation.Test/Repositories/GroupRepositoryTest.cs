@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using FluentAssertions;
 using MinistryPlatform.Translation.Repositories;
@@ -19,6 +20,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
         private List<string> _attributeColumns;
         private List<string> _groupColumns;
+        private List<string> _groupAttributeColumns;
+
 
         [SetUp]
         public void SetUp()
@@ -46,6 +49,13 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Groups.Group_ID",
                 "Groups.Group_Name"
             };
+
+            _groupAttributeColumns = new List<string>
+            {
+                "Group_Attributes.Group_ID",
+                "Group_ID_Table.Group_Name"
+            };
+            _groupAttributeColumns.AddRange(_attributeColumns);
 
             _fixture = new GroupRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
         }
@@ -212,6 +222,68 @@ namespace MinistryPlatform.Translation.Test.Repositories
             result.Grade.Should().BeSameAs(attrs[2]);
             result.HasNurseryMonth().Should().BeTrue();
             result.NurseryMonth.Should().BeSameAs(attrs[3]);
+        }
+
+        [Test]
+        public void TestGetGroupsByAttribute()
+        {
+            const string token = "token 123";
+            var group = new MpGroupDto
+            {
+                Id = 789
+            };
+
+            var attrs = new List<MpAttributeDto>
+            {
+                new MpAttributeDto
+                {
+                    Id = 1000,
+                    Type = new MpAttributeTypeDto
+                    {
+                        Id = 123
+                    }
+                },
+                new MpAttributeDto
+                {
+                    Id = 2000,
+                    Type = new MpAttributeTypeDto
+                    {
+                        Id = 456
+                    }
+                },
+                new MpAttributeDto
+                {
+                    Id = 3000,
+                    Type = new MpAttributeTypeDto
+                    {
+                        Id = 789
+                    }
+                },
+                new MpAttributeDto
+                {
+                    Id = 4000,
+                    Type = new MpAttributeTypeDto
+                    {
+                        Id = 567
+                    }
+                },
+            };
+
+            var expectedSearchString = string.Join(" OR ",
+                                           attrs.Select(
+                                               a => $"(Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {a.Type.Id} AND Group_Attributes.Attribute_ID = {a.Id})")
+                                               .ToList());
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpGroupDto>("Group_Attributes", expectedSearchString, _groupAttributeColumns))
+                .Returns(new List<MpGroupDto> {group});
+
+            var result = _fixture.GetGroupsByAttribute(token, attrs, false);
+            _ministryPlatformRestRepository.VerifyAll();
+
+            result.Count.Should().Be(1);
+            result.First().Should().BeSameAs(group);
         }
     }
 }

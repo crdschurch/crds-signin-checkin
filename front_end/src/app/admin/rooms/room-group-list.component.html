@@ -32,6 +32,7 @@
         </div>
       </div>
     </div>
+
     <div class="col-sm-12 lead mt-1 mb-1">
       <div class="row">
           <span>
@@ -39,10 +40,28 @@
           </span>
       </div>
     </div>
-    <table class="table groups">
+    <table class="table groups months">
+      <thead>
+        <th>Ages</th>
+        <th><span>Select All</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Months</span></th>
+      </thead>
       <tbody>
-        <tr *ngFor="let g of getGroups();" class="group" [group]="g" ></tr>
+        <tr *ngFor="let g of getGroups() | slice:0:6" class="group" [group]="g" [eventId]="eventId" [roomId]="roomId" [room]="room"></tr>
       </tbody>
     </table>
+
+    <div class="col-sm-12 lead mt-1 mb-1">
+      <div class="row">
+          <span>
+            <b>Grades</b> (All Months Automatically Assigned)
+          </span>
+      </div>
+    </div>
+    <table class="table groups all">
+      <tbody>
+        <tr *ngFor="let g of getGroups() | slice:6" class="group" [group]="g" [eventId]="eventId" [roomId]="roomId" [room]="room"></tr>
+      </tbody>
+    </table>
+
   </div>
 </div>
