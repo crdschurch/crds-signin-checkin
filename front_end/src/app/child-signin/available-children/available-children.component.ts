@@ -4,20 +4,21 @@ import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { ChildSigninService } from '../child-signin.service';
 import { Child } from '../../shared/models/child';
+import { AdminService } from '../../admin/admin.service';
 
 @Component({
   selector: 'available-children',
   templateUrl: 'available-children.component.html',
-  styleUrls: ['../scss/_cards.scss', '../scss/_buttons.scss', ]
+  styleUrls: [ '../scss/_cards.scss', '../scss/_buttons.scss' ]
 })
 
 export class AvailableChildrenComponent implements OnInit {
   private childrenAvailable: Array<Child> = [];
-  private serving1: boolean = true;
+  private isServing: boolean = true;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
- constructor(private childSigninService: ChildSigninService, private route: ActivatedRoute) { }
+ constructor(private childSigninService: ChildSigninService, private route: ActivatedRoute, private adminService: AdminService) { }
 
  ngOnInit() {
    this.route.params.forEach((params: Params) => {
@@ -26,6 +27,13 @@ export class AvailableChildrenComponent implements OnInit {
       this.childSigninService.getChildrenByPhoneNumber(phoneNumber).
         subscribe(childrenAvailable => this.childrenAvailable = childrenAvailable);
     });
+ }
+
+ signIn() {
+   console.log(this.childrenAvailable, this.adminService);
+   // send to api
+  //  this.adminService.signInChildren
+   // if successful, go to /child-signin/assignment
  }
 
  public showServiceSelectModal(): void {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { CookieService } from 'angular2-cookie/core';
+import { MachineConfiguration } from '../../setup/machine-configuration';
 
 import { User } from '../models/user';
 
@@ -71,6 +72,12 @@ export class HttpClientService {
     reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
 
+    console.log(this.cookie.getObject(MachineConfiguration.COOKIE_NAME))
+    const machineConfig = MachineConfiguration.fromJson( this.cookie.getObject(MachineConfiguration.COOKIE_NAME) );
+    console.log(machineConfig)
+    if (machineConfig && machineConfig.CongregationId) {
+      reqHeaders.set('Site_Id', machineConfig.CongregationId.toString());
+    }
     return reqHeaders;
   }
 
