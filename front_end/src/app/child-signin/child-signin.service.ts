@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { RequestOptions, URLSearchParams } from '@angular/http';
-import '../rxjs-operators';
 
 import { HttpClientService } from '../shared/services';
 import { PhoneNumberPipe } from '../shared/pipes/phoneNumber.pipe';

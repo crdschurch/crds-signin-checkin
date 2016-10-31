@@ -23,6 +23,7 @@ describe('HttpClientService', () => {
     backend = new MockBackend();
     options = new RequestOptions();
     options.headers = new Headers();
+    options.headers.append('Authorization', '98765')
     http = new Http(backend, options);
     cookie = new CookieService(new CookieOptions());
     fixture = new HttpClientService(http, cookie);
@@ -81,7 +82,7 @@ describe('HttpClientService', () => {
 
     it('should set authentication token if sent in response', () => {
       responseObject.userToken = '98765';
-      let response = fixture.get('/test/123');
+      let response = fixture.get('/events');
       response.subscribe(() => {
         expect(fixture.isLoggedIn()).toBeTruthy();
       });
@@ -89,12 +90,14 @@ describe('HttpClientService', () => {
 
     it('should send authentication token if logged in', () => {
       expect(fixture.isLoggedIn()).toBeFalsy();
-      responseObject.userToken = '98765';
       let response = fixture.get('/test/123');
-      response.subscribe(() => {
+      response.subscribe((r) => {
+        console.log(r.headers)
+        console.log("fixture.isLoggedIn()", fixture.isLoggedIn())
         expect(fixture.isLoggedIn()).toBeTruthy();
         let r2 = fixture.get('/test/123');
         r2.subscribe(() => {
+          console.log("requestHeaders auth", requestHeaders.get('Authorization'))
           expect(requestHeaders.has('Authorization')).toBeTruthy();
           expect(requestHeaders.get('Authorization')).toEqual('98765');
         });

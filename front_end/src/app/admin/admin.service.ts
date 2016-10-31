@@ -7,8 +7,6 @@ import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
 import { Event } from './events/event';
 import { Room } from './rooms/room';
-import { Group } from './rooms/group';
-import { Child } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -85,7 +83,7 @@ export class AdminService {
     // Subscribe to the debounced event - now actually send the update to
     // the backend.
     // TODO - Should handle the response, and notify the user of success or failure
-    // TODO - Should have some sort of processing state while the update is running, since it can take several seconds to complete 
+    // TODO - Should have some sort of processing state while the update is running, since it can take several seconds to complete
     this.roomGroupsUpdateObserver.subscribe(room => {
       this.updateRoomGroupsInternal(room);
     });
