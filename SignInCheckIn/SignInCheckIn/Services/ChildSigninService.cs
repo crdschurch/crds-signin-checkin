@@ -13,11 +13,13 @@ namespace SignInCheckIn.Services
     public class ChildSigninService : IChildSigninService
     {
         private readonly IChildSigninRepository _childSigninRepository;
+        private readonly IConfigRepository _configRepository;
         private readonly IEventRepository _eventRepository;
 
-        public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository)
+        public ChildSigninService(IChildSigninRepository childSigninRepository, IConfigRepository configRepository, IEventRepository eventRepository)
         {
             _childSigninRepository = childSigninRepository;
+            _configRepository = configRepository;
             _eventRepository = eventRepository;
         }
 
@@ -45,10 +47,14 @@ namespace SignInCheckIn.Services
 
         public void SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
+            var earlyCheckinConfig = _configRepository.GetMpConfigByKey("DefaultEarlyCheckIn");
+            var lateCheckinConfig = _configRepository.GetMpConfigByKey("DefaultLateCheckIn");
+
             var mpEvent = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
 
-            var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-mpEvent.EarlyCheckinPeriod);
-            var endSigninWindow = mpEvent.EventStartDate.AddMinutes(mpEvent.LateCheckinPeriod);
+            // use the event's checkin period if available, otherwise default to the mp config values
+            var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-(mpEvent.EarlyCheckinPeriod ?? int.Parse(earlyCheckinConfig.Value)));
+            var endSigninWindow = mpEvent.EventStartDate.AddMinutes((mpEvent.LateCheckinPeriod ?? int.Parse(lateCheckinConfig.Value)));
 
             if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
             {

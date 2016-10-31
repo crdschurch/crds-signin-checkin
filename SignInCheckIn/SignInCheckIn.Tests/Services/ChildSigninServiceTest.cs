@@ -13,6 +13,7 @@ namespace SignInCheckIn.Tests.Services
     public class ChildSigninServiceTest
     {
         private Mock<IChildSigninRepository> _childCheckinRepository;
+        private Mock<IConfigRepository> _configRepository;
         private Mock<IEventRepository> _eventRepository;
 
         private ChildSigninService _fixture;
@@ -23,8 +24,9 @@ namespace SignInCheckIn.Tests.Services
             AutoMapperConfig.RegisterMappings();
 
             _childCheckinRepository = new Mock<IChildSigninRepository>();
+            _configRepository = new Mock<IConfigRepository>();
             _eventRepository = new Mock<IEventRepository>();
-            _fixture = new ChildSigninService(_childCheckinRepository.Object, _eventRepository.Object);
+            _fixture = new ChildSigninService(_childCheckinRepository.Object, _configRepository.Object, _eventRepository.Object);
         }
 
         [Test]

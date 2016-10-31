@@ -169,16 +169,5 @@ namespace MinistryPlatform.Translation.Repositories
 
             var objects = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
         }
-
-        //public List<T> Create<T>(List<T> objectsToCreate, List<string> selectColumns)
-        //{
-        //    return Create(objectsToCreate, string.Join(",", selectColumns.ToArray()));
-        //}
-
-        //public List<MpEventGroupDto> CreateEventGroups(string authenticationToken, List<MpEventGroupDto> eventGroups)
-        //{
-        //    var token = authenticationToken ?? _apiUserRepository.GetToken();
-        //    return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventGroups, _eventGroupsColumns);
-        //}
     }
 }

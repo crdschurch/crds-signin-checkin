@@ -23,10 +23,10 @@ namespace MinistryPlatform.Translation.Models.DTO
         public string EventType { get; set; }
 
         [JsonProperty(PropertyName = "Early_Check-in_Period")]
-        public int EarlyCheckinPeriod { get; set; }
+        public int? EarlyCheckinPeriod { get; set; }
 
         [JsonProperty(PropertyName = "Late_Check-in_Period")]
-        public int LateCheckinPeriod { get; set; }
+        public int? LateCheckinPeriod { get; set; }
 
         [JsonProperty(PropertyName = "Congregation_Name")]
         public string CongregationName { get; set; }
