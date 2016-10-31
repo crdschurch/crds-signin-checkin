@@ -195,6 +195,12 @@ namespace SignInCheckIn.Services
                 eventRoom.EventId = eventId;
                 eventRoom.RoomId = roomId;
             }
+            else
+            {
+                // This is needed in case the frontend does not send the EventRoomId (for instance, when multiple
+                // updates are made on the page, but the frontend does not update its model with the new event room id)
+                eventRoom.EventRoomId = existingEventRoom.EventRoomId;
+            }
 
             // Create nursery event groups
             CreateEventGroups(authenticationToken,
