@@ -51,7 +51,7 @@ namespace SignInCheckIn.Security
                     if (authData != null)
                     {
                         var authToken = authData["token"].ToString();
-                        var refreshToken = authData["RefreshToken"].ToString();
+                        var refreshToken = authData["refreshToken"].ToString();
                         var result = new HttpAuthResult(actionWhenAuthorized(authToken), authToken, refreshToken);
                         return result;
                     }
