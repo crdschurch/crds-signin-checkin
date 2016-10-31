@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.Attributes;
@@ -15,6 +16,7 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IRestClient _ministryPlatformRestClient;
         private readonly ThreadLocal<string> _authToken = new ThreadLocal<string>();
+        private const string DeleteRecordsStoredProcName = "api_crds_Delete_Table_Rows";
 
         public MinistryPlatformRestRepository(IRestClient ministryPlatformRestClient)
         {
@@ -75,11 +77,21 @@ namespace MinistryPlatform.Translation.Repositories
         public T Create<T>(T objectToCreate, List<string> selectColumns)
         {
             return Create(objectToCreate, string.Join(",", selectColumns.ToArray()));
-        } 
+        }
 
         public T Create<T>(T objectToCreate, string selectColumns = null)
         {
             return ExecutePutOrPost(objectToCreate, Method.POST, selectColumns);
+        }
+
+        public List<T> Create<T>(List<T> objectsToCreate, List<string> selectColumns)
+        {
+            return Create(objectsToCreate, string.Join(",", selectColumns.ToArray()));
+        }
+
+        public List<T> Create<T>(List<T> objectsToCreate, string selectColumns = null)
+        {
+            return ExecutePutOrPost(objectsToCreate, Method.POST, selectColumns);
         }
 
         public T Update<T>(T objectToUpdate, List<string> selectColumns)
@@ -110,6 +122,26 @@ namespace MinistryPlatform.Translation.Repositories
                 return default(T);
             }
             return result.First();
+        }
+
+        private List<T> ExecutePutOrPost<T>(List<T> records, Method method, string selectColumns)
+        {
+            var tableName = GetTableName<T>();
+            var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
+            var request = new RestRequest(url, method).SetJsonBody(records);
+
+            AddAuthorization(request);
+
+            var response = _ministryPlatformRestClient.Execute(request);
+            _authToken.Value = null;
+            response.CheckForErrors($"Error {(method == Method.PUT ? "updating existing" : "creating new")} {tableName}");
+
+            var result = JsonConvert.DeserializeObject<List<T>>(response.Content);
+            if (result == null || !result.Any())
+            {
+                return default(List<T>);
+            }
+            return result;
         }
 
         public List<List<T>> GetFromStoredProc<T>(string procedureName)
@@ -167,11 +199,11 @@ namespace MinistryPlatform.Translation.Repositories
             return result.TrimEnd('&');
         }
 
-        public List<T> Search<T>(string searchString = null, string selectColumns = null)
+        public List<T> SearchTable<T>(string tableName, string searchString = null, string selectColumns = null)
         {
             var search = string.IsNullOrWhiteSpace(searchString) ? string.Empty : string.Format("?$filter={0}", searchString);
 
-            var url = AddColumnSelection(string.Format("/tables/{0}{1}", GetTableName<T>(), search), selectColumns);
+            var url = AddColumnSelection(string.Format("/tables/{0}{1}", tableName, search), selectColumns);
             var request = new RestRequest(url, Method.GET);
             AddAuthorization(request);
 
@@ -184,14 +216,36 @@ namespace MinistryPlatform.Translation.Repositories
             return content;
         }
 
+        public List<T> SearchTable<T>(string tableName, string searchString, List<string> selectColumns)
+        {
+            return SearchTable<T>(tableName, searchString, selectColumns == null ? null : string.Join(",", selectColumns));
+        }
+
+        public List<T> Search<T>(string searchString = null, string selectColumns = null)
+        {
+            return SearchTable<T>(GetTableName<T>(), searchString, selectColumns);
+        }
+
         public List<T> Search<T>(string searchString, List<string> columns)
         {
-            string selectColumns = null;
-            if (columns != null)
+            return SearchTable<T>(GetTableName<T>(), searchString, columns);
+        }
+
+        public void Delete<T>(int recordId)
+        {
+            Delete<T>(new[] {recordId});
+        }
+
+        public void Delete<T>(IEnumerable<int> recordIds)
+        {
+            var parms = new Dictionary<string, object>
             {
-                selectColumns = string.Join(",", columns);
-            }
-            return Search<T>(searchString, selectColumns);
+                {"@TableName", GetTableName<T>()},
+                {"@PrimaryKeyColumnName", GetPrimaryKeyColumnName<T>()},
+                {"@IdentifiersToDelete", string.Join(",", recordIds)}
+            };
+
+            PostStoredProc(DeleteRecordsStoredProcName, parms);
         }
 
         public void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields)
@@ -218,10 +272,20 @@ namespace MinistryPlatform.Translation.Repositories
             var table = typeof(T).GetAttribute<MpRestApiTable>();
             if (table == null)
             {
-                throw new NoTableDefinitionException(typeof(T));
+                throw new NoTableDefinitionException<T>();
             }
 
             return table.Name;
+        }
+
+        private static string GetPrimaryKeyColumnName<T>()
+        {
+            var primaryKey = typeof (T).GetProperties().ToList().Select(p => p.GetAttribute<MpRestApiPrimaryKey>()).FirstOrDefault();
+            if (primaryKey == null)
+            {
+                throw new NoPrimaryKeyDefinitionException<T>();
+            }
+            return primaryKey.Name;
         }
 
         private static string AddColumnSelection(string url, string selectColumns)
@@ -235,8 +299,14 @@ namespace MinistryPlatform.Translation.Repositories
         }
     }
 
-    public class NoTableDefinitionException : Exception
+    public class NoTableDefinitionException<T> : Exception
     {
-        public NoTableDefinitionException(Type t) : base(string.Format("No RestApiTable attribute specified on type {0}", t)) { }
+        public NoTableDefinitionException() : base($"No RestApiTable attribute specified on type {typeof(T)}") { }
     }
+
+    public class NoPrimaryKeyDefinitionException<T> : Exception
+    {
+        public NoPrimaryKeyDefinitionException() : base($"No RestApiPrimaryKey attribute specified on type {typeof(T)}") { }
+    }
+
 }

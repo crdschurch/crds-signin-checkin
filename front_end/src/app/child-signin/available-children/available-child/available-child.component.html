@@ -1,0 +1,7 @@
+<div class="card-block">
+  <h4 class="card-title">{{child.name()}}</h4>
+  <p class="text-muted">DOB: {{child.DateOfBirth | amDateFormat: 'M-DD-YYYY'}}</p>
+  <span class="tgl-inline-label">Sign In:</span>
+  <input class='tgl tgl-light' id='cb1' type='checkbox' [(ngModel)]='child.signIn'>
+  <label class='tgl-btn' for='cb1' ><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+</div>

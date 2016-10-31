@@ -1,0 +1,15 @@
+@import '../../../assets/scss/_bootstrap.scss';
+@import '../../../assets/scss/_variables.scss';
+
+td:first-of-type {
+  width: 200px;
+}
+.btn-default {
+  width: 65px;
+  margin-right: 15px;
+  background-color: $gray-lighter;
+
+  &.selected {
+    @include button-variant($btn-primary-color, $brand-primary, $brand-primary);
+  }
+}

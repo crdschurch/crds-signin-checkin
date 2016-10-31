@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -12,6 +10,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly List<string> _eventRoomColumns;
+        private readonly List<string> _roomColumnList;
 
         public RoomRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
@@ -28,7 +27,15 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID_Table.Room_Number",
                 "Event_Rooms.Allow_Checkin",
                 "Event_Rooms.Volunteers",
-                "Event_Rooms.Capacity"
+                "Event_Rooms.Capacity",
+                "Event_Rooms.Label"
+            };
+
+            _roomColumnList = new List<string>
+            {
+                "Room_ID",
+                "Room_Name",
+                "Room_Number"
             };
         }
 
@@ -36,15 +43,8 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
-            var roomColumnList = new List<string>
-            {
-                "Room_ID",
-                "Room_Name",
-                "Room_Number"
-            };
-
             var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, roomColumnList);
+                .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
 
             var eventRoomColumnList = new List<string>
             {
@@ -110,6 +110,19 @@ namespace MinistryPlatform.Translation.Repositories
             }
 
             return response;
+        }
+
+        public MpEventRoomDto GetEventRoom(int eventId, int roomId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
+        }
+
+        public MpRoomDto GetRoom(int roomId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Get<MpRoomDto>(roomId, _roomColumnList);
         }
     }
 }

@@ -1,86 +1,54 @@
 # FrontEnd
 
-## Development
-
 ## Developer Setup
-* Make your editor aware of TypeScript typings
-  * _VSCode_
-    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at Git repo root)
-      * `"typescript.tsdk": "front_end/node_modules/typescript/lib"`
-    * File->Preferences->Workspace Settings, then add the following (assuming workspace rooted at 'front_end' under Git repo root)
-      * `"typescript.tsdk": "node_modules/typescript/lib"`
-  * _IntelliJ/WebStorm_
-    * TBD
-  * _Atom_
-    * TBD
-  * _Sublime_
-    * TBD
-  * _Vim/vi_
-    * Really? Why???
-* Acquire an API key to use when sending REST requests to the backend API.
-  * This is found in the MinistryPlatform admin interface, under Administration->Client API Keys
-  * You will need a key that allows 'localhost' in the Allowed Domains
-  * This key needs to be sent in a request header called 'Crds-Api-Key'
-    * This is automatically handled by the [HttpClientService.createAuthorizationHeader()](src/app/shared/services/http-client.service.ts#L34) method 
 
-### Install Dependencies
-```
-npm install
+#### Make your editor aware of [TypeScript typings](README_typescript.md)
+#### Install Dependencies via [yarn](https://yarnpkg.com/en/docs/migrating-from-npm)
+
+```sh
+# install yarn globally if you haven't
+npm install -g yarn
+yarn install
 ```
 
-### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
+#### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
-Create a .env file in the project root with the following values.
+  * Create a .env file in the project root with the following values (copy _.env.example_ to _.env_ and fill out values).
+  * see an [example](README_env.md)
 
-_TODO: Tweak hostnames & ports depending on your actual environment setup_
-```
 
-# To access local development API
-ECHECK_API_ENDPOINT=http://localhost:49390/api
-# To access integration API
-# ECHECK_API_ENDPOINT=https://echeck-int.crossroads.net/proxy/SignInCheckIn/api
 
-# To access local development CMS
-CRDS_CMS_ENDPOINT=http://localhost:81/
-# To access integration CMS
-# CRDS_CMS_ENDPOINT=https://contentint.crossroads.net/
+#### Run locally
 
-# Domain-locked API key - this will vary based on what ECHECK_API_ENDPOINT (local or int) is being used
-ECHECK_API_TOKEN=[get appropriate value from MinistryPlatform "Client API Keys" table]
-```
-
-You can update this file rather than setting environment variables through your OS or CLI (.env file will not be checked in to git)
-
-### Run locally
-
-```
+```sh
 npm start
 ```
 
-and visit [http://localhost:8080/](http://localhost:8080/)
 
+#### Run locally with Hot Module Replacement
 
-### Run locally with Hot Module Replacement
-
-```
+```sh
 npm run server:dev:hmr
 
 ```
 
-and visit [http://localhost:8080/](http://localhost:8080/)
+#### Run tests
 
-### Run tests
-
-```
+```sh
 npm test
-npm e2e
+npm e2e # no e2e yet
+```
+
+#### Run linter
+
+```sh
+npm run lint
 ```
 
 ## Deployment
 
-### Build
+#### Build
 
-(TODO: other environments needed?)
-```
+```sh
 npm run build
 ```

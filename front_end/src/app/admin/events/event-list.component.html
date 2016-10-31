@@ -1,0 +1,101 @@
+<header-event></header-event>
+
+<div class="wrapper" class="events">
+  <div class="container-fluid admin-content py-1">
+    <div class="row">
+      <div class="col-sm-12 m-b-2">
+        <h1>Events</h1>
+        <h4>{{currentWeekFilter.start | amDateFormat :'dddd, MMMM Do'}} - {{currentWeekFilter.end | amDateFormat :'dddd, MMMM Do'}}</h4>
+      </div>
+      <div class="col-md-9 col-sm-8 col-xs-12">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Event Type</th>
+              <th>Day</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Site</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let event of events">
+            <td>Service</td>
+            <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
+            <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
+            <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
+            <td>{{event.EventSite}}</td>
+            <td class="text-xs-right">
+              <a routerLink="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-3 col-sm-4 col-xs-12">
+        <section class="sidebar-section m-b-2">
+          <select class="form-control">
+            <option *ngFor="let weekFilter of weekFilters">
+              {{weekFilter.start | amDateFormat :'M/D/YYYY'}} - {{weekFilter.end | amDateFormat :'M/D/YYYY'}}
+            </option>
+          </select>
+        </section>
+        <section class="sidebar-section m-b-1">
+          <label><strong>Site Filter</strong></label>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Florence
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Mason
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Oakley
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Oxford
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Uptown
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Westside
+            </label>
+          </div>
+        </section>
+        <section class="sidebar-section m-b-1">
+          <label><strong>Event Filter</strong></label>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Childcare
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" value="">
+              Service
+            </label>
+          </div>
+        </section>
+      </div><!--col-sm-3 col-xs-12-->
+    </div>
+  </div>
+</div>

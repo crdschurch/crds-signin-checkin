@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Castle.Components.DictionaryAdapter;
+using AutoMapper;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
 using SignInCheckIn.App_Start;
 using SignInCheckIn.Services;
-using SignInCheckIn.Services.Interfaces;
+using SignInCheckIn.Models.DTO;
 
 namespace SignInCheckIn.Tests.Services
 {
@@ -33,9 +30,9 @@ namespace SignInCheckIn.Tests.Services
         public void ShouldGetEvents()
         {
             // Arrange
-            List<MpEventDto> mpEventDtos = new List<MpEventDto>();
+            var mpEventDtos = new List<MpEventDto>();
 
-            MpEventDto testMpEventDto = new MpEventDto
+            var testMpEventDto = new MpEventDto
             {
                 CongregationName = "Oakley",
                 EventStartDate = new DateTime(2016, 10, 10),
@@ -46,14 +43,34 @@ namespace SignInCheckIn.Tests.Services
 
             mpEventDtos.Add(testMpEventDto);
 
-            _eventRepository.Setup(m => m.GetEvents()).Returns(mpEventDtos);
+            var start = new DateTime(2016, 10, 9);
+            var end = new DateTime(2016, 10, 12);
+            const int site = 1;
+            _eventRepository.Setup(m => m.GetEvents(start, end, site)).Returns(mpEventDtos);
 
             // Act
-            var result = _fixture.GetCheckinEvents();
+            var result = _fixture.GetCheckinEvents(start, end, site);
             _eventRepository.VerifyAll();
 
             // Assert
             Assert.IsNotNull(result);
+            Assert.AreEqual("Oakley", result[0].EventSite);
+            Assert.AreEqual(1234567, result[0].EventId);
+        }
+
+        [Test]
+        public void TestGetEvent()
+        {
+            const int eventId = 123;
+            var e = new MpEventDto
+            {
+                EventId = 999
+            };
+
+            _eventRepository.Setup(mocked => mocked.GetEventById(eventId)).Returns(e);
+            var result = _fixture.GetEvent(eventId);
+            _eventRepository.VerifyAll();
+            Assert.AreEqual(e.EventId, result.EventId);
         }
     }
 }

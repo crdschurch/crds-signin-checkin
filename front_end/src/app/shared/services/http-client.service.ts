@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { CookieService } from 'angular2-cookie/core';
 
 import { User } from '../models/user';
 
 @Injectable()
 export class HttpClientService {
-  private http: Http;
-  private user: User;
 
-  constructor(http: Http) {
-    this.http = http;
-    this.user = new User();
-  }
+  constructor(private http: Http, private cookie: CookieService) {}
 
   get(url: string, options?: RequestOptions) {
     let requestOptions = this.getRequestOption(options);
     return this.extractAuthToken(this.http.get(url, requestOptions));
   }
+
   put(url: string, data: any, options?: RequestOptions) {
     let requestOptions = this.getRequestOption(options);
     return this.extractAuthToken(this.http.put(url, data, requestOptions));
@@ -32,22 +29,30 @@ export class HttpClientService {
   }
 
   logOut(): void {
-    this.user.logOut();
+    let user = this.user;
+    user.logOut();
+
+    this.user = user;
+  }
+
+  getUser(): User {
+    return this.user;
   }
 
   private extractAuthToken(o: any) {
     let sharable = o.share();
     sharable.subscribe((res: Response) => {
+      let user = this.user;
       let body = res.json();
+
       if (body != null && body.userToken) {
-        this.user.token = body.userToken;
+        user.token = body.userToken;
       }
       if (body != null && body.refreshToken) {
-        this.user.refreshToken = body.refreshToken;
+        user.refreshToken = body.refreshToken;
       }
-      if (body != null && body.roles) {
-        this.user.roles = body.roles;
-      }
+
+      this.user = user;
     });
     return sharable;
   }
@@ -67,5 +72,22 @@ export class HttpClientService {
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
 
     return reqHeaders;
+  }
+
+  private get user(): User {
+    let user: User;
+
+    if (!this.cookie.getObject('user')) {
+      this.cookie.putObject('user', new User());
+    }
+
+    user = Object.create(User.prototype);
+    Object.assign(user, this.cookie.getObject('user'));
+
+    return user;
+  }
+
+  private set user(value: User) {
+    this.cookie.putObject('user', value);
   }
 }

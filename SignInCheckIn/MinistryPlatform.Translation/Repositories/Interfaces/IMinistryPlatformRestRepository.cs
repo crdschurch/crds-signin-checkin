@@ -25,6 +25,9 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         T Create<T>(T objectToCreate, List<string> selectColumns);
         T Create<T>(T objectToCreate, string selectColumns = null);
+        List<T> Create<T>(List<T> objectsToCreate, List<string> selectColumns);
+        List<T> Create<T>(List<T> objectsToCreate, string selectColumns = null);
+
 
         T Update<T>(T objectToUpdate, List<string> selectColumns);
         T Update<T>(T objectToUpdate, string selectColumns = null);
@@ -65,8 +68,14 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         /// <returns>An List of objects representing the matching MP rows for the search, if found.</returns>
         List<T> Search<T>(string searchString, List<string> columns);
 
+        List<T> SearchTable<T>(string tableName, string searchString = null, string selectColumns = null);
+        List<T> SearchTable<T>(string tableName, string searchString, List<string> selectColumns);
+
         int PostStoredProc(string procedureName, Dictionary<string, object> parameters);
 
         void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields);
+
+        void Delete<T>(IEnumerable<int> recordIds);
+        void Delete<T>(int recordId);
     }
 }

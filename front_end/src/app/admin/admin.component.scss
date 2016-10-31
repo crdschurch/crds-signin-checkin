@@ -1,3 +1,5 @@
+@import '../../assets/scss/_variables.scss';
+
 admin {
   background: white;
 
@@ -13,6 +15,26 @@ admin {
       border-bottom: 1px solid #eceeef; // Replace with $gray-lighter
     }
   }
+
+  .icon {
+    vertical-align: top;
+
+    g {
+      fill: #748FA2;
+    }
+  }
+
+  .btn-primary {
+    background: $brand-primary;
+  }
+
+  a:hover {
+    .icon {
+      g {
+        fill: #516879;
+      }
+    }
+  }
 }
 
 .admin-logo {
@@ -24,4 +46,14 @@ admin {
 
 .admin-content {
   background: #fff;
+}
+
+.btn-primary {
+  &:not([href]):not([tabindex]) {
+    color: #fff;
+
+    &:hover {
+      color: #fff;
+    }
+  }
 }
