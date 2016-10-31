@@ -41,8 +41,12 @@ describe('SignInService', () => {
       backend.connections.subscribe((connection: MockConnection) => {
         requestHeaders = connection.request.headers;
         requestUrl = connection.request.url;
+        const headers = new Headers();
+        headers.append('Authorization', '98765')
+        headers.append('RefreshToken', 'refresh-8885')
         connection.mockRespond(new Response(new ResponseOptions({
-          body: responseObject
+          body: responseObject,
+          headers: headers
         })));
       });
     });
