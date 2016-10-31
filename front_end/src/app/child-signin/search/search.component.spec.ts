@@ -9,7 +9,7 @@ let routerStub: any = {
 describe('SearchComponent', () => {
 
   beforeEach(() => {
-    fixture = new SearchComponent(routerStub);
+    fixture = new SearchComponent(routerStub, undefined, undefined);
   });
 
   describe('#constructor', () => {

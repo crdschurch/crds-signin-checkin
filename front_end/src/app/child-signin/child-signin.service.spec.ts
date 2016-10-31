@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { Http, RequestOptions, Headers, Response, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
+import { Router } from '@angular/router';
 
 import { ChildSigninService } from './child-signin.service';
 import { HttpClientService } from '../shared/services/http-client.service';
@@ -16,6 +17,7 @@ describe('ChildSigninService', () => {
   let backend: MockBackend;
   let cookie: CookieService;
   let responseObject: any;
+  let router: Router;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -29,7 +31,7 @@ describe('ChildSigninService', () => {
     http = new Http(backend, options);
     cookie = new CookieService(new CookieOptions());
     httpClientService = new HttpClientService(http, cookie);
-    fixture = new ChildSigninService(httpClientService);
+    fixture = new ChildSigninService(httpClientService, router);
   });
 
   describe('#getChildrenByPhoneNumber', () => {

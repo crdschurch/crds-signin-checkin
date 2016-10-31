@@ -44,11 +44,13 @@ export class HttpClientService {
     let sharable = o.share();
     sharable.subscribe((res: Response) => {
       let user = this.user;
-      if (res.headers.get('Authorization')) {
-        user.token = res.headers.get('Authorization');
-      };
-      if (res.headers.get('RefreshToken')) {
-        user.refreshToken = res.headers.get('RefreshToken');
+      if (res.headers) {
+        if (res.headers.get('Authorization')) {
+          user.token = res.headers.get('Authorization');
+        };
+        if (res.headers.get('RefreshToken')) {
+          user.refreshToken = res.headers.get('RefreshToken');
+        }
       }
       this.user = user;
     });
