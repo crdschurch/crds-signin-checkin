@@ -89,6 +89,7 @@
     <Compile Include="Extensions\JsonUnmappedDataExtensions.cs" />
     <Compile Include="Extensions\MpEventGroupDtoExtensions.cs" />
     <Compile Include="Extensions\RestSharpExtensions.cs" />
+    <Compile Include="Models\Attributes\MpRestApiPrimaryKey.cs" />
     <Compile Include="Models\Attributes\MpRestApiTable.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
     <Compile Include="Models\DTO\MpEventParticipantDto.cs" />

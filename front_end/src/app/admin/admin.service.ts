@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { RequestOptions, URLSearchParams } from '@angular/http';
 
@@ -12,8 +12,11 @@ import { Child } from '../shared/models';
 
 @Injectable()
 export class AdminService {
+  private roomGroupsUpdateEmitter: EventEmitter<Room>;
+  private roomGroupsUpdateObserver: Observable<Room>;
 
   constructor(private http: HttpClientService) {
+    this.configureUpdateRoomGroupsEmitterAndObserver();
   }
 
   getEvent(eventId: string) {
@@ -57,10 +60,35 @@ export class AdminService {
   }
 
   updateRoomGroups(eventId: string, roomId: string, body: Room) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
-    return this.http.put(url, body)
+    body.EventId = eventId;
+    body.RoomId = roomId;
+    this.roomGroupsUpdateEmitter.emit(body);
+  }
+
+  private updateRoomGroupsInternal(room: Room) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${room.EventId}/rooms/${room.RoomId}/groups`;
+    return this.http.put(url, room)
                     .map(res => Room.fromJson(res.json()))
                     .catch(this.handleError);
+  }
+
+  private configureUpdateRoomGroupsEmitterAndObserver() {
+    // Create an emitter to use when sending updates to the room
+    this.roomGroupsUpdateEmitter = new EventEmitter<Room>();
+
+    // Setup an observer on the emitter, and set it to debounce for 2 seconds.
+    // This prevents the frontend from sending a backend update if multiple
+    // age ranges or grades are selected quickly.
+    this.roomGroupsUpdateObserver =
+      this.roomGroupsUpdateEmitter.map(room => room).debounceTime(2000);
+
+    // Subscribe to the debounced event - now actually send the update to
+    // the backend.
+    // TODO - Should handle the response, and notify the user of success or failure
+    // TODO - Should have some sort of processing state while the update is running, since it can take several seconds to complete 
+    this.roomGroupsUpdateObserver.subscribe(room => {
+      this.updateRoomGroupsInternal(room);
+    });
   }
 
   private handleError (error: any) {
