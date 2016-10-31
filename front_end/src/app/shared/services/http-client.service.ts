@@ -29,6 +29,10 @@ export class HttpClientService {
     return this.user.isLoggedIn();
   }
 
+  hasRefreshToken(): boolean {
+    return this.user.hasRefreshToken();
+  }
+
   logOut(): void {
     let user = this.user;
     user.logOut();
