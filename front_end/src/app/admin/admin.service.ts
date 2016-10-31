@@ -7,7 +7,6 @@ import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
 import { Event } from './events/event';
 import { Room } from './rooms/room';
-import { Group } from './rooms/group';
 
 @Injectable()
 export class AdminService {
