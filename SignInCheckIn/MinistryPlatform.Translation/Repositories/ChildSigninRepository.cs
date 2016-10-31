@@ -167,7 +167,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Registrant_Message_Sent"
             };
 
-            var objects = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
         }
     }
 }

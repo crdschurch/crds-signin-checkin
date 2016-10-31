@@ -4,9 +4,6 @@ using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
 {
-
-                //"Event_Participants_ID_Table.Registrant_Message_Sent"
-
     [MpRestApiTable(Name = "Event_Participants")]
     public class MpEventParticipantDto
     {

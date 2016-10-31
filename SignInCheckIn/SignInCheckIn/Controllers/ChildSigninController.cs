@@ -46,7 +46,6 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPost]
-        //[ResponseType(typeof(List<ParticipantDto>))]
         [Route("signin/children")]
         public IHttpActionResult SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
