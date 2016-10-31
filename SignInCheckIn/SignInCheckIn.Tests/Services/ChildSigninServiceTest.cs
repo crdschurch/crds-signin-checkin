@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Components.DictionaryAdapter;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -13,6 +14,7 @@ namespace SignInCheckIn.Tests.Services
     public class ChildSigninServiceTest
     {
         private Mock<IChildSigninRepository> _childCheckinRepository;
+        private Mock<IConfigRepository> _configRepository;
         private Mock<IEventRepository> _eventRepository;
 
         private ChildSigninService _fixture;
@@ -23,8 +25,9 @@ namespace SignInCheckIn.Tests.Services
             AutoMapperConfig.RegisterMappings();
 
             _childCheckinRepository = new Mock<IChildSigninRepository>();
+            _configRepository = new Mock<IConfigRepository>();
             _eventRepository = new Mock<IEventRepository>();
-            _fixture = new ChildSigninService(_childCheckinRepository.Object, _eventRepository.Object);
+            _fixture = new ChildSigninService(_childCheckinRepository.Object, _configRepository.Object, _eventRepository.Object);
         }
 
         [Test]
@@ -33,6 +36,23 @@ namespace SignInCheckIn.Tests.Services
             var siteId = 1;
             var phoneNumber = "812-812-8877";
             var primaryHouseholdId = 123;
+
+            List<MpEventDto> events = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    CongregationId = 1,
+                    CongregationName = "Oakley",
+                    EarlyCheckinPeriod = 30,
+                    EventEndDate = DateTime.Now.AddDays(1),
+                    EventId = 1234567,
+                    EventStartDate = DateTime.Now,
+                    EventTitle = "test event",
+                    EventType = "type test",
+                    LateCheckinPeriod = 30,
+                    LocationId = 3
+                }
+            };
 
             List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>
             {
@@ -49,7 +69,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _childCheckinRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
-            
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childCheckinRepository.VerifyAll();
 
@@ -65,8 +85,26 @@ namespace SignInCheckIn.Tests.Services
             var siteId = 1;
             var phoneNumber = "812-812-8877";
 
+            List<MpEventDto> events = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    CongregationId = 1,
+                    CongregationName = "Oakley",
+                    EarlyCheckinPeriod = 30,
+                    EventEndDate = DateTime.Now.AddDays(1),
+                    EventId = 1234567,
+                    EventStartDate = DateTime.Now,
+                    EventTitle = "test event",
+                    EventType = "type test",
+                    LateCheckinPeriod = 30,
+                    LocationId = 3
+                }
+            };
+
             List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>();
 
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
             _childCheckinRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
 
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
