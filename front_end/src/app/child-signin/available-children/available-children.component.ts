@@ -15,7 +15,7 @@ import { EventParticipants } from '../../shared/models/eventParticipants';
 
 export class AvailableChildrenComponent implements OnInit {
   private childrenAvailable: Array<Child> = [];
-  private isServing: boolean = true;
+  private isServing: boolean = false;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
