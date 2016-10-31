@@ -14,7 +14,6 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Kiosk_Config_ID")]
         public int KioskConfigId { get; set; }
 
-        // TODO: Determine if this actually works - casting to a guid
         [JsonProperty(PropertyName = "_Kiosk_Identifier")]
         public Guid KioskIdentifier { get; set; }
 
