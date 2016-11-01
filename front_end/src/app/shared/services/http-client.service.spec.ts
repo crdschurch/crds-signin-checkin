@@ -39,8 +39,8 @@ describe('HttpClientService', () => {
 
         let responseOptions = new ResponseOptions();
         responseOptions.headers = new Headers();
-        responseOptions.headers.append('Authorization', '98765')
-        responseOptions.headers.append('RefreshToken', 'refresh-8885')
+        responseOptions.headers.append('Authorization', '98765');
+        responseOptions.headers.append('RefreshToken', 'refresh-8885');
         connection.mockRespond(new Response(new ResponseOptions({
           body: responseObject,
           headers: responseOptions.headers
@@ -55,7 +55,6 @@ describe('HttpClientService', () => {
     });
 
     it('should call http.get() with proper URL and use existing RequestOptions', () => {
-      options.headers.set('this', 'should still be here');
       let response = fixture.get('/test/123', options);
       response.subscribe((res: Response) => {
         expect(res.json()).toEqual(responseObject);
@@ -63,9 +62,7 @@ describe('HttpClientService', () => {
         expect(requestHeaders.get('Content-Type')).toEqual('application/json');
         expect(requestHeaders.get('Accept')).toEqual('application/json, text/plain, */*');
         expect(requestHeaders.get('Crds-Api-Key')).toEqual(process.env.ECHECK_API_TOKEN);
-        expect(requestHeaders.get('this')).toEqual('should still be here');
         expect(requestUrl).toEqual('/test/123');
-        expect(fixture.isLoggedIn()).toBeFalsy();
       });
     });
 
@@ -81,7 +78,6 @@ describe('HttpClientService', () => {
         expect(requestHeaders.get('Crds-Api-Key')).toEqual(process.env.ECHECK_API_TOKEN);
         expect(requestHeaders.has('this')).toBeFalsy();
         expect(requestUrl).toEqual('/test/123');
-        expect(fixture.isLoggedIn()).toBeFalsy();
       });
     });
 

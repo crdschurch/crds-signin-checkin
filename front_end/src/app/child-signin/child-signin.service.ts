@@ -57,7 +57,6 @@ export class ChildSigninService {
                     .map((res) => {
                       this.router.navigate(['/child-signin/assignment']);
                       // TODO pass children to step 3 to display
-                      return
                     })
                     .catch(this.handleError);
   }

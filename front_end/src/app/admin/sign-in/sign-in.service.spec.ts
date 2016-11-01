@@ -68,7 +68,7 @@ describe('SignInService', () => {
           expect(httpClientService.hasRefreshToken()).toBeTruthy();
         });
       });
-    })
+    });
 
     describe('with bad credentials', () => {
       beforeEach(() => {
