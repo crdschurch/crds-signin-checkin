@@ -50,8 +50,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 mocked =>
                     mocked.Execute(
                         It.Is<IRestRequest>(
-                            r => r.Resource.Contains("/tables/MP_Table_Name?") && r.Resource.Contains("$filter=search string") && r.Resource.Contains("$select=col1,col2"))))
-                .Returns(restResponse.Object);
+                            r =>
+                                r.Resource.Contains("/tables/MP_Table_Name") && r.Parameters.Find(p => p.Name.Equals("$filter")).Value.Equals("search string") &&
+                                r.Parameters.Find(p => p.Name.Equals("$select")).Value.Equals("col1,col2")))).Returns(restResponse.Object);
 
             var results = _fixture.Search<TestModelWithRestApiTable>("search string", "col1,col2");
             _restClient.VerifyAll();
@@ -78,8 +79,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 mocked =>
                     mocked.Execute(
                         It.Is<IRestRequest>(
-                            r => r.Resource.Contains("/tables/MP_Table_Name?") && r.Resource.Contains("$filter=search string") && r.Resource.Contains("$select=col1,col2"))))
-                .Returns(restResponse.Object);
+                            r =>
+                                r.Resource.Contains("/tables/MP_Table_Name") && r.Parameters.Find(p => p.Name.Equals("$filter")).Value.Equals("search string") &&
+                                r.Parameters.Find(p => p.Name.Equals("$select")).Value.Equals("col1,col2")))).Returns(restResponse.Object);
 
             var results = _fixture.Search<TestModelWithRestApiTable>("search string", "col1,col2");
             _restClient.VerifyAll();
@@ -109,8 +111,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _restClient.Setup(
                 mocked =>
                     mocked.Execute(
-                        It.Is<IRestRequest>(
-                            r => r.Resource.Contains("/tables/MP_Table_Name/123") && r.Resource.Contains("$select=col1,col2"))))
+                        It.Is<IRestRequest>(r => r.Resource.Contains("/tables/MP_Table_Name/123") && r.Parameters.Find(p => p.Name.Equals("$select")).Value.Equals("col1,col2"))))
                 .Returns(restResponse.Object);
 
             var result = _fixture.Get<TestModelWithRestApiTable>(123, "col1,col2");
@@ -139,8 +140,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _restClient.Setup(
                 mocked =>
                     mocked.Execute(
-                        It.Is<IRestRequest>(
-                            r => r.Resource.Contains("/tables/MP_Table_Name/123") && r.Resource.Contains("$select=col1,col2"))))
+                        It.Is<IRestRequest>(r => r.Resource.Contains("/tables/MP_Table_Name/123") && r.Parameters.Find(p => p.Name.Equals("$select")).Value.Equals("col1,col2"))))
                 .Returns(restResponse.Object);
 
             try
@@ -186,8 +186,11 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _restClient.Setup(
                 mocked =>
-                    mocked.Execute(It.Is<IRestRequest>(r => r.Method == Method.POST && r.Resource.Contains("/tables/MP_Table_Name") && r.Resource.Contains("$select=col1,col2"))))
-                .Returns(restResponse.Object);
+                    mocked.Execute(
+                        It.Is<IRestRequest>(
+                            r =>
+                                r.Method == Method.POST && r.Resource.Contains("/tables/MP_Table_Name") &&
+                                r.Parameters.Find(p => p.Name.Equals("$select")).Value.Equals("col1,col2")))).Returns(restResponse.Object);
 
             var result = _fixture.Create(input, "col1,col2");
             _restClient.VerifyAll();
@@ -223,7 +226,10 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _restClient.Setup(
                 mocked =>
-                    mocked.Execute(It.Is<IRestRequest>(r => r.Method == Method.PUT && r.Resource.Contains("/tables/MP_Table_Name") && r.Resource.Contains("$select=col1,col2"))))
+                    mocked.Execute(
+                        It.Is<IRestRequest>(
+                            r =>
+                                r.Method == Method.PUT && r.Resource.Contains("/tables/MP_Table_Name") && r.Parameters.Find(p => p.Name.Equals("$select")).Value.Equals("col1,col2"))))
                 .Returns(restResponse.Object);
 
             var result = _fixture.Update(input, "col1,col2");
