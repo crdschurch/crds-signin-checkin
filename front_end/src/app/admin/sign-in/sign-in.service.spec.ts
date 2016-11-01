@@ -35,7 +35,7 @@ describe('SignInService', () => {
     body = { email: 'test@test.com', password: 'password123' };
   });
 
-  fdescribe('when logging in', () => {
+  describe('when logging in', () => {
     afterEach(() => {
       backend.resolveAllConnections();
       backend.verifyNoPendingRequests();
@@ -61,8 +61,6 @@ describe('SignInService', () => {
         responseObject = { userToken: 'userToken1', refreshToken: 'refreshToken1', roles: ['123', '456'] };
         let response = http.post( `${process.env.ECHECK_API_ENDPOINT}/authenticate`, body);
         let login = fixture.logIn(body.email, body.password);
-        options.headers.set('Authorization', 'successful');
-
         response.subscribe((res: Response) => {
           expect(res.json()).toEqual(responseObject);
           expect(requestHeaders).toBeDefined();
@@ -91,7 +89,6 @@ describe('SignInService', () => {
         let response = http.post( `${process.env.ECHECK_API_ENDPOINT}/authenticate`, body);
         let login = fixture.logIn(body.email, body.password);
         response.subscribe((res: Response) => {
-          console.log("123", httpClientService.isLoggedIn(), httpClientService.hasRefreshToken());
           expect(httpClientService.isLoggedIn()).toBeFalsy();
           expect(httpClientService.hasRefreshToken()).toBeFalsy();
         });
