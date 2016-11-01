@@ -17,3 +17,6 @@ import 'rxjs/add/operator/map';
 
 // Used to return only the most recent request
 import 'rxjs/add/operator/switchMap';
+
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/toPromise';
