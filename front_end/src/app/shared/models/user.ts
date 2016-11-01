@@ -13,5 +13,6 @@ export class User {
 
   logOut(): void {
     this.token = undefined;
+    this.refreshToken = undefined;
   }
 }
