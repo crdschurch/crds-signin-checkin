@@ -10,7 +10,6 @@ export class SetupService {
   }
 
   getMachineConfiguration(guid: string) {
-    // TODO: uncomment when backend working
     const url = `${process.env.ECHECK_API_ENDPOINT}/kiosks/${guid}`;
     return this.http.get(url)
                     .map(res => {
