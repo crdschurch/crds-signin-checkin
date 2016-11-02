@@ -15,15 +15,17 @@ namespace SignInCheckIn.Services
         private readonly IChildSigninRepository _childSigninRepository;
         private readonly IConfigRepository _configRepository;
         private readonly IEventRepository _eventRepository;
+        private readonly IGroupRepository _groupRepository;
 
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
 
-        public ChildSigninService(IChildSigninRepository childSigninRepository, IConfigRepository configRepository, IEventRepository eventRepository)
+        public ChildSigninService(IChildSigninRepository childSigninRepository, IConfigRepository configRepository, IEventRepository eventRepository, IGroupRepository groupRepository)
         {
             _childSigninRepository = childSigninRepository;
             _configRepository = configRepository;
             _eventRepository = eventRepository;
+            _groupRepository = groupRepository;
 
             _defaultEarlyCheckinPeriod = int.Parse(_configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(_configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -65,18 +67,28 @@ namespace SignInCheckIn.Services
                 throw new Exception("Sign-In Not Available For Event " + mpEventDto.EventId);
             }
 
+            // get groups for the participant
+            var eventGroupsForEvent = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
+
             List<MpEventParticipantDto> mpEventParticipantDtoList = new List<MpEventParticipantDto>();
 
             // Status ID of 3 = "Attended"
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
             {
+                // get groups for participant by participant id
+                var groupIds = _groupRepository.GetGroupIdByParticipantId(participant.ParticipantId);
+
+                // TODO: Gracefully handle exception for mix of valid and invalid signins
+                var eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g));
+
                 MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
                 {
                     EventId = participantEventMapDto.CurrentEvent.EventId,
                     ParticipantId = participant.ParticipantId,
                     ParticipantStatusId = 3,
-                    TimeIn = System.DateTime.Now,
-                    OpportunityId = null
+                    TimeIn = DateTime.Now,
+                    OpportunityId = null,
+                    RoomId = eventGroup.RoomReservation.RoomId
                 };
 
                 mpEventParticipantDtoList.Add(mpEventParticipantDto);
