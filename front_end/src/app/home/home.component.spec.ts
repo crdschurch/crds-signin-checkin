@@ -1,3 +1,5 @@
+/* tslint:disable:max-line-length */
+
 import { HomeComponent } from './home.component';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
@@ -63,7 +65,7 @@ describe('Home Component', () => {
 
   });
 
-  fdescribe('where there is an invalid cookie present', () => {
+  describe('where there is an invalid cookie present', () => {
 
     beforeEach(() => {
       machineIdConfig = 'bad-cookie';
