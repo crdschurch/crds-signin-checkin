@@ -141,7 +141,7 @@ namespace MinistryPlatform.Translation.Repositories
             }
         }
 
-	    public void CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
+	    public List<MpEventParticipantDto> CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
         {
             var token = _apiUserRepository.GetToken();
 
@@ -167,7 +167,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Registrant_Message_Sent"
             };
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
         }
     }
 }

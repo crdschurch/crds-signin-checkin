@@ -45,7 +45,7 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public void SigninParticipants(ParticipantEventMapDto participantEventMapDto)
+        public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
             var earlyCheckinConfig = _configRepository.GetMpConfigByKey("DefaultEarlyCheckIn");
             var lateCheckinConfig = _configRepository.GetMpConfigByKey("DefaultLateCheckIn");
@@ -78,7 +78,14 @@ namespace SignInCheckIn.Services
                 mpEventParticipantDtoList.Add(mpEventParticipantDto);
             }
 
-            _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList);
+            var response = new ParticipantEventMapDto
+            {
+                CurrentEvent = participantEventMapDto.CurrentEvent
+            };
+
+            response.Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList();
+
+            return response;
         }
     }
 }

@@ -37,8 +37,8 @@ export class AvailableChildrenComponent implements OnInit {
    const event = this.childSigninService.getEvent();
    const children = this.childrenAvailable
    const eventParticipants = EventParticipants.fromJson({ CurrentEvent: event, Participants: children });
-   this.childSigninService.signInChildren(eventParticipants).subscribe((availableChildren) => {
-     if (availableChildren.length > 0) {
+   this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {
+     if (response && response.Participants && response.Participants.length > 0) {
        this.router.navigate(['/child-signin/assignment']);
      } else {
        this.rootService.announceEvent('generalError');

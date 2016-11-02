@@ -53,11 +53,7 @@ export class ChildSigninService {
   signInChildren(eventParticipants: EventParticipants) {
     const url = `${this.url}/children`;
     return this.http.post(url, eventParticipants)
-                    // .map(res => EventParticipants.fromJson(res.json()))
-                    .map((res) => {
-                      this.router.navigate(['/child-signin/assignment']);
-                      // TODO pass children to step 3 to display
-                    })
+                    .map(res => EventParticipants.fromJson(res.json()))
                     .catch(this.handleError);
   }
 

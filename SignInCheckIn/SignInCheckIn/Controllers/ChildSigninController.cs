@@ -46,13 +46,14 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPost]
+        [ResponseType(typeof(ParticipantEventMapDto))]
         [Route("signin/children")]
         public IHttpActionResult SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
             try
             {
-                _childSigninService.SigninParticipants(participantEventMapDto);
-                return Ok();
+                ;
+                return Ok(_childSigninService.SigninParticipants(participantEventMapDto));
             }
             catch (Exception e)
             {

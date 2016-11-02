@@ -6,6 +6,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     public interface IChildSigninRepository
     {
         List<MpParticipantDto> GetChildrenByPhoneNumber(string phoneNumber);
-        void CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos);
+        List<MpEventParticipantDto> CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos);
     }
 }
