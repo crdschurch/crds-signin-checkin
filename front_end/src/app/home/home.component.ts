@@ -9,6 +9,10 @@ export class HomeComponent {
 
   constructor(private router: Router) { }
 
+  goToChildCheckin() {
+    this.router.navigate(['/child-checkin/room']);
+  }
+
   goToChildSignin() {
     this.router.navigate(['/child-signin/search']);
   }
