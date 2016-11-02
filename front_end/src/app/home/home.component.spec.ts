@@ -7,6 +7,7 @@ let fixture: HomeComponent;
 let router: Router;
 let cookieService: CookieService;
 let childCheckinRedirectSpy: any;
+let setupErrorRedirectSpy: any;
 let machineIdConfig: any;
 let thisMachineConfig: any;
 
@@ -19,13 +20,13 @@ let setupServiceStub: any = {
   }
 };
 
-fdescribe('Home Component', () => {
+describe('Home Component', () => {
 
   afterEach(() => {
     cookieService.removeAll();
   });
 
-  describe('where there is a redirect cookie present', () => {
+  describe('where there is a valid machine configuration cookie present', () => {
 
     beforeEach(() => {
       machineIdConfig = 'valid-cookie';
@@ -45,7 +46,7 @@ fdescribe('Home Component', () => {
 
   });
 
-  describe('where there is not a redirect cookie present', () => {
+  describe('where there is not an invalid machine configuration cookie present', () => {
 
     beforeEach(() => {
       machineIdConfig = undefined;
@@ -58,6 +59,23 @@ fdescribe('Home Component', () => {
     it('should redirect to child sign in when cookie is type = Sign In', () => {
       fixture.ngOnInit();
       expect(childCheckinRedirectSpy).not.toHaveBeenCalled();
+    });
+
+  });
+
+  fdescribe('where there is an invalid cookie present', () => {
+
+    beforeEach(() => {
+      machineIdConfig = 'bad-cookie';
+      thisMachineConfig = Observable.throw('invalid machine confid');
+      cookieService = new CookieService(new CookieOptions());
+      fixture = new HomeComponent(router, cookieService, setupServiceStub);
+      setupErrorRedirectSpy = spyOn(fixture, 'goToSetupError');
+    });
+
+    it('should redirect to child sign in when cookie is type = Sign In', () => {
+      fixture.ngOnInit();
+      expect(setupErrorRedirectSpy).toHaveBeenCalled();
     });
 
   });
