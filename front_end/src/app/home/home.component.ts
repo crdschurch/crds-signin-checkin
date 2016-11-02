@@ -11,7 +11,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private router: Router,
               private cookieService: CookieService,
-              private setupService: SetupService) { }
+              private setupService: SetupService) {
+              }
 
   goToChildSignin() {
     this.router.navigate(['/child-signin/search']);
@@ -26,7 +27,7 @@ export class HomeComponent implements OnInit {
   }
 
   redirectIfConfigured() {
-    if(this.setupService.getMachineIdConfigCookie()) {
+    if (this.setupService.getMachineIdConfigCookie()) {
       this.setupService.getThisMachineConfiguration().subscribe(
           machineConfig => {
             return this.goToChildSignin();

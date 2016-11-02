@@ -56,8 +56,8 @@ export class HttpClientService {
         this.user = user;
       },
       (error) => {
-        return Observable.throw('errrrrror');
-      })
+        return Observable.throw(error.json().error || 'Server error');
+      });
     return sharable;
   }
 

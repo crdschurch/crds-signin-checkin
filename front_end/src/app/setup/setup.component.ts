@@ -30,8 +30,9 @@ export class SetupComponent implements OnInit {
     this.route.params.forEach((params: Params) => {
        machineGuid = params['machine'];
      });
-    if (machineGuid || this.setupService.getMachineIdConfigCookie()) {
-      this.machineId = machineGuid || this.setupService.getMachineIdConfigCookie();
+    machineGuid = machineGuid || this.setupService.getMachineIdConfigCookie();
+    if ( machineGuid ) {
+      this.machineId = machineGuid;
       this.setupService.setMachineIdConfigCookie(this.machineId);
     }
   }
