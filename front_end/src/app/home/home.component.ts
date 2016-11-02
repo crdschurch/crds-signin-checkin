@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   }
 
   goToAdminTools() {
+    // console.log("child sign in")
     this.router.navigate(['/admin/sign-in']);
   }
 

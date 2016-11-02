@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'angular2-cookie/core';
-import { Observable } from 'rxjs/Observable';
 import { HttpClientService } from '../shared/services';
 import { MachineConfiguration } from './machine-configuration';
 
@@ -16,7 +15,7 @@ export class SetupService {
     return this.http.get(url)
                     .map(res => {
                         this.setMachineConfigCookie(res.json());
-                        console.log(this.getMachineConfigCookie())
+                        console.log(this.getMachineConfigCookie());
                         return this.getMachineConfigCookie();
                     })
                     .catch(err => console.error(err));
