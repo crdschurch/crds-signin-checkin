@@ -1,6 +1,7 @@
 export class MachineConfiguration {
   // this should probably live on a cookie service
-  public static COOKIE_NAME = 'machine_config';
+  public static COOKIE_NAME_ID = 'machine_config_id';
+  public static COOKIE_NAME_DETAILS = 'machine_config_details';
 
   private KIOSK_TYPE = {
     SIGN_IN: 1

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { CookieService } from 'angular2-cookie/core';
+import { Observable } from 'rxjs/Observable';
 
 import { User } from '../models/user';
 
@@ -41,19 +42,22 @@ export class HttpClientService {
 
   private extractAuthToken(o: any) {
     let sharable = o.share();
-    sharable.subscribe((res: Response) => {
-      let user = this.user;
-      let body = res.json();
+    sharable.subscribe(
+      (res: Response) => {
+        let user = this.user;
+        let body = res.json();
 
-      if (body != null && body.userToken) {
-        user.token = body.userToken;
-      }
-      if (body != null && body.refreshToken) {
-        user.refreshToken = body.refreshToken;
-      }
-
-      this.user = user;
-    });
+        if (body != null && body.userToken) {
+          user.token = body.userToken;
+        }
+        if (body != null && body.refreshToken) {
+          user.refreshToken = body.refreshToken;
+        }
+        this.user = user;
+      },
+      (error) => {
+        return Observable.throw('errrrrror');
+      })
     return sharable;
   }
 
