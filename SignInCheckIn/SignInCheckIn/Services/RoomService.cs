@@ -195,6 +195,12 @@ namespace SignInCheckIn.Services
                 eventRoom.EventId = eventId;
                 eventRoom.RoomId = roomId;
             }
+            else
+            {
+                // This is needed in case the frontend does not send the EventRoomId (for instance, when multiple
+                // updates are made on the page, but the frontend does not update its model with the new event room id)
+                eventRoom.EventRoomId = existingEventRoom.EventRoomId;
+            }
 
             // Create nursery event groups
             CreateEventGroups(authenticationToken,
@@ -236,7 +242,15 @@ namespace SignInCheckIn.Services
             // in the group repository, but would have made that method more complex.
             var groups =
                 _groupRepository.GetGroupsByAttribute(authenticationToken, attributes, true)
-                    .FindAll(g => isAgeGroup ? g.HasAgeRange() && selectedGroups.Exists(sg => sg.Id == g.AgeRange.Id) : g.HasGrade())
+                    .FindAll(
+                        g =>
+                            isAgeGroup
+                                ? g.HasAgeRange() && (g.HasNurseryMonth() || g.HasBirthMonth()) &&
+                                  selectedGroups.Exists(
+                                      sg =>
+                                          (sg.Selected || sg.HasSelectedRanges) && sg.Id == g.AgeRange.Id &&
+                                          sg.Ranges.Exists(r => r.Selected && r.Id == (g.HasNurseryMonth() ? g.NurseryMonth.Id : g.BirthMonth.Id)))
+                                : g.HasGrade())
                     .Select(g => new MpEventGroupDto {EventId = eventRoom.EventId, GroupId = g.Id, RoomReservationId = eventRoom.EventRoomId})
                     .ToList();
 

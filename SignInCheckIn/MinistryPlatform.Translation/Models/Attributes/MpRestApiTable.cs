@@ -3,7 +3,7 @@
 namespace MinistryPlatform.Translation.Models.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class MpRestApiTable : System.Attribute
+    public class MpRestApiTable : Attribute
     {
         public string Name { get; set; }
     }

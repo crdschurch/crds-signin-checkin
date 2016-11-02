@@ -1,4 +1,5 @@
 import { SearchComponent } from './search.component';
+import { Observable } from 'rxjs/Observable';
 
 let fixture: SearchComponent;
 let routerStub: any = {
@@ -6,10 +7,21 @@ let routerStub: any = {
   }
 };
 
+let childSigninServiceStub: any = {
+  getChildrenByPhoneNumber() {
+    return Observable.of([1, 2, 3]);
+  }
+};
+
+let rootServiceStub: any = {
+  announceEvent(): void {
+  }
+};
+
 describe('SearchComponent', () => {
 
   beforeEach(() => {
-    fixture = new SearchComponent(routerStub);
+    fixture = new SearchComponent(routerStub, childSigninServiceStub, rootServiceStub);
   });
 
   describe('#constructor', () => {

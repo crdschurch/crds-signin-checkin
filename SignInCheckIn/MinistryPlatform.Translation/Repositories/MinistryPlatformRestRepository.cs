@@ -16,6 +16,7 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IRestClient _ministryPlatformRestClient;
         private readonly ThreadLocal<string> _authToken = new ThreadLocal<string>();
+        private const string DeleteRecordsStoredProcName = "api_crds_Delete_Table_Rows";
 
         public MinistryPlatformRestRepository(IRestClient ministryPlatformRestClient)
         {
@@ -35,11 +36,10 @@ namespace MinistryPlatform.Translation.Repositories
 
         public T Get<T>(int recordId, string selectColumns = null)
         {
-            var url = AddGetColumnSelection(string.Format("/tables/{0}/{1}", GetTableName<T>(), recordId), selectColumns);
-            var request = new RestRequest(url, Method.GET);
+            var request = new RestRequest($"/tables/{GetTableName<T>()}/{recordId}", Method.GET);
             request.RequestFormat = DataFormat.Json;
             request.AddHeader("Accept", "application/json");
-            AddAuthorization(request);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -56,9 +56,8 @@ namespace MinistryPlatform.Translation.Repositories
 
         public T Get<T>(string tableName, int recordId, string columnName)
         {
-            var url = AddGetColumnSelection(string.Format("/tables/{0}/{1}", tableName, recordId), columnName);
-            var request = new RestRequest(url, Method.GET);
-            AddAuthorization(request);
+            var request = new RestRequest($"/tables/{tableName}/{recordId}", Method.GET);
+            AddAuthorization(AddSelectAndFilter(request, columnName, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -106,10 +105,9 @@ namespace MinistryPlatform.Translation.Repositories
         private T ExecutePutOrPost<T>(T record, Method method, string selectColumns)
         {
             var tableName = GetTableName<T>();
-            var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
-            var request = new RestRequest(url, method).SetJsonBody(record);
+            var request = new RestRequest($"/tables/{tableName}", method).SetJsonBody(record);
 
-            AddAuthorization(request);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -126,10 +124,9 @@ namespace MinistryPlatform.Translation.Repositories
         private List<T> ExecutePutOrPost<T>(List<T> records, Method method, string selectColumns)
         {
             var tableName = GetTableName<T>();
-            var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
-            var request = new RestRequest(url, method).SetJsonBody(records);
+            var request = new RestRequest($"/tables/{tableName}", method).SetJsonBody(records);
 
-            AddAuthorization(request);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -200,11 +197,8 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<T> SearchTable<T>(string tableName, string searchString = null, string selectColumns = null)
         {
-            var search = string.IsNullOrWhiteSpace(searchString) ? string.Empty : string.Format("?$filter={0}", searchString);
-
-            var url = AddColumnSelection(string.Format("/tables/{0}{1}", tableName, search), selectColumns);
-            var request = new RestRequest(url, Method.GET);
-            AddAuthorization(request);
+            var request = new RestRequest($"/tables/{tableName}", Method.GET);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, searchString));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -213,6 +207,13 @@ namespace MinistryPlatform.Translation.Repositories
             var content = JsonConvert.DeserializeObject<List<T>>(response.Content);
 
             return content;
+        }
+
+        private static IRestRequest AddSelectAndFilter(IRestRequest request, string selectString, string filterString)
+        {
+            request.AddQueryParameterIfSpecified("$select", selectString);
+            request.AddQueryParameterIfSpecified("$filter", filterString);
+            return request;
         }
 
         public List<T> SearchTable<T>(string tableName, string searchString, List<string> selectColumns)
@@ -237,16 +238,14 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void Delete<T>(IEnumerable<int> recordIds)
         {
-            var url = $"/tables/{GetTableName<T>()}";
-            var request = new RestRequest(url, Method.DELETE);
-            AddAuthorization(request);
-            recordIds.ToList().ForEach(id =>
+            var parms = new Dictionary<string, object>
             {
-                request.AddQueryParameter("id", id+"");
-            });
+                {"@TableName", GetTableName<T>()},
+                {"@PrimaryKeyColumnName", GetPrimaryKeyColumnName<T>()},
+                {"@IdentifiersToDelete", string.Join(",", recordIds)}
+            };
 
-            var response = _ministryPlatformRestClient.Execute(request);
-            response.CheckForErrors($"Error deleting {GetTableName<T>()}", true);
+            PostStoredProc(DeleteRecordsStoredProcName, parms);
         }
 
         public void UpdateRecord(string tableName, int recordId, Dictionary<string, object> fields)
@@ -273,25 +272,31 @@ namespace MinistryPlatform.Translation.Repositories
             var table = typeof(T).GetAttribute<MpRestApiTable>();
             if (table == null)
             {
-                throw new NoTableDefinitionException(typeof(T));
+                throw new NoTableDefinitionException<T>();
             }
 
             return table.Name;
         }
 
-        private static string AddColumnSelection(string url, string selectColumns)
+        private static string GetPrimaryKeyColumnName<T>()
         {
-            return string.IsNullOrWhiteSpace(selectColumns) ? url : string.Format("{0}&$select={1}", url, selectColumns);
-        }
-
-        private static string AddGetColumnSelection(string url, string selectColumns)
-        {
-            return string.IsNullOrWhiteSpace(selectColumns) ? url : string.Format("{0}?$select={1}", url, selectColumns);
+            var primaryKey = typeof (T).GetProperties().ToList().Select(p => p.GetAttribute<MpRestApiPrimaryKey>()).FirstOrDefault();
+            if (primaryKey == null)
+            {
+                throw new NoPrimaryKeyDefinitionException<T>();
+            }
+            return primaryKey.Name;
         }
     }
 
-    public class NoTableDefinitionException : Exception
+    public class NoTableDefinitionException<T> : Exception
     {
-        public NoTableDefinitionException(Type t) : base(string.Format("No RestApiTable attribute specified on type {0}", t)) { }
+        public NoTableDefinitionException() : base($"No RestApiTable attribute specified on type {typeof(T)}") { }
     }
+
+    public class NoPrimaryKeyDefinitionException<T> : Exception
+    {
+        public NoPrimaryKeyDefinitionException() : base($"No RestApiPrimaryKey attribute specified on type {typeof(T)}") { }
+    }
+
 }
