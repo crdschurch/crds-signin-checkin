@@ -25,4 +25,8 @@ export class Child {
     return `${this.FirstName} ${this.LastName}`;
   }
 
+  selected(): boolean {
+    return Boolean(this.Selected).valueOf();
+  }
+
 }

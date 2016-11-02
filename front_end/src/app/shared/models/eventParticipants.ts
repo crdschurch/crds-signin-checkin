@@ -18,4 +18,8 @@ export class EventParticipants {
     }
     return eventParticipants;
   }
+
+  public hasSelectedParticipants() {
+    return this.Participants && this.Participants.length > 0 && this.Participants.find(p => p.selected()) !== undefined;
+  }
 }

@@ -35,8 +35,13 @@ export class AvailableChildrenComponent implements OnInit {
 
  signIn() {
    const event = this.childSigninService.getEvent();
-   const children = this.childrenAvailable
+   const children = this.childrenAvailable;
    const eventParticipants = EventParticipants.fromJson({ CurrentEvent: event, Participants: children });
+   if (!eventParticipants.hasSelectedParticipants()) {
+     this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
+     return;
+   }
+
    this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {
      if (response && response.Participants && response.Participants.length > 0) {
        this.router.navigate(['/child-signin/assignment']);
