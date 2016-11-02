@@ -27,6 +27,26 @@ namespace SignInCheckIn.Tests.Services
             _childCheckinRepository = new Mock<IChildSigninRepository>();
             _configRepository = new Mock<IConfigRepository>();
             _eventRepository = new Mock<IEventRepository>();
+
+            MpConfigDto mpConfigDtoEarly = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultEarlyCheckIn",
+                Value = "60"
+            };
+
+            MpConfigDto mpConfigDtoLate = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultLateCheckIn",
+                Value = "60"
+            };
+
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
+
             _fixture = new ChildSigninService(_childCheckinRepository.Object, _configRepository.Object, _eventRepository.Object);
         }
 

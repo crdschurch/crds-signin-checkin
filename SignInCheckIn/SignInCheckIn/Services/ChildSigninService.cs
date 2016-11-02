@@ -16,16 +16,27 @@ namespace SignInCheckIn.Services
         private readonly IConfigRepository _configRepository;
         private readonly IEventRepository _eventRepository;
 
+        private readonly int _defaultEarlyCheckinPeriod;
+        private readonly int _defaultLateCheckinPeriod;
+
         public ChildSigninService(IChildSigninRepository childSigninRepository, IConfigRepository configRepository, IEventRepository eventRepository)
         {
             _childSigninRepository = childSigninRepository;
             _configRepository = configRepository;
             _eventRepository = eventRepository;
+
+            _defaultEarlyCheckinPeriod = int.Parse(_configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
+            _defaultLateCheckinPeriod = int.Parse(_configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
         {
-            var currentEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, siteId);
+            // look between midnights on the current day
+            var eventOffsetStartString = DateTime.Now.ToShortDateString();
+            var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
+            var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
+
+            var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(r) == true).ToList();
 
             if (!(currentEvents).Any())
             {
@@ -47,18 +58,18 @@ namespace SignInCheckIn.Services
 
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
-            var earlyCheckinConfig = _configRepository.GetMpConfigByKey("DefaultEarlyCheckIn");
-            var lateCheckinConfig = _configRepository.GetMpConfigByKey("DefaultLateCheckIn");
+            //var earlyCheckinConfig = _configRepository.GetMpConfigByKey("DefaultEarlyCheckIn");
+            //var lateCheckinConfig = _configRepository.GetMpConfigByKey("DefaultLateCheckIn");
 
-            var mpEvent = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
+            var mpEventDto = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
 
-            // use the event's checkin period if available, otherwise default to the mp config values
-            var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-(mpEvent.EarlyCheckinPeriod ?? int.Parse(earlyCheckinConfig.Value)));
-            var endSigninWindow = mpEvent.EventStartDate.AddMinutes((mpEvent.LateCheckinPeriod ?? int.Parse(lateCheckinConfig.Value)));
+            //// use the event's checkin period if available, otherwise default to the mp config values
+            //var beginSigninWindow = mpEvent.EventStartDate.AddMinutes(-(mpEvent.EarlyCheckinPeriod ?? int.Parse(earlyCheckinConfig.Value)));
+            //var endSigninWindow = mpEvent.EventStartDate.AddMinutes((mpEvent.LateCheckinPeriod ?? int.Parse(lateCheckinConfig.Value)));
 
-            if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
+            if (CheckEventTimeValidity(mpEventDto) == false)
             {
-                throw new Exception("Sign-In Not Available For Event " + mpEvent.EventId);
+                throw new Exception("Sign-In Not Available For Event " + mpEventDto.EventId);
             }
 
             List<MpEventParticipantDto> mpEventParticipantDtoList = new List<MpEventParticipantDto>();
@@ -85,7 +96,26 @@ namespace SignInCheckIn.Services
 
             response.Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList();
 
+            foreach (var item in response.Participants)
+            {
+                item.Selected = true;
+            }
+
             return response;
+        }
+
+        private bool CheckEventTimeValidity(MpEventDto mpEventDto)
+        {
+            // use the event's checkin period if available, otherwise default to the mp config values
+            var beginSigninWindow = mpEventDto.EventStartDate.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
+            var endSigninWindow = mpEventDto.EventStartDate.AddMinutes(mpEventDto.LateCheckinPeriod ?? _defaultLateCheckinPeriod);
+
+            if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
