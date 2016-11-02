@@ -88,13 +88,13 @@ namespace MinistryPlatform.Translation.Repositories
             return response;
         }
 
-        public List<int> GetGroupIdByParticipantId(int participantId)
+        public List<MpGroupDto> GetGroupIdByParticipantId(int participantId)
         {
             var token = _apiUserRepository.GetToken();
 
-            var ids = _ministryPlatformRestRepository.UsingAuthenticationToken(token).SearchTable<int>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID] AS [Group ID]");
+            var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token).SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID]");
 
-            return ids;
+            return mpGroupDtos;
         } 
 
         private MpGroupDto SetKidsClubGroupAttributes(MpGroupDto group, bool includeAttributes, string token)

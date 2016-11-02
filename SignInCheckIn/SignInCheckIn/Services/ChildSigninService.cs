@@ -79,7 +79,7 @@ namespace SignInCheckIn.Services
                 var groupIds = _groupRepository.GetGroupIdByParticipantId(participant.ParticipantId);
 
                 // TODO: Gracefully handle exception for mix of valid and invalid signins
-                var eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g));
+                var eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g.Id));
 
                 MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
                 {
