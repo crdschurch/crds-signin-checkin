@@ -16,6 +16,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IChildSigninRepository> _childCheckinRepository;
         private Mock<IConfigRepository> _configRepository;
         private Mock<IEventRepository> _eventRepository;
+        private Mock<IGroupRepository> _groupRepository;
 
         private ChildSigninService _fixture;
 
@@ -27,6 +28,7 @@ namespace SignInCheckIn.Tests.Services
             _childCheckinRepository = new Mock<IChildSigninRepository>();
             _configRepository = new Mock<IConfigRepository>();
             _eventRepository = new Mock<IEventRepository>();
+            _groupRepository = new Mock<IGroupRepository>();
 
             MpConfigDto mpConfigDtoEarly = new MpConfigDto
             {
@@ -47,7 +49,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
-            _fixture = new ChildSigninService(_childCheckinRepository.Object, _configRepository.Object, _eventRepository.Object);
+            _fixture = new ChildSigninService(_childCheckinRepository.Object, _configRepository.Object, _eventRepository.Object, _groupRepository.Object);
         }
 
         [Test]

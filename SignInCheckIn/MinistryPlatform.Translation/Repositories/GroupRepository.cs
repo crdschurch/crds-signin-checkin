@@ -14,6 +14,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly List<string> _groupColumns;
         private readonly List<string> _groupAttributeColumns;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        //private readonly List<string> _groupParticipantColumns 
 
         public GroupRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IApplicationConfiguration applicationConfiguration)
         {
@@ -86,6 +87,15 @@ namespace MinistryPlatform.Translation.Repositories
             var response = groups.Select(g => SetKidsClubGroupAttributes(g, includeAttributes, token)).ToList();
             return response;
         }
+
+        public List<int> GetGroupIdByParticipantId(int participantId)
+        {
+            var token = _apiUserRepository.GetToken();
+
+            var ids = _ministryPlatformRestRepository.UsingAuthenticationToken(token).SearchTable<int>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID] AS [Group ID]");
+
+            return ids;
+        } 
 
         private MpGroupDto SetKidsClubGroupAttributes(MpGroupDto group, bool includeAttributes, string token)
         {
