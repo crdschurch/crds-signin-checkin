@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { AdminService } from '../admin.service';
 import { HeaderService } from '../header/header.service';
@@ -18,7 +18,6 @@ export class RoomGroupListComponent implements OnInit {
   roomId: string;
   private room: Room;
   private event: Event;
-
   alternateRoomsSelected: boolean = false;
 
   constructor( private adminService: AdminService,
@@ -66,7 +65,9 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   openTabIfAlternateRoomsHash() {
-    console.log(this.route.snapshot.params['tab']);
+    if (this.route.snapshot.queryParams['tab'] === 'alternate-rooms') {
+      this.alternateRoomsSelected = true;
+    }
   }
 
   ngOnInit() {
