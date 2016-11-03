@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AdminService } from '../admin.service';
 import { Room } from './room';
 import { HeaderService } from '../header/header.service';
+import { DropdownModule } from 'ng2-bootstrap/components/dropdown';
 
 @Component({
   templateUrl: 'room-list.component.html',
@@ -34,5 +35,19 @@ export class RoomListComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getData();
+  }
+
+  // Tate - dropdown demo
+  public disabled:boolean = false;
+  public status:{isopen:boolean} = {isopen: false};
+
+  public toggled(open:boolean):void {
+    console.log('Dropdown is now: ', open);
+  }
+
+  public toggleDropdown($event:MouseEvent):void {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.status.isopen = !this.status.isopen;
   }
 }

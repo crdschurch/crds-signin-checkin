@@ -57,3 +57,18 @@ admin {
     }
   }
 }
+
+.btn-unstyled {
+  padding: 0;
+  background: transparent;
+}
+
+.btn-unstyled.dropdown-toggle::after {
+  display: none;
+}
+
+.gear-dropdown {
+  .dropdown-menu-right {
+    right: 1rem;
+  }
+}
