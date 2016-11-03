@@ -37,9 +37,7 @@ describe('Setup Service', () => {
             expect(machineConfig).toBeDefined();
             expect(machineConfig).toEqual(machineConfigStub);
           },
-          error => {
-            expect(error).not.toBeDefined();
-          }
+          error => {}
         );
       });
 
@@ -59,9 +57,7 @@ describe('Setup Service', () => {
 
         it('should return an error', () => {
           fixture.getThisMachineConfiguration().subscribe(
-            machineConfig => {
-              expect(machineConfig).not.toBeDefined();
-            },
+            machineConfig => {},
             error => {
               expect(error).toBeDefined();
             }
