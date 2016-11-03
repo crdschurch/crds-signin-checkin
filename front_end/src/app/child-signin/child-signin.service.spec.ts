@@ -11,7 +11,7 @@ import { Event } from '../admin/events/event';
 import { ChildSigninService } from './child-signin.service';
 import { HttpClientService } from '../shared/services/http-client.service';
 
-fdescribe('ChildSigninService', () => {
+describe('ChildSigninService', () => {
   let fixture: ChildSigninService;
   let httpClientService: any;
   let router: Router;

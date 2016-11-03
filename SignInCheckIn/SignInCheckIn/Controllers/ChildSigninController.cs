@@ -52,7 +52,6 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                ;
                 return Ok(_childSigninService.SigninParticipants(participantEventMapDto));
             }
             catch (Exception e)
