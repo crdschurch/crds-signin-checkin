@@ -69,7 +69,7 @@ describe('Home Component', () => {
 
     beforeEach(() => {
       machineIdConfig = 'bad-cookie';
-      thisMachineConfig = Observable.throw('invalid machine confid');
+      thisMachineConfig = Observable.throw('invalid machine config');
       cookieService = new CookieService(new CookieOptions());
       fixture = new HomeComponent(router, cookieService, setupServiceStub);
       setupErrorRedirectSpy = spyOn(fixture, 'goToSetupError');

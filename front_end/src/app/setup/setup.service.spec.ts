@@ -3,70 +3,97 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 import { SetupService } from './setup.service';
 import { HttpClientService } from '../shared/services/http-client.service';
-import { Http, RequestOptions, Headers, Response, ResponseOptions } from '@angular/http';
+import { Http, Response, RequestOptions, Headers, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
+import { Observable } from 'rxjs/Observable';
 
-describe('SetupService', () => {
+describe('Setup Service', () => {
   let fixture: SetupService;
-  let httpClientService: HttpClientService;
-  let http: Http;
-  let options: RequestOptions;
-  let backend: MockBackend;
+  let httpClientService: any;
   let cookieService: CookieService;
-  let cookie: any;
-  let thisCookieService: any;
   const machineIdStub = '1991653a-ddb8-47fd-9d3a-86761506fa4f';
   const machineConfigStub = { 'KioskConfigId': 1, 'KioskIdentifier': '1991653a-ddb8-47fd-9d3a-86761506fa4f', 'KioskName': 'Test Kiosk 1 Name', 'KioskDescription': 'Test Kiosk 1 Desc', 'KioskTypeId': 1, 'LocationId': 3, 'CongregationId': 1, 'RoomId': 1984, 'StartDate': '2016-10-27T00:00:00', 'EndDate': null };
 
-  describe('SetupService', () => {
+  fdescribe('when remotely getting machine configuration', () => {
 
-    beforeEach(() => {
-      cookieService = new CookieService(new CookieOptions());
-      cookieService.putObject('machine_config_id', machineIdStub);
-      cookieService.putObject('machine_config_details', machineConfigStub);
-      thisCookieService = cookieService;
-      backend = new MockBackend();
-      options = new RequestOptions();
-      options.headers = new Headers();
-      http = new Http(backend, options);
-      cookie = thisCookieService;
-      httpClientService = new HttpClientService(http, cookie);
-      fixture = new SetupService(httpClientService, cookie);
-    });
+    describe('and configuration is valid', () => {
+      beforeEach(() => {
+        cookieService = new CookieService(new CookieOptions());
+        cookieService.putObject('machine_config_id', machineIdStub);
+        cookieService.putObject('machine_config_details', machineConfigStub);
+        httpClientService = {
+          get(url: string) {
+            let response = new ResponseOptions({ body: machineConfigStub });
+            return Observable.of(new Response(response));
+          }
+        };
+        fixture = new SetupService(httpClientService, cookieService);
+      });
 
-    it('should get this machine\'s configuration from server if server return configuration', (done) => {
-      fixture.getThisMachineConfiguration().subscribe(
+      it('should get this machine\'s configuration from server if server return configuration', () => {
+        fixture.getThisMachineConfiguration().subscribe(
           machineConfig => {
+            expect(machineConfig).toBeDefined();
             expect(machineConfig).toEqual(machineConfigStub);
-            done()
           },
-          error => {}
+          error => {
+            expect(error).not.toBeDefined();
+          }
         );
+      });
+
+      describe('and configuration is invalid', () => {
+        beforeEach(() => {
+          cookieService = new CookieService(new CookieOptions());
+          cookieService.putObject('machine_config_id', machineIdStub);
+          cookieService.putObject('machine_config_details', machineConfigStub);
+          httpClientService = {
+            get(url: string) {
+              let response = new ResponseOptions({ body: machineConfigStub });
+              return Observable.throw('invalid config');
+            }
+          };
+          fixture = new SetupService(httpClientService, cookieService);
+        });
+
+        it('should return an error', () => {
+          fixture.getThisMachineConfiguration().subscribe(
+            machineConfig => {
+              expect(machineConfig).not.toBeDefined();
+            },
+            error => {
+              expect(error).toBeDefined();
+            }
+          );
+        });
+
+      });
+
     });
+  });
+
+  describe('when setting machine id and machine details cookies', () => {
 
     beforeEach(() => {
       cookieService = new CookieService(new CookieOptions());
       cookieService.putObject('machine_config_id', undefined);
-      cookieService.putObject('machine_config_details', {});
-      thisCookieService = cookieService;
-      backend = new MockBackend();
-      options = new RequestOptions();
-      options.headers = new Headers();
-      http = new Http(backend, options);
-      cookie = thisCookieService;
-      httpClientService = new HttpClientService(http, cookie);
-      fixture = new SetupService(httpClientService, cookie);
+      cookieService.putObject('machine_config_details', undefined);
+      fixture = new SetupService(undefined, cookieService);
     });
 
-    it('should catch an error if no configuration returned from server', () => {
-      fixture.getThisMachineConfiguration().subscribe(
-          machineConfig => {},
-          error => {
-            expect(error).toBeDefined();
-          }
-        );
+    it('should set and get a the machine id cookie', () => {
+      const idCookieName = 'cookieName123';
+      fixture.setMachineIdConfigCookie(idCookieName);
+      expect(fixture.getMachineIdConfigCookie()).toEqual(idCookieName);
     });
 
+    it('should set and get a the machine id cookie', () => {
+      const detailsCookieName = 'cookieName456';
+      fixture.setMachineIdConfigCookie(detailsCookieName);
+      expect(fixture.getMachineIdConfigCookie()).toEqual(detailsCookieName);
+    });
   });
+
+  // TODO set machine details
 });
