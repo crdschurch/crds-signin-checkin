@@ -91,6 +91,8 @@
     <Compile Include="Extensions\RestSharpExtensions.cs" />
     <Compile Include="Models\Attributes\MpRestApiPrimaryKey.cs" />
     <Compile Include="Models\Attributes\MpRestApiTable.cs" />
+    <Compile Include="Models\DTO\MpConfigDto.cs" />
+    <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
     <Compile Include="Models\DTO\MpParticipantDto.cs" />
     <Compile Include="Models\DTO\MpContactDto.cs" />
     <Compile Include="Models\DTO\MpAttributeTypeDto.cs" />
@@ -107,12 +109,14 @@
     <Compile Include="Repositories\AttributeRepository.cs" />
     <Compile Include="Repositories\AuthenticationRepository.cs" />
     <Compile Include="Repositories\ChildSigninRepository.cs" />
+    <Compile Include="Repositories\ConfigRepository.cs" />
     <Compile Include="Repositories\EventRepository.cs" />
     <Compile Include="Repositories\GroupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IApiUserRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAttributeRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAuthenticationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IChildSigninRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IConfigRepository.cs" />
     <Compile Include="Repositories\Interfaces\IEventRepository.cs" />
     <Compile Include="Repositories\Interfaces\IGroupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IKioskRepository.cs" />

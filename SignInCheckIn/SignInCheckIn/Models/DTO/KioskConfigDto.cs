@@ -10,7 +10,6 @@ namespace SignInCheckIn.Models.DTO
     {
         public int KioskConfigId { get; set; }
 
-        // TODO: Determine if this actually works - casting to a guid
         public Guid KioskIdentifier { get; set; }
 
         public string KioskName { get; set; }

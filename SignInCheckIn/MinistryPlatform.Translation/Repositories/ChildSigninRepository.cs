@@ -140,5 +140,34 @@ namespace MinistryPlatform.Translation.Repositories
                 return $"{obj.ParticipantId}{obj.ContactId}".GetHashCode();
             }
         }
+
+	    public List<MpEventParticipantDto> CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
+        {
+            var token = _apiUserRepository.GetToken();
+
+            var columnList = new List<string>
+            {
+                "Event_Participant_ID",
+                "Event_ID",
+                "Participant_ID",
+                "Participation_Status_ID",
+                "Time_In",
+                "Time_Confirmed",
+                "Time_Out",
+                "Notes",
+                "Domain_ID",
+                "Group_Participant_ID",
+                "[Check-in_Station]",
+                "Group_ID",
+                "Room_ID",
+                "Call_Parents",
+                "Group_Role_ID",
+                "Response_ID",
+                "Opportunity_ID",
+                "Registrant_Message_Sent"
+            };
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
+        }
     }
 }

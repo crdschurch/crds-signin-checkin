@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
-using crds_angular.Security;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
+using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Controllers
 {
-    public class KioskController : MPAuth
+    public class KioskController : MpAuth
     {
         private readonly IKioskService _kioskService;
         

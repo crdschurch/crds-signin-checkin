@@ -87,6 +87,16 @@ namespace MinistryPlatform.Translation.Repositories
             return response;
         }
 
+        public List<MpGroupDto> GetGroupsForParticipantId(int participantId)
+        {
+            var token = _apiUserRepository.GetToken();
+
+            var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                .SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID]");
+
+            return mpGroupDtos;
+        } 
+
         private MpGroupDto SetKidsClubGroupAttributes(MpGroupDto group, bool includeAttributes, string token)
         {
             if (!includeAttributes)

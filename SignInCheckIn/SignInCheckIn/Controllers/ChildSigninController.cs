@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
 using SignInCheckIn.Exceptions.Models;
@@ -18,18 +18,45 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof(List<ParticipantDto>))]
+        [ResponseType(typeof(ParticipantEventMapDto))]
         [Route("signin/children/{phoneNumber}")]
-        public IHttpActionResult GetEvents(string phoneNumber)
+        public IHttpActionResult GetChildrenAndEvent(string phoneNumber)
         {
             try
             {
-                var children = _childSigninService.GetChildrenByPhoneNumber(phoneNumber);
+                var siteId = 0;
+                if (Request.Headers.Contains("Crds-Site-Id"))
+                {
+                    siteId = int.Parse(Request.Headers.GetValues("Crds-Site-Id").First());
+                }
+
+                if (siteId == 0)
+                {
+                    throw new Exception("Site Id is Invalid");
+                }
+
+                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
                 return Ok(children);
             }
             catch (Exception e)
             {
                 var apiError = new ApiErrorDto("Get Children", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("signin/children")]
+        public IHttpActionResult SigninParticipants(ParticipantEventMapDto participantEventMapDto)
+        {
+            try
+            {
+                return Ok(_childSigninService.SigninParticipants(participantEventMapDto));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Sign In Participants", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }

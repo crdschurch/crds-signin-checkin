@@ -1,33 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Web;
-using System.Web.Http;
-using System.Net.Http;
-using System.Web.Http.Description;
-using System.Web.SessionState;
-using System.Diagnostics;
-using log4net;
-using log4net.Config;
 using System.Reflection;
-using System.Threading;
-//using crds_angular.Models.Crossroads;
-//using crds_angular.Util;
-//using Microsoft.Ajax.Utilities;
-//using Microsoft.Owin;
-using MinistryPlatform.Translation.Repositories;
+using System.Web.Http;
+using log4net;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Util;
 
-namespace crds_angular.Security
+namespace SignInCheckIn.Security
 {
-    public class MPAuth : ApiController
+    public class MpAuth : ApiController
     {
-        protected readonly log4net.ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private IAuthenticationRepository _authenticationRepository;
+        protected readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IAuthenticationRepository _authenticationRepository;
 
-        public MPAuth(IAuthenticationRepository authenticationRepository)
+        public MpAuth(IAuthenticationRepository authenticationRepository)
         {
             _authenticationRepository = authenticationRepository;
         }
@@ -41,7 +27,7 @@ namespace crds_angular.Security
         /// <returns>An IHttpActionResult from the "doIt" expression, or UnauthorizedResult if the user is not authenticated.</returns>
         protected IHttpActionResult Authorized(Func<string, IHttpActionResult> doIt)
         {
-            return (Authorized(doIt, () => { return (Unauthorized()); }));
+            return Authorized(doIt, () => Unauthorized());
         }
 
         /// <summary>
@@ -56,28 +42,31 @@ namespace crds_angular.Security
         {
             try
             {
-                IEnumerable<string> refreshTokens;
-                var authorized = "";
-                if (Request.Headers.TryGetValues("RefreshToken", out refreshTokens) && refreshTokens.Any())
+                var refreshTokenHeader = Request.Headers.Contains(HttpAuthResult.RefreshTokenHeaderName)
+                    ? Request.Headers.GetValues(HttpAuthResult.RefreshTokenHeaderName).FirstOrDefault()
+                    : null;
+                if (refreshTokenHeader != null)
                 {
-                    var authData = _authenticationRepository.RefreshToken(refreshTokens.FirstOrDefault());
+                    var authData = _authenticationRepository.RefreshToken(refreshTokenHeader);
                     if (authData != null)
                     {
-                        authorized = authData["token"].ToString();
-                        var RefreshToken = authData["RefreshToken"].ToString();
-                        var result = new HttpAuthResult(actionWhenAuthorized(authorized), authorized, RefreshToken);
+                        var authToken = authData["token"].ToString();
+                        var refreshToken = authData["refreshToken"].ToString();
+                        var result = new HttpAuthResult(actionWhenAuthorized(authToken), authToken, refreshToken);
                         return result;
                     }
                 }
 
-                authorized = Request.Headers.GetValues("Authorization").FirstOrDefault();
-                if (authorized != null && (authorized != "null" || authorized != ""))
+                var authorized = Request.Headers.Contains(HttpAuthResult.AuthorizationTokenHeaderName)
+                    ? Request.Headers.GetValues(HttpAuthResult.AuthorizationTokenHeaderName).FirstOrDefault()
+                    : null;
+                if (!string.IsNullOrEmpty(authorized) && !authorized.Equals("null"))
                 {
                     return actionWhenAuthorized(authorized);
                 }
                 return actionWhenNotAuthorized();
             }
-            catch (System.InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 return actionWhenNotAuthorized();
             }

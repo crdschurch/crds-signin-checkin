@@ -13,7 +13,7 @@ let rootServiceStub: any = {
   }
 };
 
-fdescribe('SetupComponent', () => {
+describe('SetupComponent', () => {
   describe('#ngOnInit', () => {
     let setMachineIdConfigCookieSpy;
     let getMachineIdConfigCookieSpy;
