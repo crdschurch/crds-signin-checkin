@@ -25,11 +25,12 @@ export class SetupComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isError = this.route.snapshot.params['error'];
     let machineGuid;
     this.route.params.forEach((params: Params) => {
-       machineGuid = params['machine'];
-     });
+      this.isError = params['error'];
+      machineGuid = params['machine'];
+    });
+
     machineGuid = machineGuid || this.setupService.getMachineIdConfigCookie();
     if ( machineGuid ) {
       this.machineId = machineGuid;
