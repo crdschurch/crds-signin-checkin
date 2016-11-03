@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { CookieService } from 'angular2-cookie/core';
 import { HttpClientService } from '../shared/services';
 import { MachineConfiguration } from './machine-configuration';
@@ -9,23 +10,44 @@ export class SetupService {
   constructor(private http: HttpClientService, private cookieService: CookieService) {
   }
 
-  getMachineConfiguration(guid: string) {
-    // TODO: uncomment when backend working
+  getThisMachineConfiguration() {
+    let guid = this.getMachineIdConfigCookie();
     const url = `${process.env.ECHECK_API_ENDPOINT}/kiosks/${guid}`;
     return this.http.get(url)
                     .map(res => {
-                        this.setMachineConfigCookie(res.json());
-                        return this.getMachineConfigCookie();
+                      this.setMachineDetailsConfigCookie(res.json());
+                      return this.getMachineDetailsConfigCookie();
+                    })
+                    .catch(error => {
+                      return Observable.throw('Server error');
+                    });
+  }
+
+  getNewMachineConfiguration(guid: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/kiosks/${guid}`;
+    this.setMachineIdConfigCookie(guid);
+    return this.http.get(url)
+                    .map(res => {
+                        this.setMachineDetailsConfigCookie(res.json());
+                        return this.getMachineDetailsConfigCookie();
                     })
                     .catch(err => console.error(err));
   }
 
-  setMachineConfigCookie(config: MachineConfiguration) {
-    this.cookieService.putObject(MachineConfiguration.COOKIE_NAME, config);
+  setMachineIdConfigCookie(guid: string) {
+    this.cookieService.putObject(MachineConfiguration.COOKIE_NAME_ID, guid);
   }
 
-  getMachineConfigCookie(): any {
-    return this.cookieService.getObject(MachineConfiguration.COOKIE_NAME);
+  getMachineIdConfigCookie(): any {
+    return this.cookieService.getObject(MachineConfiguration.COOKIE_NAME_ID);
+  }
+
+  setMachineDetailsConfigCookie(config: MachineConfiguration) {
+    this.cookieService.putObject(MachineConfiguration.COOKIE_NAME_DETAILS, config);
+  }
+
+  getMachineDetailsConfigCookie(): any {
+    return this.cookieService.getObject(MachineConfiguration.COOKIE_NAME_DETAILS);
   }
 
 }

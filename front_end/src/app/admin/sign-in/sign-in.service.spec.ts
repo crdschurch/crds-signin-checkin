@@ -5,7 +5,7 @@ import { SignInService } from './sign-in.service';
 import { HttpClientService } from '../../shared/services/http-client.service';
 import { Http, RequestOptions, Headers, Response, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
-import {CookieService, CookieOptions} from 'angular2-cookie/core';
+import { CookieService, CookieOptions } from 'angular2-cookie/core';
 
 describe('SignInService', () => {
   let fixture: SignInService;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'angular2-cookie/core';
 import { Router } from '@angular/router';
-import { MachineConfiguration } from '../setup/machine-configuration';
+import { SetupService } from '../setup/setup.service';
 
 @Component({
   selector: 'home',
@@ -9,7 +9,10 @@ import { MachineConfiguration } from '../setup/machine-configuration';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router, private cookieService: CookieService) { }
+  constructor(private router: Router,
+              private cookieService: CookieService,
+              private setupService: SetupService) {
+              }
 
   goToChildCheckin() {
     this.router.navigate(['/child-checkin/room']);
@@ -23,10 +26,20 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/admin/sign-in']);
   }
 
+  goToSetupError() {
+    this.router.navigate(['/setup', {error: true} ]);
+  }
+
   redirectIfConfigured() {
-    const machineConfig = MachineConfiguration.fromJson( this.cookieService.getObject(MachineConfiguration.COOKIE_NAME) );
-    if (machineConfig.isTypeSignIn()) {
-      return this.goToChildSignin();
+    if (this.setupService.getMachineIdConfigCookie()) {
+      this.setupService.getThisMachineConfiguration().subscribe(
+          machineConfig => {
+            return this.goToChildSignin();
+          },
+          error => {
+            return this.goToSetupError();
+          }
+        );
     }
   }
 
