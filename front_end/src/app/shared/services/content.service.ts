@@ -17,7 +17,6 @@ export class ContentService {
     // call for each type of content block used in the app
     this.getContentBlocks().then(contentBlocks => {
       this.contentBlocks = contentBlocks;
-      debugger;
     });
   }
 
