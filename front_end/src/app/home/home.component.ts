@@ -14,6 +14,10 @@ export class HomeComponent implements OnInit {
               private setupService: SetupService) {
               }
 
+  goToChildCheckin() {
+    this.router.navigate(['/child-checkin/room']);
+  }
+
   goToChildSignin() {
     this.router.navigate(['/child-signin/search']);
   }
