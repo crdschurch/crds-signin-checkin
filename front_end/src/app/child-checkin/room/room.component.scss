@@ -1,7 +1,10 @@
 /***************************************************************************************
 * Check In Screen
 ***************************************************************************************/
-.signin-header {
+@import '../../../assets/scss/_variables.scss';
+@import '../../../assets/scss/_bootstrap.scss';
+
+.checkin-header {
   span {
     vertical-align: middle;
   }

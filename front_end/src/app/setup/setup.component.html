@@ -1,0 +1,21 @@
+<div class="col-xs-12 offset-md-3 col-md-6 text-xs-center mt-3">
+  <div class="card">
+    <h3 class="card-header">Welcome to Setup</h3>
+    <div class="card-block">
+      <h4 [hidden]="!isError" class="text-danger">Your machine is improperly configured.</h4>
+      <h5 class="card-title">Manually go to the route below to setup your machine:</h5>
+<pre>
+  <code>/setup;machine=your-preconfigured-guid-here</code>
+</pre>
+      <p class="card-text">
+        <span>Thank you for spending time in the setup route. Feel free to stop by anytime.</span>
+      </p>
+      <a href="#" class="btn btn-primary" routerLink='/'>Back to home route</a>
+      <a class="btn btn-outline-danger" (click)="reset()">Reset</a>
+    </div>
+
+    <div [hidden]="!machineId">
+      Machine Id: {{ machineId }}
+    </div>
+  </div>
+</div>

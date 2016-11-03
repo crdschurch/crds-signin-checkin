@@ -6,6 +6,7 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IChildSigninService
     {
-        List<ParticipantDto> GetChildrenByPhoneNumber(string phoneNumber);
+        ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId);
+        ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto);
     }
 }

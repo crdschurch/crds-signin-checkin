@@ -3,15 +3,17 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Description;
 using log4net;
+using SignInCheckIn.Filters;
 using SignInCheckIn.Models.Authentication;
 using SignInCheckIn.Services.Interfaces;
+using SignInCheckIn.Util;
 
 namespace SignInCheckIn.Controllers
 {
     public class LoginController : ApiController
     {
         private readonly ILoginService _loginService;
-        protected readonly log4net.ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        protected readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public LoginController(ILoginService loginService)
         {
@@ -26,8 +28,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var loginReturn = _loginService.Login(cred.Username, cred.Password);
-
-                return this.Ok(loginReturn);
+                return new HttpAuthResult(Ok(loginReturn), loginReturn.UserToken, loginReturn.RefreshToken);
             }
             catch (Exception e)
             {
@@ -36,7 +37,7 @@ namespace SignInCheckIn.Controllers
                     return Unauthorized();
                 }
 
-                logger.Error("Error authenticating user", e);
+                Logger.Error("Error authenticating user", e);
 
                 return InternalServerError();                
             }

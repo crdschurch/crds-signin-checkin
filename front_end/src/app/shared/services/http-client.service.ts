@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { CookieService } from 'angular2-cookie/core';
+import { MachineConfiguration } from '../../setup/machine-configuration';
+import { Observable } from 'rxjs/Observable';
 
 import { User } from '../models/user';
 
@@ -28,6 +30,10 @@ export class HttpClientService {
     return this.user.isLoggedIn();
   }
 
+  hasRefreshToken(): boolean {
+    return this.user.hasRefreshToken();
+  }
+
   logOut(): void {
     let user = this.user;
     user.logOut();
@@ -41,19 +47,20 @@ export class HttpClientService {
 
   private extractAuthToken(o: any) {
     let sharable = o.share();
-    sharable.subscribe((res: Response) => {
-      let user = this.user;
-      let body = res.json();
-
-      if (body != null && body.userToken) {
-        user.token = body.userToken;
-      }
-      if (body != null && body.refreshToken) {
-        user.refreshToken = body.refreshToken;
-      }
-
-      this.user = user;
-    });
+    sharable.subscribe(
+      (res: Response) => {
+        let user = this.user;
+        if (res.headers.get('Authorization')) {
+          user.token = res.headers.get('Authorization');
+        };
+        if (res.headers.get('RefreshToken')) {
+          user.refreshToken = res.headers.get('RefreshToken');
+        }
+        this.user = user;
+      },
+      (error) => {
+        return Observable.throw(error.json().error || 'Server error');
+      });
     return sharable;
   }
 
@@ -67,9 +74,15 @@ export class HttpClientService {
   private createAuthorizationHeader(headers?: Headers) {
     let reqHeaders =  headers || new Headers();
     reqHeaders.set('Authorization', this.user.token);
+    reqHeaders.set('RefreshToken', this.user.refreshToken);
     reqHeaders.set('Content-Type', 'application/json');
     reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
+
+    const machineConfig = MachineConfiguration.fromJson( this.cookie.getObject(MachineConfiguration.COOKIE_NAME_DETAILS) );
+    if (machineConfig && machineConfig.CongregationId) {
+      reqHeaders.set('Crds-Site-Id', machineConfig.CongregationId.toString());
+    }
 
     return reqHeaders;
   }

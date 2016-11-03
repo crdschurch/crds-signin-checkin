@@ -63,15 +63,39 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupDto> GetGroupsByAttribute(string authenticationToken, IEnumerable<MpAttributeDto> attributes, bool includeAttributes = false)
         {
+            var attributesList = attributes.ToList();
             var token = authenticationToken ?? _apiUserRepository.GetToken();
-            var searchString = string.Join(" OR ",
-                                           attributes.Select(
-                                               a => $"(Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {a.Type.Id} AND Group_Attributes.Attribute_ID = {a.Id})")
-                                               .ToList());
+            var searchString = string.Empty;
+            var first = true;
+            foreach (var typeId in attributesList.Select(a => a.Type.Id).Distinct())
+            {
+                if (!first)
+                {
+                    searchString = $"{searchString} OR ";
+                }
+                else
+                {
+                    first = false;
+                }
+
+                searchString = $"{searchString} (Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {typeId} AND Group_Attributes.Attribute_ID IN ";
+                searchString = searchString + "(" + string.Join(",", attributesList.FindAll(a => a.Type.Id == typeId).Select(a => a.Id).ToList()) + "))";
+            }
+
             var groups = _ministryPlatformRestRepository.UsingAuthenticationToken(token).SearchTable<MpGroupDto>("Group_Attributes", searchString, _groupAttributeColumns);
             var response = groups.Select(g => SetKidsClubGroupAttributes(g, includeAttributes, token)).ToList();
             return response;
         }
+
+        public List<MpGroupDto> GetGroupsForParticipantId(int participantId)
+        {
+            var token = _apiUserRepository.GetToken();
+
+            var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                .SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID]");
+
+            return mpGroupDtos;
+        } 
 
         private MpGroupDto SetKidsClubGroupAttributes(MpGroupDto group, bool includeAttributes, string token)
         {
