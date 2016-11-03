@@ -2,6 +2,7 @@
 
 import { TestBed, async, inject } from '@angular/core/testing';
 import { SetupService } from './setup.service';
+import { MachineConfiguration } from './machine-configuration';
 import { HttpClientService } from '../shared/services/http-client.service';
 import { Http, Response, RequestOptions, Headers, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
@@ -46,7 +47,7 @@ describe('Setup Service', () => {
         fixture.getThisMachineConfiguration().subscribe(
           machineConfig => {
             expect(machineConfig).toBeDefined();
-            expect(machineConfig).toEqual(machineConfigStub);
+            expect(machineConfig).toEqual(MachineConfiguration.fromJson(machineConfigStub));
           },
           error => {}
         );

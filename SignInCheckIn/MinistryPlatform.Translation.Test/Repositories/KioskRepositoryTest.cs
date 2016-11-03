@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -35,7 +33,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "[Kiosk_Type_ID]",
                 "[Location_ID]",
                 "[Congregation_ID]",
-                "[Room_ID]",
+                "cr_Kiosk_Configs.[Room_ID]",
+                "Room_ID_Table.Room_Name",
                 "[Start_Date]",
                 "[End_Date]"
             };
@@ -46,11 +45,11 @@ namespace MinistryPlatform.Translation.Test.Repositories
         [Test]
         public void TestGetKioskConfigsForIdentifier()
         {
-            Guid testGuid = Guid.Parse("9c01a404-3ba8-4f4a-b7b1-2183e30addd1");
+            var testGuid = Guid.Parse("9c01a404-3ba8-4f4a-b7b1-2183e30addd1");
             const string token = "tok 123";
             var kioskConfigs = new List<MpKioskConfigDto>();
 
-            MpKioskConfigDto testDto = new MpKioskConfigDto
+            var testDto = new MpKioskConfigDto
             {
                 KioskIdentifier = testGuid
             };

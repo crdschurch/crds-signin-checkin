@@ -4,10 +4,12 @@ import { HomeComponent } from './home.component';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
+import { MachineConfiguration } from '../setup/machine-configuration';
 
 let fixture: HomeComponent;
 let router: Router;
 let cookieService: CookieService;
+let childSigninRedirectSpy: any;
 let childCheckinRedirectSpy: any;
 let setupErrorRedirectSpy: any;
 let machineIdConfig: any;
@@ -32,20 +34,33 @@ describe('Home Component', () => {
 
     beforeEach(() => {
       machineIdConfig = 'valid-cookie';
-      thisMachineConfig = Observable.of({'MachineId': '123'});
+      thisMachineConfig = Observable.of(MachineConfiguration.fromJson({'MachineId': '123'}));
       cookieService = new CookieService(new CookieOptions());
       cookieService.putObject('machine_config_id', '1991653a-ddb8-47fd-9d3a-86761506fa4f');
       cookieService.putObject('machine_config_details', { 'KioskConfigId': 1, 'KioskIdentifier': '1991653a-ddb8-47fd-9d3a-86761506fa4f', 'KioskName': 'Test Kiosk 1 Name', 'KioskDescription': 'Test Kiosk 1 Desc', 'KioskTypeId': 1, 'LocationId': 3, 'CongregationId': 1, 'RoomId': 1984, 'StartDate': '2016-10-27T00:00:00', 'EndDate': null });
       fixture = new HomeComponent(router, cookieService, setupServiceStub);
-      childCheckinRedirectSpy = spyOn(fixture, 'goToChildSignin');
+      childSigninRedirectSpy = spyOn(fixture, 'goToChildSignin');
+      childCheckinRedirectSpy = spyOn(fixture, 'goToChildCheckin');
+      setupErrorRedirectSpy = spyOn(fixture, 'goToSetupError');
     });
 
     it('should redirect to child sign in when cookie is type = Sign In', () => {
-      expect(cookieService.getObject('machine_config_details')['KioskTypeId']).toEqual(1);
+      thisMachineConfig = Observable.of(MachineConfiguration.fromJson({'MachineId': '123', 'KioskTypeId': 1}));
+      fixture.ngOnInit();
+      expect(childSigninRedirectSpy).toHaveBeenCalled();
+    });
+
+    it('should redirect to child checkin when cookie is type = Check In', () => {
+      thisMachineConfig = Observable.of(MachineConfiguration.fromJson({'MachineId': '123', 'KioskTypeId': 2}));
       fixture.ngOnInit();
       expect(childCheckinRedirectSpy).toHaveBeenCalled();
     });
 
+    it('should redirect to error page when cookie is an unknown type', () => {
+      thisMachineConfig = Observable.of(MachineConfiguration.fromJson({'MachineId': '123', 'KioskTypeId': 3}));
+      fixture.ngOnInit();
+      expect(setupErrorRedirectSpy).toHaveBeenCalled();
+    });
   });
 
   describe('where there is not an invalid machine configuration cookie present', () => {
@@ -55,12 +70,12 @@ describe('Home Component', () => {
       thisMachineConfig = undefined;
       cookieService = new CookieService(new CookieOptions());
       fixture = new HomeComponent(router, cookieService, setupServiceStub);
-      childCheckinRedirectSpy = spyOn(fixture, 'goToChildSignin');
+      childSigninRedirectSpy = spyOn(fixture, 'goToChildSignin');
     });
 
     it('should redirect to child sign in when cookie is type = Sign In', () => {
       fixture.ngOnInit();
-      expect(childCheckinRedirectSpy).not.toHaveBeenCalled();
+      expect(childSigninRedirectSpy).not.toHaveBeenCalled();
     });
 
   });

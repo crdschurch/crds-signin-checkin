@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
+import { SetupService } from '../setup/setup.service';
+import { MachineConfiguration } from '../setup/machine-configuration';
 
 @Component({
   selector: 'child-checkin',
@@ -6,7 +8,19 @@ import { Component } from '@angular/core';
   styleUrls: ['child-checkin.component.scss', 'scss/_stepper.scss' ],
   providers: []
 })
-export class ChildCheckinComponent {
+@Injectable()
+export class ChildCheckinComponent implements OnInit {
+  private kioskDetails: MachineConfiguration;
 
-  constructor() {}
+  constructor(private setupService: SetupService) {
+    this.kioskDetails = new MachineConfiguration();
+  }
+
+  public getKioskDetails() {
+    return this.kioskDetails;
+  }
+
+  public ngOnInit() {
+    this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
+  }
 }
