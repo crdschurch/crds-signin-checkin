@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AdminService } from '../admin.service';
@@ -9,7 +9,8 @@ import { Event } from '../events/event';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
-  styleUrls: ['room-group-list.component.scss']
+  styleUrls: ['room-group-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomGroupListComponent implements OnInit {
   groups: Group[];
@@ -17,6 +18,8 @@ export class RoomGroupListComponent implements OnInit {
   roomId: string;
   private room: Room;
   private event: Event;
+
+  alternateRoomsSelected: boolean = false;
 
   constructor( private adminService: AdminService,
                private route: ActivatedRoute,
@@ -29,7 +32,6 @@ export class RoomGroupListComponent implements OnInit {
     this.roomId = this.route.snapshot.params['roomId'];
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
-        console.log("room", room)
         this.room = room;
       },
       error => console.error(error)
@@ -63,7 +65,12 @@ export class RoomGroupListComponent implements OnInit {
     this.location.back();
   }
 
+  openTabIfAlternateRoomsHash() {
+    console.log(this.route.snapshot.params['tab']);
+  }
+
   ngOnInit() {
     this.getData();
+    this.openTabIfAlternateRoomsHash();
   }
 }
