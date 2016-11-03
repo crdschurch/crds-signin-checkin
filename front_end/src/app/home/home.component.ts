@@ -11,6 +11,10 @@ export class HomeComponent implements OnInit {
 
   constructor(private router: Router, private cookieService: CookieService) { }
 
+  goToChildCheckin() {
+    this.router.navigate(['/child-checkin/room']);
+  }
+
   goToChildSignin() {
     this.router.navigate(['/child-signin/search']);
   }
