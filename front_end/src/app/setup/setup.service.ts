@@ -46,7 +46,7 @@ export class SetupService {
     this.cookieService.putObject(MachineConfiguration.COOKIE_NAME_DETAILS, config);
   }
 
-  getMachineDetailsConfigCookie(): any {
-    return this.cookieService.getObject(MachineConfiguration.COOKIE_NAME_DETAILS);
+  getMachineDetailsConfigCookie(): MachineConfiguration {
+    return MachineConfiguration.fromJson(this.cookieService.getObject(MachineConfiguration.COOKIE_NAME_DETAILS));
   }
 }

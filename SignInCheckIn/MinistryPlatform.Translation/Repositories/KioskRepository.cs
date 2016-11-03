@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -29,7 +26,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "[Kiosk_Type_ID]",
                 "[Location_ID]",
                 "[Congregation_ID]",
-                "[Room_ID]",
+                "cr_Kiosk_Configs.[Room_ID]",
+                "Room_ID_Table.Room_Name",
                 "[Start_Date]",
                 "[End_Date]"
             };
