@@ -50,7 +50,7 @@ export class ChildSigninService {
     }
   }
 
-  signInChildren(eventParticipants: EventParticipants) {
+  signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
     const url = `${this.url}/children`;
     return this.http.post(url, eventParticipants)
                     .map(res => EventParticipants.fromJson(res.json()))

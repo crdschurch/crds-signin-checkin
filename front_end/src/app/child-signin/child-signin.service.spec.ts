@@ -1,80 +1,91 @@
 /* tslint:disable:max-line-length */
 
 import { TestBed } from '@angular/core/testing';
-import { Http, RequestOptions, Headers, Response, ResponseOptions } from '@angular/http';
-import { MockConnection, MockBackend } from '@angular/http/testing';
-import { CookieService, CookieOptions } from 'angular2-cookie/core';
+import { Observable } from 'rxjs';
+import { RequestOptions } from '@angular/http';
 import { Router } from '@angular/router';
 
+import { EventParticipants } from '../shared/models/eventParticipants';
+import { Child } from '../shared/models/child';
+import { Event } from '../admin/events/event';
 import { ChildSigninService } from './child-signin.service';
 import { HttpClientService } from '../shared/services/http-client.service';
 
-describe('ChildSigninService', () => {
+fdescribe('ChildSigninService', () => {
   let fixture: ChildSigninService;
-  let httpClientService: HttpClientService;
-  let http: Http;
-  let options: RequestOptions;
-  let backend: MockBackend;
-  let cookie: CookieService;
-  let responseObject: any;
+  let httpClientService: any;
   let router: Router;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        HttpClientService
+        HttpClientService,
       ],
     });
-    backend = new MockBackend();
-    options = new RequestOptions();
-    options.headers = new Headers();
-    http = new Http(backend, options);
-    cookie = new CookieService(new CookieOptions());
-    httpClientService = new HttpClientService(http, cookie);
+
+    httpClientService = jasmine.createSpyObj('httpClientService', ['post', 'put', 'get']);
     fixture = new ChildSigninService(httpClientService, router);
   });
 
   describe('#getChildrenByPhoneNumber', () => {
-    let requestHeaders: Headers;
-    let requestUrl: string;
-
-    beforeEach(() => {
-      backend.connections.subscribe((connection: MockConnection) => {
-        requestHeaders = connection.request.headers;
-        requestUrl = connection.request.url;
-        connection.mockRespond(new Response(new ResponseOptions({
-          body: responseObject
-        })));
-      });
-    });
-
-    afterEach(() => {
-      backend.resolveAllConnections();
-      backend.verifyNoPendingRequests();
-      httpClientService.logOut();
-    });
-
     it('should get and then cache them when called again', () => {
-      responseObject = http.get('assets/mock-data/available-children-get.json');
-      let response = http.get( `${process.env.ECHECK_API_ENDPOINT}/signin/children/8128128123`);
-      fixture.getChildrenByPhoneNumber('8128128123');
+      let input = new EventParticipants();
+      input.CurrentEvent = new Event();
+      input.Participants = [
+        new Child()
+      ];
+      input.CurrentEvent.EventId = 12345;
+      input.Participants[0].ContactId = 54321;
 
-      response.subscribe((res: Response) => {
-        expect(res.json()).toEqual(responseObject);
-        expect(requestHeaders).toBeDefined();
+      let output = new EventParticipants();
+      output.CurrentEvent = new Event();
+      output.Participants = [
+        new Child()
+      ];
+      output.CurrentEvent.EventId = 6789;
+      output.Participants[0].ContactId = 9876;
+
+      httpClientService.get.and.callFake((url: string, data: any, opts: any) => {
+        return Observable.of({ json: () => {
+          return JSON.stringify(output);
+        }});
       });
+
+      let result = fixture.getChildrenByPhoneNumber('8128128123');
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/children/812-812-8123`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
     });
+  });
 
-    // it('should sign in children to backend', () => {
-    //   responseObject = http.get('assets/mock-data/available-children-post.json');
-    //   let response = http.post( `${process.env.ECHECK_API_ENDPOINT}/signin/children`, responseObject);
-    //   // fixture.getChildrenByPhoneNumber('8128128123');
-    //
-    //   response.subscribe((res: Response) => {
-    //     expect(res.json()).toEqual(responseObject);
-    //     expect(requestHeaders).toBeDefined();
-    //   });
-    // });
+  describe('#signInChildren', () => {
+    it('should sign in children to backend', () => {
+      let input = new EventParticipants();
+      input.CurrentEvent = new Event();
+      input.Participants = [
+        new Child()
+      ];
+      input.CurrentEvent.EventId = 12345;
+      input.Participants[0].ContactId = 54321;
 
+      let output = new EventParticipants();
+      output.CurrentEvent = new Event();
+      output.Participants = [
+        new Child()
+      ];
+      output.CurrentEvent.EventId = 6789;
+      output.Participants[0].ContactId = 9876;
+
+      httpClientService.post.and.callFake((url: string, data: EventParticipants, opts: RequestOptions) => {
+        return Observable.of({ json: () => {
+          return JSON.stringify(output);
+        }});
+      });
+
+      let result = fixture.signInChildren(input);
+      expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/children`, input);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+    });
   });
 });
