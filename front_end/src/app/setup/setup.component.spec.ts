@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 let fixture: SetupComponent;
 
 let setupServiceStub: any = {
-  setMachineIdConfigCookie: {}
+  setMachineIdConfigCookie: {},
   getMachineIdConfigCookie: {}
 };
 
@@ -13,22 +13,20 @@ let rootServiceStub: any = {
   }
 };
 
-describe('SetupComponent', () => {
+fdescribe('SetupComponent', () => {
   describe('#ngOnInit', () => {
-    let setMachineIdConfigCookie;
-    let getMachineIdConfigCookie;
+    let setMachineIdConfigCookieSpy;
+    let getMachineIdConfigCookieSpy;
 
     beforeEach(() => {
-      setMachineIdConfigCookie = spyOn(setupServiceStub, 'setMachineIdConfigCookie');
-      getMachineIdConfigCookie = spyOn(setupServiceStub, 'getMachineIdConfigCookie').and.returnValue(undefined);
+      setMachineIdConfigCookieSpy = spyOn(setupServiceStub, 'setMachineIdConfigCookie');
+      getMachineIdConfigCookieSpy = spyOn(setupServiceStub, 'getMachineIdConfigCookie').and.returnValue(undefined);
     });
 
     it('should get the param values and have no machine id', () => {
 
       let routerStub: any = {
-        params: Observable.of({'error': false, 'machine': undefined}),
-        navigate(): void {
-        }
+        params: Observable.of({'error': false})
       };
 
       fixture = new SetupComponent(setupServiceStub, routerStub, rootServiceStub);
@@ -36,8 +34,8 @@ describe('SetupComponent', () => {
 
       expect(fixture.isError).toBeFalsy();
       expect(fixture.machineId).toEqual(undefined);
-      expect(setMachineIdConfigCookie).not.toHaveBeenCalled();
-      expect(getMachineIdConfigCookie).toHaveBeenCalled();
+      expect(setMachineIdConfigCookieSpy).not.toHaveBeenCalled();
+      expect(getMachineIdConfigCookieSpy).toHaveBeenCalled();
     });
 
     it('should get the param values and set machine id', () => {
@@ -53,8 +51,8 @@ describe('SetupComponent', () => {
 
       expect(fixture.isError).toBeTruthy();
       expect(fixture.machineId).toEqual('xyz');
-      expect(setMachineIdConfigCookie).toHaveBeenCalled();
-      expect(getMachineIdConfigCookie).not.toHaveBeenCalled();
+      expect(setMachineIdConfigCookieSpy).toHaveBeenCalledWith('xyz');
+      expect(getMachineIdConfigCookieSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -66,6 +64,7 @@ describe('SetupComponent', () => {
         }
       };
 
+
       fixture = new SetupComponent(setupServiceStub, routerStub, rootServiceStub);
       fixture.machineId = 'test-id';
     });
@@ -73,8 +72,7 @@ describe('SetupComponent', () => {
     it('should reset machineId to undefined', () => {
       expect(fixture.machineId).toEqual('test-id');
       fixture.reset();
-      expect(fixture.machineId).toEqual(undefined);
+      expect(fixture.machineId).not.toBeDefined();
     });
   });
 });
-

@@ -13,7 +13,18 @@ describe('Setup Service', () => {
   let httpClientService: any;
   let cookieService: CookieService;
   const machineIdStub = '1991653a-ddb8-47fd-9d3a-86761506fa4f';
-  const machineConfigStub = { 'KioskConfigId': 1, 'KioskIdentifier': '1991653a-ddb8-47fd-9d3a-86761506fa4f', 'KioskName': 'Test Kiosk 1 Name', 'KioskDescription': 'Test Kiosk 1 Desc', 'KioskTypeId': 1, 'LocationId': 3, 'CongregationId': 1, 'RoomId': 1984, 'StartDate': '2016-10-27T00:00:00', 'EndDate': null };
+  const machineConfigStub = {
+    'KioskConfigId': 1,
+    'KioskIdentifier': '1991653a-ddb8-47fd-9d3a-86761506fa4f',
+    'KioskName': 'Test Kiosk 1 Name',
+    'KioskDescription': 'Test Kiosk 1 Desc',
+    'KioskTypeId': 1,
+    'LocationId': 3,
+    'CongregationId': 1,
+    'RoomId': 1984,
+    'StartDate': '2016-10-27T00:00:00',
+    'EndDate': null
+  };
 
   describe('when remotely getting machine configuration', () => {
 
