@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.DTO;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
@@ -9,6 +8,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpGroupDto GetGroup(string authenticationToken, int groupId, bool includeAttributes = false);
         List<MpGroupDto> GetGroups(string authenticationToken, IEnumerable<int> groupIds, bool includeAttributes = false);
         List<MpGroupDto> GetGroupsByAttribute(string authenticationToken, IEnumerable<MpAttributeDto> attributes, bool includeAttributes = false);
-        List<MpGroupDto> GetGroupIdByParticipantId(int participantId);
+        List<MpGroupDto> GetGroupsForParticipantId(int participantId);
     }
 }

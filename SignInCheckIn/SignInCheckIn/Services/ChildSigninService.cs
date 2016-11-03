@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using AutoMapper;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -13,7 +12,6 @@ namespace SignInCheckIn.Services
     public class ChildSigninService : IChildSigninService
     {
         private readonly IChildSigninRepository _childSigninRepository;
-        private readonly IConfigRepository _configRepository;
         private readonly IEventRepository _eventRepository;
         private readonly IGroupRepository _groupRepository;
 
@@ -23,12 +21,11 @@ namespace SignInCheckIn.Services
         public ChildSigninService(IChildSigninRepository childSigninRepository, IConfigRepository configRepository, IEventRepository eventRepository, IGroupRepository groupRepository)
         {
             _childSigninRepository = childSigninRepository;
-            _configRepository = configRepository;
             _eventRepository = eventRepository;
             _groupRepository = groupRepository;
 
-            _defaultEarlyCheckinPeriod = int.Parse(_configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
-            _defaultLateCheckinPeriod = int.Parse(_configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
+            _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
+            _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
@@ -38,9 +35,9 @@ namespace SignInCheckIn.Services
             var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
             var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
 
-            var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(r) == true).ToList();
+            var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(r)).ToList();
 
-            if (!(currentEvents).Any())
+            if (!currentEvents.Any())
             {
                 throw new Exception("No current events for site");
             }
@@ -67,44 +64,35 @@ namespace SignInCheckIn.Services
                 throw new Exception("Sign-In Not Available For Event " + mpEventDto.EventId);
             }
 
-            // get groups for the participant
+            // Get groups that are configured for the event
             var eventGroupsForEvent = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
 
-            List<MpEventParticipantDto> mpEventParticipantDtoList = new List<MpEventParticipantDto>();
-
-            // Status ID of 3 = "Attended"
-            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
-            {
-                // get groups for participant by participant id
-                var groupIds = _groupRepository.GetGroupIdByParticipantId(participant.ParticipantId);
+            var mpEventParticipantDtoList = (from participant in participantEventMapDto.Participants.Where(r => r.Selected)
+                // Get groups for the participant
+                let groupIds = _groupRepository.GetGroupsForParticipantId(participant.ParticipantId)
 
                 // TODO: Gracefully handle exception for mix of valid and invalid signins
-                var eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g.Id));
+                let eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g.Id))
 
-                MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
-                {
-                    EventId = participantEventMapDto.CurrentEvent.EventId,
-                    ParticipantId = participant.ParticipantId,
-                    ParticipantStatusId = 3,
-                    TimeIn = DateTime.Now,
-                    OpportunityId = null,
-                    RoomId = eventGroup.RoomReservation.RoomId
-                };
+                select
+                    new MpEventParticipantDto
+                    {
+                        EventId = participantEventMapDto.CurrentEvent.EventId,
+                        ParticipantId = participant.ParticipantId,
+                        ParticipantStatusId = 3, // Status ID of 3 = "Attended"
+                        TimeIn = DateTime.Now,
+                        OpportunityId = null,
+                        RoomId = eventGroup.RoomReservation.RoomId
+                    }).ToList();
 
-                mpEventParticipantDtoList.Add(mpEventParticipantDto);
-            }
 
             var response = new ParticipantEventMapDto
             {
-                CurrentEvent = participantEventMapDto.CurrentEvent
+                CurrentEvent = participantEventMapDto.CurrentEvent,
+                Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList()
             };
 
-            response.Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList();
-
-            foreach (var item in response.Participants)
-            {
-                item.Selected = true;
-            }
+            response.Participants.ForEach(p => p.Selected = true);
 
             return response;
         }
@@ -115,12 +103,7 @@ namespace SignInCheckIn.Services
             var beginSigninWindow = mpEventDto.EventStartDate.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
             var endSigninWindow = mpEventDto.EventStartDate.AddMinutes(mpEventDto.LateCheckinPeriod ?? _defaultLateCheckinPeriod);
 
-            if (!(DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow))
-            {
-                return false;
-            }
-
-            return true;
+            return DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow;
         }
     }
 }

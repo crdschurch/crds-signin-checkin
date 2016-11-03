@@ -14,7 +14,6 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly List<string> _groupColumns;
         private readonly List<string> _groupAttributeColumns;
         private readonly IApplicationConfiguration _applicationConfiguration;
-        //private readonly List<string> _groupParticipantColumns 
 
         public GroupRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IApplicationConfiguration applicationConfiguration)
         {
@@ -88,11 +87,12 @@ namespace MinistryPlatform.Translation.Repositories
             return response;
         }
 
-        public List<MpGroupDto> GetGroupIdByParticipantId(int participantId)
+        public List<MpGroupDto> GetGroupsForParticipantId(int participantId)
         {
             var token = _apiUserRepository.GetToken();
 
-            var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token).SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID]");
+            var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                .SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID]");
 
             return mpGroupDtos;
         } 
