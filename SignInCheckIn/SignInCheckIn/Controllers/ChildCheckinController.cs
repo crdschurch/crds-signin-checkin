@@ -35,8 +35,8 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id is Invalid");
                 }
 
-                var children = _childCheckinService.GetChildrenForCurrentEventAndRoom(siteId, roomId);
-                return Ok(children);
+                //var children = _childCheckinService.GetChildrenForCurrentEventAndRoom(siteId, roomId);
+                return Ok(/*children*/);
             }
             catch (Exception e)
             {
