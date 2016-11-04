@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignInCheckIn", "SignInCheckIn\SignInCheckIn.csproj", "{178426A1-78F0-456F-B3D8-EAEC78A9F348}"
 EndProject
@@ -12,6 +12,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinistryPlatform.Translation", "MinistryPlatform.Translation\MinistryPlatform.Translation.csproj", "{9CA5C91A-96E5-4968-B4CE-213B581B33F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crossroads.Utilities", "Crossroads.Utilities\Crossroads.Utilities.csproj", "{837BC104-F8ED-4C38-A441-D1F5DC1E0F44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LocalContent", "LocalContent", "{A5AB6396-9297-4F50-870A-CD5BB5047EF1}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Users\JP Cleaver\Documents\Visual Studio 2015\Projects\ITextSharpTest\DefaultLabel.pdf = ..\..\Users\JP Cleaver\Documents\Visual Studio 2015\Projects\ITextSharpTest\DefaultLabel.pdf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
