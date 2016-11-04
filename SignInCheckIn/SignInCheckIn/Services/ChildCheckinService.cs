@@ -9,14 +9,14 @@ using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Services
 {
-    public class ChildSigninService : IChildSigninService
+    public class ChildCheckinService : IChildCheckinService
     {
         private readonly IChildSigninRepository _childSigninRepository;
         private readonly IEventRepository _eventRepository;
         private readonly IEventService _eventService;
         private readonly IGroupRepository _groupRepository;
 
-        public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, IGroupRepository groupRepository, IEventService eventService)
+        public ChildCheckinService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, IGroupRepository groupRepository, IEventService eventService)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -24,7 +24,7 @@ namespace SignInCheckIn.Services
             _eventService = eventService;
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
+        public ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int siteId, int roomId)
         {
             var eventDto = _eventService.GetCurrentEventForSite(siteId);
             var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
