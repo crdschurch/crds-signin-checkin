@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { CookieService } from 'angular2-cookie/core';
+import { CookieService, CookieOptions } from 'angular2-cookie/core';
 import { HttpClientService } from '../shared/services';
 import { MachineConfiguration } from './machine-configuration';
 
 
 @Injectable()
 export class SetupService {
+  private persistentCookieOptions: CookieOptions;
+
   constructor(private http: HttpClientService, private cookieService: CookieService) {
+    this.persistentCookieOptions = new CookieOptions();
+    // Maximum expiration date for a cookie, to avoid the 2038 bug, is 2038-01-19 04:14:07
+    this.persistentCookieOptions.expires = new Date(2038, 0, 19, 4, 14, 7);
   }
 
   getThisMachineConfiguration() {
@@ -35,7 +40,7 @@ export class SetupService {
   }
 
   setMachineIdConfigCookie(guid: string) {
-    this.cookieService.putObject(MachineConfiguration.COOKIE_NAME_ID, guid);
+    this.cookieService.putObject(MachineConfiguration.COOKIE_NAME_ID, guid, this.persistentCookieOptions);
   }
 
   getMachineIdConfigCookie(): any {
