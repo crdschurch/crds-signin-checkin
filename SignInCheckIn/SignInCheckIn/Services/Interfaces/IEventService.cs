@@ -9,5 +9,7 @@ namespace SignInCheckIn.Services.Interfaces
         List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site);
 
         EventDto GetEvent(int eventId);
+        EventDto GetCurrentEventForSite(int siteId);
+        Boolean CheckEventTimeValidity(EventDto mpEventDto);
     }
 }

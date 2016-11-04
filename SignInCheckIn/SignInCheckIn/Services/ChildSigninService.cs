@@ -13,38 +13,22 @@ namespace SignInCheckIn.Services
     {
         private readonly IChildSigninRepository _childSigninRepository;
         private readonly IEventRepository _eventRepository;
+        private readonly IEventService _eventService;
         private readonly IGroupRepository _groupRepository;
 
-        private readonly int _defaultEarlyCheckinPeriod;
-        private readonly int _defaultLateCheckinPeriod;
-
-        public ChildSigninService(IChildSigninRepository childSigninRepository, IConfigRepository configRepository, IEventRepository eventRepository, IGroupRepository groupRepository)
+        public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, IGroupRepository groupRepository, IEventService eventService)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
             _groupRepository = groupRepository;
-
-            _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
-            _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
+            _eventService = eventService;
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
         {
-            // look between midnights on the current day
-            var eventOffsetStartString = DateTime.Now.ToShortDateString();
-            var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
-            var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
-
-            var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(r)).ToList();
-
-            if (!currentEvents.Any())
-            {
-                throw new Exception("No current events for site");
-            }
-
+            var eventDto = _eventService.GetCurrentEventForSite(siteId);
             var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
-            var eventDto = Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
 
             ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
             {
@@ -57,11 +41,11 @@ namespace SignInCheckIn.Services
 
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
-            var mpEventDto = _eventRepository.GetEventById(participantEventMapDto.CurrentEvent.EventId);
+            var eventDto = _eventService.GetEvent(participantEventMapDto.CurrentEvent.EventId);
 
-            if (CheckEventTimeValidity(mpEventDto) == false)
+            if (_eventService.CheckEventTimeValidity(eventDto) == false)
             {
-                throw new Exception("Sign-In Not Available For Event " + mpEventDto.EventId);
+                throw new Exception("Sign-In Not Available For Event " + eventDto.EventId);
             }
 
             // Get groups that are configured for the event
@@ -95,15 +79,6 @@ namespace SignInCheckIn.Services
             response.Participants.ForEach(p => p.Selected = true);
 
             return response;
-        }
-
-        private bool CheckEventTimeValidity(MpEventDto mpEventDto)
-        {
-            // use the event's checkin period if available, otherwise default to the mp config values
-            var beginSigninWindow = mpEventDto.EventStartDate.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
-            var endSigninWindow = mpEventDto.EventStartDate.AddMinutes(mpEventDto.LateCheckinPeriod ?? _defaultLateCheckinPeriod);
-
-            return DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow;
         }
     }
 }

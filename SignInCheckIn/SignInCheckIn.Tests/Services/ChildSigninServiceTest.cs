@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Components.DictionaryAdapter;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
 using SignInCheckIn.App_Start;
 using SignInCheckIn.Services;
+using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Tests.Services
 {
     public class ChildSigninServiceTest
     {
         private Mock<IChildSigninRepository> _childCheckinRepository;
-        private Mock<IConfigRepository> _configRepository;
         private Mock<IEventRepository> _eventRepository;
         private Mock<IGroupRepository> _groupRepository;
+        private Mock<IEventService> _eventService;
 
         private ChildSigninService _fixture;
 
@@ -26,30 +26,11 @@ namespace SignInCheckIn.Tests.Services
             AutoMapperConfig.RegisterMappings();
 
             _childCheckinRepository = new Mock<IChildSigninRepository>();
-            _configRepository = new Mock<IConfigRepository>();
             _eventRepository = new Mock<IEventRepository>();
             _groupRepository = new Mock<IGroupRepository>();
+            _eventService = new Mock<IEventService>();
 
-            MpConfigDto mpConfigDtoEarly = new MpConfigDto
-            {
-                ApplicationCode = "COMMON",
-                ConfigurationSettingId = 1,
-                KeyName = "DefaultEarlyCheckIn",
-                Value = "60"
-            };
-
-            MpConfigDto mpConfigDtoLate = new MpConfigDto
-            {
-                ApplicationCode = "COMMON",
-                ConfigurationSettingId = 1,
-                KeyName = "DefaultLateCheckIn",
-                Value = "60"
-            };
-
-            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
-            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
-
-            _fixture = new ChildSigninService(_childCheckinRepository.Object, _configRepository.Object, _eventRepository.Object, _groupRepository.Object);
+            _fixture = new ChildSigninService(_childCheckinRepository.Object,_eventRepository.Object, _groupRepository.Object, _eventService.Object);
         }
 
         [Test]

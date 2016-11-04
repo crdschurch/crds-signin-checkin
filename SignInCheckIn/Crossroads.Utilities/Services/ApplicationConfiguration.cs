@@ -20,6 +20,8 @@ namespace Crossroads.Utilities.Services
         public int MinorChildId { get; }
         public string HouseHoldIdsThatCanCheckIn { get; }
 
+        public string MachineConfigDetails { get; }
+
         public ApplicationConfiguration(IConfigurationWrapper configurationWrapper)
         {
             AgesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubAgesAttributeTypeId");
@@ -38,6 +40,8 @@ namespace Crossroads.Utilities.Services
             AdultChildId = configurationWrapper.GetConfigIntValue("AdultChildId");
             MinorChildId = configurationWrapper.GetConfigIntValue("MinorChildId");
             HouseHoldIdsThatCanCheckIn = $"{HeadOfHouseholdId},{OtherAdultId},{AdultChildId}";
+
+            MachineConfigDetails = configurationWrapper.GetConfigValue("MachineConfigDetails");
         }
     }
 }
