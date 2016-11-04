@@ -92,8 +92,12 @@ describe('Setup Service', () => {
 
     it('should set and get a the machine id cookie', () => {
       const idCookieName = 'cookieName123';
+      spyOn(cookieService, 'putObject').and.callThrough();
       fixture.setMachineIdConfigCookie(idCookieName);
       expect(fixture.getMachineIdConfigCookie()).toEqual(idCookieName);
+      expect(cookieService.putObject).toHaveBeenCalledWith(MachineConfiguration.COOKIE_NAME_ID, idCookieName, jasmine.objectContaining({
+        'expires': new Date(2038, 0, 19, 4, 14, 7)
+      }));
     });
 
     it('should set and get a the machine id cookie', () => {
