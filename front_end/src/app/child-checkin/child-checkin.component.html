@@ -4,6 +4,9 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-xs-12 col-sm-5">
+          <ul class="stepper list-unstyled">
+            <li class="step-item step-single px-1 float-xs-left">{{getKioskDetails().RoomName}}</li>
+          </ul>
         </div>
         <div class="col-xs-12 col-sm-2 text-xs-center">
           <a [routerLink]="['/']" title="Home" class="hidden-xs-down" >

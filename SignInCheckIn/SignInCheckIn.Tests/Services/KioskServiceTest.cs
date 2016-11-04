@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -30,7 +26,7 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void TestGetKioskConfig()
         {
-            Guid testGuid = Guid.Parse("9c01a404-3ba8-4f4a-b7b1-2183e30addd1");
+            var testGuid = Guid.Parse("9c01a404-3ba8-4f4a-b7b1-2183e30addd1");
 
             var e = new MpKioskConfigDto
             {

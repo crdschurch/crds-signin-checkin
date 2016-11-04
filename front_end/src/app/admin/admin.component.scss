@@ -1,8 +1,6 @@
 @import '../../assets/scss/_variables.scss';
 
 admin {
-  background: white;
-
   .navbar {
     border-radius: 0px;
 
@@ -56,4 +54,12 @@ admin {
       color: #fff;
     }
   }
+}
+
+.gray-lighter {
+  background: $gray-lighter;
+}
+
+.white {
+  background: #fff;
 }

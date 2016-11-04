@@ -2,6 +2,7 @@
 
 import { TestBed, async, inject } from '@angular/core/testing';
 import { SetupService } from './setup.service';
+import { MachineConfiguration } from './machine-configuration';
 import { HttpClientService } from '../shared/services/http-client.service';
 import { Http, Response, RequestOptions, Headers, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
@@ -46,7 +47,7 @@ describe('Setup Service', () => {
         fixture.getThisMachineConfiguration().subscribe(
           machineConfig => {
             expect(machineConfig).toBeDefined();
-            expect(machineConfig).toEqual(machineConfigStub);
+            expect(machineConfig).toEqual(MachineConfiguration.fromJson(machineConfigStub));
           },
           error => {}
         );
@@ -91,8 +92,12 @@ describe('Setup Service', () => {
 
     it('should set and get a the machine id cookie', () => {
       const idCookieName = 'cookieName123';
+      spyOn(cookieService, 'putObject').and.callThrough();
       fixture.setMachineIdConfigCookie(idCookieName);
       expect(fixture.getMachineIdConfigCookie()).toEqual(idCookieName);
+      expect(cookieService.putObject).toHaveBeenCalledWith(MachineConfiguration.COOKIE_NAME_ID, idCookieName, jasmine.objectContaining({
+        'expires': new Date(2038, 0, 19, 4, 14, 7)
+      }));
     });
 
     it('should set and get a the machine id cookie', () => {

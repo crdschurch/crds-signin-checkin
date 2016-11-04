@@ -4,7 +4,8 @@ export class MachineConfiguration {
   public static COOKIE_NAME_DETAILS = 'machine_config_details';
 
   private KIOSK_TYPE = {
-    SIGN_IN: 1
+    SIGN_IN: 1,
+    ROOM_CHECKIN: 2
   };
 
   KioskConfigId: number;
@@ -15,6 +16,7 @@ export class MachineConfiguration {
   LocationId: number;
   CongregationId: number;
   RoomId: number;
+  RoomName: string;
   StartDate: string;
   EndDate: string;
 
@@ -32,6 +34,7 @@ export class MachineConfiguration {
     machineConfig.LocationId = json.LocationId;
     machineConfig.CongregationId = json.CongregationId;
     machineConfig.RoomId = json.RoomId;
+    machineConfig.RoomName = json.RoomName;
     machineConfig.StartDate = json.StartDate;
     machineConfig.EndDate = json.EndDate;
     return machineConfig;
@@ -39,5 +42,9 @@ export class MachineConfiguration {
 
   public isTypeSignIn(): boolean {
     return this.KioskTypeId === this.KIOSK_TYPE.SIGN_IN;
+  }
+
+  public isTypeRoomCheckin(): boolean {
+    return this.KioskTypeId === this.KIOSK_TYPE.ROOM_CHECKIN;
   }
 }
