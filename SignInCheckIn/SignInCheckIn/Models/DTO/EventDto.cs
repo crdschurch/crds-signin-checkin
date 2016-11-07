@@ -10,6 +10,7 @@ namespace SignInCheckIn.Models.DTO
         public DateTime EventEndDate { get; set; }
         public string EventType { get; set; }
         public string EventSite { get; set; }
+        public int EventSiteId { get; set; }
         public int? EarlyCheckinPeriod { get; set; }
         public int? LateCheckinPeriod { get; set; }
     }

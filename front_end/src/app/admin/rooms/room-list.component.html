@@ -24,11 +24,11 @@
               </span>
             </button>
             <ul dropdownMenu role="menu" aria-labelledby="single-button" class="dropdown-menu-right">
-              <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-              <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
-              <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
-              <li class="divider dropdown-divider"></li>
-              <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
+              <li role="menuitem"><a class="dropdown-item" (click)="okToImportOrReset($event, 'import')">Import Event Settings</a></li>
+              <li role="menuitem"><a class="dropdown-item" (click)="okToImportOrReset($event, 'reset')">Reset Event Settings</a></li>
+              <!-- TODO: Can add separator like this -->
+              <!-- li class="divider dropdown-divider"></li -->
+              <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
             </ul>
           </div>
         </div>

@@ -4,6 +4,7 @@ export class Event {
   EventStartDate: string;
   EventType: string;
   EventSite: string;
+  EventSiteId: number;
 
   static fromJson(json: any): Event {
     let e = new Event();
@@ -12,6 +13,7 @@ export class Event {
     e.EventStartDate = json.EventStartDate;
     e.EventType = json.EventType;
     e.EventSite = json.EventSite;
+    e.EventSiteId = json.EventSiteId;
     return e;
   }
 
