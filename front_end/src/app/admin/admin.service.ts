@@ -5,6 +5,7 @@ import { RequestOptions, URLSearchParams } from '@angular/http';
 import * as moment from 'moment';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
+import { SetupService } from '../setup/setup.service';
 import { Event } from './events/event';
 import { Room } from './rooms/room';
 
@@ -12,8 +13,9 @@ import { Room } from './rooms/room';
 export class AdminService {
   private roomGroupsUpdateEmitter: EventEmitter<Room>;
   private roomGroupsUpdateObserver: Observable<Room>;
+  site: number;
 
-  constructor(private http: HttpClientService) {
+  constructor(private http: HttpClientService, private setupService: SetupService) {
     this.configureUpdateRoomGroupsEmitterAndObserver();
   }
 
@@ -24,8 +26,9 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  getEvents(startDate: any, endDate: any, site: number) {
+  getEvents(startDate: any, endDate: any, site?: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
+    if (!site) { site = this.getSite() };
     let formattedStartDate = moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
     let formattedEndDate = moment(endDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
     let options = new RequestOptions({
@@ -61,6 +64,12 @@ export class AdminService {
     body.EventId = eventId;
     body.RoomId = roomId;
     this.roomGroupsUpdateEmitter.emit(body);
+  }
+
+  private getSite(): number {
+    let setupCookie = this.setupService.getMachineDetailsConfigCookie();
+    // default to Oakley if setup cookie is not present
+    return setupCookie && setupCookie.CongregationId ? setupCookie.CongregationId : 1;
   }
 
   private updateRoomGroupsInternal(room: Room) {
