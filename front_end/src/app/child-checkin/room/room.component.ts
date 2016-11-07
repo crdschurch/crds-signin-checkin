@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
+import { Child } from '../../shared/models/child';
+import { ChildCheckinService } from '../child-checkin.service';
+
 @Component({
   selector: 'room',
   templateUrl: 'room.component.html',
@@ -12,9 +15,20 @@ export class RoomComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
   @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
 
-  constructor() {}
+  private children: Array<Child> = [];
+
+  constructor(private childCheckinService: ChildCheckinService) {}
 
   ngOnInit() {
+    this.childCheckinService.getChildrenForRoom(1820, 4525342).subscribe((children) => this.children = children);
+  }
+
+  checkedIn(): Array<Child> {
+    return this.children.filter( (obj: Child) => { return obj.checkedIn(); } );
+  }
+
+  signedIn(): Array<Child> {
+    return this.children.filter( (obj: Child) => { return !obj.checkedIn(); } );
   }
 
   public showNumberSearchModal():void {
