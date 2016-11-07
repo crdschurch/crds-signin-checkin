@@ -47,12 +47,10 @@ export class RoomListComponent implements OnInit {
     this.getData();
   }
 
-  public okToImportOrReset($event: MouseEvent, target: string): void {
+  public goToImportOrReset(target: string): void {
     if (this.event && moment(this.event.EventStartDate).isBefore(moment())) {
       this.rootService.announceEvent('echeckCantImportToPastEvent');
       return;
-      // $event.preventDefault();
-      // $event.stopPropagation();
     }
 
     this.router.navigate([`/admin/events/${this.eventId}/${target}`]);
