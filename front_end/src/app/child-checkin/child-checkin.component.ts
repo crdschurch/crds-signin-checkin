@@ -69,7 +69,7 @@ export class ChildCheckinComponent implements OnInit {
   public ngOnInit() {
     this.getData();
     this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
-    this.thisSiteName = this.getKioskDetails().CongregationName;
+    this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
   }
 
   public showServiceSelectModal() {
