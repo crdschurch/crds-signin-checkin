@@ -19,8 +19,8 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [Route("checkin/children/{roomId}")]
-        public IHttpActionResult GetCheckedInChildrenForEventAndRoom(int roomId, int? eventId)
+        [Route("checkin/children/{roomId:int}")]
+        public IHttpActionResult GetCheckedInChildrenForEventAndRoom(int roomId, [FromUri(Name = "eventId")] int? eventId = null)
         {
             try
             {
@@ -30,9 +30,9 @@ namespace SignInCheckIn.Controllers
                     siteId = int.Parse(Request.Headers.GetValues("Crds-Site-Id").First());
                 }
 
-                if (siteId == 0)
+                if (siteId == 0 && eventId == null)
                 {
-                    throw new Exception("Site Id is Invalid");
+                    throw new Exception("Site Id or Event Id is required");
                 }
 
                 var children = _childCheckinService.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventId);
