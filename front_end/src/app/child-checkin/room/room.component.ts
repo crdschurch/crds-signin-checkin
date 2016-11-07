@@ -1,7 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-import { AdminService } from '../../admin/admin.service';
-import { Event } from '../../admin/events/event';
+import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 
 @Component({
@@ -11,28 +8,8 @@ import * as moment from 'moment';
 })
 
 export class RoomComponent implements OnInit {
-  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
-  @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
-  todaysEvents: Event[];
-
-  constructor(private adminService: AdminService) { }
-
+  // constructor(private adminService: AdminService) { }
+  //
   ngOnInit() {
-    let today = new Date();
-    this.adminService.getEvents(today, today).subscribe(
-      events => {
-        console.log("e", events)
-        this.todaysEvents = events;
-      },
-      error => { console.error(error); }
-    );
-  }
-
-  public showServiceSelectModal() {
-    this.serviceSelectModal.show();
-  }
-
-  public showChildDetailModal() {
-    this.childDetailModal.show();
   }
 }
