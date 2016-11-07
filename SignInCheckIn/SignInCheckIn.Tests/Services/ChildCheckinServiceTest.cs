@@ -116,8 +116,19 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void TestCheckinChildrenForCurrentEventAndRoom()
         {
-            _childCheckinRepository.Setup(m => m.CheckinChildrenForCurrentEventAndRoom(It.IsAny<bool>(), It.IsAny<int>()));
-            _fixture.CheckinChildrenForCurrentEventAndRoom(true, 123);
+            var dto = new ParticipantDto
+            {
+                ParticipantId = 12,
+                ContactId = 1443,
+                HouseholdPositionId = 2,
+                FirstName = "First1",
+                LastName = "Last1",
+                DateOfBirth = new DateTime(),
+                ParticipationStatusId = 3
+            };
+
+            _childCheckinRepository.Setup(m => m.CheckinChildrenForCurrentEventAndRoom(It.IsAny<int>(), It.IsAny<int>()));
+            _fixture.CheckinChildrenForCurrentEventAndRoom(dto);
             _childCheckinRepository.VerifyAll();
         }
     }

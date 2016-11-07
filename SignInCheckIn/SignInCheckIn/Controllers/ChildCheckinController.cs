@@ -47,13 +47,13 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [Route("checkin/event/participant/{eventParticipantId}/{checkIn}")]
-        public IHttpActionResult CheckinChildrenForCurrentEventAndRoom(bool checkIn, int eventParticipantId)
+        [Route("checkin/event/participant")]
+        public IHttpActionResult CheckinChildrenForCurrentEventAndRoom(ParticipantDto participant)
         {
             try
             {
-                _childCheckinService.CheckinChildrenForCurrentEventAndRoom(checkIn, eventParticipantId);
-                return Ok();
+                var child = _childCheckinService.CheckinChildrenForCurrentEventAndRoom(participant);
+                return Ok(child);
             }
             catch (Exception e)
             {
