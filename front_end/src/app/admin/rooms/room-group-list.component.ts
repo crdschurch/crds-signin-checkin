@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { AdminService } from '../admin.service';
 import { HeaderService } from '../header/header.service';
@@ -9,8 +9,7 @@ import { Event } from '../events/event';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
-  styleUrls: ['room-group-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['room-group-list.component.scss']
 })
 export class RoomGroupListComponent implements OnInit {
   groups: Group[];

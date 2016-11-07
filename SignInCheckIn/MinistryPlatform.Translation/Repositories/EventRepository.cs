@@ -55,9 +55,9 @@ namespace MinistryPlatform.Translation.Repositories
                 "Congregation_ID_Table.Congregation_Name"
             };
 
-            var startTimeString = startDate.ToShortDateString();
-            var endTimeString = endDate.ToShortDateString();
-
+            var startTimeString = startDate.ToString();
+            // make sure end time is end of day
+            var endTimeString = endDate.AddHours(23).AddMinutes(59).AddSeconds(59).ToString();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>($"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}", columnList);
         }
