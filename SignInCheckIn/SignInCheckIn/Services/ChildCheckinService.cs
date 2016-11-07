@@ -34,5 +34,10 @@ namespace SignInCheckIn.Services
 
             return participantEventMapDto;
         }
+
+        public void CheckinChildrenForCurrentEventAndRoom(bool checkIn, int eventParticipantId)
+        {
+            _childCheckinRepository.CheckinChildrenForCurrentEventAndRoom(checkIn, eventParticipantId);
+        }
     }
 }

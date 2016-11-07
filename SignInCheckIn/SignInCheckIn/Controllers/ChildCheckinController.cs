@@ -44,5 +44,22 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpPut]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("checkin/event/participant/{eventParticipantId}/{checkIn}")]
+        public IHttpActionResult CheckinChildrenForCurrentEventAndRoom(bool checkIn, int eventParticipantId)
+        {
+            try
+            {
+                _childCheckinService.CheckinChildrenForCurrentEventAndRoom(checkIn, eventParticipantId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Checking in Children", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }

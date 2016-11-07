@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -14,6 +13,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private ChildCheckinRepository _fixture;
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
+        private Mock<IApplicationConfiguration> _applicationConfiguration;
 
         private List<string> _getEventParticipantColumns;
 
@@ -22,7 +22,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _ministryPlatformRestRepository = new Mock<IMinistryPlatformRestRepository>(MockBehavior.Strict);
-            _fixture = new ChildCheckinRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
+            _applicationConfiguration = new Mock<IApplicationConfiguration>(MockBehavior.Strict);
+            _fixture = new ChildCheckinRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
 
             _getEventParticipantColumns = new List<string>
             {
@@ -72,6 +73,19 @@ namespace MinistryPlatform.Translation.Test.Repositories
             Assert.AreEqual(result[0].FirstName, participants[0].FirstName);
             Assert.AreEqual(result[0].LastName, participants[0].LastName);
             Assert.AreEqual(result[0].ParticipationStatusId, participants[0].ParticipationStatusId);
+        }
+
+        [Test]
+        public void TestCheckinChildrenForCurrentEventAndRoom()
+        {
+            _applicationConfiguration.Setup(mocked => mocked.CheckedInParticipationStatusId).Returns(2);
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UpdateRecord("Event_Participants", It.IsAny<int>(), It.IsAny<Dictionary<string, object>>()));
+
+            _fixture.CheckinChildrenForCurrentEventAndRoom(true, 123);
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
         }
     }
 }

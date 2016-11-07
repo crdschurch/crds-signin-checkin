@@ -112,5 +112,13 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(mpParticipantsDto[0].ContactId, result.Participants[0].ContactId);
             Assert.AreEqual(result.CurrentEvent.EventId, eventDto.EventId);
         }
+
+        [Test]
+        public void TestCheckinChildrenForCurrentEventAndRoom()
+        {
+            _childCheckinRepository.Setup(m => m.CheckinChildrenForCurrentEventAndRoom(It.IsAny<bool>(), It.IsAny<int>()));
+            _fixture.CheckinChildrenForCurrentEventAndRoom(true, 123);
+            _childCheckinRepository.VerifyAll();
+        }
     }
 }
