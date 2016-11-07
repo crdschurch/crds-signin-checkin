@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
-using Crossroads.Utilities.Services.Interfaces;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -9,13 +8,11 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
-        private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildCheckinRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IApplicationConfiguration applicationConfiguration)
+        public ChildCheckinRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository)
         {
             _apiUserRepository = apiUserRepository;
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
-            _applicationConfiguration = applicationConfiguration;
         }
 
         public List<MpParticipantDto> GetChildrenByEventAndRoom(int eventId, int roomId)
@@ -38,13 +35,13 @@ namespace MinistryPlatform.Translation.Repositories
                         SearchTable<MpParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Room_ID_Table.[Room_ID] = {roomId}", columnList);
         }
 
-        public void CheckinChildrenForCurrentEventAndRoom(bool checkIn, int eventParticipantId)
+        public void CheckinChildrenForCurrentEventAndRoom(int checkinStatusId, int eventParticipantId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
-
-            var checkinStatusId = checkIn ? _applicationConfiguration.CheckedInParticipationStatusId : _applicationConfiguration.SignedInParticipationStatusId;
+            
             var updateObject = new Dictionary<string, object>
             {
+                { "Event_Participant_ID", eventParticipantId },
                 { "Participation_Status_ID_Table.Participation_Status_ID", checkinStatusId }
             };
 
