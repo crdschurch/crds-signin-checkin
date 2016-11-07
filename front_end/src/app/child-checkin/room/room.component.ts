@@ -20,7 +20,9 @@ export class RoomComponent implements OnInit {
   constructor(private childCheckinService: ChildCheckinService) {}
 
   ngOnInit() {
-    this.childCheckinService.getChildrenForRoom(1820, 4525342).subscribe((children) => this.children = children);
+    this.childCheckinService.getChildrenForRoom(1820, 4525342).subscribe((children) => {
+      this.children = children;
+    });
   }
 
   checkedIn(): Array<Child> {
@@ -29,6 +31,10 @@ export class RoomComponent implements OnInit {
 
   signedIn(): Array<Child> {
     return this.children.filter( (obj: Child) => { return !obj.checkedIn(); } );
+  }
+
+  toggleCheckIn(child: Child) {
+    this.childCheckinService.checkInChildren(child).subscribe();
   }
 
   public showNumberSearchModal():void {

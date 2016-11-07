@@ -1,21 +1,21 @@
 <div class="container-fluid text-xs-left pt-2 mt-2">
   <div class="row">
     <div class="col-xs-6">
-      <p class="checkin-header text-xs-center"><span class='h3'>3</span>&nbsp;&nbsp;children signed in</p>
+      <p class="checkin-header text-xs-center"><span class='h3'>{{signedIn().length}}</span>&nbsp;&nbsp;children signed in</p>
 
       <div class="list-group echeck-list-group signin-list-group">
         <a class="list-group-item" *ngFor="let child of signedIn()">
-          {{child.name()}}
+          <room-child [child]="child" (toggleCheckIn)="toggleCheckIn($event)"></room-child>
         </a>
       </div>
 
     </div>
     <div class="col-xs-6">
-      <p class="checkin-header text-xs-center"><span class='h3'>9</span>&nbsp;&nbsp;children checked in</p>
+      <p class="checkin-header text-xs-center"><span class='h3'>{{checkedIn().length}}</span>&nbsp;&nbsp;children checked in</p>
 
       <div class="list-group echeck-list-group checkin-list-group">
         <a class="list-group-item" *ngFor="let child of checkedIn()">
-          {{child.name()}}
+          <room-child [child]="child" (toggleCheckIn)="toggleCheckIn($event)"></room-child>
         </a>
       </div>
     </div>

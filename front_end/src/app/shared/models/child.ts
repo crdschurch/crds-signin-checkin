@@ -34,7 +34,7 @@ export class Child {
   }
 
   checkedIn(): boolean {
-    return this.ParticipantId === Constants.CheckedInParticipationStatusId;
+    return this.ParticipationStatusId === Constants.CheckedInParticipationStatusId;
   }
 
   toggleCheckIn(): void {
