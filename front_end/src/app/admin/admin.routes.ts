@@ -14,7 +14,7 @@ const adminRoutes: Routes = [
       { path: 'dashboard', redirectTo: 'events' },
       { path: 'sign-in', component: SignInComponent },
       { path: 'events', children: [...eventsRoutes] },
-      { path: 'guest-check-in', component: GuestCheckInComponent }
+      { path: 'guest-checkin', component: GuestCheckInComponent }
     ]
   }
 ];
