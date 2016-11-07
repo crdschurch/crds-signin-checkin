@@ -15,6 +15,7 @@ describe('AdminService', () => {
   let options: RequestOptions;
   let backend: MockBackend;
   let cookie: CookieService;
+  let setupServiceStub: any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -28,7 +29,7 @@ describe('AdminService', () => {
     http = new Http(backend, options);
     cookie = new CookieService(new CookieOptions());
     httpClientService = new HttpClientService(http, cookie);
-    fixture = new AdminService(httpClientService);
+    fixture = new AdminService(httpClientService, setupServiceStub);
   });
 
   it('should successfully get list of Events', () => {

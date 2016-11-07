@@ -28,7 +28,7 @@ export class AdminService {
 
   getEvents(startDate: any, endDate: any, site?: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
-    if (!site) { site = this.getSite() };
+    if (!site) { site = this.getSite(); }
     let formattedStartDate = moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
     let formattedEndDate = moment(endDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
     let options = new RequestOptions({
