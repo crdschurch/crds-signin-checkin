@@ -28,7 +28,6 @@ body {
 .main {
   flex: 1;
   color: #fff;
-  overflow: scroll;
   .card, .list-group {
     color: $body-color;
   }
@@ -69,7 +68,7 @@ body {
  }
 
 .sticky-footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   background: rgba(00,00,00,.2);
 }
