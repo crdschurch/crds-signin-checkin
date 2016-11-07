@@ -6,6 +6,7 @@ import { AdminComponent } from './admin.component';
 import { SignInComponent } from './sign-in';
 import { EventsModule } from './events/events.module';
 import { adminRouting } from './admin.routes';
+import { GuestCheckInComponent } from './guest-checkin';
 
 @NgModule({
   // the view classes that belong to this module.
@@ -13,7 +14,8 @@ import { adminRouting } from './admin.routes';
   // components, directives, and pipes.
   declarations: [
     AdminComponent,
-    SignInComponent
+    SignInComponent,
+    GuestCheckInComponent
   ],
   // other modules whose exported classes are needed
   // by component templates declared in this module.
