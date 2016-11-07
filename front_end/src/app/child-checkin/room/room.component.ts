@@ -21,6 +21,7 @@ export class RoomComponent implements OnInit {
     let today = new Date();
     this.adminService.getEvents(today, today).subscribe(
       events => {
+        console.log("e", events)
         this.todaysEvents = events;
       },
       error => { console.error(error); }

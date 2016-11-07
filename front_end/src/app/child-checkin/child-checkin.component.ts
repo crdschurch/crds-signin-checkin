@@ -1,6 +1,7 @@
 import { Component, Injectable, OnInit } from '@angular/core';
 import { SetupService } from '../setup/setup.service';
 import { MachineConfiguration } from '../setup/machine-configuration';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'child-checkin',
@@ -11,6 +12,8 @@ import { MachineConfiguration } from '../setup/machine-configuration';
 @Injectable()
 export class ChildCheckinComponent implements OnInit {
   private kioskDetails: MachineConfiguration;
+
+  clock = Observable.interval(1000).map(() => new Date());
 
   constructor(private setupService: SetupService) {
     this.kioskDetails = new MachineConfiguration();
