@@ -18,6 +18,8 @@ namespace SignInCheckIn.Models.DTO
 
         public int CongregationId { get; set; }
 
+        public string CongregationName { get; set; }
+
         public int RoomId { get; set; }
 
         public string RoomName { get; set; }
