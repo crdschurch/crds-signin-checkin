@@ -17,6 +17,7 @@ export class RoomGroupListComponent implements OnInit {
   roomId: string;
   private room: Room;
   private event: Event;
+  alternateRoomsSelected: boolean = false;
 
   constructor( private adminService: AdminService,
                private route: ActivatedRoute,
@@ -29,7 +30,6 @@ export class RoomGroupListComponent implements OnInit {
     this.roomId = this.route.snapshot.params['roomId'];
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
-        console.log("room", room)
         this.room = room;
       },
       error => console.error(error)
@@ -63,7 +63,14 @@ export class RoomGroupListComponent implements OnInit {
     this.location.back();
   }
 
+  openTabIfAlternateRoomsHash() {
+    if (this.route.snapshot.queryParams['tab'] === 'alternate-rooms') {
+      this.alternateRoomsSelected = true;
+    }
+  }
+
   ngOnInit() {
     this.getData();
+    this.openTabIfAlternateRoomsHash();
   }
 }

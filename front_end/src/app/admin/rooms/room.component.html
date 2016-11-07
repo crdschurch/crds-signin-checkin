@@ -33,4 +33,6 @@
 <td>{{room.SignedIn}}</td>
 <td>{{room.CheckedIn}}</td>
 <td>-</td>
-<td class="text-xs-right"><a class="btn btn-primary btn-sm">Alt Rooms</a></td>
+<td class="text-xs-right">
+  <a class="btn btn-primary btn-sm" routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
+</td>

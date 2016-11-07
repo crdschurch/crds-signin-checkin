@@ -202,7 +202,7 @@ namespace MinistryPlatform.Translation.Repositories
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
-            response.CheckForErrors(string.Format("Error searching {0}", GetTableName<T>()));
+            response.CheckForErrors(string.Format($"Error searching table {tableName}"));
 
             var content = JsonConvert.DeserializeObject<List<T>>(response.Content);
 

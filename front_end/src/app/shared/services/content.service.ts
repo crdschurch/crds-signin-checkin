@@ -15,18 +15,13 @@ export class ContentService {
 
   loadData() {
     // call for each type of content block used in the app
-    this.getContentBlocks('main').then(mainContentBlocks => {
-      this.contentBlocks = mainContentBlocks;
-
-      this.getContentBlocks('common').then(commonContentBlocks => {
-        this.contentBlocks = this.contentBlocks.concat(commonContentBlocks);
-      });
-
+    this.getContentBlocks().then(contentBlocks => {
+      this.contentBlocks = contentBlocks;
     });
   }
 
-  getContentBlocks (categoryName) {
-      const url = `${process.env.CRDS_CMS_ENDPOINT}/api/contentblock?category=` + categoryName;
+  getContentBlocks () {
+      const url = `${process.env.CRDS_CMS_ENDPOINT}/api/contentblock?category=main&category=common&category=echeck`;
       return this.http.get(url).toPromise()
                     .then(res => { return res.json().contentblocks; })
                     .catch(this.handleError);
@@ -35,13 +30,10 @@ export class ContentService {
   getToastContent (contentBlockTitle): Promise<any> {
     this.contentBlockTitle = contentBlockTitle;
     if (this.contentBlocks === undefined) {
-      return this.getContentBlocks('main').then(mainContentBlocks => {
+      return this.getContentBlocks().then(mainContentBlocks => {
         this.contentBlocks = mainContentBlocks;
 
-        return this.getContentBlocks('common').then(commonContentBlocks => {
-          this.contentBlocks = this.contentBlocks.concat(commonContentBlocks);
-          return this.displayToast(this.contentBlockTitle);
-        });
+        return this.displayToast(this.contentBlockTitle);
 
       });
     } else {

@@ -14,6 +14,7 @@ namespace SignInCheckIn.Tests.Services
     public class EventServiceTest
     {
         private Mock<IEventRepository> _eventRepository;
+        private Mock<IConfigRepository> _configRepository;
 
         private EventService _fixture;
 
@@ -23,7 +24,28 @@ namespace SignInCheckIn.Tests.Services
             AutoMapperConfig.RegisterMappings();
 
             _eventRepository = new Mock<IEventRepository>();
-            _fixture = new EventService(_eventRepository.Object);
+            _configRepository = new Mock<IConfigRepository>();
+
+            MpConfigDto mpConfigDtoEarly = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultEarlyCheckIn",
+                Value = "60"
+            };
+
+            MpConfigDto mpConfigDtoLate = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultLateCheckIn",
+                Value = "60"
+            };
+
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
+
+            _fixture = new EventService(_eventRepository.Object, _configRepository.Object);
         }
 
         [Test]
@@ -71,6 +93,72 @@ namespace SignInCheckIn.Tests.Services
             var result = _fixture.GetEvent(eventId);
             _eventRepository.VerifyAll();
             Assert.AreEqual(e.EventId, result.EventId);
+        }
+
+        [Test]
+        public void TestGetCurrentEventForSite()
+        {
+            var siteId = 1;
+            List<MpEventDto> events = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    CongregationId = 1,
+                    CongregationName = "Oakley",
+                    EarlyCheckinPeriod = 30,
+                    EventEndDate = DateTime.Now.AddDays(1),
+                    EventId = 1234567,
+                    EventStartDate = DateTime.Now,
+                    EventTitle = "test event",
+                    EventType = "type test",
+                    LateCheckinPeriod = 30,
+                    LocationId = 3
+                }
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
+            var result = _fixture.GetCurrentEventForSite(siteId);
+            _eventRepository.VerifyAll();
+
+            Assert.AreEqual(result.EventId, events[0].EventId);
+            Assert.AreEqual(result.EarlyCheckinPeriod, events[0].EarlyCheckinPeriod);
+            Assert.AreEqual(result.LateCheckinPeriod, events[0].LateCheckinPeriod);
+        }
+
+        [Test]
+        public void TestCheckEventTimeValidityTrue()
+        {
+            EventDto eventDto = new EventDto
+            {
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(1),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now,
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30
+            };
+
+            var result = _fixture.CheckEventTimeValidity(eventDto);
+            Assert.AreEqual(result, true);
+        }
+
+        [Test]
+        public void TestCheckEventTimeValidityFalse()
+        {
+            EventDto eventDto = new EventDto
+            {
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(2),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now.AddDays(1),
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30
+            };
+
+            var result = _fixture.CheckEventTimeValidity(eventDto);
+            Assert.AreEqual(result, false);
         }
     }
 }
