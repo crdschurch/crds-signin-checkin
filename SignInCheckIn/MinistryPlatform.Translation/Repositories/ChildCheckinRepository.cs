@@ -41,6 +41,7 @@ namespace MinistryPlatform.Translation.Repositories
             
             var updateObject = new Dictionary<string, object>
             {
+                { "Event_Participant_ID", eventParticipantId },
                 { "Participation_Status_ID_Table.Participation_Status_ID", checkinStatusId }
             };
 
