@@ -34,7 +34,6 @@ export class ChildCheckinService {
 
   checkInChildren(child: Child) {
     const url = `${this.url}/event/participant`;
-    debugger;
     child.toggleCheckIn();
 
     return this.http.put(url, child)
