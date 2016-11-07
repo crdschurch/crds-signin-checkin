@@ -1,12 +1,14 @@
-<div class="wrapper child-checkin-wrapper">
+<div class="wrapper child-signin-wrapper">
 
   <header class="header py-1">
     <div class="container-fluid">
       <div class="row">
         <div class="col-xs-12 col-sm-5">
-          <ul class="stepper list-unstyled">
-            <li class="step-item step-single px-1 float-xs-left">{{getKioskDetails().RoomName}}</li>
-          </ul>
+          <div class="in-room-meta">
+            <h5 class="mb-0">
+              Ones Room B (K120) • Capacity: 17
+            </h5>
+          </div>
         </div>
         <div class="col-xs-12 col-sm-2 text-xs-center">
           <a [routerLink]="['/']" title="Home" class="hidden-xs-down" >
