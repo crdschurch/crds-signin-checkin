@@ -1,9 +1,8 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async, inject } from '@angular/core/testing';
-import { SetupService } from './setup.service';
 import { MachineConfiguration } from '../shared/models';
-import { HttpClientService } from '../shared/services/http-client.service';
+import { HttpClientService, SetupService } from '../shared/services';
 import { Http, Response, RequestOptions, Headers, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';

@@ -16,26 +16,6 @@ export class AdminService {
     this.configureUpdateRoomGroupsEmitterAndObserver();
   }
 
-  getEvent(eventId: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}`;
-    return this.http.get(url)
-                    .map(res => Event.fromJson(res.json()))
-                    .catch(this.handleError);
-  }
-
-  getEvents(startDate: any, endDate: any, site?: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
-    if (!site) { site = this.getSite(); }
-    let formattedStartDate = moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    let formattedEndDate = moment(endDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    let options = new RequestOptions({
-        search: new URLSearchParams(`site=${site}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
-    });
-    return this.http.get(url, options)
-                    .map(res => res.json())
-                    .catch(this.handleError);
-  }
-
   getRooms(eventId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms`;
     return this.http.get(url)

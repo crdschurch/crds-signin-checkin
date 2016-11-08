@@ -4,7 +4,7 @@ import { RequestOptions, URLSearchParams } from '@angular/http';
 
 import * as moment from 'moment';
 import '../../rxjs-operators';
-import { HttpClientService, SetupService } from './';
+import { HttpClientService, SetupService } from '.';
 import { Event } from '../models';
 
 @Injectable()
@@ -20,6 +20,7 @@ export class ApiService {
   }
 
   getEvents(startDate: any, endDate: any, site?: number) {
+    console.log("this", this)
     const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
     if (!site) { site = this.getSite(); }
     let formattedStartDate = moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');

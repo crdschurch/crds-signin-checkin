@@ -32,13 +32,6 @@ describe('AdminService', () => {
     fixture = new AdminService(httpClientService, setupServiceStub);
   });
 
-  it('should successfully get list of Events', () => {
-    let responseObject = http.get('assets/mock-data/events-get.json');
-    fixture.getEvents('10-11-16', '10-15-16', 1).subscribe((res: Response) => {
-      expect(res.json()).toEqual(responseObject);
-    });
-  });
-
   it('should successfully get list of Rooms', () => {
     let responseObject = http.get('assets/mock-data/rooms-get.json');
     fixture.getRooms('4525323').subscribe((res: Response) => {
