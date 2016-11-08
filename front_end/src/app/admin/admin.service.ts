@@ -21,6 +21,13 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  getBumpingRooms() {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/rooms/site/${this.getSite()}`;
+    return this.http.get(url)
+                    .map(res => res.json())
+                    .catch(this.handleError);
+  }
+
   updateRoom(eventId: string, roomId: string, body: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.put(url, body)
@@ -76,6 +83,12 @@ export class AdminService {
     this.roomGroupsUpdateObserver.subscribe(room => {
       this.updateRoomGroupsInternal(room);
     });
+  }
+
+  private getSite(): number {
+    let setupCookie = this.setupService.getMachineDetailsConfigCookie();
+    // default to Oakley if setup cookie is not present
+    return setupCookie && setupCookie.CongregationId ? setupCookie.CongregationId : 1;
   }
 
   private handleError (error: any) {
