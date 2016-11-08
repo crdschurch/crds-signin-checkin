@@ -1,7 +1,6 @@
 import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-import { SetupService } from '../setup/setup.service';
-import { AdminService } from '../admin/admin.service';
+import { ApiService, SetupService } from '../shared/services';
 import { Event, MachineConfiguration } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
@@ -23,14 +22,14 @@ export class ChildCheckinComponent implements OnInit {
   todaysEvents: Event[];
   ready: boolean;
 
-  constructor(private setupService: SetupService, private adminService: AdminService) {
+  constructor(private setupService: SetupService, private apiService: ApiService) {
     this.kioskDetails = new MachineConfiguration();
     this.ready = false;
   }
 
   private getData() {
     let today = new Date();
-    this.adminService.getEvents(today, today).subscribe(
+    this.apiService.getEvents(today, today).subscribe(
       events => {
         this.todaysEvents = [];
         // transform to Event

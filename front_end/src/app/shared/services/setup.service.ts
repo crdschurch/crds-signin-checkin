@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
-import { HttpClientService } from '../shared/services';
-import { MachineConfiguration } from '../shared/models';
+import { HttpClientService } from './';
+import { MachineConfiguration } from '../models';
 
 
 @Injectable()

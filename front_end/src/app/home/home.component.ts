@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'angular2-cookie/core';
 import { Router } from '@angular/router';
-import { SetupService } from '../setup/setup.service';
+import { SetupService } from '../shared/services';
 import { MachineConfiguration } from '../shared/models';
 
 @Component({

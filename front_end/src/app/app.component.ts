@@ -1,8 +1,7 @@
 import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToasterModule, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
-import { ContentService, RootService } from './shared/services';
-import { SetupService } from './setup/setup.service';
+import { ContentService, RootService, SetupService } from './shared/services';
 
 @Component({
   selector: 'app-root',

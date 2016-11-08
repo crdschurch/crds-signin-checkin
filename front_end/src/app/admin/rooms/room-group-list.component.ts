@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { AdminService } from '../admin.service';
 import { HeaderService } from '../header/header.service';
 import { Group, Room, Event } from '../../shared/models';
+import { AdminService } from '../admin.service';
+import { ApiService } from '../../shared/services';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -17,7 +18,8 @@ export class RoomGroupListComponent implements OnInit {
   private event: Event;
   alternateRoomsSelected: boolean = false;
 
-  constructor( private adminService: AdminService,
+  constructor( private apiService: ApiService,
+               private adminService: AdminService,
                private route: ActivatedRoute,
                private headerService: HeaderService,
                private location: Location) {
@@ -32,7 +34,7 @@ export class RoomGroupListComponent implements OnInit {
       },
       error => console.error(error)
     );
-    this.adminService.getEvent(this.eventId).subscribe(
+    this.apiService.getEvent(this.eventId).subscribe(
       event => {
         this.event = event;
         this.headerService.announceEvent(event);

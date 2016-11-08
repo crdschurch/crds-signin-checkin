@@ -1,11 +1,9 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { RequestOptions, URLSearchParams } from '@angular/http';
-
 import * as moment from 'moment';
 import '../rxjs-operators';
-import { HttpClientService } from '../shared/services';
-import { SetupService } from '../setup/setup.service';
+import { HttpClientService, SetupService } from '../shared/services';
 import { Event, Room } from '../shared/models';
 
 @Injectable()
