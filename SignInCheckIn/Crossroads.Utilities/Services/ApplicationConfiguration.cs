@@ -20,6 +20,8 @@ namespace Crossroads.Utilities.Services
         public int MinorChildId { get; }
         public string HouseHoldIdsThatCanCheckIn { get; }
 
+        public int SignedInParticipationStatusId { get; }
+        public int CheckedInParticipationStatusId { get; }
         public string MachineConfigDetails { get; }
 
         public ApplicationConfiguration(IConfigurationWrapper configurationWrapper)
@@ -41,6 +43,8 @@ namespace Crossroads.Utilities.Services
             MinorChildId = configurationWrapper.GetConfigIntValue("MinorChildId");
             HouseHoldIdsThatCanCheckIn = $"{HeadOfHouseholdId},{OtherAdultId},{AdultChildId}";
 
+            SignedInParticipationStatusId = configurationWrapper.GetConfigIntValue("SignedInParticipationStatusId");
+            CheckedInParticipationStatusId = configurationWrapper.GetConfigIntValue("CheckedInParticipationStatusId");
             MachineConfigDetails = configurationWrapper.GetConfigValue("MachineConfigDetails");
         }
     }
