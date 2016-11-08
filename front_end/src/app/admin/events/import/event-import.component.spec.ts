@@ -1,7 +1,7 @@
 import { EventImportComponent } from './event-import.component';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { AdminService } from '../../admin.service';
-import { Event } from '../../events/event';
+import { ApiService } from '../../../shared/services';
+import { Event } from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
 import { Observable } from 'rxjs';
 
@@ -13,7 +13,7 @@ describe('RoomListComponent', () => {
   let eventSiteId: 90210;
 
   let route: ActivatedRoute;
-  let adminService: AdminService;
+  let apiService: ApiService;
   let headerService: HeaderService;
 
   beforeEach(() => {
@@ -24,9 +24,9 @@ describe('RoomListComponent', () => {
       eventId: eventId
     };
 
-    adminService = <AdminService>jasmine.createSpyObj('adminService', ['getEvent', 'getEvents']);
-    headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
-    fixture = new EventImportComponent(route, adminService, headerService);
+    apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEvents']);
+    headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
+    fixture = new EventImportComponent(route, apiService, headerService);
     fixture.targetEvent = null;
     fixture.events = null;
     fixture.sourceEventDate = null;
@@ -41,13 +41,13 @@ describe('RoomListComponent', () => {
       targetEvent.EventId = eventId;
       targetEvent.EventSiteId = eventSiteId;
       targetEvent.EventStartDate = targetEventStartDate.toISOString();
-      (<jasmine.Spy>(adminService.getEvent)).and.returnValue(Observable.of(targetEvent));
+      (<jasmine.Spy>apiService.getEvent).and.returnValue(Observable.of(targetEvent));
 
       spyOn(fixture, 'changeSourceEventDate').and.callFake(() => { });
 
       fixture.ngOnInit();
 
-      expect(adminService.getEvent).toHaveBeenCalledWith(eventId);
+      expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
       expect(fixture.changeSourceEventDate).toHaveBeenCalled();
       expect(headerService.announceEvent).toHaveBeenCalledWith(targetEvent);
 
@@ -68,17 +68,16 @@ describe('RoomListComponent', () => {
       sourceEvents[1].EventStartDate = moment(sourceEventDate).add(8, 'days').toISOString();
       sourceEvents[2].EventId = 456;
       sourceEvents[2].EventStartDate = moment(sourceEventDate).subtract(7, 'days').toISOString();
-
-      (<jasmine.Spy>(adminService.getEvents)).and.returnValue(Observable.of(sourceEvents));
+      (<jasmine.Spy>apiService.getEvents).and.returnValue(Observable.of(sourceEvents));
 
       let targetEvent = new Event();
-      targetEvent.EventId = eventId;
+      targetEvent.EventId = eventId; 
       targetEvent.EventSiteId = eventSiteId;
       fixture.targetEvent = targetEvent;
 
       fixture.changeSourceEventDate(null);
 
-      expect(adminService.getEvents).toHaveBeenCalledWith(sourceEventDate.toDate(), sourceEventDate.toDate(), eventSiteId);
+      expect(apiService.getEvents).toHaveBeenCalledWith(sourceEventDate.toDate(), sourceEventDate.toDate(), eventSiteId);
       expect(fixture.events).toBeDefined();
       expect(fixture.events.length).toEqual(2);
       expect(fixture.events[0].EventId).toEqual(456);

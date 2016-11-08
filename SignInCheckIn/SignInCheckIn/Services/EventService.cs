@@ -27,7 +27,12 @@ namespace SignInCheckIn.Services
 
         public List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site)
         {
-            return Mapper.Map<List<MpEventDto>, List<EventDto>>(_eventRepository.GetEvents(startDate, endDate, site));
+            var events = Mapper.Map<List<MpEventDto>, List<EventDto>>(_eventRepository.GetEvents(startDate, endDate, site));
+            foreach (var eventDto in events)
+            {
+                eventDto.IsCurrentEvent = CheckEventTimeValidity(eventDto);
+            }
+            return events;
         }
 
         public EventDto GetEvent(int eventId)

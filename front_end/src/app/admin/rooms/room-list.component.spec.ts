@@ -1,8 +1,8 @@
 import { RoomListComponent } from './room-list.component';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { AdminService } from '../admin.service';
-import { Event } from '../events/event';
-import { Room } from './room';
+import { Event, Room } from '../../shared/models';
+import { ApiService } from '../../shared/services';
 import { HeaderService } from '../header/header.service';
 import { RootService } from '../../shared/services/root.service';
 import { Observable } from 'rxjs';
@@ -15,6 +15,7 @@ describe('RoomListComponent', () => {
 
   let route: ActivatedRoute;
 
+  let apiService: ApiService;
   let adminService: AdminService;
   let headerService: HeaderService;
   let router: Router;
@@ -28,11 +29,12 @@ describe('RoomListComponent', () => {
       eventId: eventId
     };
 
-    adminService = <AdminService>jasmine.createSpyObj('adminService', ['getRooms', 'getEvent']);
+    adminService = <AdminService>jasmine.createSpyObj('adminService', ['getRooms']);
+    apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent']);
     headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
     router = <Router>jasmine.createSpyObj('router', ['navigate']);
     rootService = <RootService>jasmine.createSpyObj('rootService', ['announceEvent']);
-    fixture = new RoomListComponent(route, adminService, headerService, router, rootService);
+    fixture = new RoomListComponent(route, adminService, apiService, headerService, router, rootService);
     fixture.event = new Event();
   });
 
@@ -45,7 +47,7 @@ describe('RoomListComponent', () => {
 
       let event = new Event();
       event.EventId = eventId;
-      (<jasmine.Spy>(adminService.getEvent)).and.returnValue(Observable.of(event));
+      (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
 
       fixture.eventId = null;
       fixture.rooms = null;
@@ -54,7 +56,7 @@ describe('RoomListComponent', () => {
       fixture.ngOnInit();
 
       expect(adminService.getRooms).toHaveBeenCalledWith(eventId);
-      expect(adminService.getEvent).toHaveBeenCalledWith(eventId);
+      expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
       expect(headerService.announceEvent).toHaveBeenCalledWith(event);
 
       expect(fixture.eventId).toEqual(eventId);

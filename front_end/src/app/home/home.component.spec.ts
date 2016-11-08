@@ -4,7 +4,7 @@ import { HomeComponent } from './home.component';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
-import { MachineConfiguration } from '../setup/machine-configuration';
+import { MachineConfiguration } from '../shared/models';
 
 let fixture: HomeComponent;
 let router: Router;
@@ -24,7 +24,7 @@ let setupServiceStub: any = {
   }
 };
 
-describe('Home Component', () => {
+describe('HomeComponent', () => {
 
   afterEach(() => {
     cookieService.removeAll();

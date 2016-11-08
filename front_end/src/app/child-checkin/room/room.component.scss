@@ -14,7 +14,7 @@
   height: 65vh;
   background: #fff;
   @include border-radius( $border-radius );
-  overflow-y: scroll;
+  overflow-y: auto;
 
   .move-child {
     background: red;

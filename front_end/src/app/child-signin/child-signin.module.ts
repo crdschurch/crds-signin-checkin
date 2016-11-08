@@ -7,6 +7,7 @@ import { AvailableChildrenModule } from './available-children';
 import { GuestComponent } from './guest';
 import { AssignmentComponent } from './assignment';
 import { childSigninRouting } from './child-signin.routes';
+import { MomentModule } from 'angular2-moment';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { childSigninRouting } from './child-signin.routes';
   imports: [
     SharedModule,
     SearchModule,
+    MomentModule,
     AvailableChildrenModule,
     childSigninRouting
   ],
