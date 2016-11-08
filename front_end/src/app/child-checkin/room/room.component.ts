@@ -15,7 +15,7 @@ export class RoomComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
   @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
 
-  private children: Array<Child> = [];
+  private _children: Array<Child> = [];
 
   constructor(private childCheckinService: ChildCheckinService) {}
 
@@ -35,6 +35,14 @@ export class RoomComponent implements OnInit {
 
   toggleCheckIn(child: Child) {
     this.childCheckinService.checkInChildren(child).subscribe();
+  }
+
+  get children(): Array<Child> {
+    return this._children;
+  }
+
+  set children(child: Array<Child>) {
+    this._children = child;
   }
 
   public showNumberSearchModal():void {
