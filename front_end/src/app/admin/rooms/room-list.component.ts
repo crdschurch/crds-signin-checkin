@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Room } from '../../shared/models';
+import { Event, Room } from '../../shared/models';
 import { AdminService } from '../admin.service';
 import { ApiService } from '../../shared/services';
 import { HeaderService } from '../header/header.service';

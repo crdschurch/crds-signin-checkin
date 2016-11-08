@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Event } from '../event';
+import { Event } from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
-import { AdminService } from '../../admin.service';
+import { ApiService } from '../../../shared/services';
 
 @Component({
   selector: '.event-reset',
@@ -14,14 +14,14 @@ export class EventResetComponent implements OnInit {
   targetEvent: Event;
 
   constructor(private route: ActivatedRoute,
-    private adminService: AdminService,
+    private apiService: ApiService,
     private headerService: HeaderService) {
   }
 
   ngOnInit(): void {
     let eventId = this.route.snapshot.params['eventId'];
 
-    this.adminService.getEvent(eventId).subscribe((event: Event) => {
+    this.apiService.getEvent(eventId).subscribe((event: Event) => {
       this.targetEvent = event;
       this.headerService.announceEvent(event);
     });
