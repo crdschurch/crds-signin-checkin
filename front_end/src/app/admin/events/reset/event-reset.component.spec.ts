@@ -1,7 +1,7 @@
 import { EventResetComponent } from './event-reset.component';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { AdminService } from '../../admin.service';
-import { Event } from '../../events/event';
+import { ApiService } from '../../../shared/services';
+import { Event} from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
 import { Observable } from 'rxjs';
 
@@ -12,7 +12,7 @@ describe('RoomListComponent', () => {
   let eventId: 54321;
 
   let route: ActivatedRoute;
-  let adminService: AdminService;
+  let apiService: ApiService;
   let headerService: HeaderService;
 
   beforeEach(() => {
@@ -23,9 +23,9 @@ describe('RoomListComponent', () => {
       eventId: eventId
     };
 
-    adminService = <AdminService>jasmine.createSpyObj('adminService', ['getEvent', 'getEvents']);
+    apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent', 'getEvents']);
     headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
-    fixture = new EventResetComponent(route, adminService, headerService);
+    fixture = new EventResetComponent(route, apiService, headerService);
     fixture.targetEvent = null;
   });
 
@@ -36,11 +36,11 @@ describe('RoomListComponent', () => {
       let targetEvent = new Event();
       targetEvent.EventId = eventId;
       targetEvent.EventStartDate = targetEventStartDate.toISOString();
-      (<jasmine.Spy>(adminService.getEvent)).and.returnValue(Observable.of(targetEvent));
+      (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(targetEvent));
 
       fixture.ngOnInit();
 
-      expect(adminService.getEvent).toHaveBeenCalledWith(eventId);
+      expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
       expect(headerService.announceEvent).toHaveBeenCalledWith(targetEvent);
 
       expect(fixture.targetEvent).toBe(targetEvent);

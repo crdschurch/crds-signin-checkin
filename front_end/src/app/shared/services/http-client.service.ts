@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { CookieService } from 'angular2-cookie/core';
-import { MachineConfiguration } from '../../setup/machine-configuration';
+import { User, MachineConfiguration } from '../models';
 import { Observable } from 'rxjs/Observable';
-
-import { User } from '../models/user';
 
 @Injectable()
 export class HttpClientService {

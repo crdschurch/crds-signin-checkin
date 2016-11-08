@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
+import { Component, OnInit } from '@angular/core';
+import * as moment from 'moment';
 
 import { Child } from '../../shared/models/child';
 import { ChildCheckinService } from '../child-checkin.service';
@@ -8,13 +8,10 @@ import { RootService } from '../../shared/services';
 @Component({
   selector: 'room',
   templateUrl: 'room.component.html',
-  styleUrls: ['room.component.scss', ]
+  styleUrls: ['room.component.scss' ]
 })
 
 export class RoomComponent implements OnInit {
-  @ViewChild('numberSearchModal') public numberSearchModal: ModalDirective;
-  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
-  @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
 
   private _children: Array<Child> = [];
 
@@ -52,16 +49,5 @@ export class RoomComponent implements OnInit {
   set children(child: Array<Child>) {
     this._children = child;
   }
-
-  public showNumberSearchModal(): void {
-    this.numberSearchModal.show();
-  }
-
-  public showServiceSelectModal(): void {
-    this.serviceSelectModal.show();
-  }
-
-  public showChildDetailModal(): void {
-    this.childDetailModal.show();
-  }
 }
+

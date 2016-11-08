@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { Http } from '@angular/http';
 import { Toast, BodyOutputType } from 'angular2-toaster/angular2-toaster';
-import { ContentBlock } from '../models/contentBlock';
+import { ContentBlock } from '../models';
 
 @Injectable()
 export class ContentService {
