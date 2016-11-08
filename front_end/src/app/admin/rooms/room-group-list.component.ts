@@ -6,6 +6,7 @@ import { HeaderService } from '../header/header.service';
 import { Group } from './group';
 import { Room } from './room';
 import { Event } from '../events/event';
+import { BumpingRule } from './bumping-rule';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -18,6 +19,8 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   alternateRoomsSelected: boolean = false;
+  bumpingRules: BumpingRule[];
+  availableRooms: Room[];
 
   constructor( private adminService: AdminService,
                private route: ActivatedRoute,
@@ -34,6 +37,7 @@ export class RoomGroupListComponent implements OnInit {
       },
       error => console.error(error)
     );
+
     this.adminService.getEvent(this.eventId).subscribe(
       event => {
         this.event = event;
@@ -41,6 +45,13 @@ export class RoomGroupListComponent implements OnInit {
       },
       error => console.error(error)
     );
+
+    this.adminService.getBumpingRules(this.eventId).subscribe(
+      room => {
+        this.room = room;
+      },
+      error => console.error(error)
+    ); 
   }
 
   getEvent(): Event {
@@ -72,5 +83,14 @@ export class RoomGroupListComponent implements OnInit {
   ngOnInit() {
     this.getData();
     this.openTabIfAlternateRoomsHash();
+  }
+
+  // update from components
+  roomSelected(roomId: string) {
+    // TODO: The stuff...pop from one list to the other
+  }
+
+  bumpingRuleSelected(bumpingRuleId: string) {
+    
   }
 }

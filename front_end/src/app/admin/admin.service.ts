@@ -7,6 +7,7 @@ import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
 import { Event } from './events/event';
 import { Room } from './rooms/room';
+import { BumpingRule } from './rooms/bumping-rule';
 
 @Injectable()
 export class AdminService {
@@ -66,7 +67,7 @@ export class AdminService {
   getBumpingRules(eventRoomId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/eventrooms/${eventRoomId}`;
     return this.http.get(url)
-                    .map(res => Room.fromJson(res.json()))
+                    .map(res => BumpingRule.fromJson(res.json()))
                     .catch(this.handleError);
   }
 

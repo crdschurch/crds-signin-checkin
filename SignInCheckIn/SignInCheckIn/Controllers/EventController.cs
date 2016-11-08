@@ -152,6 +152,7 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
+                // TODO - change to add from get - need to make sure the room has a reservation before creating the rule
                 var bumpingRuleList = _roomService.GetBumpingRulesByRoomId(eventRoomId);
                 return Ok(bumpingRuleList);
             }

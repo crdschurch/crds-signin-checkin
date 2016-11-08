@@ -153,8 +153,10 @@
                           <th></th>
                         </tr>
                       </thead>
+                      <!--<tr *ngFor="let someRoom of rooms; let i = index;" class="room" [room]="someRoom"></tr>-->
                       <tbody>
-                        <tr>
+                        <tr *ngFor="let someRule of bumpingRules; let i = index;"></tr>
+                        <!--<tr>
                           <td><span class="pl-1">&#9668;</span></td>
                           <td>Nursery B</td>
                           <td>K116</td>
@@ -168,8 +170,8 @@
                               </svg>
                             </span>
                           </td>
-                        </tr>
-                        <tr>
+                        </tr>-->
+                        <!--<tr>
                           <td><span class="pl-1">&#9668;</span></td>
                           <td>Nursery B</td>
                           <td>K116</td>
@@ -228,7 +230,7 @@
                             </span>
                           </td>
                           <td class="text-xs-center"></td>
-                        </tr>
+                        </tr>-->
                       </tbody>
                     </table>
                   </div>
