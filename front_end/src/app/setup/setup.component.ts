@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { SetupService } from './setup.service';
-import { RootService } from '../shared/services';
+import { RootService, SetupService } from '../shared/services';
 
 @Component({
   selector: 'setup',

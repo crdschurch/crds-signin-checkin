@@ -1,15 +1,14 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async, inject } from '@angular/core/testing';
-import { SetupService } from './setup.service';
-import { MachineConfiguration } from './machine-configuration';
-import { HttpClientService } from '../shared/services/http-client.service';
+import { MachineConfiguration } from '../shared/models';
+import { HttpClientService, SetupService } from '../shared/services';
 import { Http, Response, RequestOptions, Headers, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
 import { Observable } from 'rxjs/Observable';
 
-describe('Setup Service', () => {
+describe('SetupService', () => {
   let fixture: SetupService;
   let httpClientService: any;
   let cookieService: CookieService;

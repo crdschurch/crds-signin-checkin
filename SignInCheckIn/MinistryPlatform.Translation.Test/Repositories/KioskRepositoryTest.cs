@@ -27,16 +27,17 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _kioskConfigColumns = new List<string>
             {
                 "[Kiosk_Config_ID]",
-                "[_Kiosk_IDentifier]",
+                "[_Kiosk_Identifier]",
                 "[Kiosk_Name]",
                 "[Kiosk_Description]",
                 "[Kiosk_Type_ID]",
-                "[Location_ID]",
-                "[Congregation_ID]",
+                "cr_Kiosk_Configs.[Location_ID]",
+                "cr_Kiosk_Configs.[Congregation_ID]",
+                "Congregation_ID_Table.[Congregation_Name]",
                 "cr_Kiosk_Configs.[Room_ID]",
                 "Room_ID_Table.Room_Name",
-                "[Start_Date]",
-                "[End_Date]"
+                "cr_Kiosk_Configs.[Start_Date]",
+                "cr_Kiosk_Configs.[End_Date]"
             };
 
             _fixture = new KioskRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
@@ -58,7 +59,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpKioskConfigDto>($"[_Kiosk_Identifier]='{testGuid}' AND [End_Date] IS NULL", _kioskConfigColumns)).Returns(kioskConfigs);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpKioskConfigDto>($"[_Kiosk_Identifier]='{testGuid}' AND cr_Kiosk_Configs.[End_Date] IS NULL", _kioskConfigColumns)).Returns(kioskConfigs);
             var result = _fixture.GetMpKioskConfigByIdentifier(testGuid);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();

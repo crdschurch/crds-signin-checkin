@@ -1,11 +1,9 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-
 import { ChildSigninService } from '../child-signin.service';
-import { Child } from '../../shared/models/child';
 import { RootService } from '../../shared/services';
-import { EventParticipants } from '../../shared/models/eventParticipants';
+import { EventParticipants, Child } from '../../shared/models';
 
 @Component({
   selector: 'available-children',

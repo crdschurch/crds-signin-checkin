@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs/Observable';
-
 import { RoomComponent } from './room.component';
-import { Room } from './room';
+import { Room } from '../../shared/models';
 
 let fixture: RoomComponent;
 let adminServiceStub: any = {

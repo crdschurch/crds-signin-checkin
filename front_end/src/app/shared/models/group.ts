@@ -1,4 +1,4 @@
-import { Range } from './range';
+import { Range } from '.';
 
 export class Group {
   Id: number;
