@@ -52,7 +52,16 @@ describe('Child Checkin Component', () => {
           expect(fixture.selectedEvent.EventId).toEqual(event.EventId);
         });
       });
-
+    });
+  });
+  fdescribe('#selectEvent', () => {
+    beforeEach(() => {
+      adminService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
+      fixture = new ChildCheckinComponent(setupService, adminService);
+    });
+    it('changes selectedEvent property', () => {
+      fixture.selectEvent(event);
+      expect(fixture.selectedEvent.EventId).toEqual(event.EventId);
     });
   });
 });
