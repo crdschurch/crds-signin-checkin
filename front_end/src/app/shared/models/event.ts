@@ -5,6 +5,7 @@ export class Event {
   EventType: string;
   EventSite: string;
   IsCurrentEvent: boolean;
+  EventSiteId: number;
 
   static fromJson(json: any): Event {
     let e = new Event();
@@ -14,6 +15,7 @@ export class Event {
     e.EventType = json.EventType;
     e.EventSite = json.EventSite;
     e.IsCurrentEvent = json.IsCurrentEvent;
+    e.EventSiteId = json.EventSiteId;
     return e;
   }
 

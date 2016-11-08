@@ -3,7 +3,9 @@ import { SharedModule } from '../../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { EventImportComponent } from './import/event-import.component';
 import { EventListComponent } from './event-list.component';
+import { EventResetComponent } from './reset/event-reset.component';
 import { RoomListComponent } from '../rooms/room-list.component';
 import { RoomGroupListComponent } from '../rooms/room-group-list.component';
 import { RoomGroupComponent } from '../rooms/room-group.component';
@@ -13,7 +15,9 @@ import { eventsRouting } from './events.routes';
 
 @NgModule({
   declarations: [
+    EventImportComponent,
     EventListComponent,
+    EventResetComponent,
     RoomListComponent,
     RoomGroupListComponent,
     RoomGroupComponent,
@@ -26,7 +30,7 @@ import { eventsRouting } from './events.routes';
     MomentModule,
     ReactiveFormsModule
   ],
-  exports: []
+  exports: [ ]
 })
 
 export class EventsModule { }
