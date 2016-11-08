@@ -37,8 +37,16 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 text-xs-left">
-          <a class="btn btn-primary btn-block" (click)="showServiceSelectModal.show()">
-            Viewing: {{selectedEvent?.EventStartDate | amDateFormat :'dddd'}}&nbsp;{{selectedEvent?.EventStartDate | amDateFormat :'h:mma'}}
+          <a (click)="showServiceSelectModal.show()" class="btn btn-primary btn-block"  [ngClass]="{'disabled': !selectedEvent }">
+            <span [hidden]="ready">...</span>
+            <span [hidden]="!ready">
+              <span [hidden]="!selectedEvent">
+                Viewing: {{selectedEvent?.EventStartDate | amDateFormat :'dddd'}}&nbsp;{{selectedEvent?.EventStartDate | amDateFormat :'h:mma'}}
+              </span>
+              <span [hidden]="selectedEvent">
+                No Events Today
+              </span>
+            </span>
           </a>
         </div>
       </div>

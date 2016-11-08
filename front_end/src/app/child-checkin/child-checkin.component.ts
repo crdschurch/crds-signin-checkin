@@ -22,9 +22,11 @@ export class ChildCheckinComponent implements OnInit {
   thisSiteName: string;
   selectedEvent: Event;
   todaysEvents: Event[];
+  ready: boolean;
 
   constructor(private setupService: SetupService, private adminService: AdminService) {
     this.kioskDetails = new MachineConfiguration();
+    this.ready = false;
   }
 
   private getData() {
@@ -48,8 +50,12 @@ export class ChildCheckinComponent implements OnInit {
             this.selectedEvent = this.todaysEvents[0];
           }
         }
+        this.ready = true;
       },
-      error => { console.error(error); }
+      error => {
+        console.error(error);
+        this.ready = true;
+      }
     );
   }
 
@@ -58,8 +64,8 @@ export class ChildCheckinComponent implements OnInit {
   }
 
   selectEvent(event) {
-    // TODO: get new data from backend for event
-    console.log('pick event', event);
+    this.selectedEvent = event;
+    // TODO: populate UI with new data from backend for event
   }
 
   public getKioskDetails() {
