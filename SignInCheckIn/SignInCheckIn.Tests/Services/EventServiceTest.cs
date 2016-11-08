@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AutoMapper;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -15,6 +14,7 @@ namespace SignInCheckIn.Tests.Services
     {
         private Mock<IEventRepository> _eventRepository;
         private Mock<IConfigRepository> _configRepository;
+        private Mock<IRoomRepository> _roomRepository;
 
         private EventService _fixture;
 
@@ -25,8 +25,9 @@ namespace SignInCheckIn.Tests.Services
 
             _eventRepository = new Mock<IEventRepository>();
             _configRepository = new Mock<IConfigRepository>();
+            _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
 
-            MpConfigDto mpConfigDtoEarly = new MpConfigDto
+            var mpConfigDtoEarly = new MpConfigDto
             {
                 ApplicationCode = "COMMON",
                 ConfigurationSettingId = 1,
@@ -34,7 +35,7 @@ namespace SignInCheckIn.Tests.Services
                 Value = "60"
             };
 
-            MpConfigDto mpConfigDtoLate = new MpConfigDto
+            var mpConfigDtoLate = new MpConfigDto
             {
                 ApplicationCode = "COMMON",
                 ConfigurationSettingId = 1,
@@ -45,7 +46,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
-            _fixture = new EventService(_eventRepository.Object, _configRepository.Object);
+            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object);
         }
 
         [Test]
@@ -98,8 +99,8 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void TestGetCurrentEventForSite()
         {
-            var siteId = 1;
-            List<MpEventDto> events = new List<MpEventDto>
+            const int siteId = 1;
+            var events = new List<MpEventDto>
             {
                 new MpEventDto
                 {
@@ -128,7 +129,7 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void TestCheckEventTimeValidityTrue()
         {
-            EventDto eventDto = new EventDto
+            var eventDto = new EventDto
             {
                 EarlyCheckinPeriod = 30,
                 EventEndDate = DateTime.Now.AddDays(1),
@@ -146,7 +147,7 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void TestCheckEventTimeValidityFalse()
         {
-            EventDto eventDto = new EventDto
+            var eventDto = new EventDto
             {
                 EarlyCheckinPeriod = 30,
                 EventEndDate = DateTime.Now.AddDays(2),
