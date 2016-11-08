@@ -1,14 +1,14 @@
 import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToasterModule, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
-import { ContentService, RootService, SetupService } from './shared/services';
+import { ContentService, RootService, SetupService, HttpClientService, ApiService } from './shared/services';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  providers: [ToasterModule, ToasterService, ContentService, SetupService]
+  providers: [ToasterModule, ToasterService, ContentService, SetupService, HttpClientService, ApiService]
 })
 export class AppComponent implements OnInit {
 
