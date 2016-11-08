@@ -1,4 +1,4 @@
-import { Child, Event } from './';
+import { Child, Event } from '.';
 
 export class EventParticipants {
   CurrentEvent: Event;
