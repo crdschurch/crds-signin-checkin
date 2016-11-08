@@ -61,11 +61,14 @@ describe('RoomListComponent', () => {
       let sourceEventDate = moment().subtract(1, 'days');
       fixture.sourceEventDate = sourceEventDate.toDate();
 
-      let sourceEvents: Event[] = [ new Event(), new Event() ];
+      let sourceEvents: Event[] = [ new Event(), new Event(), new Event() ];
       sourceEvents[0].EventId = 123;
       sourceEvents[0].EventStartDate = moment(sourceEventDate).add(7, 'days').toISOString();
-      sourceEvents[1].EventId = 456;
-      sourceEvents[1].EventStartDate = moment(sourceEventDate).subtract(7, 'days').toISOString();
+      sourceEvents[1].EventId = eventId;
+      sourceEvents[1].EventStartDate = moment(sourceEventDate).add(8, 'days').toISOString();
+      sourceEvents[2].EventId = 456;
+      sourceEvents[2].EventStartDate = moment(sourceEventDate).subtract(7, 'days').toISOString();
+
       (<jasmine.Spy>(adminService.getEvents)).and.returnValue(Observable.of(sourceEvents));
 
       let targetEvent = new Event();

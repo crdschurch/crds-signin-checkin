@@ -37,8 +37,10 @@ export class EventImportComponent implements OnInit {
     this.adminService
       .getEvents(this.sourceEventDate, this.sourceEventDate, this.targetEvent.EventSiteId)
       .subscribe((events: Event[]) => {
-        // Sort the source events by date & time
-        this.events = events.sort((a: Event, b: Event) => {
+        // Sort the source events by date & time, and strip off the target event if in the list
+        this.events = events.filter(e => {
+          return e.EventId !== this.targetEvent.EventId;
+        }).sort((a: Event, b: Event) => {
           return a.EventStartDate.localeCompare(b.EventStartDate);
         });
       });
