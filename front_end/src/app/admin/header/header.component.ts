@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderService } from './header.service';
-import { Event } from '../events/event';
+import { Event } from '../../shared/models';
 import { HttpClientService } from '../../shared/services';
 
 @Component({

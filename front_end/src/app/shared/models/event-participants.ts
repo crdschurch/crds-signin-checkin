@@ -1,5 +1,4 @@
-import { Child } from './child';
-import { Event } from '../../admin/events/event';
+import { Child, Event } from '.';
 
 export class EventParticipants {
   CurrentEvent: Event;
