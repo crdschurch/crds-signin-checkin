@@ -12,8 +12,6 @@ import { AdminService } from '../../admin.service';
 })
 export class EventResetComponent implements OnInit {
   targetEvent: Event;
-  events: Event[];
-  sourceEventDate: Date;
 
   constructor(private route: ActivatedRoute,
     private adminService: AdminService,
@@ -27,6 +25,5 @@ export class EventResetComponent implements OnInit {
       this.targetEvent = event;
       this.headerService.announceEvent(event);
     });
-
   }
 }

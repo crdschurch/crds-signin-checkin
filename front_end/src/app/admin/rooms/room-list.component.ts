@@ -17,8 +17,7 @@ export class RoomListComponent implements OnInit {
   rooms: Room[];
   event: Event = null;
   eventId: string;
-  public disabled: boolean = false;
-  public status: {isopen: boolean} = {isopen: false};
+  public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
 
   constructor(
     private route: ActivatedRoute,
@@ -43,27 +42,31 @@ export class RoomListComponent implements OnInit {
       error => console.error(error)
     );
   }
+
   ngOnInit(): void {
     this.getData();
   }
 
-  public goToImportOrReset(target: string): void {
+  public goToImport(): void {
+    this.goToImportOrReset('import');
+  }
+
+  public goToReset(): void {
+    this.goToImportOrReset('reset');
+  }
+
+  private goToImportOrReset(target: string): void {
     if (this.event && moment(this.event.EventStartDate).isBefore(moment())) {
-      this.rootService.announceEvent('echeckCantImportToPastEvent');
+      this.rootService.announceEvent('echeckCannotOverwritePastEvent');
       return;
     }
 
     this.router.navigate([`/admin/events/${this.eventId}/${target}`]);
   }
 
-  // Tate - dropdown demo
-  public toggled(open: boolean): void {
-    console.log('Dropdown is now: ', open);
-  }
-
   public toggleDropdown($event: MouseEvent): void {
     $event.preventDefault();
     $event.stopPropagation();
-    this.status.isopen = !this.status.isopen;
+    this.dropdownStatus.isOpen = !this.dropdownStatus.isOpen;
   }
 }

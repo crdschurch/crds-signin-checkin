@@ -13,8 +13,8 @@
             <strong>0</strong> of <strong>20</strong> rooms open
           </div>
           <!-- Single button -->
-          <div class="col-xs-1 pl-0 gear-dropdown" dropdown [(isOpen)]="status.isopen">
-            <button id="single-button" type="button" class="btn btn-unstyled" dropdownToggle [disabled]="disabled">
+          <div class="col-xs-1 pl-0 gear-dropdown" dropdown [(isOpen)]="dropdownStatus.isOpen">
+            <button id="single-button" type="button" class="btn btn-unstyled" dropdownToggle [disabled]="dropdownStatus.isDisabled">
               <span class="icon icon-large">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
                 <g>
@@ -24,8 +24,8 @@
               </span>
             </button>
             <ul dropdownMenu role="menu" aria-labelledby="single-button" class="dropdown-menu-right">
-              <li role="menuitem"><a class="dropdown-item" (click)="goToImportOrReset('import')">Import Event Settings</a></li>
-              <li role="menuitem"><a class="dropdown-item" (click)="goToImportOrReset('reset')">Reset Event Settings</a></li>
+              <li role="menuitem"><a class="dropdown-item" (click)="goToImport()">Import Event Settings</a></li>
+              <li role="menuitem"><a class="dropdown-item" (click)="goToReset()">Reset Event Settings</a></li>
               <!-- TODO: Can add separator like this -->
               <!-- li class="divider dropdown-divider"></li -->
               <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
