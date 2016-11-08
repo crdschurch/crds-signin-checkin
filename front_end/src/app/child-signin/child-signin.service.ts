@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-
 import { HttpClientService } from '../shared/services';
 import { PhoneNumberPipe } from '../shared/pipes/phoneNumber.pipe';
-import { EventParticipants } from '../shared/models/eventParticipants';
-import { Child } from '../shared/models/child';
-import { Event } from '../admin/events/event';
+import { Child, Event, EventParticipants } from '../shared/models';
 
 @Injectable()
 export class ChildSigninService {

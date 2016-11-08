@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 
 import { ChildCheckinComponent } from './child-checkin.component';
-import { MachineConfiguration } from '../setup/machine-configuration';
+import { MachineConfiguration } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
 let fixture: ChildCheckinComponent;

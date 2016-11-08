@@ -4,12 +4,8 @@ import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
 import { RootService } from '../../shared/services';
 import { SetupService } from '../../setup/setup.service';
-import { MachineConfiguration } from '../../setup/machine-configuration';
-
-import { Event } from './event';
-import { Timeframe } from '../models/timeframe';
+import { MachineConfiguration, Event, Timeframe } from '../../shared/models';
 import { HeaderService } from '../header/header.service';
-
 import * as moment from 'moment';
 
 @Component({

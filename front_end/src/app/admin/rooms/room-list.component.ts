@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AdminService } from '../admin.service';
-import { Room } from './room';
+import { Room } from '../../shared/models';
 import { HeaderService } from '../header/header.service';
 
 @Component({

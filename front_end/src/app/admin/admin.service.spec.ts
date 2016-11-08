@@ -6,7 +6,7 @@ import { HttpClientService } from '../shared/services/http-client.service';
 import { Http, RequestOptions, Headers, Response } from '@angular/http';
 import { MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
-import { Room } from './rooms/room';
+import { Room } from '../shared/models';
 
 describe('AdminService', () => {
   let fixture: AdminService;

@@ -6,8 +6,7 @@ import * as moment from 'moment';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
 import { SetupService } from '../setup/setup.service';
-import { Event } from './events/event';
-import { Room } from './rooms/room';
+import { Event, Room } from '../shared/models';
 
 @Injectable()
 export class AdminService {

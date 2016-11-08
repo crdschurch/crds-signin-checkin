@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CookieService } from 'angular2-cookie/core';
 import { Router } from '@angular/router';
 import { SetupService } from '../setup/setup.service';
-import { MachineConfiguration } from '../setup/machine-configuration';
+import { MachineConfiguration } from '../shared/models';
 
 @Component({
   selector: 'home',

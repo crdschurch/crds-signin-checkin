@@ -1,4 +1,4 @@
-import { Group } from './group';
+import { Group } from './';
 
 export class Room {
   EventRoomId: string;

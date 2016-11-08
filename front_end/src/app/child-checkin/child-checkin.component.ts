@@ -2,8 +2,7 @@ import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { SetupService } from '../setup/setup.service';
 import { AdminService } from '../admin/admin.service';
-import { Event } from '../admin/events/event';
-import { MachineConfiguration } from '../setup/machine-configuration';
+import { Event, MachineConfiguration } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
