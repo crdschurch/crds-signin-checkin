@@ -3,6 +3,7 @@ import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { Child } from '../../shared/models/child';
 import { ChildCheckinService } from '../child-checkin.service';
+import { RootService } from '../../shared/services';
 
 @Component({
   selector: 'room',
@@ -17,11 +18,14 @@ export class RoomComponent implements OnInit {
 
   private _children: Array<Child> = [];
 
-  constructor(private childCheckinService: ChildCheckinService) {}
+  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService) {}
 
   ngOnInit() {
     this.childCheckinService.getChildrenForRoom(1820, 4525342).subscribe((children) => {
       this.children = children;
+    }, (error) => {
+      console.error(error);
+      this.rootService.announceEvent('generalError');
     });
   }
 
@@ -34,7 +38,11 @@ export class RoomComponent implements OnInit {
   }
 
   toggleCheckIn(child: Child) {
-    this.childCheckinService.checkInChildren(child).subscribe();
+    this.childCheckinService.checkInChildren(child).subscribe(() => {
+    }, (error) => {
+      console.error(error);
+      this.rootService.announceEvent('generalError');
+    });
   }
 
   get children(): Array<Child> {
@@ -45,15 +53,15 @@ export class RoomComponent implements OnInit {
     this._children = child;
   }
 
-  public showNumberSearchModal():void {
+  public showNumberSearchModal(): void {
     this.numberSearchModal.show();
   }
 
-  public showServiceSelectModal():void {
+  public showServiceSelectModal(): void {
     this.serviceSelectModal.show();
   }
 
-  public showChildDetailModal():void {
+  public showChildDetailModal(): void {
     this.childDetailModal.show();
   }
 }

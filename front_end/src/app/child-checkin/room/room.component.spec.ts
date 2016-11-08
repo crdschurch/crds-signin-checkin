@@ -31,10 +31,13 @@ let childCheckinServiceStub: any = {
   }
 };
 
+let rootServiceStub: any = {
+};
+
 describe('Child Checkin RoomComponent', () => {
 
   beforeEach(() => {
-    fixture = new RoomComponent(childCheckinServiceStub);
+    fixture = new RoomComponent(childCheckinServiceStub, rootServiceStub);
     fixture.ngOnInit();
   });
 
