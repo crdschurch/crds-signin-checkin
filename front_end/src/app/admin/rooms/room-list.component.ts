@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Room } from '../../shared/models';
 import { AdminService } from '../admin.service';
-import { Room } from './room';
+import { ApiService } from '../../shared/services';
 import { HeaderService } from '../header/header.service';
 
 @Component({
@@ -15,6 +16,7 @@ export class RoomListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private adminService: AdminService,
+    private apiService: ApiService,
     private headerService: HeaderService) {}
 
   private getData(): void {
@@ -25,7 +27,7 @@ export class RoomListComponent implements OnInit {
       },
       (error: any) => console.error(error)
     );
-    this.adminService.getEvent(eventId).subscribe(
+    this.apiService.getEvent(eventId).subscribe(
       event => {
         this.headerService.announceEvent(event);
       },

@@ -4,10 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { Observable } from 'rxjs';
 import { RequestOptions } from '@angular/http';
 import { Router } from '@angular/router';
-
-import { EventParticipants } from '../shared/models/eventParticipants';
-import { Child } from '../shared/models/child';
-import { Event } from '../admin/events/event';
+import { Child, Event, EventParticipants} from '../shared/models';
 import { ChildSigninService } from './child-signin.service';
 import { HttpClientService } from '../shared/services/http-client.service';
 

@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 
 import { ChildCheckinComponent } from './child-checkin.component';
-import { MachineConfiguration } from '../setup/machine-configuration';
+import { MachineConfiguration } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
 let fixture: ChildCheckinComponent;
@@ -11,28 +11,28 @@ const event2 = { EventId: '456', IsCurrentEvent: false };
 const eventCurrent = { EventId: '789', IsCurrentEvent: true };
 let setupService = jasmine.createSpyObj('setupService', ['getMachineDetailsConfigCookie']);
 setupService.getMachineDetailsConfigCookie.and.returnValue(thisMachineConfig);
-let adminService = jasmine.createSpyObj('adminService', ['getEvents']);
+let apiService = jasmine.createSpyObj('apiService', ['getEvents']);
 
-describe('Child Checkin Component', () => {
+describe('ChildCheckinComponent', () => {
   describe('#ngOnInit', () => {
     describe('initalization', () => {
       beforeEach(() => {
-        adminService.getEvents.and.returnValue(Observable.of([{}]));
-        fixture = new ChildCheckinComponent(setupService, adminService);
+        apiService.getEvents.and.returnValue(Observable.of([{}]));
+        fixture = new ChildCheckinComponent(setupService, apiService);
       });
 
       it('should set kiosk config details from cookie and get today\'s events', () => {
         fixture.ngOnInit();
         expect(fixture.getKioskDetails()).toBe(thisMachineConfig);
         expect(setupService.getMachineDetailsConfigCookie).toHaveBeenCalled();
-        expect(adminService.getEvents).toHaveBeenCalled();
+        expect(apiService.getEvents).toHaveBeenCalled();
       });
     });
     describe('setting the current event', () => {
       describe('and there is a current event', () => {
         beforeEach(() => {
-          adminService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
-          fixture = new ChildCheckinComponent(setupService, adminService);
+          apiService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
+          fixture = new ChildCheckinComponent(setupService, apiService);
         });
 
         it('should set where IsCurrentEvent is true', () => {
@@ -43,8 +43,8 @@ describe('Child Checkin Component', () => {
 
       describe('and there is no current event', () => {
         beforeEach(() => {
-          adminService.getEvents.and.returnValue(Observable.of([event, event2]));
-          fixture = new ChildCheckinComponent(setupService, adminService);
+          apiService.getEvents.and.returnValue(Observable.of([event, event2]));
+          fixture = new ChildCheckinComponent(setupService, apiService);
         });
 
         it('should set first when no IsCurrentEvent', () => {
@@ -54,10 +54,10 @@ describe('Child Checkin Component', () => {
       });
     });
   });
-  fdescribe('#selectEvent', () => {
+  describe('#selectEvent', () => {
     beforeEach(() => {
-      adminService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
-      fixture = new ChildCheckinComponent(setupService, adminService);
+      apiService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
+      fixture = new ChildCheckinComponent(setupService, apiService);
     });
     it('changes selectedEvent property', () => {
       fixture.selectEvent(event);

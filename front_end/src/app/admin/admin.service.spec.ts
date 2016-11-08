@@ -6,7 +6,7 @@ import { HttpClientService } from '../shared/services/http-client.service';
 import { Http, RequestOptions, Headers, Response } from '@angular/http';
 import { MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
-import { Room } from './rooms/room';
+import { Room } from '../shared/models';
 
 describe('AdminService', () => {
   let fixture: AdminService;
@@ -30,13 +30,6 @@ describe('AdminService', () => {
     cookie = new CookieService(new CookieOptions());
     httpClientService = new HttpClientService(http, cookie);
     fixture = new AdminService(httpClientService, setupServiceStub);
-  });
-
-  it('should successfully get list of Events', () => {
-    let responseObject = http.get('assets/mock-data/events-get.json');
-    fixture.getEvents('10-11-16', '10-15-16', 1).subscribe((res: Response) => {
-      expect(res.json()).toEqual(responseObject);
-    });
   });
 
   it('should successfully get list of Rooms', () => {
