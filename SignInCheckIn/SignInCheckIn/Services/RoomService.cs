@@ -226,6 +226,18 @@ namespace SignInCheckIn.Services
             return eventRoom;
         }
 
+        public List<BumpingRuleDto> GetBumpingRulesByRoomId(int roomReservationId)
+        {
+            var mpBumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomReservationId);
+            return Mapper.Map<List<MpBumpingRuleDto>, List<BumpingRuleDto>>(mpBumpingRules);
+        }
+
+        public void UpdateBumpingRules(List<BumpingRuleDto> bumpingRuleDtos)
+        {
+            var mpBumpingRules = Mapper.Map<List<BumpingRuleDto>, List<MpBumpingRuleDto>>(bumpingRuleDtos);
+
+        }
+
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
         {
             // Create a list of attributes corresponding to the selected groups

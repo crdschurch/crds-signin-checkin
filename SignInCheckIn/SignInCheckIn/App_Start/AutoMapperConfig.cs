@@ -21,6 +21,7 @@ namespace SignInCheckIn.App_Start
             config.CreateMap<MpKioskConfigDto, KioskConfigDto>().ReverseMap();
             config.CreateMap<MpParticipantDto, ParticipantDto>().ReverseMap();
             config.CreateMap<MpEventParticipantDto, ParticipantDto>().ReverseMap();
+            config.CreateMap<MpBumpingRuleDto, BumpingRuleDto>().ReverseMap();
         }
     }
 }

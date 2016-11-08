@@ -183,6 +183,7 @@
     </Compile>
     <Compile Include="Models\Authentication\Credentials.cs" />
     <Compile Include="Models\Authentication\LoginReturn.cs" />
+    <Compile Include="Models\DTO\BumpingRuleDto.cs" />
     <Compile Include="Models\DTO\ParticipantDto.cs" />
     <Compile Include="Models\DTO\AgeGradeDto.cs" />
     <Compile Include="Models\DTO\EventDto.cs" />

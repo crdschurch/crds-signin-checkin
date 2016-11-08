@@ -11,6 +11,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly List<string> _eventRoomColumns;
         private readonly List<string> _roomColumnList;
+        private readonly List<string> _bumpingRuleColumns; 
 
         public RoomRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
@@ -36,6 +37,20 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID",
                 "Room_Name",
                 "Room_Number"
+            };
+
+            _bumpingRuleColumns = new List<string>
+            {
+                "Bumping_Rules_ID",
+                "From_Event_Room_ID",
+                "To_Event_Room_ID",
+                "Priority_Order",
+                "cr_Bumping_Rules.Bumping_Rule_Type_ID",
+                "Bumping_Rule_Type_ID_Table.[Description]",
+                "From_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS From_Room_Name",
+                "From_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS From_Room_Number",
+                "To_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS To_Room_Name",
+                "To_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS To_Room_Number"
             };
         }
 
@@ -123,6 +138,18 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var apiUserToken = _apiUserRepository.GetToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Get<MpRoomDto>(roomId, _roomColumnList);
+        }
+
+        public List<MpBumpingRuleDto> GetBumpingRulesByRoomId(int fromRoomId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"From_Event_Room_ID={fromRoomId}", _bumpingRuleColumns);
+        }
+
+        public void UpdateBumpingRules(List<MpBumpingRuleDto> mpBumpingRuleDtos)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update(mpBumpingRuleDtos, _eventRoomColumns);
         }
     }
 }

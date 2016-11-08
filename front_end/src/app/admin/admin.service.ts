@@ -63,6 +63,17 @@ export class AdminService {
     this.roomGroupsUpdateEmitter.emit(body);
   }
 
+  getBumpingRules(eventRoomId: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/eventrooms/${eventRoomId}`;
+    return this.http.get(url)
+                    .map(res => Room.fromJson(res.json()))
+                    .catch(this.handleError);
+  }
+
+  updateBumpingRules() {
+    // TODO: Put some shiitake here
+  }
+
   private updateRoomGroupsInternal(room: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${room.EventId}/rooms/${room.RoomId}/groups`;
     return this.http.put(url, room)
