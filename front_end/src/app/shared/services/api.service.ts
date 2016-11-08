@@ -20,7 +20,6 @@ export class ApiService {
   }
 
   getEvents(startDate: any, endDate: any, site?: number) {
-    console.log("this", this)
     const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
     if (!site) { site = this.getSite(); }
     let formattedStartDate = moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');

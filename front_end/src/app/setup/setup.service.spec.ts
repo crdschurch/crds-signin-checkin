@@ -8,7 +8,7 @@ import { MockConnection, MockBackend } from '@angular/http/testing';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
 import { Observable } from 'rxjs/Observable';
 
-describe('Setup Service', () => {
+describe('SetupService', () => {
   let fixture: SetupService;
   let httpClientService: any;
   let cookieService: CookieService;

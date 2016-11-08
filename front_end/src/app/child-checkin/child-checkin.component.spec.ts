@@ -13,7 +13,7 @@ let setupService = jasmine.createSpyObj('setupService', ['getMachineDetailsConfi
 setupService.getMachineDetailsConfigCookie.and.returnValue(thisMachineConfig);
 let apiService = jasmine.createSpyObj('apiService', ['getEvents']);
 
-describe('Child Checkin Component', () => {
+describe('ChildCheckinComponent', () => {
   describe('#ngOnInit', () => {
     describe('initalization', () => {
       beforeEach(() => {

@@ -24,7 +24,7 @@ let setupServiceStub: any = {
   }
 };
 
-describe('Home Component', () => {
+describe('HomeComponent', () => {
 
   afterEach(() => {
     cookieService.removeAll();

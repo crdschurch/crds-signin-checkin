@@ -1,10 +1,8 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { RequestOptions, URLSearchParams } from '@angular/http';
-import * as moment from 'moment';
 import '../rxjs-operators';
 import { HttpClientService, SetupService } from '../shared/services';
-import { Event, Room } from '../shared/models';
+import { Room } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -41,12 +39,6 @@ export class AdminService {
     body.EventId = eventId;
     body.RoomId = roomId;
     this.roomGroupsUpdateEmitter.emit(body);
-  }
-
-  private getSite(): number {
-    let setupCookie = this.setupService.getMachineDetailsConfigCookie();
-    // default to Oakley if setup cookie is not present
-    return setupCookie && setupCookie.CongregationId ? setupCookie.CongregationId : 1;
   }
 
   private updateRoomGroupsInternal(room: Room) {
