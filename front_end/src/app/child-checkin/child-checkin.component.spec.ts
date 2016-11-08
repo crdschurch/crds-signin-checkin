@@ -54,7 +54,7 @@ describe('Child Checkin Component', () => {
       });
     });
   });
-  fdescribe('#selectEvent', () => {
+  describe('#selectEvent', () => {
     beforeEach(() => {
       adminService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
       fixture = new ChildCheckinComponent(setupService, adminService);
