@@ -13,7 +13,7 @@ namespace SignInCheckIn.Tests.Services
 {
     public class ChildSigninServiceTest
     {
-        private Mock<IChildSigninRepository> _childCheckinRepository;
+        private Mock<IChildSigninRepository> _childSigninRepository;
         private Mock<IEventRepository> _eventRepository;
         private Mock<IGroupRepository> _groupRepository;
         private Mock<IEventService> _eventService;
@@ -25,12 +25,12 @@ namespace SignInCheckIn.Tests.Services
         {
             AutoMapperConfig.RegisterMappings();
 
-            _childCheckinRepository = new Mock<IChildSigninRepository>();
+            _childSigninRepository = new Mock<IChildSigninRepository>();
             _eventRepository = new Mock<IEventRepository>();
             _groupRepository = new Mock<IGroupRepository>();
             _eventService = new Mock<IEventService>();
 
-            _fixture = new ChildSigninService(_childCheckinRepository.Object,_eventRepository.Object, _groupRepository.Object, _eventService.Object);
+            _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, _groupRepository.Object, _eventService.Object);
         }
 
         [Test]
@@ -71,10 +71,10 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _childCheckinRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
-            _childCheckinRepository.VerifyAll();
+            _childSigninRepository.VerifyAll();
 
             // Assert
             Assert.IsNotNull(result);
@@ -108,10 +108,10 @@ namespace SignInCheckIn.Tests.Services
             List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>();
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
-            _childCheckinRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
 
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
-            _childCheckinRepository.VerifyAll();
+            _childSigninRepository.VerifyAll();
 
             // Assert
             Assert.IsNotNull(result);
