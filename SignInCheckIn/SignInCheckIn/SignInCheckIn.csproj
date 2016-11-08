@@ -176,6 +176,7 @@
     <Compile Include="Controllers\HelloWorldController.cs" />
     <Compile Include="Controllers\KioskController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Exceptions\Models\ApiErrorDto.cs" />
     <Compile Include="Filters\DomainLockedApiKeyFilter.cs" />
     <Compile Include="Global.asax.cs">
@@ -190,6 +191,7 @@
     <Compile Include="Models\DTO\EventRoomDto.cs" />
     <Compile Include="Models\DTO\KioskConfigDto.cs" />
     <Compile Include="Models\DTO\ParticipantEventMapDto.cs" />
+    <Compile Include="Models\DTO\RoomDto.cs" />
     <Compile Include="Models\HelloWorldInputDto.cs" />
     <Compile Include="Models\HelloWorldOutputDto.cs" />
     <Compile Include="Models\HelloWorldV2InputDto.cs" />

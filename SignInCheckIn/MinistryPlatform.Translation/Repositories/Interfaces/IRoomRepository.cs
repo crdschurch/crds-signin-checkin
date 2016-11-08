@@ -16,5 +16,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpBumpingRuleDto> GetBumpingRulesByRoomId(int fromRoomId);
 
         void UpdateBumpingRules(List<MpBumpingRuleDto> mpBumpingRuleDtos);
+
+        List<MpRoomDto> GetRoomsBySite(int locationId);
     }
 }

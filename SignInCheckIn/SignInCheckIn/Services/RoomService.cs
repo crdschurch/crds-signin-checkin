@@ -309,5 +309,11 @@ namespace SignInCheckIn.Services
                 _eventRepository.DeleteEventGroups(authenticationToken, currentEventGroups.Select(g => g.Id));
             }
         }
+
+        public List<RoomDto> GetRoomsByLocation(int locationId)
+        {
+            var mpRooms = _roomRepository.GetRoomsBySite(locationId);
+            return Mapper.Map<List<MpRoomDto>, List<RoomDto>>(mpRooms);
+        } 
     }
 }

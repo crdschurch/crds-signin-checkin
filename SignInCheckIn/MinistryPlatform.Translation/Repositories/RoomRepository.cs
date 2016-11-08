@@ -151,5 +151,13 @@ namespace MinistryPlatform.Translation.Repositories
             var apiUserToken = _apiUserRepository.GetToken();
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update(mpBumpingRuleDtos, _eventRoomColumns);
         }
+
+        public List<MpRoomDto> GetRoomsBySite(int locationId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
+        } 
     }
 }
