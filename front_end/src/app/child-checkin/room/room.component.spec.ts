@@ -28,16 +28,25 @@ let childCheckinServiceStub: any = {
   checkInChildren(child: Child): any {
     child.toggleCheckIn();
     return Observable.of(child);
+  },
+  selectedEvent: {
+    EventId: 11111,
   }
 };
 
 let rootServiceStub: any = {
 };
 
+let setupServiceStub: any = {
+  getMachineDetailsConfigCookie() {
+    return { RoomId: 1820 };
+  }
+};
+
 describe('Child Checkin RoomComponent', () => {
 
   beforeEach(() => {
-    fixture = new RoomComponent(childCheckinServiceStub, rootServiceStub);
+    fixture = new RoomComponent(childCheckinServiceStub, rootServiceStub, setupServiceStub);
     fixture.ngOnInit();
   });
 

@@ -3,9 +3,11 @@ import { Observable } from 'rxjs/Observable';
 
 import { HttpClientService } from '../shared/services';
 import { Child } from '../shared/models/child';
+import { Event } from '../shared/models/event';
 
 @Injectable()
 export class ChildCheckinService {
+  private _selectedEvent: Event;
   private url: string = '';
 
   constructor(private http: HttpClientService) {
@@ -39,6 +41,14 @@ export class ChildCheckinService {
     return this.http.put(url, child)
                     .map(res => Child.fromJson(res.json()))
                     .catch(this.handleError);
+  }
+
+  get selectedEvent(): Event {
+    return this._selectedEvent;
+  }
+
+  set selectedEvent(event) {
+    this._selectedEvent = event;
   }
 
   private handleError (error: any) {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Child } from '../../shared/models/child';
 import { ChildCheckinService } from '../child-checkin.service';
 import { RootService } from '../../shared/services';
+import { SetupService } from '../../shared/services';
 
 @Component({
   selector: 'room',
@@ -13,10 +14,12 @@ export class RoomComponent implements OnInit {
 
   private _children: Array<Child> = [];
 
-  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService) {}
+  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, private setupService: SetupService) {}
 
   ngOnInit() {
-    this.childCheckinService.getChildrenForRoom(1820, 4525342).subscribe((children) => {
+    let roomId: number = this.setupService.getMachineDetailsConfigCookie().RoomId;
+    let eventId: number = this.childCheckinService.selectedEvent.EventId;
+    this.childCheckinService.getChildrenForRoom(roomId, eventId).subscribe((children) => {
       this.children = children;
     }, (error) => {
       console.error(error);
