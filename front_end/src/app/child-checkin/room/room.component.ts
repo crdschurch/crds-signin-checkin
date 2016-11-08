@@ -8,8 +8,6 @@ import * as moment from 'moment';
 })
 
 export class RoomComponent implements OnInit {
-  // constructor(private adminService: AdminService) { }
-  //
   ngOnInit() {
   }
 }
