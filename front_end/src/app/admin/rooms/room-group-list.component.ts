@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { AdminService } from '../admin.service';
 import { HeaderService } from '../header/header.service';
-import { Group } from './group';
-import { Room } from './room';
-import { Event } from '../events/event';
-import { BumpingRule } from './bumping-rule';
+import { Group, Room, Event, BumpingRule } from '../../shared/models';
+import { AdminService } from '../admin.service';
+import { ApiService } from '../../shared/services';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -22,7 +20,8 @@ export class RoomGroupListComponent implements OnInit {
   bumpingRules: BumpingRule[];
   availableRooms: Room[];
 
-  constructor( private adminService: AdminService,
+  constructor( private apiService: ApiService,
+               private adminService: AdminService,
                private route: ActivatedRoute,
                private headerService: HeaderService,
                private location: Location) {
@@ -37,8 +36,8 @@ export class RoomGroupListComponent implements OnInit {
       },
       error => console.error(error)
     );
+    this.apiService.getEvent(this.eventId).subscribe(
 
-    this.adminService.getEvent(this.eventId).subscribe(
       event => {
         this.event = event;
         this.headerService.announceEvent(event);
@@ -51,7 +50,7 @@ export class RoomGroupListComponent implements OnInit {
         this.room = room;
       },
       error => console.error(error)
-    ); 
+    );
   }
 
   getEvent(): Event {
@@ -91,6 +90,6 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   bumpingRuleSelected(bumpingRuleId: string) {
-    
+
   }
 }

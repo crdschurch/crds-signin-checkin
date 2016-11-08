@@ -1,40 +1,17 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { RequestOptions, URLSearchParams } from '@angular/http';
-
-import * as moment from 'moment';
 import '../rxjs-operators';
-import { HttpClientService } from '../shared/services';
-import { Event } from './events/event';
-import { Room } from './rooms/room';
-import { BumpingRule } from './rooms/bumping-rule';
+import { HttpClientService, SetupService } from '../shared/services';
+import { Room, BumpingRule } from '../shared/models';
 
 @Injectable()
 export class AdminService {
   private roomGroupsUpdateEmitter: EventEmitter<Room>;
   private roomGroupsUpdateObserver: Observable<Room>;
+  site: number;
 
-  constructor(private http: HttpClientService) {
+  constructor(private http: HttpClientService, private setupService: SetupService) {
     this.configureUpdateRoomGroupsEmitterAndObserver();
-  }
-
-  getEvent(eventId: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}`;
-    return this.http.get(url)
-                    .map(res => Event.fromJson(res.json()))
-                    .catch(this.handleError);
-  }
-
-  getEvents(startDate: any, endDate: any, site: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
-    let formattedStartDate = moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    let formattedEndDate = moment(endDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    let options = new RequestOptions({
-        search: new URLSearchParams(`site=${site}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
-    });
-    return this.http.get(url, options)
-                    .map(res => res.json())
-                    .catch(this.handleError);
   }
 
   getRooms(eventId: string) {
