@@ -29,7 +29,7 @@ describe('ChildCheckinComponent', () => {
         expect(apiService.getEvents).toHaveBeenCalled();
       });
     });
-    fdescribe('setting the current event', () => {
+    describe('setting the current event', () => {
       describe('and there is a current event', () => {
         beforeEach(() => {
           apiService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
