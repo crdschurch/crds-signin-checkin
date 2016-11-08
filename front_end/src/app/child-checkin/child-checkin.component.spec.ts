@@ -51,7 +51,7 @@ describe('ChildCheckinComponent', () => {
 
          it('should set first when no IsCurrentEvent', () => {
            fixture2.ngOnInit();
-           console.log(fixture2.selectedEvent.EventId, event.EventId)
+           console.log(fixture2.selectedEvent.EventId, event.EventId);
            expect(fixture2.selectedEvent.EventId).toEqual(event.EventId);
          });
        });

@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
+import { RoomComponent } from './room';
 import { HttpClientService } from '../shared/services';
 import { Child } from '../shared/models/child';
 import { Event } from '../shared/models/event';
 
 @Injectable()
 export class ChildCheckinService {
+  private _roomComp: RoomComponent;
+  private _roomSetUpFunc: Function;
   private _selectedEvent: Event;
   private url: string = '';
 
@@ -49,6 +52,15 @@ export class ChildCheckinService {
 
   set selectedEvent(event) {
     this._selectedEvent = event;
+    this._roomSetUpFunc(this._roomComp);
+  }
+
+  set roomSetUpFunc(func: Function) {
+    this._roomSetUpFunc = func;
+  }
+
+  set roomComp(comp: RoomComponent) {
+    this._roomComp = comp;
   }
 
   private handleError (error: any) {
