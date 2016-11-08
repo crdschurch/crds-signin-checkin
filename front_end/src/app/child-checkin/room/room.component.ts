@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Child } from '../../shared/models/child';
+import { Event } from '../../shared/models/event';
 import { ChildCheckinService } from '../child-checkin.service';
 import { RootService } from '../../shared/services';
 import { SetupService } from '../../shared/services';
@@ -17,14 +18,24 @@ export class RoomComponent implements OnInit {
   constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, private setupService: SetupService) {}
 
   ngOnInit() {
-    let roomId: number = this.setupService.getMachineDetailsConfigCookie().RoomId;
-    let eventId: number = this.childCheckinService.selectedEvent.EventId;
-    this.childCheckinService.getChildrenForRoom(roomId, eventId).subscribe((children) => {
-      this.children = children;
-    }, (error) => {
-      console.error(error);
-      this.rootService.announceEvent('generalError');
-    });
+    this.childCheckinService.roomComp = this;
+    this.childCheckinService.roomSetUpFunc = this.setup;
+    this.setup(this);
+  }
+
+  setup(comp) {
+    if (comp) {
+      let roomId: number = comp.setupService.getMachineDetailsConfigCookie().RoomId;
+      let event: Event = comp.childCheckinService.selectedEvent;
+      if (roomId && event) {
+        comp.childCheckinService.getChildrenForRoom(roomId, event.EventId).subscribe((children) => {
+          comp.children = children;
+        }, (error) => {
+          console.error(error);
+          comp.rootService.announceEvent('generalError');
+        });
+      }
+    }
   }
 
   checkedIn(): Array<Child> {
