@@ -4,9 +4,9 @@ import { TestBed } from '@angular/core/testing';
 import { Observable } from 'rxjs';
 import { RequestOptions } from '@angular/http';
 
-import { EventParticipants } from '../shared/models/eventParticipants';
+import { EventParticipants } from '../shared/models/event-participants';
 import { Child } from '../shared/models/child';
-import { Event } from '../admin/events/event';
+import { Event } from '../shared/models/event';
 import { ChildCheckinService } from './child-checkin.service';
 import { HttpClientService } from '../shared/services/http-client.service';
 

@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as moment from 'moment';
-
 import { Child } from '../../shared/models/child';
 import { ChildCheckinService } from '../child-checkin.service';
 import { RootService } from '../../shared/services';
