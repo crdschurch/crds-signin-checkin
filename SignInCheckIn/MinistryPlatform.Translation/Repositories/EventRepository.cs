@@ -10,7 +10,10 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly List<string> _eventGroupsColumns;
-        private readonly List<string> _eventColumns; 
+        private readonly List<string> _eventColumns;
+
+        private const string ResetEventStoredProcedureName = "api_crds_ResetEcheckEvent";
+        private const string ImportEventStoredProcedureName = "api_crds_ImportEcheckEvent";
 
         public EventRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
@@ -85,6 +88,18 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var token = authenticationToken ?? _apiUserRepository.GetToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventGroups, _eventGroupsColumns);
+        }
+
+        public void ResetEventSetup(string authenticationToken, int eventId)
+        {
+            _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
+                .PostStoredProc(ResetEventStoredProcedureName, new Dictionary<string, object> {{"EventId", eventId}});
+        }
+
+        public void ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId)
+        {
+            _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
+                .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"DestinationEventId", destinationEventId}, {"SourceEventId", sourceEventId}});
         }
     }
 }

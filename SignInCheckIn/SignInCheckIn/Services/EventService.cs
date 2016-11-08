@@ -12,12 +12,14 @@ namespace SignInCheckIn.Services
     public class EventService : IEventService
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IRoomRepository _roomRepository;
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
 
-        public EventService(IEventRepository eventRepository, IConfigRepository configRepository)
+        public EventService(IEventRepository eventRepository, IConfigRepository configRepository, IRoomRepository roomRepository)
         {
             _eventRepository = eventRepository;
+            _roomRepository = roomRepository;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -57,6 +59,24 @@ namespace SignInCheckIn.Services
             var endSigninWindow = eventDto.EventStartDate.AddMinutes(eventDto.LateCheckinPeriod ?? _defaultLateCheckinPeriod);
 
             return DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow;
+        }
+
+        public List<EventRoomDto> ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId)
+        {
+            var e = GetEvent(destinationEventId);
+
+            _eventRepository.ResetEventSetup(authenticationToken, destinationEventId);
+            _eventRepository.ImportEventSetup(authenticationToken, destinationEventId, sourceEventId);
+
+            return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(destinationEventId, e.EventSiteId));
+        }
+
+        public List<EventRoomDto> ResetEventSetup(string authenticationToken, int eventId)
+        {
+            var e = GetEvent(eventId);
+
+            _eventRepository.ResetEventSetup(authenticationToken, eventId);
+            return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(eventId, e.EventSiteId));
         }
     }
 }
