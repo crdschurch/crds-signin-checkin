@@ -4,6 +4,7 @@ import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
 import { RootService } from '../../shared/services';
 import { SetupService } from '../../setup/setup.service';
+import { MachineConfiguration } from '../../setup/machine-configuration';
 
 import { Event } from './event';
 import { Timeframe } from '../models/timeframe';
@@ -59,16 +60,19 @@ export class EventListComponent implements OnInit {
     this.currentWeekFilter = this.weekFilters[0];
   }
 
-  private setupSite() {
-    let setupCookie = this.setupService.getMachineDetailsConfigCookie();
-    // default to Oakley if setup cookie is not present
-    this.site = setupCookie && setupCookie.CongregationId ? setupCookie.CongregationId : 1;
+  private setupSite(config: MachineConfiguration) {
+    // default to Oakley (1) if setup cookie is not present or does not have a site id
+    this.site = config && config.CongregationId ? config.CongregationId : 1;
   }
 
   ngOnInit(): void {
     this.createWeekFilters();
-    this.setupService.getThisMachineConfiguration().subscribe(() => {
-      this.setupSite();
+    this.setupService.getThisMachineConfiguration().subscribe((setupCookie) => {
+      this.setupSite(setupCookie);
+      this.getData();
+    },
+    (error) => {
+      this.setupSite(null);
       this.getData();
     });
   }
