@@ -24,13 +24,13 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
-        [Route("rooms/site/{locationId}")]
-        public IHttpActionResult GetRoomsByLocation(
+        [Route("rooms/{roomId}/site/{locationId}")]
+        public IHttpActionResult GetAvailableRoomsByLocation(
             [FromUri(Name = "locationId")] int locationId)
         {
             try
             {
-                var roomList = _roomService.GetRoomsByLocation(locationId);
+                var roomList = _roomService.GetAvailableRoomsByLocation(locationId);
                 return Ok(roomList);
             }
             catch (Exception e)

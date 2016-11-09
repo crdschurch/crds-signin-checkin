@@ -310,7 +310,7 @@ namespace SignInCheckIn.Services
             }
         }
 
-        public List<RoomDto> GetRoomsByLocation(int locationId)
+        public List<RoomDto> GetAvailableRoomsByLocation(int locationId, int roomId)
         {
             var mpRooms = _roomRepository.GetRoomsBySite(locationId);
             return Mapper.Map<List<MpRoomDto>, List<RoomDto>>(mpRooms);

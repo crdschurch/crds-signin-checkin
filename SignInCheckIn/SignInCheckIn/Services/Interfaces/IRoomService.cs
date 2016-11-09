@@ -11,6 +11,6 @@ namespace SignInCheckIn.Services.Interfaces
         EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom);
         List<BumpingRuleDto> GetBumpingRulesByRoomId(int roomReservationId);
         void UpdateBumpingRules(List<BumpingRuleDto> bumpingRuleDtos);
-        List<RoomDto> GetRoomsByLocation(int locationId);
+        List<RoomDto> GetAvailableRoomsByLocation(int locationId);
     }
 }

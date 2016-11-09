@@ -27,5 +27,9 @@ namespace SignInCheckIn.Models.DTO
         public string Label { get; set; }
 
         public List<AgeGradeDto> AssignedGroups { get; set; }
+
+        public int BumpingRuleId { get; set; }
+
+        public int BumpingRulePriority { get; set; }
     }
 }
