@@ -68,75 +68,7 @@
           </div>
         </tab>
         <tab heading='Alternate Rooms' [active]="alternateRoomsSelected">
-          <div class="row mt-1">
-            <div class="col-xs-12">
-              <p class="lead">
-                Alternate rooms that are activated will be assigned if the current room is full or if the current room is closed.
-              </p>
-              <form class="form-inline">
-                <div class="form-group mb-1">
-                  <label><strong>Open rooms by</strong></label>
-                  <div class="form-check-inline">
-                    <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-                      Priority
-                    </label>
-                  </div>
-                  <div class="form-check-inline">
-                    <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2" disabled>
-                      Vacancy
-                    </label>
-                  </div>
-                </div>
-              </form>
-              <div class="row">
-                <div class="col-xs-12 col-sm-6 mb-1">
-                  <div class="gray-lighter table-bumping-wrapper">
-                    <h5>Available Rooms</h5>
-                    <p class="mb-0">
-                      &nbsp;
-                    </p>
-                    <table class="table white table-hover table-bumping-wrapper">
-                      <thead>
-                        <tr class="gray-lighter">
-                          <th>Room Name</th>
-                          <th>Room No.</th>
-                          <th>Open/<br />Closed</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let room of availableRooms" class="room-bump" [room]="room"></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 mb-1">
-                  <div class="gray-lighter table-bumping-wrapper">
-                    <h5>Alternate Rooms</h5>
-                    <p class="mb-0">
-                      Use the up/down arrows to rank the rooms in order of priority.
-                    </p>
-                    <table class="table white table-hover table-bumping">
-                      <thead>
-                        <tr class="gray-lighter">
-                          <th>Room Name</th>
-                          <th>Room No.</th>
-                          <th>Open/<br />Closed</th>
-                          <th>Priority</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let room of bumpingRooms" class="room-bump" [room]="room"></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <alternate-rooms></alternate-rooms>
         </tab>
       </tabset>
     </div>

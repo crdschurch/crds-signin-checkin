@@ -5,7 +5,6 @@ import { HeaderService } from '../header/header.service';
 import { Group, Room, Event } from '../../shared/models';
 import { AdminService } from '../admin.service';
 import { ApiService } from '../../shared/services';
-import * as _ from 'lodash';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -18,9 +17,6 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   alternateRoomsSelected: boolean = false;
-  _availableRooms: Room[];
-  _bumpingRooms: Room[];
-  // _allRooms: Room[];
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -36,6 +32,7 @@ export class RoomGroupListComponent implements OnInit {
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
+        console.log('parent room', this.room)
       },
       error => console.error(error)
     );
@@ -44,30 +41,13 @@ export class RoomGroupListComponent implements OnInit {
 
       event => {
         this.event = event;
+        console.log('parent event', this.event)
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
     );
 
-    this.adminService.getBumpingRooms(this.eventId, this.roomId).subscribe(
-      allRooms => {
-        this.allRooms = Room.fromJsons(allRooms);
-      },
-      error => {
-        console.error(error)
-        this.allRooms = Room.fromJsons(error);
-      }
-    );
   }
-
-  set allRooms(rooms) {
-    this._availableRooms = rooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
-    let unsortedBumpingRooms = rooms.filter( (obj: Room) => { return obj.isBumpingRoom(); } );
-    this._bumpingRooms = _.sortBy( Room.fromJsons(unsortedBumpingRooms), 'BumpingRulePriority');
-  }
-
-  get availableRooms() { return this._availableRooms; }
-  get bumpingRooms() { return this._bumpingRooms; }
 
   getEvent(): Event {
     return this.isReady() ? this.event : new Event();
@@ -100,12 +80,4 @@ export class RoomGroupListComponent implements OnInit {
     this.openTabIfAlternateRoomsHash();
   }
 
-  // update from components
-  roomSelected(roomId: string) {
-    // TODO: The stuff...pop from one list to the other
-  }
-
-  bumpingRuleSelected(bumpingRuleId: string) {
-
-  }
 }

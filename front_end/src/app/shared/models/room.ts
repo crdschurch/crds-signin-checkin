@@ -64,6 +64,6 @@ export class Room {
   }
 
   isBumpingRoom() {
-    return this.BumpingRulePriority !== undefined;
+    return this.BumpingRulePriority;
   }
 }
