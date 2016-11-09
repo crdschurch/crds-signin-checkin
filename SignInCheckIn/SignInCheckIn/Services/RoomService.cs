@@ -226,17 +226,17 @@ namespace SignInCheckIn.Services
             return eventRoom;
         }
 
-        public List<BumpingRuleDto> GetBumpingRulesByRoomId(int roomReservationId)
-        {
-            var mpBumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomReservationId);
-            return Mapper.Map<List<MpBumpingRuleDto>, List<BumpingRuleDto>>(mpBumpingRules);
-        }
+        //public List<BumpingRuleDto> GetBumpingRulesByRoomId(int roomReservationId)
+        //{
+        //    var mpBumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomReservationId);
+        //    return Mapper.Map<List<MpBumpingRuleDto>, List<BumpingRuleDto>>(mpBumpingRules);
+        //}
 
-        public void UpdateBumpingRules(List<BumpingRuleDto> bumpingRuleDtos)
-        {
-            var mpBumpingRules = Mapper.Map<List<BumpingRuleDto>, List<MpBumpingRuleDto>>(bumpingRuleDtos);
+        //public void UpdateBumpingRules(List<BumpingRuleDto> bumpingRuleDtos)
+        //{
+        //    var mpBumpingRules = Mapper.Map<List<BumpingRuleDto>, List<MpBumpingRuleDto>>(bumpingRuleDtos);
 
-        }
+        //}
 
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
         {
@@ -310,10 +310,35 @@ namespace SignInCheckIn.Services
             }
         }
 
-        public List<RoomDto> GetAvailableRoomsByLocation(int locationId, int roomId)
+        public List<EventRoomDto> GetAvailableRooms(int roomId, int eventId)
         {
-            var mpRooms = _roomRepository.GetRoomsBySite(locationId);
-            return Mapper.Map<List<MpRoomDto>, List<RoomDto>>(mpRooms);
-        } 
+            var mpEvent = _eventRepository.GetEventById(eventId);
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+
+            // get bumping rules on the room id here
+            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomId);
+
+            // TODO: Get rid of nested loops
+            foreach (var rule in bumpingRules)
+            {
+                // set the rule id and priority on the matching event room - which is the "to" field
+                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.FromEventRoomId))
+                {
+                    room.BumpingRuleId = rule.BumpingRuleId;
+                    room.BumpingRulePriority = rule.PriorityOrder;
+                }
+            }
+
+            return eventRooms;
+        }
+
+        public List<EventRoomDto> UpdateAvailableRooms(int roomId, int eventId)
+        {
+
+
+            return null;
+        }
     }
 }
