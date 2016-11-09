@@ -4,13 +4,15 @@ import { MomentModule } from 'angular2-moment';
 
 import { ApiService, SetupService } from '../shared/services';
 import { ChildCheckinComponent } from './child-checkin.component';
-import { RoomComponent } from './room';
+import { RoomComponent } from './room';;
+import { RoomChildComponent } from './room/child';
 import { childCheckinRouting } from './child-checkin.routes';
 
 @NgModule({
   declarations: [
     ChildCheckinComponent,
-    RoomComponent
+    RoomComponent,
+    RoomChildComponent
   ],
   imports: [
     SharedModule,

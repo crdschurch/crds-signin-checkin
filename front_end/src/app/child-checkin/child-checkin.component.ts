@@ -1,16 +1,17 @@
-import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ApiService, SetupService } from '../shared/services';
-import { Event, MachineConfiguration } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
+
+import { Event, MachineConfiguration } from '../shared/models';
+import { ChildCheckinService } from './child-checkin.service';
 
 @Component({
   selector: 'child-checkin',
   templateUrl: 'child-checkin.component.html',
   styleUrls: ['child-checkin.component.scss', 'scss/_stepper.scss' ],
-  providers: []
+  providers: [ ChildCheckinService ]
 })
-@Injectable()
 export class ChildCheckinComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
   @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
@@ -18,11 +19,10 @@ export class ChildCheckinComponent implements OnInit {
 
   clock = Observable.interval(10000).map(() => new Date());
   thisSiteName: string;
-  selectedEvent: Event;
   todaysEvents: Event[];
   ready: boolean;
 
-  constructor(private setupService: SetupService, private apiService: ApiService) {
+  constructor(private setupService: SetupService, private apiService: ApiService,  private childCheckinService: ChildCheckinService) {
     this.kioskDetails = new MachineConfiguration();
     this.ready = false;
   }
@@ -61,9 +61,12 @@ export class ChildCheckinComponent implements OnInit {
     return event.EventId === this.selectedEvent.EventId;
   }
 
-  selectEvent(event) {
-    this.selectedEvent = event;
-    // TODO: populate UI with new data from backend for event
+  get selectedEvent(): Event {
+    return this.childCheckinService.selectedEvent;
+  }
+
+  set selectedEvent(event) {
+    this.childCheckinService.selectedEvent = event;
   }
 
   public getKioskDetails() {
@@ -83,5 +86,5 @@ export class ChildCheckinComponent implements OnInit {
   public showChildDetailModal() {
     this.childDetailModal.show();
   }
-
 }
+

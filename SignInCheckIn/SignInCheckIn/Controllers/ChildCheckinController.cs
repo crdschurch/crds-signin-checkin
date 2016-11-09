@@ -19,8 +19,8 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [Route("checkin/children/{roomId}")]
-        public IHttpActionResult GetCheckedInChildrenForEventAndRoom(int roomId)
+        [Route("checkin/children/{roomId:int}")]
+        public IHttpActionResult GetCheckedInChildrenForEventAndRoom(int roomId, [FromUri(Name = "eventId")] int? eventId = null)
         {
             try
             {
@@ -30,17 +30,34 @@ namespace SignInCheckIn.Controllers
                     siteId = int.Parse(Request.Headers.GetValues("Crds-Site-Id").First());
                 }
 
-                if (siteId == 0)
+                if (siteId == 0 && eventId == null)
                 {
-                    throw new Exception("Site Id is Invalid");
+                    throw new Exception("Site Id or Event Id is required");
                 }
 
-                //var children = _childCheckinService.GetChildrenForCurrentEventAndRoom(siteId, roomId);
-                return Ok(/*children*/);
+                var children = _childCheckinService.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventId);
+                return Ok(children);
             }
             catch (Exception e)
             {
                 var apiError = new ApiErrorDto("Get Children", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpPut]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("checkin/event/participant")]
+        public IHttpActionResult CheckinChildrenForCurrentEventAndRoom(ParticipantDto participant)
+        {
+            try
+            {
+                var child = _childCheckinService.CheckinChildrenForCurrentEventAndRoom(participant);
+                return Ok(child);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Checking in Children", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
