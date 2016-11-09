@@ -93,13 +93,13 @@ namespace MinistryPlatform.Translation.Repositories
         public void ResetEventSetup(string authenticationToken, int eventId)
         {
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
-                .PostStoredProc(ResetEventStoredProcedureName, new Dictionary<string, object> {{"EventId", eventId}});
+                .PostStoredProc(ResetEventStoredProcedureName, new Dictionary<string, object> {{"@EventId", eventId}});
         }
 
         public void ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId)
         {
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
-                .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"DestinationEventId", destinationEventId}, {"SourceEventId", sourceEventId}});
+                .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"@DestinationEventId", destinationEventId}, {"@SourceEventId", sourceEventId}});
         }
     }
 }

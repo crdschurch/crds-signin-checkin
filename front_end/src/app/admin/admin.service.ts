@@ -41,6 +41,13 @@ export class AdminService {
     this.roomGroupsUpdateEmitter.emit(body);
   }
 
+  importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${destinationEventId}/import/${sourceEventId}`;
+    return this.http.put(url, null, null)
+                    .map(res => { (<any[]>res.json()).map(r => Room.fromJson(r)); })
+                    .catch(this.handleError);
+  }
+
   private updateRoomGroupsInternal(room: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${room.EventId}/rooms/${room.RoomId}/groups`;
     return this.http.put(url, room)
