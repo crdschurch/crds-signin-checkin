@@ -12,30 +12,18 @@
 
       <div class="row">
         <div class="col-sm-6 col-md-4">
-          Select an event date
-          <div class="input-group">
-            <input type="text" class="form-control" value="11/09/16" aria-describedby="basic-addon2" readonly>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button">
-                <span class="icon">
-                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="32" viewBox="0 0 30 32">
-                  <g>
-                  </g>
-                  	<path d="M2.286 29.714h25.143v-18.286h-25.143v18.286zM9.143 8v-5.143q0-0.25-0.161-0.411t-0.411-0.161h-1.143q-0.25 0-0.411 0.161t-0.161 0.411v5.143q0 0.25 0.161 0.411t0.411 0.161h1.143q0.25 0 0.411-0.161t0.161-0.411zM22.857 8v-5.143q0-0.25-0.161-0.411t-0.411-0.161h-1.143q-0.25 0-0.411 0.161t-0.161 0.411v5.143q0 0.25 0.161 0.411t0.411 0.161h1.143q0.25 0 0.411-0.161t0.161-0.411zM29.714 6.857v22.857q0 0.929-0.679 1.607t-1.607 0.679h-25.143q-0.929 0-1.607-0.679t-0.679-1.607v-22.857q0-0.929 0.679-1.607t1.607-0.679h2.286v-1.714q0-1.179 0.839-2.018t2.018-0.839h1.143q1.179 0 2.018 0.839t0.839 2.018v1.714h6.857v-1.714q0-1.179 0.839-2.018t2.018-0.839h1.143q1.179 0 2.018 0.839t0.839 2.018v1.714h2.286q0.929 0 1.607 0.679t0.679 1.607z" fill="#FFFFFF" />
-                  </svg>
-                </span>
-              </button>
-            </span>
-          </div>
+          Select an event date<br/>
+          <crds-datepicker
+            name="sourceEventDate"
+            autoClose="true"
+            [(date)]="sourceEventDate"
+            (onChange)="changeSourceEventDate($event)"></crds-datepicker>
         </div>
         <div class="col-sm-6 col-md-4">
           <div class="checkbox mt-2">
             <label><input type="checkbox" name="importAll" id="importAll" disabled/>&nbsp;&nbsp;Import all services for this weekend</label>
           </div>
         </div>
-      </div>
-      <div class="mt-1">
-        <datepicker name="sourceEventDate" [(ngModel)]="sourceEventDate" [showWeeks]="false" (ngModelChange)="changeSourceEventDate($event)"></datepicker>
       </div>
 
       <div class="row" *ngIf="!isReady()">
