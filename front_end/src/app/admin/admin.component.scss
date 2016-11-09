@@ -84,3 +84,21 @@ admin {
   border-radius: 3px;
   display: inline-block;
 }
+
+datepicker {
+  .text-success {
+    color: white !important;
+  }
+
+  .pull-right {
+    float: right;
+  }
+  
+  .glyphicon.glyphicon-chevron-left:after {
+    content: "<";
+  }
+
+  .glyphicon.glyphicon-chevron-right:after {
+    content: ">";
+  }
+}
