@@ -22,20 +22,10 @@ export class AdminService {
   }
 
   getBumpingRooms(eventId: string, roomId: string) {
-    // const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
-    // return this.http.get(url)
-    //                 .map(res => {return data})
-    //                 .catch(this.handleError);
-    // TODO: remove when backend available
-    const data = [
-      { EventRoomId: "456", RoomId: "456", EventId: "456", RoomName: "456", RoomNumber: "456", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123", BumpingRuleId: 897, BumpingRulePriority: 1 },
-      { EventRoomId: "888", RoomId: "888", EventId: "888", RoomName: "888", RoomNumber: "888", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123" },
-      { EventRoomId: "987", RoomId: "987", EventId: "987", RoomName: "987", RoomNumber: "987", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123", BumpingRuleId: 897, BumpingRulePriority: 2 },
-      { EventRoomId: "123", RoomId: "123", EventId: "123", RoomName: "123", RoomNumber: "123", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123", BumpingRuleId: 897, BumpingRulePriority: 0 },
-      { EventRoomId: "221", RoomId: "221", EventId: "221", RoomName: "221", RoomNumber: "221", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123", BumpingRuleId: 897, BumpingRulePriority: 3 },
-      { EventRoomId: "789", RoomId: "789", EventId: "789", RoomName: "789", RoomNumber: "789", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123" },
-    ]
-    return Observable.of(data);
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
+    return this.http.get(url)
+                    .map(res => res.json())
+                    .catch(this.handleError);
   }
 
   updateRoom(eventId: string, roomId: string, body: Room) {

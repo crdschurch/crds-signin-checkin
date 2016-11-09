@@ -20,8 +20,7 @@ export class AlternateRoomsComponent implements OnInit {
         this.allRooms = Room.fromJsons(allRooms);
       },
       error => {
-        console.error(error)
-        this.allRooms = Room.fromJsons(error);
+        console.error(error);
       }
     );
   }
@@ -31,15 +30,19 @@ export class AlternateRoomsComponent implements OnInit {
   }
 
   get availableRooms() {
-    return this._allRooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
+    if (this._allRooms) {
+      return this._allRooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
+    };
   }
   get bumpingRooms() {
-    return this._allRooms
-    .filter(
-      (obj: Room) => { return obj.isBumpingRoom(); })
-    .sort(
-      (a, b) => { if (a.BumpingRulePriority > b.BumpingRulePriority) { return 1; } }
-    );
+    if (this._allRooms) {
+      return this._allRooms
+      .filter(
+        (obj: Room) => { return obj.isBumpingRoom(); })
+      .sort(
+        (a, b) => { if (a.BumpingRulePriority > b.BumpingRulePriority) { return 1; } }
+      );
+    }
   }
 
 }

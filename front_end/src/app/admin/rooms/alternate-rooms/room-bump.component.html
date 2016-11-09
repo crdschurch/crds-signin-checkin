@@ -1,14 +1,16 @@
-<td>
-  <span class="pr-1" (click)="unBump()" [hidden]="isUnBumped()">&#9664;</span>
+<td [hidden]="isUnBumped()">
+  <span class="clickable" (click)="unBump()">&#9664;</span>
 </td>
 <td>{{room.EventRoomId}}</td>
 <td>{{room.RoomId}}</td>
 <td>Closed</td>
-<td class="text-xs-right">
+<td class="text-xs-right" [hidden]="isUnBumped()">
   <span>{{room.BumpingRulePriority | oneBasedIndex}}</span>
-  <span class="pr-1" (click)="bump()" [hidden]="isBumped()">&#9658;</span>
-  <span class="pr-1" (click)="bumpUp()" [hidden]="isFirst() || isUnBumped()">&#9650;</span>
-  <span class="pr-1" (click)="bumpDown()" [hidden]="isLast() || isUnBumped()">&#9660;</span>
+</td>
+<td>
+  <span class="clickable bump" (click)="bump()" [hidden]="isBumped()">&#9658;</span>
+  <span class="clickable bump-up" (click)="bumpUp()" [hidden]="isFirst() || isUnBumped()">&#8679;</span>
+  <span class="clickable bump-down" (click)="bumpDown()" [hidden]="isLast() || isUnBumped()">&#8681;</span>
 </td>
 
 <!-- <td>{{room.EventRoomId}}</td>
@@ -16,6 +18,6 @@
 <td>Closed</td>
 <td>{{room.BumpingRulePriority}}</td>
 <td class="text-xs-right">
-  <span class="pr-1">&#9650;</span>
-  <span class="pr-1">&#9660;</span>
+  <span class=">&#9650;</span>
+  <span class=">&#9660;</span>
 </td> -->
