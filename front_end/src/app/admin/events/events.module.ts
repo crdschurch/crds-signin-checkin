@@ -10,6 +10,8 @@ import { RoomListComponent } from '../rooms/room-list.component';
 import { RoomGroupListComponent } from '../rooms/room-group-list.component';
 import { RoomGroupComponent } from '../rooms/room-group.component';
 import { RoomComponent } from '../rooms/room.component';
+import { RoomBumpComponent } from '../rooms/alternate-rooms/room-bump.component';
+import { AlternateRoomsComponent } from '../rooms/alternate-rooms/alternate-rooms.component';
 import { HeaderComponent } from '../header/header.component';
 import { eventsRouting } from './events.routes';
 
@@ -22,7 +24,9 @@ import { eventsRouting } from './events.routes';
     RoomGroupListComponent,
     RoomGroupComponent,
     HeaderComponent,
-    RoomComponent
+    RoomComponent,
+    AlternateRoomsComponent,
+    RoomBumpComponent
   ],
   imports: [
     eventsRouting,

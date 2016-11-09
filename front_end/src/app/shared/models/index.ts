@@ -1,4 +1,3 @@
-export { BumpingRule } from './bumping-rule';
 export { Child } from './child';
 export { ContentBlock } from './content-block';
 export { Event } from './event';

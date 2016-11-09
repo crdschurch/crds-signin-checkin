@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { HeaderService } from '../header/header.service';
-import { Group, Room, Event, BumpingRule } from '../../shared/models';
+import { Group, Room, Event } from '../../shared/models';
 import { AdminService } from '../admin.service';
 import { ApiService } from '../../shared/services';
 
@@ -17,8 +17,6 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   alternateRoomsSelected: boolean = false;
-  bumpingRules: BumpingRule[];
-  availableRooms: Room[];
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -30,27 +28,25 @@ export class RoomGroupListComponent implements OnInit {
   private getData(): void {
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
+
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
+        console.log('parent room', this.room)
       },
       error => console.error(error)
     );
+
     this.apiService.getEvent(this.eventId).subscribe(
 
       event => {
         this.event = event;
+        console.log('parent event', this.event)
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
     );
 
-    this.adminService.getBumpingRules(this.eventId).subscribe(
-      room => {
-        this.room = room;
-      },
-      error => console.error(error)
-    );
   }
 
   getEvent(): Event {
@@ -84,12 +80,4 @@ export class RoomGroupListComponent implements OnInit {
     this.openTabIfAlternateRoomsHash();
   }
 
-  // update from components
-  roomSelected(roomId: string) {
-    // TODO: The stuff...pop from one list to the other
-  }
-
-  bumpingRuleSelected(bumpingRuleId: string) {
-
-  }
 }
