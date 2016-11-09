@@ -1,14 +1,14 @@
 <td>
-  <span class="pr-1" (click)="unBump()">&#9664;</span>
+  <span class="pr-1" (click)="unBump()" [hidden]="isUnBumped()">&#9664;</span>
 </td>
 <td>{{room.EventRoomId}}</td>
 <td>{{room.RoomId}}</td>
 <td>Closed</td>
 <td class="text-xs-right">
   <span>{{room.BumpingRulePriority}}</span>
-  <span class="pr-1" (click)="bump()">&#9658;</span>
-  <span class="pr-1" (click)="bumpUp()">&#9650;</span>
-  <span class="pr-1" (click)="bumpDown()">&#9660;</span>
+  <span class="pr-1" (click)="bump()" [hidden]="isBumped()">&#9658;</span>
+  <span class="pr-1" (click)="bumpUp()" [hidden]="isFirst() || isUnBumped()">&#9650;</span>
+  <span class="pr-1" (click)="bumpDown()" [hidden]="isLast() || isUnBumped()">&#9660;</span>
 </td>
 
 <!-- <td>{{room.EventRoomId}}</td>

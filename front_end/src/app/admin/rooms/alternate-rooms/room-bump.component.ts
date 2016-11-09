@@ -14,6 +14,11 @@ export class RoomBumpComponent implements OnInit {
   ngOnInit() {
   }
 
+  isFirst() { return this.index === 0; }
+  isLast() { return this.index === this.bumpingRooms.length - 1; }
+  isBumped() { return this.room.isBumpingRoom(); }
+  isUnBumped() { return !this.room.isBumpingRoom(); }
+
   unBump() {
     delete this.room.BumpingRuleId;
     delete this.room.BumpingRulePriority;
