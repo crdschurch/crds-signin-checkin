@@ -24,13 +24,32 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
-        [Route("rooms/{roomId}/site/{locationId}")]
-        public IHttpActionResult GetAvailableRoomsByLocation(
-            [FromUri(Name = "locationId")] int locationId)
+        [Route("events/{eventId}/rooms/{roomId}/bumping")]
+        public IHttpActionResult GetAvailableRooms(
+            [FromUri(Name = "roomId")] int roomId,
+            [FromUri(Name = "eventId")] int eventId)
         {
             try
             {
-                var roomList = _roomService.GetAvailableRoomsByLocation(locationId);
+                var roomList = _roomService.GetAvailableRooms(roomId, eventId);
+                return Ok(roomList);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Get Rooms By Location ", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(List<RoomDto>))]
+        [Route("events/{eventId}/rooms/{roomId}/bumping")]
+        public IHttpActionResult UpdateAvailableRoomsByLocation(
+        [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId, [FromBody] List<EventRoomDto> eventRooms)
+        {
+            try
+            {
+                var roomList = _roomService.UpdateAvailableRooms(eventId, roomId, eventRooms);
                 return Ok(roomList);
             }
             catch (Exception e)

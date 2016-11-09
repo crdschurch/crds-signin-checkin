@@ -17,6 +17,10 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         void UpdateBumpingRules(List<MpBumpingRuleDto> mpBumpingRuleDtos);
 
-        List<MpRoomDto> GetRoomsBySite(int locationId);
+        List<MpRoomDto> GetAvailableRoomsBySite(int locationId);
+
+        void DeleteBumpingRules(IEnumerable<int> ruleIds);
+
+        void CreateBumpingRules(List<MpBumpingRuleDto> bumpingRules);
     }
 }

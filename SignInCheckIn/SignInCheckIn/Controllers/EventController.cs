@@ -160,39 +160,39 @@ namespace SignInCheckIn.Controllers
             }
         }
 
-	[HttpGet]
-        [ResponseType(typeof(EventRoomDto))]
-        [Route("events/eventrooms/{eventRoomId}")]
-        public IHttpActionResult GetBumpingRules([FromUri] int eventRoomId)
-        {
-            try
-            {
-                var bumpingRuleList = _roomService.GetBumpingRulesByRoomId(eventRoomId);
-                return Ok(bumpingRuleList);
-            }
-            catch (Exception e)
-            {
-                var apiError = new ApiErrorDto("Get Bumping Rules For Event Room " + eventRoomId, e);
-                throw new HttpResponseException(apiError.HttpResponseMessage);
-            }
-        }
+	//[HttpGet]
+ //       [ResponseType(typeof(EventRoomDto))]
+ //       [Route("events/eventrooms/{eventRoomId}")]
+ //       public IHttpActionResult GetBumpingRules([FromUri] int eventRoomId)
+ //       {
+ //           try
+ //           {
+ //               var bumpingRuleList = _roomService.GetBumpingRulesByRoomId(eventRoomId);
+ //               return Ok(bumpingRuleList);
+ //           }
+ //           catch (Exception e)
+ //           {
+ //               var apiError = new ApiErrorDto("Get Bumping Rules For Event Room " + eventRoomId, e);
+ //               throw new HttpResponseException(apiError.HttpResponseMessage);
+ //           }
+ //       }
 
-        [HttpPut]
-        //[ResponseType(typeof(EventRoomDto))]
-        [Route("events/eventrooms/{eventRoomId}")]
-        public IHttpActionResult UpdateBumpingRules([FromUri] int eventRoomId, [FromBody] List<BumpingRuleDto> bumpingRuleDtos)
-        {
-            try
-            {
-                // TODO - change to add from get - need to make sure the room has a reservation before creating the rule
-                var bumpingRuleList = _roomService.GetBumpingRulesByRoomId(eventRoomId);
-                return Ok(bumpingRuleList);
-            }
-            catch (Exception e)
-            {
-                var apiError = new ApiErrorDto("Get Bumping Rules For Event Room " + eventRoomId, e);
-                throw new HttpResponseException(apiError.HttpResponseMessage);
-            }
-        }
+ //       [HttpPut]
+ //       //[ResponseType(typeof(EventRoomDto))]
+ //       [Route("events/eventrooms/{eventRoomId}")]
+ //       public IHttpActionResult UpdateBumpingRules([FromUri] int eventRoomId, [FromBody] List<BumpingRuleDto> bumpingRuleDtos)
+ //       {
+ //           try
+ //           {
+ //               // TODO - change to add from get - need to make sure the room has a reservation before creating the rule
+ //               var bumpingRuleList = _roomService.GetBumpingRulesByRoomId(eventRoomId);
+ //               return Ok(bumpingRuleList);
+ //           }
+ //           catch (Exception e)
+ //           {
+ //               var apiError = new ApiErrorDto("Get Bumping Rules For Event Room " + eventRoomId, e);
+ //               throw new HttpResponseException(apiError.HttpResponseMessage);
+ //           }
+ //       }
     }
 }

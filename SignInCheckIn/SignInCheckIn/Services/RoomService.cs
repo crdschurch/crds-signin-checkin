@@ -226,17 +226,17 @@ namespace SignInCheckIn.Services
             return eventRoom;
         }
 
-        public List<BumpingRuleDto> GetBumpingRulesByRoomId(int roomReservationId)
-        {
-            var mpBumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomReservationId);
-            return Mapper.Map<List<MpBumpingRuleDto>, List<BumpingRuleDto>>(mpBumpingRules);
-        }
+        //public List<BumpingRuleDto> GetBumpingRulesByRoomId(int roomReservationId)
+        //{
+        //    var mpBumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomReservationId);
+        //    return Mapper.Map<List<MpBumpingRuleDto>, List<BumpingRuleDto>>(mpBumpingRules);
+        //}
 
-        public void UpdateBumpingRules(List<BumpingRuleDto> bumpingRuleDtos)
-        {
-            var mpBumpingRules = Mapper.Map<List<BumpingRuleDto>, List<MpBumpingRuleDto>>(bumpingRuleDtos);
+        //public void UpdateBumpingRules(List<BumpingRuleDto> bumpingRuleDtos)
+        //{
+        //    var mpBumpingRules = Mapper.Map<List<BumpingRuleDto>, List<MpBumpingRuleDto>>(bumpingRuleDtos);
 
-        }
+        //}
 
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
         {
@@ -310,10 +310,61 @@ namespace SignInCheckIn.Services
             }
         }
 
-        public List<RoomDto> GetAvailableRoomsByLocation(int locationId, int roomId)
+        public List<EventRoomDto> GetAvailableRooms(int roomId, int eventId)
         {
-            var mpRooms = _roomRepository.GetRoomsBySite(locationId);
-            return Mapper.Map<List<MpRoomDto>, List<RoomDto>>(mpRooms);
-        } 
+            var mpEvent = _eventRepository.GetEventById(eventId);
+
+            // exclude the origin room from the available rooms
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId).Where(r => r.RoomId != roomId).ToList();
+
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+
+            // get bumping rules on the room id here
+            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomId);
+
+            // TODO: Get rid of nested loops
+            foreach (var rule in bumpingRules)
+            {
+                // set the rule id and priority on the matching event room - which is the "to" field
+                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.FromEventRoomId))
+                {
+                    room.BumpingRuleId = rule.BumpingRuleId;
+                    room.BumpingRulePriority = rule.PriorityOrder;
+                }
+            }
+
+            return eventRooms;
+        }
+
+        public List<EventRoomDto> UpdateAvailableRooms(int eventId, int roomId, List<EventRoomDto> eventRoomDtos)
+        {
+            var sourceEventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+
+            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(sourceEventRoom.EventRoomId.GetValueOrDefault());
+            var bumpingRuleIds = bumpingRules.Select(r => r.BumpingRuleId).Distinct();
+            _roomRepository.DeleteBumpingRules(bumpingRuleIds);
+
+            var selectedRooms = eventRoomDtos.Where(r => r.BumpingRulePriority != 0).ToList();
+
+            List<MpBumpingRuleDto> mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
+
+            foreach (var selectedRoom in selectedRooms)
+            {
+                MpBumpingRuleDto mpBumpingRuleDto = new MpBumpingRuleDto
+                {
+                    FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
+                    ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
+                    PriorityOrder = selectedRoom.BumpingRulePriority,
+                    BumpingRuleTypeId = 1
+                };
+
+                mpBumpingRuleDtos.Add(mpBumpingRuleDto);
+            }
+
+            _roomRepository.CreateBumpingRules(mpBumpingRuleDtos);
+
+            // pull back the newly created rooms - not sure this should be used here
+            return GetAvailableRooms(roomId, eventId);
+        }
     }
 }

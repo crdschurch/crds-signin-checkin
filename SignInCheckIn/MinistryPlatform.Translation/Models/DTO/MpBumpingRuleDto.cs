@@ -11,6 +11,7 @@ namespace MinistryPlatform.Translation.Models.DTO
     [MpRestApiTable(Name = "cr_Bumping_Rules")]
     public class MpBumpingRuleDto
     {
+        [MpRestApiPrimaryKey("Bumping_Rules_ID")]
         [JsonProperty(PropertyName = "Bumping_Rules_ID")]
         public int BumpingRuleId { get; set; }
 
