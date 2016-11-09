@@ -19,6 +19,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         List<MpRoomDto> GetAvailableRoomsBySite(int locationId);
 
-        void DeleteBumpingRules(List<int> ruleIds);
+        void DeleteBumpingRules(IEnumerable<int> ruleIds);
     }
 }

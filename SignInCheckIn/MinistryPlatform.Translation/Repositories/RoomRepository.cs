@@ -152,7 +152,7 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update(mpBumpingRuleDtos, _eventRoomColumns);
         }
 
-        public void DeleteBumpingRules(List<int> ruleIds)
+        public void DeleteBumpingRules(IEnumerable<int> ruleIds)
         {
             var token = _apiUserRepository.GetToken();
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpBumpingRuleDto>(ruleIds);

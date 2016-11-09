@@ -313,7 +313,9 @@ namespace SignInCheckIn.Services
         public List<EventRoomDto> GetAvailableRooms(int roomId, int eventId)
         {
             var mpEvent = _eventRepository.GetEventById(eventId);
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+
+            // exclude the origin room from the available rooms
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId).Where(r => r.RoomId != roomId).ToList();
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
@@ -334,8 +336,12 @@ namespace SignInCheckIn.Services
             return eventRooms;
         }
 
-        public List<EventRoomDto> UpdateAvailableRooms(int roomId, int eventId)
+        public List<EventRoomDto> UpdateAvailableRooms(int roomId, int eventId, List<EventRoomDto> eventRoomDtos)
         {
+            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomId);
+            var bumpingRuleIds = bumpingRules.Select(r => r.BumpingRuleId).Distinct();
+            _roomRepository.DeleteBumpingRules(bumpingRuleIds);
+
 
 
             return null;

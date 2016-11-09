@@ -45,7 +45,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(List<RoomDto>))]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         public IHttpActionResult UpdateAvailableRoomsByLocation(
-        [FromUri(Name = "locationId")] int locationId)
+        [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId)
         {
             try
             {
