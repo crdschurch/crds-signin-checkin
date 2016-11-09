@@ -354,7 +354,7 @@ namespace SignInCheckIn.Services
                 {
                     FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
                     ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
-                    PriorityOrder = selectedRoom.BumpingRulePriority,
+                    PriorityOrder = selectedRoom.BumpingRulePriority.GetValueOrDefault(),
                     BumpingRuleTypeId = 1
                 };
 
