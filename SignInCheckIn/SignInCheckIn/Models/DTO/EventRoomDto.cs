@@ -28,8 +28,8 @@ namespace SignInCheckIn.Models.DTO
 
         public List<AgeGradeDto> AssignedGroups { get; set; }
 
-        public int BumpingRuleId { get; set; }
+        public int? BumpingRuleId { get; set; }
 
-        public int BumpingRulePriority { get; set; }
+        public int? BumpingRulePriority { get; set; }
     }
 }
