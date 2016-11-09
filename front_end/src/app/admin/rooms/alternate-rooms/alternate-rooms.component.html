@@ -59,7 +59,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of bumpingRooms" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms"></tr>
+              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [index]="i"></tr>
             </tbody>
           </table>
         </div>
