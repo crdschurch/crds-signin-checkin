@@ -1,8 +1,8 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
-import { HttpClientService, SetupService } from '../shared/services';
-import { Room, BumpingRule } from '../shared/models';
+import { HttpClientService } from '../shared/services';
+import { Room } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -10,19 +10,12 @@ export class AdminService {
   private roomGroupsUpdateObserver: Observable<Room>;
   site: number;
 
-  constructor(private http: HttpClientService, private setupService: SetupService) {
+  constructor(private http: HttpClientService) {
     this.configureUpdateRoomGroupsEmitterAndObserver();
   }
 
   getRooms(eventId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms`;
-    return this.http.get(url)
-                    .map(res => res.json())
-                    .catch(this.handleError);
-  }
-
-  getBumpingRooms() {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/rooms/site/${this.getSite()}`;
     return this.http.get(url)
                     .map(res => res.json())
                     .catch(this.handleError);
@@ -48,15 +41,11 @@ export class AdminService {
     this.roomGroupsUpdateEmitter.emit(body);
   }
 
-  getBumpingRules(eventRoomId: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/eventrooms/${eventRoomId}`;
-    return this.http.get(url)
-                    .map(res => BumpingRule.fromJson(res.json()))
+  importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${destinationEventId}/import/${sourceEventId}`;
+    return this.http.put(url, null, null)
+                    .map(res => { (<any[]>res.json()).map(r => Room.fromJson(r)); })
                     .catch(this.handleError);
-  }
-
-  updateBumpingRules() {
-    // TODO: Put some shiitake here
   }
 
   private updateRoomGroupsInternal(room: Room) {
@@ -83,12 +72,6 @@ export class AdminService {
     this.roomGroupsUpdateObserver.subscribe(room => {
       this.updateRoomGroupsInternal(room);
     });
-  }
-
-  private getSite(): number {
-    let setupCookie = this.setupService.getMachineDetailsConfigCookie();
-    // default to Oakley if setup cookie is not present
-    return setupCookie && setupCookie.CongregationId ? setupCookie.CongregationId : 1;
   }
 
   private handleError (error: any) {

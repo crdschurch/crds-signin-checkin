@@ -128,7 +128,39 @@ namespace SignInCheckIn.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPut]
+        [ResponseType(typeof(List<EventRoomDto>))]
+        [Route("events/{destinationEventId:int}/import/{sourceEventId:int}")]
+        public IHttpActionResult ImportEventSetup(int destinationEventId, int sourceEventId)
+        {
+            try
+            {
+                return Authorized(token => Ok(_eventService.ImportEventSetup(token, destinationEventId, sourceEventId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error importing source event #{sourceEventId} into destination event #{destinationEventId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpPut]
+        [ResponseType(typeof(List<EventRoomDto>))]
+        [Route("events/{destinationEventId:int}/reset")]
+        public IHttpActionResult ResetEventSetup(int eventId)
+        {
+            try
+            {
+                return Authorized(token => Ok(_eventService.ResetEventSetup(token, eventId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error resetting event #{eventId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+	[HttpGet]
         [ResponseType(typeof(EventRoomDto))]
         [Route("events/eventrooms/{eventRoomId}")]
         public IHttpActionResult GetBumpingRules([FromUri] int eventRoomId)
