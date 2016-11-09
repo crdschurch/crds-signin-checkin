@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Room } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'alternate-rooms',
@@ -10,8 +9,6 @@ import * as _ from 'lodash';
   styleUrls: ['alternate-rooms.component.scss']
 })
 export class AlternateRoomsComponent implements OnInit {
-  // private _availableRooms: Room[];
-  // private _bumpingRooms: Room[];
   private _allRooms: Room[];
 
   constructor( private adminService: AdminService,
@@ -37,7 +34,12 @@ export class AlternateRoomsComponent implements OnInit {
     return this._allRooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
   }
   get bumpingRooms() {
-    return this._allRooms.filter( (obj: Room) => { return obj.isBumpingRoom(); } ).sort((a: Room, b: Room) => {if (a.BumpingRulePriority > b.BumpingRulePriority) {return 1}} );
+    return this._allRooms
+    .filter(
+      (obj: Room) => { return obj.isBumpingRoom(); })
+    .sort(
+      (a, b) => { if (a.BumpingRulePriority > b.BumpingRulePriority) { return 1; } }
+    );
   }
 
 }

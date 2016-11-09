@@ -5,7 +5,7 @@
 <td>{{room.RoomId}}</td>
 <td>Closed</td>
 <td class="text-xs-right">
-  <span>{{room.BumpingRulePriority}}</span>
+  <span>{{room.BumpingRulePriority | oneBasedIndex}}</span>
   <span class="pr-1" (click)="bump()" [hidden]="isBumped()">&#9658;</span>
   <span class="pr-1" (click)="bumpUp()" [hidden]="isFirst() || isUnBumped()">&#9650;</span>
   <span class="pr-1" (click)="bumpDown()" [hidden]="isLast() || isUnBumped()">&#9660;</span>
