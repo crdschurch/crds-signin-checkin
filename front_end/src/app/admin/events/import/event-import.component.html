@@ -1,70 +1,71 @@
 <header-event></header-event>
 
-<div class="wrapper">
-  <div class="container-fluid admin-content py-1">
+<form (ngSubmit)="submitForm(importForm)" #importForm="ngForm" novalidate>
+  <div class="wrapper">
+    <div class="container-fluid admin-content py-1">
 
-    <div class="row">
-      <div class="col-md-12 m-b-2">
-        <h1>Import Event Settings</h1>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-12 m-b-2">
-        Select an event date
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-3 m-b-2">
-        <datepicker [(ngModel)]="sourceEventDate" [showWeeks]="false" (ngModelChange)="changeSourceEventDate($event)"></datepicker>
-      </div>
-      <div class="col-md-9 m-b-2">
-        <label for="importAll">
-          <input type="checkbox" name="importAll" id="importAll"/>
-          Import all services for this weekend
-        </label>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-9 col-sm-8 col-xs-12">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Event Type</th>
-              <th>Day</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Site</th>
-              <th>Select</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let event of events">
-              <td>Service</td>
-              <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
-              <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
-              <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
-              <td>{{event.EventSite}}</td>
-              <td class="text-xs">
-                <input type='radio' name='eventId' value='{{event.EventId}}' />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-7"></div>
-      <div class="col-md-2">
-        <div class="text-md-right">
-          <button class="btn btn-standard">Cancel</button>
-          <button class="btn btn-primary">Import</button>
+      <div class="row">
+        <div class="col-md-12 m-b-2">
+          <h1>Import Event Settings</h1>
         </div>
       </div>
-    </div>
 
+      <div class="row">
+        <div class="col-md-12 m-b-2">
+          Select an event date
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 m-b-2">
+          <datepicker name="sourceEventDate" [(ngModel)]="sourceEventDate" [showWeeks]="false" (ngModelChange)="changeSourceEventDate($event)"></datepicker>
+        </div>
+        <div class="col-md-9 m-b-2">
+          <div class="checkbox">
+            <label><input type="checkbox" name="importAll" id="importAll" disabled/>&nbsp;Import all services for this weekend</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-9 col-sm-8 col-xs-12">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Event Type</th>
+                <th>Day</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Site</th>
+                <th class="text-xs-center">Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of events">
+                <td>Service</td>
+                <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
+                <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
+                <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
+                <td>{{event.EventSite}}</td>
+                <td class="text-xs">
+                  <input type="radio" name="sourceEventId" value="{{event.EventId}}" class="form-control" [(ngModel)]="sourceEventId" required/>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-7"></div>
+        <div class="col-md-2">
+          <div class="text-md-right">
+            <button class="btn btn-standard" (click)="backToEventRooms()" [disabled]="import.processing">Cancel</button>
+            <button class="btn btn-primary" type="submit" [disabled]="import.processing">{{import.buttonLabel}}</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
+</form>

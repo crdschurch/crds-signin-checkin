@@ -23,8 +23,8 @@ describe('RoomListComponent', () => {
       eventId: eventId
     };
 
-    apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent', 'getEvents']);
-    headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
+    apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEvents']);
+    headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
     fixture = new EventResetComponent(route, apiService, headerService);
     fixture.targetEvent = null;
   });
@@ -36,7 +36,7 @@ describe('RoomListComponent', () => {
       let targetEvent = new Event();
       targetEvent.EventId = eventId;
       targetEvent.EventStartDate = targetEventStartDate.toISOString();
-      (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(targetEvent));
+      (<jasmine.Spy>apiService.getEvent).and.returnValue(Observable.of(targetEvent));
 
       fixture.ngOnInit();
 
