@@ -5,6 +5,7 @@ import { HeaderService } from '../header/header.service';
 import { Group, Room, Event } from '../../shared/models';
 import { AdminService } from '../admin.service';
 import { ApiService } from '../../shared/services';
+import * as _ from 'lodash';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -60,9 +61,9 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   set allRooms(rooms) {
-    console.log("set this._allRooms", rooms)
     this._availableRooms = rooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
-    this._bumpingRooms = rooms.filter( (obj: Room) => { return obj.isBumpingRoom(); } );
+    let unsortedBumpingRooms = rooms.filter( (obj: Room) => { return obj.isBumpingRoom(); } );
+    this._bumpingRooms = _.sortBy(unsortedBumpingRooms, 'BumpingRulePriority');
   }
 
   get availableRooms() { return this._availableRooms; }

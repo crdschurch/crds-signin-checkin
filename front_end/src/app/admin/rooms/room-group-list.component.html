@@ -126,12 +126,10 @@
                     <table class="table white table-hover table-bumping">
                       <thead>
                         <tr class="gray-lighter">
-                          <th></th>
                           <th>Room Name</th>
                           <th>Room No.</th>
                           <th>Open/<br />Closed</th>
                           <th>Priority</th>
-                          <th></th>
                           <th></th>
                         </tr>
                       </thead>
@@ -141,7 +139,11 @@
                           <td>{{room.EventRoomId}}</td>
                           <td>{{room.RoomId}}</td>
                           <td>Closed</td>
-                          <td class="text-xs-right"><span class="pr-1">&#9658;</span></td>
+                          <td>{{room.BumpingRulePriority}}</td>
+                          <td class="text-xs-right">
+                            <span class="pr-1">&#9650;</span>
+                            <span class="pr-1">&#9660;</span>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
