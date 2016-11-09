@@ -107,12 +107,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr *ngFor="let room of availableRooms">
-                          <td>{{room.EventRoomId}}</td>
-                          <td>{{room.RoomId}}</td>
-                          <td>Closed</td>
-                          <td class="text-xs-right"><span class="pr-1">&#9658;</span></td>
-                        </tr>
+                        <tr *ngFor="let room of availableRooms" class="room-bump" [room]="room"></tr>
                       </tbody>
                     </table>
                   </div>
@@ -133,9 +128,8 @@
                           <th></th>
                         </tr>
                       </thead>
-                      <!--<tr *ngFor="let someRoom of rooms; let i = index;" class="room" [room]="someRoom"></tr>-->
                       <tbody>
-                        <tr *ngFor="let room of bumpingRooms">
+                        <!-- <tr *ngFor="let room of bumpingRooms">
                           <td>{{room.EventRoomId}}</td>
                           <td>{{room.RoomId}}</td>
                           <td>Closed</td>
@@ -144,7 +138,8 @@
                             <span class="pr-1">&#9650;</span>
                             <span class="pr-1">&#9660;</span>
                           </td>
-                        </tr>
+                        </tr> -->
+                        <tr *ngFor="let room of availableRooms" class="room-bump" [room]="room"></tr>
                       </tbody>
                     </table>
                   </div>

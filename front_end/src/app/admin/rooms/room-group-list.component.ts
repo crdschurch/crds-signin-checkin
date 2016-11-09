@@ -63,7 +63,7 @@ export class RoomGroupListComponent implements OnInit {
   set allRooms(rooms) {
     this._availableRooms = rooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
     let unsortedBumpingRooms = rooms.filter( (obj: Room) => { return obj.isBumpingRoom(); } );
-    this._bumpingRooms = _.sortBy(unsortedBumpingRooms, 'BumpingRulePriority');
+    this._bumpingRooms = _.sortBy( Room.fromJsons(unsortedBumpingRooms), 'BumpingRulePriority');
   }
 
   get availableRooms() { return this._availableRooms; }
