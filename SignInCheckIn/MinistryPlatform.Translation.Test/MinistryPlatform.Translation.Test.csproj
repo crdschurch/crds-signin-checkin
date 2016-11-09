@@ -113,6 +113,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Extensions\RestSharpExtensionsTest.cs" />
+    <Compile Include="Repositories\ChildCheckinRepositoryTest.cs" />
     <Compile Include="Repositories\ChildSigninRepositoryTest.cs" />
     <Compile Include="Extensions\JsonUnmappedDataExtensionsTest.cs" />
     <Compile Include="Extensions\MpEventGroupDtoExtensionsTest.cs" />

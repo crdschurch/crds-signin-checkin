@@ -5,6 +5,7 @@ namespace SignInCheckIn.Models.DTO
 {
     public class ParticipantDto
     {
+        public int EventParticipantId { get; set; }
         public int ParticipantId { get; set; }
         public int ContactId { get; set; }
         public int HouseholdId { get; set; }
@@ -13,5 +14,6 @@ namespace SignInCheckIn.Models.DTO
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool Selected { get; set; } = false;
+        public int ParticipationStatusId { get; set; }
     }
 }
