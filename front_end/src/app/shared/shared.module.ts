@@ -6,6 +6,8 @@ import { Ng2BootstrapModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
 
+import { PreloaderModule } from './preloader';
+
 @NgModule({
   imports: [
     CommonModule
@@ -17,7 +19,8 @@ import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
     PhoneNumberPipe,
     CommonModule,
     FormsModule,
-    Ng2BootstrapModule
+    Ng2BootstrapModule,
+    PreloaderModule
   ],
 })
 export class SharedModule {
