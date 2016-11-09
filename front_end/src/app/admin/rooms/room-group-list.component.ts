@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { HeaderService } from '../header/header.service';
-import { Group, Room, Event, BumpingRule } from '../../shared/models';
+import { Group, Room, Event } from '../../shared/models';
 import { AdminService } from '../admin.service';
 import { ApiService } from '../../shared/services';
 
@@ -17,8 +17,9 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   alternateRoomsSelected: boolean = false;
-  bumpingRules: BumpingRule[];
-  availableRooms: Room[];
+  _availableRooms: Room[];
+  _bumpingRooms: Room[];
+  // _allRooms: Room[];
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -30,12 +31,14 @@ export class RoomGroupListComponent implements OnInit {
   private getData(): void {
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
+
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
       },
       error => console.error(error)
     );
+
     this.apiService.getEvent(this.eventId).subscribe(
 
       event => {
@@ -45,13 +48,25 @@ export class RoomGroupListComponent implements OnInit {
       error => console.error(error)
     );
 
-    this.adminService.getBumpingRules(this.eventId).subscribe(
-      room => {
-        this.room = room;
+    this.adminService.getBumpingRooms(this.eventId, this.roomId).subscribe(
+      allRooms => {
+        this.allRooms = Room.fromJsons(allRooms);
       },
-      error => console.error(error)
+      error => {
+        console.error(error)
+        this.allRooms = Room.fromJsons(error);
+      }
     );
   }
+
+  set allRooms(rooms) {
+    console.log("set this._allRooms", rooms)
+    this._availableRooms = rooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
+    this._bumpingRooms = rooms.filter( (obj: Room) => { return obj.isBumpingRoom(); } );
+  }
+
+  get availableRooms() { return this._availableRooms; }
+  get bumpingRooms() { return this._bumpingRooms; }
 
   getEvent(): Event {
     return this.isReady() ? this.event : new Event();

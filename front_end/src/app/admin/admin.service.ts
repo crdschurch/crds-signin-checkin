@@ -21,6 +21,20 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  getBumpingRooms(eventId: string, roomId: string) {
+    // const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
+    // return this.http.get(url)
+    //                 .map(res => {return data})
+    //                 .catch(this.handleError);
+    // TODO: remove when backend available
+    const data = [
+      { EventRoomId: "123", RoomId: "123", EventId: "123", RoomName: "123", RoomNumber: "123", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123", BumpingRuleId: 897, BumpingRulePriority: 1 },
+      { EventRoomId: "456", RoomId: "456", EventId: "456", RoomName: "456", RoomNumber: "456", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123", BumpingRuleId: 897, BumpingRulePriority: 2 },
+      { EventRoomId: "789", RoomId: "789", EventId: "789", RoomName: "789", RoomNumber: "789", AllowSignIn: true, Volunteers: 3, Capacity: 4, SignedIn: 5, CheckedIn: 6, Label: "label123" },
+    ]
+    return Observable.of(data);
+  }
+
   updateRoom(eventId: string, roomId: string, body: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.put(url, body)

@@ -84,7 +84,7 @@
                   </div>
                   <div class="form-check-inline">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2" disabled>
                       Vacancy
                     </label>
                   </div>
@@ -107,27 +107,9 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Nursery B</td>
-                          <td>K116</td>
-                          <td>Closed</td>
-                          <td class="text-xs-right"><span class="pr-1">&#9658;</span></td>
-                        </tr>
-                        <tr>
-                          <td>Nursery B</td>
-                          <td>K116</td>
-                          <td>Closed</td>
-                          <td class="text-xs-right"><span class="pr-1">&#9658;</span></td>
-                        </tr>
-                        <tr>
-                          <td>Nursery B</td>
-                          <td>K116</td>
-                          <td>Closed</td>
-                          <td class="text-xs-right"><span class="pr-1">&#9658;</span></td>
-                        </tr>
-                        <tr>
-                          <td>Nursery B</td>
-                          <td>K116</td>
+                        <tr *ngFor="let room of availableRooms">
+                          <td>{{room.EventRoomId}}</td>
+                          <td>{{room.RoomId}}</td>
                           <td>Closed</td>
                           <td class="text-xs-right"><span class="pr-1">&#9658;</span></td>
                         </tr>
@@ -155,82 +137,12 @@
                       </thead>
                       <!--<tr *ngFor="let someRoom of rooms; let i = index;" class="room" [room]="someRoom"></tr>-->
                       <tbody>
-                        <tr *ngFor="let someRule of bumpingRules; let i = index;"></tr>
-                        <!--<tr>
-                          <td><span class="pl-1">&#9668;</span></td>
-                          <td>Nursery B</td>
-                          <td>K116</td>
+                        <tr *ngFor="let room of bumpingRooms">
+                          <td>{{room.EventRoomId}}</td>
+                          <td>{{room.RoomId}}</td>
                           <td>Closed</td>
-                          <td>1</td>
-                          <td class="text-xs-center"></td>
-                          <td class="text-xs-center">
-                            <span class="icon-large">
-                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-                                <g></g><path d="M20 16.571q0 0.214-0.179 0.429l-5.696 5.696q-0.196 0.161-0.411 0.161t-0.411-0.161l-5.714-5.714q-0.268-0.286-0.125-0.625 0.143-0.357 0.536-0.357h3.429v-6.286q0-0.25 0.161-0.411t0.411-0.161h3.429q0.25 0 0.411 0.161t0.161 0.411v6.286h3.429q0.25 0 0.411 0.161t0.161 0.411zM13.714 6.286q-2.643 0-4.875 1.304t-3.536 3.536-1.304 4.875 1.304 4.875 3.536 3.536 4.875 1.304 4.875-1.304 3.536-3.536 1.304-4.875-1.304-4.875-3.536-3.536-4.875-1.304zM27.429 16q0 3.732-1.839 6.884t-4.991 4.991-6.884 1.839-6.884-1.839-4.991-4.991-1.839-6.884 1.839-6.884 4.991-4.991 6.884-1.839 6.884 1.839 4.991 4.991 1.839 6.884z" fill="#000000" />
-                              </svg>
-                            </span>
-                          </td>
-                        </tr>-->
-                        <!--<tr>
-                          <td><span class="pl-1">&#9668;</span></td>
-                          <td>Nursery B</td>
-                          <td>K116</td>
-                          <td>Closed</td>
-                          <td>2</td>
-                          <td class="text-xs-center">
-                            <span class="icon-large">
-                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-                                <g></g>
-                            	  <path d="M19.964 15.643q-0.143 0.357-0.536 0.357h-3.429v6.286q0 0.25-0.161 0.411t-0.411 0.161h-3.429q-0.25 0-0.411-0.161t-0.161-0.411v-6.286h-3.429q-0.25 0-0.411-0.161t-0.161-0.411q0-0.214 0.179-0.429l5.696-5.696q0.196-0.161 0.411-0.161t0.411 0.161l5.714 5.714q0.268 0.286 0.125 0.625zM13.714 6.286q-2.643 0-4.875 1.304t-3.536 3.536-1.304 4.875 1.304 4.875 3.536 3.536 4.875 1.304 4.875-1.304 3.536-3.536 1.304-4.875-1.304-4.875-3.536-3.536-4.875-1.304zM27.429 16q0 3.732-1.839 6.884t-4.991 4.991-6.884 1.839-6.884-1.839-4.991-4.991-1.839-6.884 1.839-6.884 4.991-4.991 6.884-1.839 6.884 1.839 4.991 4.991 1.839 6.884z" fill="#000000" />
-                              </svg>
-                            </span>
-                          </td>
-                          <td class="text-xs-center">
-                            <span class="icon-large">
-                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-                                <g></g><path d="M20 16.571q0 0.214-0.179 0.429l-5.696 5.696q-0.196 0.161-0.411 0.161t-0.411-0.161l-5.714-5.714q-0.268-0.286-0.125-0.625 0.143-0.357 0.536-0.357h3.429v-6.286q0-0.25 0.161-0.411t0.411-0.161h3.429q0.25 0 0.411 0.161t0.161 0.411v6.286h3.429q0.25 0 0.411 0.161t0.161 0.411zM13.714 6.286q-2.643 0-4.875 1.304t-3.536 3.536-1.304 4.875 1.304 4.875 3.536 3.536 4.875 1.304 4.875-1.304 3.536-3.536 1.304-4.875-1.304-4.875-3.536-3.536-4.875-1.304zM27.429 16q0 3.732-1.839 6.884t-4.991 4.991-6.884 1.839-6.884-1.839-4.991-4.991-1.839-6.884 1.839-6.884 4.991-4.991 6.884-1.839 6.884 1.839 4.991 4.991 1.839 6.884z" fill="#000000" />
-                              </svg>
-                            </span>
-                          </td>
+                          <td class="text-xs-right"><span class="pr-1">&#9658;</span></td>
                         </tr>
-                        <tr>
-                          <td><span class="pl-1">&#9668;</span></td>
-                          <td>Nursery B</td>
-                          <td>K116</td>
-                          <td>Closed</td>
-                          <td>3</td>
-                          <td class="text-xs-center">
-                            <span class="icon-large">
-                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-                                <g></g>
-                            	  <path d="M19.964 15.643q-0.143 0.357-0.536 0.357h-3.429v6.286q0 0.25-0.161 0.411t-0.411 0.161h-3.429q-0.25 0-0.411-0.161t-0.161-0.411v-6.286h-3.429q-0.25 0-0.411-0.161t-0.161-0.411q0-0.214 0.179-0.429l5.696-5.696q0.196-0.161 0.411-0.161t0.411 0.161l5.714 5.714q0.268 0.286 0.125 0.625zM13.714 6.286q-2.643 0-4.875 1.304t-3.536 3.536-1.304 4.875 1.304 4.875 3.536 3.536 4.875 1.304 4.875-1.304 3.536-3.536 1.304-4.875-1.304-4.875-3.536-3.536-4.875-1.304zM27.429 16q0 3.732-1.839 6.884t-4.991 4.991-6.884 1.839-6.884-1.839-4.991-4.991-1.839-6.884 1.839-6.884 4.991-4.991 6.884-1.839 6.884 1.839 4.991 4.991 1.839 6.884z" fill="#000000" />
-                              </svg>
-                            </span>
-                          </td>
-                          <td class="text-xs-center">
-                            <span class="icon-large">
-                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-                                <g></g><path d="M20 16.571q0 0.214-0.179 0.429l-5.696 5.696q-0.196 0.161-0.411 0.161t-0.411-0.161l-5.714-5.714q-0.268-0.286-0.125-0.625 0.143-0.357 0.536-0.357h3.429v-6.286q0-0.25 0.161-0.411t0.411-0.161h3.429q0.25 0 0.411 0.161t0.161 0.411v6.286h3.429q0.25 0 0.411 0.161t0.161 0.411zM13.714 6.286q-2.643 0-4.875 1.304t-3.536 3.536-1.304 4.875 1.304 4.875 3.536 3.536 4.875 1.304 4.875-1.304 3.536-3.536 1.304-4.875-1.304-4.875-3.536-3.536-4.875-1.304zM27.429 16q0 3.732-1.839 6.884t-4.991 4.991-6.884 1.839-6.884-1.839-4.991-4.991-1.839-6.884 1.839-6.884 4.991-4.991 6.884-1.839 6.884 1.839 4.991 4.991 1.839 6.884z" fill="#000000" />
-                              </svg>
-                            </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><span class="pl-1">&#9668;</span></td>
-                          <td>Nursery B</td>
-                          <td>K116</td>
-                          <td>Closed</td>
-                          <td>4</td>
-                          <td class="text-xs-center">
-                            <span class="icon-large">
-                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-                                <g></g>
-                            	  <path d="M19.964 15.643q-0.143 0.357-0.536 0.357h-3.429v6.286q0 0.25-0.161 0.411t-0.411 0.161h-3.429q-0.25 0-0.411-0.161t-0.161-0.411v-6.286h-3.429q-0.25 0-0.411-0.161t-0.161-0.411q0-0.214 0.179-0.429l5.696-5.696q0.196-0.161 0.411-0.161t0.411 0.161l5.714 5.714q0.268 0.286 0.125 0.625zM13.714 6.286q-2.643 0-4.875 1.304t-3.536 3.536-1.304 4.875 1.304 4.875 3.536 3.536 4.875 1.304 4.875-1.304 3.536-3.536 1.304-4.875-1.304-4.875-3.536-3.536-4.875-1.304zM27.429 16q0 3.732-1.839 6.884t-4.991 4.991-6.884 1.839-6.884-1.839-4.991-4.991-1.839-6.884 1.839-6.884 4.991-4.991 6.884-1.839 6.884 1.839 4.991 4.991 1.839 6.884z" fill="#000000" />
-                              </svg>
-                            </span>
-                          </td>
-                          <td class="text-xs-center"></td>
-                        </tr>-->
                       </tbody>
                     </table>
                   </div>
