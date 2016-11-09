@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
-import { HttpClientService, SetupService } from '../shared/services';
+import { HttpClientService } from '../shared/services';
 import { Room } from '../shared/models';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class AdminService {
   private roomGroupsUpdateObserver: Observable<Room>;
   site: number;
 
-  constructor(private http: HttpClientService, private setupService: SetupService) {
+  constructor(private http: HttpClientService) {
     this.configureUpdateRoomGroupsEmitterAndObserver();
   }
 

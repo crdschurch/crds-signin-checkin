@@ -68,20 +68,20 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId)
         {
-            var e = GetEvent(destinationEventId);
+            var targetEvent = _eventRepository.GetEventById(destinationEventId);
 
             _eventRepository.ResetEventSetup(authenticationToken, destinationEventId);
             _eventRepository.ImportEventSetup(authenticationToken, destinationEventId, sourceEventId);
 
-            return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(destinationEventId, e.EventSiteId));
+            return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(destinationEventId, targetEvent.LocationId));
         }
 
         public List<EventRoomDto> ResetEventSetup(string authenticationToken, int eventId)
         {
-            var e = GetEvent(eventId);
+            var targetEvent = _eventRepository.GetEventById(eventId);
 
             _eventRepository.ResetEventSetup(authenticationToken, eventId);
-            return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(eventId, e.EventSiteId));
+            return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(eventId, targetEvent.LocationId));
         }
     }
 }
