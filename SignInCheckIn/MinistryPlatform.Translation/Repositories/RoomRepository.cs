@@ -44,13 +44,13 @@ namespace MinistryPlatform.Translation.Repositories
                 "Bumping_Rules_ID",
                 "From_Event_Room_ID",
                 "To_Event_Room_ID",
-                "Priority_Order",
-                "cr_Bumping_Rules.Bumping_Rule_Type_ID",
-                "Bumping_Rule_Type_ID_Table.[Description]",
-                "From_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS From_Room_Name",
-                "From_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS From_Room_Number",
-                "To_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS To_Room_Name",
-                "To_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS To_Room_Number"
+                "Priority_Order"
+                //"cr_Bumping_Rules.Bumping_Rule_Type_ID",
+                //"Bumping_Rule_Type_ID_Table.[Description]",
+                //"From_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS From_Room_Name",
+                //"From_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS From_Room_Number",
+                //"To_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS To_Room_Name",
+                //"To_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS To_Room_Number"
             };
         }
 
@@ -164,6 +164,12 @@ namespace MinistryPlatform.Translation.Repositories
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
-        } 
+        }
+
+        public void CreateBumpingRules(List<MpBumpingRuleDto> bumpingRules)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Create(bumpingRules, _bumpingRuleColumns);
+        }
     }
 }

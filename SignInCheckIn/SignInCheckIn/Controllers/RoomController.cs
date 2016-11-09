@@ -41,17 +41,16 @@ namespace SignInCheckIn.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost]
         [ResponseType(typeof(List<RoomDto>))]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         public IHttpActionResult UpdateAvailableRoomsByLocation(
-        [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId)
+        [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId, [FromBody] List<EventRoomDto> eventRooms)
         {
             try
             {
-                //var roomList = _roomService.GetAvailableRooms(locationId);
-                //return Ok(roomList);
-                return Ok();
+                var roomList = _roomService.UpdateAvailableRooms(eventId, roomId, eventRooms);
+                return Ok(roomList);
             }
             catch (Exception e)
             {

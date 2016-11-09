@@ -336,15 +336,35 @@ namespace SignInCheckIn.Services
             return eventRooms;
         }
 
-        public List<EventRoomDto> UpdateAvailableRooms(int roomId, int eventId, List<EventRoomDto> eventRoomDtos)
+        public List<EventRoomDto> UpdateAvailableRooms(int eventId, int roomId, List<EventRoomDto> eventRoomDtos)
         {
-            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomId);
+            var sourceEventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+
+            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(sourceEventRoom.EventRoomId.GetValueOrDefault());
             var bumpingRuleIds = bumpingRules.Select(r => r.BumpingRuleId).Distinct();
             _roomRepository.DeleteBumpingRules(bumpingRuleIds);
 
+            var selectedRooms = eventRoomDtos.Where(r => r.BumpingRulePriority != 0).ToList();
 
+            List<MpBumpingRuleDto> mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
 
-            return null;
+            foreach (var selectedRoom in selectedRooms)
+            {
+                MpBumpingRuleDto mpBumpingRuleDto = new MpBumpingRuleDto
+                {
+                    FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
+                    ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
+                    PriorityOrder = selectedRoom.BumpingRulePriority,
+                    BumpingRuleTypeId = 1
+                };
+
+                mpBumpingRuleDtos.Add(mpBumpingRuleDto);
+            }
+
+            _roomRepository.CreateBumpingRules(mpBumpingRuleDtos);
+
+            // pull back the newly created rooms - not sure this should be used here
+            return GetAvailableRooms(roomId, eventId);
         }
     }
 }
