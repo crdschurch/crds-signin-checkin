@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Room } from '../../../shared/models';
+import { AdminService } from '../../admin.service';
 
 @Component({
   selector: '.room-bump',
@@ -9,10 +10,12 @@ import { Room } from '../../../shared/models';
 export class RoomBumpComponent implements OnInit {
   @Input() room: Room;
   @Input() bumpingRooms: Room[];
+  @Input() allRooms: Room[];
   @Input() index: number;
 
-  ngOnInit() {
-  }
+  constructor( private adminService: AdminService) {}
+
+  ngOnInit() {}
 
   isFirst() { return this.room.isBumpingRoom() && this.index === 0; }
   isLast() { return this.room.isBumpingRoom() && this.index === this.bumpingRooms.length - 1; }
@@ -30,10 +33,12 @@ export class RoomBumpComponent implements OnInit {
       }
       i++;
     }
+    this.updateBumpingRooms();
   }
   bump() {
     if (!this.room.BumpingRulePriority) {
       this.room.BumpingRulePriority = this.bumpingRooms.length;
+      this.updateBumpingRooms();
     }
   }
   bumpUp() {
@@ -48,6 +53,7 @@ export class RoomBumpComponent implements OnInit {
       }
       i++;
     }
+    this.updateBumpingRooms();
   }
   bumpDown() {
     let i = 0;
@@ -61,6 +67,11 @@ export class RoomBumpComponent implements OnInit {
       }
       i++;
     }
+    this.updateBumpingRooms();
+  }
+
+  private updateBumpingRooms() {
+    this.adminService.updateBumpingRooms(this.room.EventId, this.room.RoomId, this.allRooms);
   }
 
 }

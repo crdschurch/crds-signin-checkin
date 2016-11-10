@@ -25,6 +25,10 @@ export class AlternateRoomsComponent implements OnInit {
     );
   }
 
+  get allRooms() {
+    return this._allRooms;
+  }
+
   set allRooms(rooms) {
     this._allRooms = rooms;
   }
