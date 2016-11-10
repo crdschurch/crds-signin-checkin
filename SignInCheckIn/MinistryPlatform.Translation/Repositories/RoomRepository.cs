@@ -45,12 +45,6 @@ namespace MinistryPlatform.Translation.Repositories
                 "From_Event_Room_ID",
                 "To_Event_Room_ID",
                 "Priority_Order"
-                //"cr_Bumping_Rules.Bumping_Rule_Type_ID",
-                //"Bumping_Rule_Type_ID_Table.[Description]",
-                //"From_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS From_Room_Name",
-                //"From_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS From_Room_Number",
-                //"To_Event_Room_ID_Table_Room_ID_Table.[Room_Name] AS To_Room_Name",
-                //"To_Event_Room_ID_Table_Room_ID_Table.[Room_Number] AS To_Room_Number"
             };
         }
 
