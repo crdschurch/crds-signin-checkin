@@ -26,14 +26,14 @@ export class RoomBumpComponent implements OnInit {
     let j = 0;
     for (let room of this.bumpingRooms) {
       if (this.index !== i) {
-        room.BumpingRulePriority = ++j;
+        room.BumpingRulePriority = j++;
       }
       i++;
     }
   }
   bump() {
     if (!this.room.BumpingRulePriority) {
-      this.room.BumpingRulePriority = ++this.bumpingRooms.length;
+      this.room.BumpingRulePriority = this.bumpingRooms.length;
     }
   }
   bumpUp() {

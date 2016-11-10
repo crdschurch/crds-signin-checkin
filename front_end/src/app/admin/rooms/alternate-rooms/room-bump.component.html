@@ -1,9 +1,12 @@
 <td [hidden]="isUnBumped()">
   <span class="clickable" (click)="unBump()">&#9664;</span>
 </td>
-<td>{{room.EventRoomId}}</td>
-<td>{{room.RoomId}}</td>
-<td>Closed</td>
+<td>{{room.RoomName}}</td>
+<td>{{room.RoomNumber}}</td>
+<td>
+  <span [hidden]="room.AllowSignIn">Closed</span>
+  <span [hidden]="!room.AllowSignIn">Open</span>
+</td>
 <td class="text-xs-right" [hidden]="isUnBumped()">
   <span>{{room.BumpingRulePriority | oneBasedIndex}}</span>
 </td>
