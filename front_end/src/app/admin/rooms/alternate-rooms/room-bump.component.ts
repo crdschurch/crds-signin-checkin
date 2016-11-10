@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Room } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 
@@ -13,7 +14,8 @@ export class RoomBumpComponent implements OnInit {
   @Input() allRooms: Room[];
   @Input() index: number;
 
-  constructor( private adminService: AdminService) {}
+  constructor( private adminService: AdminService,
+               private route: ActivatedRoute) {}
 
   ngOnInit() {}
 
@@ -71,7 +73,7 @@ export class RoomBumpComponent implements OnInit {
   }
 
   private updateBumpingRooms() {
-    this.adminService.updateBumpingRooms(this.room.EventId, this.room.RoomId, this.allRooms);
+    this.adminService.updateBumpingRooms(this.room.EventId, this.route.snapshot.params['roomId'], this.allRooms);
   }
 
 }
