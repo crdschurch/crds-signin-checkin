@@ -48,6 +48,10 @@ export class RoomListComponent implements OnInit {
     this.getData();
   }
 
+  public isReady(): boolean {
+    return this.event !== undefined && this.rooms !== undefined;
+  }
+
   public goToImport(): void {
     this.goToImportOrReset('import');
   }

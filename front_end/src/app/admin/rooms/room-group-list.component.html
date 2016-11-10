@@ -36,7 +36,8 @@
     <div class="row my-2">
       <tabset class="col-xs-12">
         <tab heading='Age Ranges' [active]="!alternateRoomsSelected">
-          <div class="row mt-1">
+          <preloader *ngIf="!isReady()"></preloader>
+          <div class="row mt-1" *ngIf="isReady()">
             <div class="col-xs-12 lead mb-1">
               <p class="lead">
                 Select ages for this room. Within each age group, the room assigned is determined by the birth month of the child as indicated below.

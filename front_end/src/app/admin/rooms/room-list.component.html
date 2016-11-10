@@ -34,7 +34,8 @@
         </div>
     </div>
     <div class="col-xs-12">
-      <table class="table table-striped">
+      <preloader *ngIf="!isReady()"></preloader>
+      <table class="table table-striped" *ngIf="isReady()">
         <thead>
           <tr>
             <th>Age Ranges</th>

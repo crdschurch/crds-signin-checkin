@@ -17,6 +17,7 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   alternateRoomsSelected: boolean = false;
+  updating: boolean = false;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -41,6 +42,14 @@ export class RoomGroupListComponent implements OnInit {
       },
       error => console.error(error)
     );
+  }
+
+  public isUpdating(): boolean {
+    return this.updating;
+  }
+
+  public setUpdating(updating: boolean): void {
+    this.updating = updating;
   }
 
   getEvent(): Event {
