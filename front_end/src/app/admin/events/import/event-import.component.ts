@@ -20,6 +20,7 @@ export class EventImportComponent implements OnInit {
   sourceEventDate: Date;
   sourceEventId: number;
   import: { processing: boolean, buttonLabel: string } = { processing: false, buttonLabel: 'Import' };
+  ready: boolean = false;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
@@ -32,15 +33,17 @@ export class EventImportComponent implements OnInit {
   ngOnInit(): void {
     let eventId = this.route.snapshot.params['eventId'];
 
+    this.ready = false;
     this.apiService.getEvent(eventId).subscribe((event: Event) => {
       this.targetEvent = event;
       this.headerService.announceEvent(event);
       this.sourceEventDate = moment(event.EventStartDate).startOf('day').subtract(7, 'days').toDate();
-      this.changeSourceEventDate(null);
+      this.getSourceEventList();
     });
   }
 
-  public changeSourceEventDate($event: any): void {
+  public getSourceEventList(): void {
+    this.ready = false;
     this.apiService
       .getEvents(this.sourceEventDate, this.sourceEventDate, this.targetEvent.EventSiteId)
       .subscribe((events: Event[]) => {
@@ -50,6 +53,9 @@ export class EventImportComponent implements OnInit {
         }).sort((a: Event, b: Event) => {
           return a.EventStartDate.localeCompare(b.EventStartDate);
         });
+        this.ready = true;
+      }, (error) => {
+        this.ready = true;
       });
   }
 
@@ -76,5 +82,9 @@ export class EventImportComponent implements OnInit {
 
   public backToEventRooms() {
     this.router.navigate([`/admin/events/${this.targetEvent.EventId}/rooms`]);
+  }
+
+  public isReady(): boolean {
+    return this.ready;
   }
 }

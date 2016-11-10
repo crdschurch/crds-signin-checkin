@@ -10,24 +10,29 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-12 m-b-2">
-          Select an event date
+      <div class="row" *ngIf="sourceEventDate">
+        <div class="col-sm-6 col-md-3">
+          Select an event date<br/>
+          <crds-datepicker
+            name="sourceEventDate"
+            autoClose="true"
+            [(date)]="sourceEventDate"
+            (onChange)="getSourceEventList()"></crds-datepicker>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-3 m-b-2">
-          <datepicker name="sourceEventDate" [(ngModel)]="sourceEventDate" [showWeeks]="false" (ngModelChange)="changeSourceEventDate($event)"></datepicker>
-        </div>
-        <div class="col-md-9 m-b-2">
-          <div class="checkbox">
-            <label><input type="checkbox" name="importAll" id="importAll" disabled/>&nbsp;Import all services for this weekend</label>
+        <div class="col-sm-6 col-md-4">
+          <div class="checkbox mt-2">
+            <label><input type="checkbox" name="importAll" id="importAll" disabled/>&nbsp;&nbsp;Import all services for this weekend</label>
           </div>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" *ngIf="!isReady()">
+        <div class="col-md-9 col-sm-8 col-xs-12">
+          <preloader></preloader>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="isReady()">
         <div class="col-md-9 col-sm-8 col-xs-12">
           <table class="table table-striped">
             <thead>
@@ -56,7 +61,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" *ngIf="isReady()">
         <div class="col-md-7"></div>
         <div class="col-md-2">
           <div class="text-md-right">

@@ -6,6 +6,9 @@ import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
 import { OneBasedIndexPipe } from './pipes/one-based-index.pipe';
 import { ApiService } from './services';
 
+import { PreloaderModule } from './preloader';
+import { CrdsDatePickerModule } from './components/crds-datepicker';
+
 @NgModule({
   imports: [
     CommonModule
@@ -19,7 +22,9 @@ import { ApiService } from './services';
     OneBasedIndexPipe,
     CommonModule,
     FormsModule,
-    Ng2BootstrapModule
+    Ng2BootstrapModule,
+    PreloaderModule,
+    CrdsDatePickerModule
   ],
   providers:  [
     ApiService
