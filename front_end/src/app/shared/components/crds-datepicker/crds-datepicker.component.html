@@ -3,7 +3,7 @@
     <input 
       type="text"
       class="form-control" 
-      [value]="date | amDateFormat:'MM/DD/YYYY'" 
+      [value]="date | amDateFormat:'M/D/YYYY'" 
       aria-describedby="basic-addon2" 
       readonly 
       (click)="toggle()"/>
@@ -19,7 +19,7 @@
       </button>
     </span>
   </div>
-  <div class="mt-1" *ngIf="isOpen" class="crds-datepicker-chooser">
+  <div class="mt-1" *ngIf="isOpen" class="calendar">
     <datepicker 
       [name]="name" 
       [(ngModel)]="date" 

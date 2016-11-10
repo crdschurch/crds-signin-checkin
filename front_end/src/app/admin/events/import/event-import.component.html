@@ -11,7 +11,7 @@
       </div>
 
       <div class="row" *ngIf="sourceEventDate">
-        <div class="col-sm-6 col-md-4">
+        <div class="col-sm-6 col-md-2">
           Select an event date<br/>
           <crds-datepicker
             name="sourceEventDate"
@@ -19,7 +19,7 @@
             [(date)]="sourceEventDate"
             (onChange)="getSourceEventList()"></crds-datepicker>
         </div>
-        <div class="col-sm-6 col-md-4">
+        <div class="col-sm-6 col-md-2">
           <div class="checkbox mt-2">
             <label><input type="checkbox" name="importAll" id="importAll" disabled/>&nbsp;&nbsp;Import all services for this weekend</label>
           </div>
