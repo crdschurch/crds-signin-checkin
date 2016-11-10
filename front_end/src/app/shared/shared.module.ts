@@ -7,6 +7,7 @@ import { Ng2BootstrapModule } from 'ng2-bootstrap/ng2-bootstrap';
 import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
 
 import { PreloaderModule } from './preloader';
+import { CrdsDatePickerModule } from './components/crds-datepicker';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { PreloaderModule } from './preloader';
     CommonModule,
     FormsModule,
     Ng2BootstrapModule,
-    PreloaderModule
+    PreloaderModule,
+    CrdsDatePickerModule
   ],
 })
 export class SharedModule {
