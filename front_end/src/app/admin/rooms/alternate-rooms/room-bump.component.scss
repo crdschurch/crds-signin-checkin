@@ -9,3 +9,10 @@
 .bump-down {
   float: right;
 }
+
+td {
+  text-align: center;
+  &.name {
+    text-align: left;
+  }
+}
