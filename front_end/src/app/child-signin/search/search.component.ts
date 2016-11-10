@@ -9,6 +9,7 @@ import { RootService } from '../../shared/services';
   templateUrl: 'search.component.html'
 })
 export class SearchComponent {
+  private isReady: boolean = true;
   phoneNumber: string = '';
 
   constructor(private router: Router,
@@ -30,8 +31,10 @@ export class SearchComponent {
   }
 
   next(): void {
+    this.isReady = false;
     if (this.phoneNumber.length === 10) {
       this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe((availableChildren) => {
+        this.isReady = true;
         if (availableChildren.length > 0) {
           this.router.navigate(['/child-signin/available-children', this.phoneNumber]);
         } else {
@@ -39,6 +42,7 @@ export class SearchComponent {
         }
       });
     } else {
+      this.isReady = true;
       this.rootService.announceEvent('kcChildSigninPhoneNumberNotValid');
     }
   }
