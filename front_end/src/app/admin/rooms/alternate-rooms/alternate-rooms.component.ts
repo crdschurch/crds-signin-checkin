@@ -33,18 +33,27 @@ export class AlternateRoomsComponent implements OnInit {
     this._allRooms = rooms;
   }
 
-  get availableRooms() {
+  get availableRooms(): Room[] {
     if (this._allRooms) {
       return this._allRooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
     };
   }
-  get bumpingRooms() {
+
+  get bumpingRooms(): Room[] {
     if (this._allRooms) {
       return this._allRooms
         .filter(
           (obj: Room) => { return obj.isBumpingRoom(); })
         .sort(
-          (a, b) => { if (a.BumpingRulePriority > b.BumpingRulePriority) { return 1; } }
+          (a, b) => {
+            if (a.BumpingRulePriority > b.BumpingRulePriority) {
+              return 1;
+            } else if (a.BumpingRulePriority < b.BumpingRulePriority) {
+              return -1;
+            } else {
+              return 0;
+            }
+          }
         );
     }
   }
