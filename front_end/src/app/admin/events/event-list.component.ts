@@ -58,6 +58,10 @@ export class EventListComponent implements OnInit {
     this.site = config && config.CongregationId ? config.CongregationId : 1;
   }
 
+  public isReady(): boolean {
+    return this.events !== undefined;
+  }
+
   ngOnInit(): void {
     this.createWeekFilters();
     this.setupService.getThisMachineConfiguration().subscribe((setupCookie) => {

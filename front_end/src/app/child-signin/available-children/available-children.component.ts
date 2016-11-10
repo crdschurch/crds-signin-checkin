@@ -14,6 +14,7 @@ import { EventParticipants, Child } from '../../shared/models';
 export class AvailableChildrenComponent implements OnInit {
   private childrenAvailable: Array<Child> = [];
   private isServing: boolean = false;
+  private isReady: boolean = false;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
@@ -26,8 +27,10 @@ export class AvailableChildrenComponent implements OnInit {
    this.route.params.forEach((params: Params) => {
       let phoneNumber = params['phoneNumber'];
 
-      this.childSigninService.getChildrenByPhoneNumber(phoneNumber).
-        subscribe(childrenAvailable => this.childrenAvailable = childrenAvailable);
+      this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe((childrenAvailable) => {
+        this.isReady = true;
+        this.childrenAvailable = childrenAvailable;
+      });
     });
  }
 
@@ -40,7 +43,9 @@ export class AvailableChildrenComponent implements OnInit {
      return;
    }
 
-   this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {
+   this.isReady = false;
+   this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {      
+     this.isReady = true;
      if (response && response.Participants && response.Participants.length > 0) {
        this.router.navigate(['/child-signin/assignment']);
      } else {
