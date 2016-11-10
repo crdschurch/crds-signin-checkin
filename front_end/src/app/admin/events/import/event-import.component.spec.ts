@@ -52,12 +52,12 @@ describe('RoomListComponent', () => {
       targetEvent.EventStartDate = targetEventStartDate.toISOString();
       (<jasmine.Spy>apiService.getEvent).and.returnValue(Observable.of(targetEvent));
 
-      spyOn(fixture, 'changeSourceEventDate').and.callFake(() => { });
+      spyOn(fixture, 'getSourceEventList').and.callFake(() => { });
 
       fixture.ngOnInit();
 
       expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
-      expect(fixture.changeSourceEventDate).toHaveBeenCalled();
+      expect(fixture.getSourceEventList).toHaveBeenCalled();
       expect(headerService.announceEvent).toHaveBeenCalledWith(targetEvent);
 
       expect(fixture.targetEvent).toBe(targetEvent);
@@ -65,7 +65,7 @@ describe('RoomListComponent', () => {
     });
   });
 
-  describe('#changeSourceEventDate', () => {
+  describe('#getSourceEventList', () => {
     it('should get events and sort by date', () => {
       let sourceEventDate = moment().subtract(1, 'days');
       fixture.sourceEventDate = sourceEventDate.toDate();
@@ -84,7 +84,7 @@ describe('RoomListComponent', () => {
       targetEvent.EventSiteId = eventSiteId;
       fixture.targetEvent = targetEvent;
 
-      fixture.changeSourceEventDate(null);
+      fixture.getSourceEventList();
 
       expect(apiService.getEvents).toHaveBeenCalledWith(sourceEventDate.toDate(), sourceEventDate.toDate(), eventSiteId);
       expect(fixture.events).toBeDefined();

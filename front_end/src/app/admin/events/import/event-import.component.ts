@@ -37,12 +37,12 @@ export class EventImportComponent implements OnInit {
     this.apiService.getEvent(eventId).subscribe((event: Event) => {
       this.targetEvent = event;
       this.headerService.announceEvent(event);
-      this.changeSourceEventDate(moment(event.EventStartDate).startOf('day').subtract(7, 'days').toDate());
+      this.sourceEventDate = moment(event.EventStartDate).startOf('day').subtract(7, 'days').toDate();
+      this.getSourceEventList();
     });
   }
 
-  public changeSourceEventDate(newDate: Date): void {
-    this.sourceEventDate = newDate;
+  public getSourceEventList(): void {
     this.ready = false;
     this.apiService
       .getEvents(this.sourceEventDate, this.sourceEventDate, this.targetEvent.EventSiteId)

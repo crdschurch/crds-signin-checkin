@@ -10,14 +10,14 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" *ngIf="sourceEventDate">
         <div class="col-sm-6 col-md-4">
           Select an event date<br/>
           <crds-datepicker
             name="sourceEventDate"
             autoClose="true"
             [(date)]="sourceEventDate"
-            (onChange)="changeSourceEventDate($event)"></crds-datepicker>
+            (onChange)="getSourceEventList()"></crds-datepicker>
         </div>
         <div class="col-sm-6 col-md-4">
           <div class="checkbox mt-2">
