@@ -153,9 +153,11 @@ namespace SignInCheckIn.Tests.Services
             const int eventId = 12345;
             const int roomId = 67890;
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
+                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
+                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
             var eventRoom = new MpEventRoomDto
             {
@@ -163,7 +165,7 @@ namespace SignInCheckIn.Tests.Services
             };
             _roomRepository.Setup(mocked => mocked.GetEventRoom(eventId, roomId)).Returns(eventRoom);
 
-            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns((List<MpEventGroupDto>)null);
+            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns((List<MpEventGroupDto>) null);
 
             var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
             result.Should().NotBeNull();
@@ -217,9 +219,11 @@ namespace SignInCheckIn.Tests.Services
             const int eventId = 12345;
             const int roomId = 67890;
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
+                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
+                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
             var events = new List<MpEventGroupDto>
             {
@@ -227,7 +231,7 @@ namespace SignInCheckIn.Tests.Services
                 {
                     Event = new MpEventDto
                     {
-                        EventId  = eventId
+                        EventId = eventId
                     },
                     Group = new MpGroupDto
                     {
@@ -282,9 +286,11 @@ namespace SignInCheckIn.Tests.Services
             const int eventId = 12345;
             const int roomId = 67890;
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
+                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
+                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
             var events = new List<MpEventGroupDto>
             {
@@ -292,7 +298,7 @@ namespace SignInCheckIn.Tests.Services
                 {
                     Event = new MpEventDto
                     {
-                        EventId  = eventId
+                        EventId = eventId
                     },
                     Group = new MpGroupDto
                     {
@@ -346,9 +352,11 @@ namespace SignInCheckIn.Tests.Services
             const int eventId = 12345;
             const int roomId = 67890;
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
+                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
+                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
             var events = new List<MpEventGroupDto>
             {
@@ -356,7 +364,7 @@ namespace SignInCheckIn.Tests.Services
                 {
                     Event = new MpEventDto
                     {
-                        EventId  = eventId
+                        EventId = eventId
                     },
                     Group = new MpGroupDto
                     {
@@ -401,6 +409,58 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(_gradeList[0].Id, selected[0].Id);
             Assert.IsFalse(assignedGroups.Exists(x => x.Id != _gradeList[0].Id && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
+
+        [Test]
+        public void ShouldGetAvailableRooms()
+        {
+            // Arrange
+            var eventId = 1234567;
+            var roomId = 1111;
+
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                LocationId = 1
+            };
+
+            var mpEventRoom = new MpEventRoomDto
+            {
+                AllowSignIn = true,
+                Capacity = 1,
+                CheckedIn = 2,
+                EventId = 3,
+                EventRoomId = 999,
+                RoomId = 4,
+                RoomName = "name",
+                RoomNumber = "number",
+                SignedIn = 5,
+                Volunteers = 6
+            };
+
+            List<MpEventRoomDto> mpEventRoomDtos = new List<MpEventRoomDto>();
+            mpEventRoomDtos.Add(mpEventRoom);
+
+            var mpBumpingRuleDtos = new List<MpBumpingRuleDto>
+            {
+                new MpBumpingRuleDto
+                {
+                    BumpingRuleId = 2345678,
+                    PriorityOrder = 1
+                }
+            };
+
+            _eventRepository.Setup(m => m.GetEventById(eventId)).Returns(mpEventDto);
+            _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
+            _roomRepository.Setup(m => m.GetBumpingRulesByRoomId(roomId)).Returns(mpBumpingRuleDtos);
+
+            // Act
+            var result = _fixture.GetAvailableRooms(1111, 1234567);
+
+            // Assert
+            _eventRepository.VerifyAll();
+            _roomRepository.VerifyAll();
+        }
+
 
     }
 }

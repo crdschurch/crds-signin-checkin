@@ -344,7 +344,7 @@ namespace SignInCheckIn.Services
             var bumpingRuleIds = bumpingRules.Select(r => r.BumpingRuleId).Distinct();
             _roomRepository.DeleteBumpingRules(bumpingRuleIds);
 
-            var selectedRooms = eventRoomDtos.Where(r => r.BumpingRulePriority != 0).ToList();
+            var selectedRooms = eventRoomDtos.Where(r => r.BumpingRulePriority != null).ToList();
 
             List<MpBumpingRuleDto> mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
 
