@@ -17,7 +17,7 @@ describe('RoomBumpComponent', () => {
     beforeEach(() => {
       fixture = new RoomBumpComponent(adminService, route);
       fixture.index = 1;
-      let availableRoom = Room.fromJson({})
+      let availableRoom = Room.fromJson({});
       fixture.room = availableRoom;
       fixture.bumpingRooms = [
         Room.fromJson({BumpingRulePriority: 0, EventRoomId: 555}),

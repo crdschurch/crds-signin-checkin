@@ -19,7 +19,7 @@ export class Room {
   static fromJsons(jsons: any): Room[] {
     let rooms: Room[] = [];
     for (let json of jsons) {
-        rooms.push(Room.fromJson(json))
+        rooms.push(Room.fromJson(json));
     }
     return rooms;
   }

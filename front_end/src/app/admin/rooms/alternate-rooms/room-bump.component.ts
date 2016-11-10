@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Room } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
@@ -67,7 +67,6 @@ export class RoomBumpComponent {
       }
       i++;
     }
-    console.log(this)
     this.updateBumpingRooms();
   }
 
