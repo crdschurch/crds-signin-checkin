@@ -19,7 +19,7 @@ export class EventImportComponent implements OnInit {
   events: Event[];
   sourceEventDate: Date;
   sourceEventId: number;
-  import: { processing: boolean, buttonLabel: string } = { processing: false, buttonLabel: 'Import' };
+  import: { processing: boolean } = { processing: false };
   ready: boolean = false;
 
   constructor(private route: ActivatedRoute,
@@ -66,7 +66,6 @@ export class EventImportComponent implements OnInit {
     }
 
     this.import.processing = true;
-    this.import.buttonLabel = 'Importing...';
 
     this.adminService.importEvent(this.targetEvent.EventId, this.sourceEventId).subscribe((rooms) => {
       this.rootService.announceEvent('echeckEventImportSuccess');
@@ -74,7 +73,6 @@ export class EventImportComponent implements OnInit {
     }, (error) => {
       this.rootService.announceEvent('echeckEventImportFailure');
       this.import.processing = false;
-      this.import.buttonLabel = 'Import';
     });
 
     return true;
