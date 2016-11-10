@@ -171,5 +171,21 @@ namespace MinistryPlatform.Translation.Repositories
             var apiUserToken = _apiUserRepository.GetToken();
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Create(bumpingRules, _bumpingRuleColumns);
         }
+
+        public List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds)
+        {
+            var queryString = "(";
+
+            foreach (var id in eventRoomIds)
+            {
+                queryString += id + ",";
+            }
+
+            queryString = queryString.TrimEnd(',');
+            queryString += ")";
+
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString}", _bumpingRuleColumns);
+        }
     }
 }

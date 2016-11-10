@@ -319,14 +319,13 @@ namespace SignInCheckIn.Services
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
-            // get bumping rules on the room id here
-            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(roomId);
+            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().ToList();
+            var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds);
 
-            // TODO: Get rid of nested loops
             foreach (var rule in bumpingRules)
             {
-                // set the rule id and priority on the matching event room - which is the "to" field
-                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.FromEventRoomId))
+                // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
+                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
                 {
                     room.BumpingRuleId = rule.BumpingRuleId;
                     room.BumpingRulePriority = rule.PriorityOrder;
@@ -339,6 +338,11 @@ namespace SignInCheckIn.Services
         public List<EventRoomDto> UpdateAvailableRooms(int eventId, int roomId, List<EventRoomDto> eventRoomDtos)
         {
             var sourceEventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+
+            if (sourceEventRoom == null)
+            {
+                throw new Exception("Event Room not found for event " + eventId + " and room " + roomId);
+            }
 
             var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(sourceEventRoom.EventRoomId.GetValueOrDefault());
             var bumpingRuleIds = bumpingRules.Select(r => r.BumpingRuleId).Distinct();
@@ -363,7 +367,7 @@ namespace SignInCheckIn.Services
 
             _roomRepository.CreateBumpingRules(mpBumpingRuleDtos);
 
-            // pull back the newly created rooms - not sure this should be used here
+            // pull back the newly created rooms
             return GetAvailableRooms(roomId, eventId);
         }
     }

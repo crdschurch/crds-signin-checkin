@@ -22,5 +22,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         void DeleteBumpingRules(IEnumerable<int> ruleIds);
 
         void CreateBumpingRules(List<MpBumpingRuleDto> bumpingRules);
+
+        List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds);
     }
 }
