@@ -32,7 +32,6 @@ export class RoomGroupListComponent implements OnInit {
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
-        console.log('parent room', this.room)
       },
       error => console.error(error)
     );
@@ -41,7 +40,6 @@ export class RoomGroupListComponent implements OnInit {
 
       event => {
         this.event = event;
-        console.log('parent event', this.event)
         this.headerService.announceEvent(event);
       },
       error => console.error(error)

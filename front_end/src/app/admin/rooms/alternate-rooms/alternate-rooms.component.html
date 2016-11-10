@@ -23,11 +23,13 @@
     <div class="row">
       <div class="col-xs-12 col-sm-6 mb-1">
         <div class="gray-lighter table-bumping-wrapper">
-          <h5>Available Rooms</h5>
-          <p class="mb-0">
-            &nbsp;
-          </p>
-          <table class="table white table-hover table-bumping-wrapper">
+          <header class="pl-1 pt-1 pr-1">
+            <h5>Available Rooms</h5>
+            <p>
+              &nbsp;
+            </p>
+          </header>
+          <table class="table white table-hover available">
             <thead>
               <tr class="gray-lighter">
                 <th>Room Name</th>
@@ -37,18 +39,20 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of availableRooms" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms"></tr>
+              <tr *ngFor="let room of availableRooms" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [allRooms]="allRooms"></tr>
             </tbody>
           </table>
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 mb-1">
         <div class="gray-lighter table-bumping-wrapper">
-          <h5>Alternate Rooms</h5>
-          <p class="mb-0">
-            Use the up/down arrows to rank the rooms in order of priority.
-          </p>
-          <table class="table white table-hover table-bumping">
+          <header class="pl-1 pt-1 pr-1">
+            <h5>Alternate Rooms</h5>
+            <p>
+              Use the up/down arrows to rank the rooms in order of priority.
+            </p>
+          </header>
+          <table class="table white table-hover bumping">
             <thead>
               <tr class="gray-lighter">
                 <th></th>
@@ -60,7 +64,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [index]="i"></tr>
+              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [allRooms]="allRooms" [index]="i"></tr>
             </tbody>
           </table>
         </div>
