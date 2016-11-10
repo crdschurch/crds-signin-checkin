@@ -8,7 +8,7 @@ import { AdminService } from '../../admin.service';
   templateUrl: 'room-bump.component.html',
   styleUrls: ['room-bump.component.scss']
 })
-export class RoomBumpComponent implements OnInit {
+export class RoomBumpComponent {
   @Input() room: Room;
   @Input() bumpingRooms: Room[];
   @Input() allRooms: Room[];
@@ -16,8 +16,6 @@ export class RoomBumpComponent implements OnInit {
 
   constructor( private adminService: AdminService,
                private route: ActivatedRoute) {}
-
-  ngOnInit() {}
 
   isFirst() { return this.room.isBumpingRoom() && this.index === 0; }
   isLast() { return this.room.isBumpingRoom() && this.index === this.bumpingRooms.length - 1; }
@@ -69,6 +67,7 @@ export class RoomBumpComponent implements OnInit {
       }
       i++;
     }
+    console.log(this)
     this.updateBumpingRooms();
   }
 
