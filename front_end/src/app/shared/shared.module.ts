@@ -8,6 +8,7 @@ import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
 
 import { PreloaderModule } from './preloader';
 import { CrdsDatePickerModule, LoadingButtonModule } from './components';
+import { CanActivateIfLoggedInGuard } from './guards';
 
 @NgModule({
   imports: [
@@ -25,6 +26,9 @@ import { CrdsDatePickerModule, LoadingButtonModule } from './components';
     CrdsDatePickerModule,
     LoadingButtonModule
   ],
+  providers: [
+    CanActivateIfLoggedInGuard
+  ]
 })
 export class SharedModule {
 }

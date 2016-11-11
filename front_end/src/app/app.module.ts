@@ -8,7 +8,7 @@ import './rxjs-operators';
 
 import { CookieService } from 'angular2-cookie/services/cookies.service';
 
-import { ContentService, RootService } from './shared/services';
+import { ContentService, RootService, UserService } from './shared/services';
 import { AdminModule } from './admin';
 import { ChildCheckinModule } from './child-checkin';
 import { ChildSigninModule } from './child-signin';
@@ -42,7 +42,8 @@ import { routing } from './app.routes';
     CookieService,
     ContentService,
     RootService,
-    ToasterModule
+    ToasterModule,
+    UserService
   ],
   bootstrap: [
     AppComponent
