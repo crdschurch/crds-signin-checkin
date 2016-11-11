@@ -61,5 +61,26 @@ namespace SignInCheckIn.Controllers
                 }
             });
         }
+
+        [HttpPost]
+        [ResponseType(typeof(EventRoomDto))]
+        [Route("rooms/event-rooms")]
+        public IHttpActionResult CreateEventRoom(
+            [FromBody] EventRoomDto eventRoomDto)
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    var eventRoom = _roomService.CreateEventRoom(token, eventRoomDto);
+                    return Ok(eventRoom);
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Get Rooms By Location ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
     }
 }

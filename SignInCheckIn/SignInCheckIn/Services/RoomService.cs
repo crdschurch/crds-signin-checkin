@@ -309,16 +309,20 @@ namespace SignInCheckIn.Services
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
-            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().ToList();
-            var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
+            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().Where(r => r != null).ToList();
 
-            foreach (var rule in bumpingRules)
+            if (eventRoomIds.Any())
             {
-                // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
-                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
+                var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
+
+                foreach (var rule in bumpingRules)
                 {
-                    room.BumpingRuleId = rule.BumpingRuleId;
-                    room.BumpingRulePriority = rule.PriorityOrder;
+                    // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
+                    foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
+                    {
+                        room.BumpingRuleId = rule.BumpingRuleId;
+                        room.BumpingRulePriority = rule.PriorityOrder;
+                    }
                 }
             }
 
@@ -368,6 +372,13 @@ namespace SignInCheckIn.Services
 
             // pull back the newly created rooms
             return GetAvailableRooms(roomId, eventId);
+        }
+
+        public EventRoomDto CreateEventRoom(string token, EventRoomDto eventRoomDto)
+        {
+            var mpEventRoomDto = Mapper.Map<MpEventRoomDto>(eventRoomDto);
+            var mpEventRoomWithId = _roomRepository.CreateOrUpdateEventRoom(token, mpEventRoomDto);
+            return Mapper.Map<EventRoomDto>(mpEventRoomWithId);
         }
     }
 }
