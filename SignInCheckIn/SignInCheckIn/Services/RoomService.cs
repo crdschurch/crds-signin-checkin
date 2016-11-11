@@ -305,7 +305,7 @@ namespace SignInCheckIn.Services
             // exclude the origin room from the available rooms
             var mpEventAllRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
             var mpEventAvailableRooms = mpEventAllRooms.Where(r => r.RoomId != roomId).ToList();
-            var mpCurrentEventRoom = mpEventAllRooms.Where(r => r.RoomId == roomId).First();
+            var mpCurrentEventRoom = mpEventAllRooms.First(r => r.RoomId == roomId);
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
