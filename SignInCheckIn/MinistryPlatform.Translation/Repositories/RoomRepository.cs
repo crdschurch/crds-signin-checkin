@@ -11,6 +11,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly List<string> _eventRoomColumns;
         private readonly List<string> _roomColumnList;
+        private readonly List<string> _bumpingRuleColumns; 
 
         public RoomRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
@@ -36,6 +37,14 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID",
                 "Room_Name",
                 "Room_Number"
+            };
+
+            _bumpingRuleColumns = new List<string>
+            {
+                "Bumping_Rules_ID",
+                "From_Event_Room_ID",
+                "To_Event_Room_ID",
+                "Priority_Order"
             };
         }
 
@@ -123,6 +132,46 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var apiUserToken = _apiUserRepository.GetToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Get<MpRoomDto>(roomId, _roomColumnList);
+        }
+
+        public List<MpBumpingRuleDto> GetBumpingRulesByRoomId(int fromRoomId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"From_Event_Room_ID={fromRoomId}", _bumpingRuleColumns);
+        }
+
+        public void DeleteBumpingRules(string authenticationToken, IEnumerable<int> ruleIds)
+        {
+            _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Delete<MpBumpingRuleDto>(ruleIds);
+        }
+
+        public List<MpRoomDto> GetAvailableRoomsBySite(int locationId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
+        }
+
+        public void CreateBumpingRules(string authenticationToken, List<MpBumpingRuleDto> bumpingRules)
+        {
+            _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Create(bumpingRules, _bumpingRuleColumns);
+        }
+
+        public List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds)
+        {
+            var queryString = "(";
+
+            foreach (var id in eventRoomIds)
+            {
+                queryString += id + ",";
+            }
+
+            queryString = queryString.TrimEnd(',');
+            queryString += ")";
+
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString}", _bumpingRuleColumns);
         }
     }
 }

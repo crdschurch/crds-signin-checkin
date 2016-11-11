@@ -297,5 +297,66 @@ namespace SignInCheckIn.Services
                 _eventRepository.DeleteEventGroups(authenticationToken, currentEventGroups.Select(g => g.Id));
             }
         }
+
+        public List<EventRoomDto> GetAvailableRooms(int roomId, int eventId)
+        {
+            var mpEvent = _eventRepository.GetEventById(eventId);
+
+            // exclude the origin room from the available rooms
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId).Where(r => r.RoomId != roomId).ToList();
+
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+
+            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().ToList();
+            var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds);
+
+            foreach (var rule in bumpingRules)
+            {
+                // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
+                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
+                {
+                    room.BumpingRuleId = rule.BumpingRuleId;
+                    room.BumpingRulePriority = rule.PriorityOrder;
+                }
+            }
+
+            return eventRooms;
+        }
+
+        public List<EventRoomDto> UpdateAvailableRooms(string authenticationToken, int eventId, int roomId, List<EventRoomDto> eventRoomDtos)
+        {
+            var sourceEventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+
+            if (sourceEventRoom == null)
+            {
+                throw new Exception("Event Room not found for event " + eventId + " and room " + roomId);
+            }
+
+            var bumpingRules = _roomRepository.GetBumpingRulesByRoomId(sourceEventRoom.EventRoomId.GetValueOrDefault());
+            var bumpingRuleIds = bumpingRules.Select(r => r.BumpingRuleId).Distinct();
+            _roomRepository.DeleteBumpingRules(authenticationToken, bumpingRuleIds);
+
+            var selectedRooms = eventRoomDtos.Where(r => r.BumpingRulePriority != null).ToList();
+
+            List<MpBumpingRuleDto> mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
+
+            foreach (var selectedRoom in selectedRooms)
+            {
+                MpBumpingRuleDto mpBumpingRuleDto = new MpBumpingRuleDto
+                {
+                    FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
+                    ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
+                    PriorityOrder = selectedRoom.BumpingRulePriority.GetValueOrDefault(),
+                    BumpingRuleTypeId = 1
+                };
+
+                mpBumpingRuleDtos.Add(mpBumpingRuleDto);
+            }
+
+            _roomRepository.CreateBumpingRules(authenticationToken, mpBumpingRuleDtos);
+
+            // pull back the newly created rooms
+            return GetAvailableRooms(roomId, eventId);
+        }
     }
 }
