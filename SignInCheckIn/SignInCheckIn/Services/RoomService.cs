@@ -303,12 +303,14 @@ namespace SignInCheckIn.Services
             var mpEvent = _eventRepository.GetEventById(eventId);
 
             // exclude the origin room from the available rooms
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId).Where(r => r.RoomId != roomId).ToList();
+            var mpEventAllRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+            var mpEventAvailableRooms = mpEventAllRooms.Where(r => r.RoomId != roomId).ToList();
+            var mpCurrentEventRoom = mpEventAllRooms.Where(r => r.RoomId == roomId).First();
 
-            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
             var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().ToList();
-            var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds);
+            var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
 
             foreach (var rule in bumpingRules)
             {

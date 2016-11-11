@@ -460,7 +460,7 @@ namespace SignInCheckIn.Tests.Services
 
             _eventRepository.Setup(m => m.GetEventById(eventId)).Returns(mpEventDto);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
-            _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>())).Returns(mpBumpingRuleDtos);
+            _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
 
             List<EventRoomDto> verifiedDtos = new List<EventRoomDto>()
             {
@@ -502,7 +502,7 @@ namespace SignInCheckIn.Tests.Services
                 CheckedIn = 2,
                 EventId = 3,
                 EventRoomId = 1000,
-                RoomId = 1112,
+                RoomId = 1111,
                 RoomName = "name",
                 RoomNumber = "number",
                 SignedIn = 5,
@@ -526,6 +526,7 @@ namespace SignInCheckIn.Tests.Services
 
             List<MpEventRoomDto> mpEventRoomDtos = new List<MpEventRoomDto>();
             mpEventRoomDtos.Add(mpEventRoom);
+            mpEventRoomDtos.Add(mpEventRoomFrom);
 
             var mpBumpingRuleDtos = new List<MpBumpingRuleDto>
             {
@@ -557,7 +558,7 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository.Setup(m => m.GetEventRoom(eventId, roomId)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesByRoomId(1000)).Returns(mpBumpingRuleDtos);
-            _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>())).Returns(mpBumpingRuleDtos);
+            _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
             _roomRepository.Setup(m => m.DeleteBumpingRules(It.IsAny<string>(), It.IsAny<IEnumerable<int>>()));
 
             // Act

@@ -160,7 +160,7 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Create(bumpingRules, _bumpingRuleColumns);
         }
 
-        public List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds)
+        public List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds, int? fromEventRoomId)
         {
             var queryString = "(";
 
@@ -173,7 +173,7 @@ namespace MinistryPlatform.Translation.Repositories
             queryString += ")";
 
             var apiUserToken = _apiUserRepository.GetToken();
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString}", _bumpingRuleColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString} AND From_Event_Room_ID = {fromEventRoomId}", _bumpingRuleColumns);
         }
     }
 }
