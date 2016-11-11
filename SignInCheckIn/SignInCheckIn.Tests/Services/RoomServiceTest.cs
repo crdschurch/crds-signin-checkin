@@ -558,10 +558,10 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesByRoomId(1000)).Returns(mpBumpingRuleDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>())).Returns(mpBumpingRuleDtos);
-            _roomRepository.Setup(m => m.DeleteBumpingRules(It.IsAny<IEnumerable<int>>()));
+            _roomRepository.Setup(m => m.DeleteBumpingRules(It.IsAny<string>(), It.IsAny<IEnumerable<int>>()));
 
             // Act
-            _fixture.UpdateAvailableRooms(eventId, roomId, eventRoomDtos);
+            _fixture.UpdateAvailableRooms("abc", eventId, roomId, eventRoomDtos);
 
             // Assert
             _eventRepository.VerifyAll();

@@ -47,16 +47,19 @@ namespace SignInCheckIn.Controllers
         public IHttpActionResult UpdateAvailableRoomsByLocation(
         [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId, [FromBody] List<EventRoomDto> eventRooms)
         {
-            try
+            return Authorized(token =>
             {
-                var roomList = _roomService.UpdateAvailableRooms(eventId, roomId, eventRooms);
-                return Ok(roomList);
-            }
-            catch (Exception e)
-            {
-                var apiError = new ApiErrorDto("Get Rooms By Location ", e);
-                throw new HttpResponseException(apiError.HttpResponseMessage);
-            }
+                    try
+                {
+                    var roomList = _roomService.UpdateAvailableRooms(token, eventId, roomId, eventRooms);
+                    return Ok(roomList);
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Get Rooms By Location ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
         }
     }
 }
