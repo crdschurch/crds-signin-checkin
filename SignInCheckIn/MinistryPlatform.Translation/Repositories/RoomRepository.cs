@@ -108,14 +108,16 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom)
         {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+
             MpEventRoomDto response;
             if (eventRoom.EventRoomId.HasValue)
             {
-                response = _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Update(eventRoom, _eventRoomColumns);
+                response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(eventRoom, _eventRoomColumns);
             }
             else
             {
-                response = _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Create(eventRoom, _eventRoomColumns);
+                response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventRoom, _eventRoomColumns);
             }
 
             return response;

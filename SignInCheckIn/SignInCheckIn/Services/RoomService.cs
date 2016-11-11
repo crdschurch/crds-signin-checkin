@@ -342,6 +342,15 @@ namespace SignInCheckIn.Services
 
             foreach (var selectedRoom in selectedRooms)
             {
+                // create the event room here
+                if (selectedRoom.EventRoomId == null)
+                {
+                    var mpEventRoomDto = Mapper.Map<MpEventRoomDto>(selectedRoom);
+
+                    // we get a new object from this call, but only need the end off it
+                    selectedRoom.EventRoomId = _roomRepository.CreateOrUpdateEventRoom(null, mpEventRoomDto).EventRoomId;
+                }
+
                 MpBumpingRuleDto mpBumpingRuleDto = new MpBumpingRuleDto
                 {
                     FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
