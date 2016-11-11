@@ -111,13 +111,31 @@ namespace MinistryPlatform.Translation.Repositories
             var token = authenticationToken ?? _apiUserRepository.GetToken();
 
             MpEventRoomDto response;
+            // TODO Modify all frontend calls that get to this service to ensure they send eventRoomId if there is already a reservation
+            // There are several instances where the frontend calls the backend, and an Event_Room gets created, but the frontend model is not
+            // being updated with the EventRoomId.  This is causing the backend to create additional Event_Room records for the same room, because
+            // we are only checking for the existence of EventRoomId to determine if this is a create or an update.
             if (eventRoom.EventRoomId.HasValue)
             {
                 response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(eventRoom, _eventRoomColumns);
             }
             else
             {
-                response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventRoom, _eventRoomColumns);
+                // Make sure it doesn't exist, in case we got a request without an eventRoomId, but there actually is already a reservation for this room
+                var existingEventRoom = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                    .Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", _eventRoomColumns).FirstOrDefault();
+
+                // If we did not find a record for this Event and Room, create one, otherwise update the existing one
+                if (existingEventRoom == null)
+                {
+                    response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventRoom, _eventRoomColumns);
+                }
+                else
+                {
+                    eventRoom.EventRoomId = existingEventRoom.EventRoomId;
+                    response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(eventRoom, _eventRoomColumns);
+                }
+                
             }
 
             return response;
