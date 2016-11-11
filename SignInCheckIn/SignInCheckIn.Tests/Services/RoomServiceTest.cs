@@ -416,12 +416,25 @@ namespace SignInCheckIn.Tests.Services
         {
             // Arrange
             var eventId = 1234567;
-            var roomId = 1111;
 
             MpEventDto mpEventDto = new MpEventDto
             {
                 EventId = 1234567,
                 LocationId = 1
+            };
+
+            var mpEventRoomFrom = new MpEventRoomDto
+            {
+                AllowSignIn = true,
+                Capacity = 1,
+                CheckedIn = 2,
+                EventId = 3,
+                EventRoomId = 1000,
+                RoomId = 1111,
+                RoomName = "name",
+                RoomNumber = "number",
+                SignedIn = 5,
+                Volunteers = 6
             };
 
             var mpEventRoom = new MpEventRoomDto
@@ -440,6 +453,7 @@ namespace SignInCheckIn.Tests.Services
 
             List<MpEventRoomDto> mpEventRoomDtos = new List<MpEventRoomDto>();
             mpEventRoomDtos.Add(mpEventRoom);
+            mpEventRoomDtos.Add(mpEventRoomFrom);
 
             var mpBumpingRuleDtos = new List<MpBumpingRuleDto>
             {
@@ -449,13 +463,6 @@ namespace SignInCheckIn.Tests.Services
                     ToEventRoomId = 1111,
                     PriorityOrder = 1
                 }
-            };
-
-            List<int?> roomIds = new List<int?>
-            {
-                111,
-                222,
-                333
             };
 
             _eventRepository.Setup(m => m.GetEventById(eventId)).Returns(mpEventDto);
