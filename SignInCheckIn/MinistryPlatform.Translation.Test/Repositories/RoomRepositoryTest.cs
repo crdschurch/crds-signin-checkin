@@ -46,7 +46,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
-        public void TestCreateEventRoom()
+        public void TestCreateEventRoomNoExistingEventRoom()
         {
             var eventRoom = new MpEventRoomDto
             {
@@ -66,12 +66,54 @@ namespace MinistryPlatform.Translation.Test.Repositories
             var created = new MpEventRoomDto();
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(
+                mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>()))
+                .Returns(new List<MpEventRoomDto>());
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create(eventRoom, _eventRoomColumns)).Returns(created);
             var result = _fixture.CreateOrUpdateEventRoom("auth", eventRoom);
             _ministryPlatformRestRepository.VerifyAll();
 
             Assert.IsNotNull(result);
             Assert.AreSame(created, result);
+        }
+
+        [Test]
+        public void TestCreateEventRoomExistingEventRoomShouldBeUpdated()
+        {
+            var eventRoom = new MpEventRoomDto
+            {
+                AllowSignIn = true,
+                Capacity = 1,
+                CheckedIn = 2,
+                EventId = 3,
+                EventRoomId = null,
+                Hidden = true,
+                RoomId = 4,
+                RoomName = "name",
+                RoomNumber = "number",
+                SignedIn = 5,
+                Volunteers = 6
+            };
+
+            var updated = new MpEventRoomDto();
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(
+                mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>()))
+                .Returns(new List<MpEventRoomDto>
+                {
+                    new MpEventRoomDto
+                    {
+                        EventRoomId = 999
+                    }
+                });
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Update(eventRoom, _eventRoomColumns)).Returns(updated);
+            var result = _fixture.CreateOrUpdateEventRoom("auth", eventRoom);
+            _ministryPlatformRestRepository.VerifyAll();
+            _ministryPlatformRestRepository.Verify(mocked => mocked.Update(It.Is<MpEventRoomDto>(e => e == eventRoom && e.EventRoomId == 999), _eventRoomColumns));
+
+            Assert.IsNotNull(result);
+            Assert.AreSame(updated, result);
         }
 
         [Test]
