@@ -4,7 +4,7 @@ import { Room } from '../../../shared/models';
 
 describe('RoomBumpComponent', () => {
   let fixture: RoomBumpComponent;
-  let adminService = jasmine.createSpyObj('adminService', ['getBumpingRooms']);
+  let adminService = jasmine.createSpyObj('adminService', ['updateBumpingRooms']);
   let route: ActivatedRoute;
   route = new ActivatedRoute();
   route.snapshot = new ActivatedRouteSnapshot();
