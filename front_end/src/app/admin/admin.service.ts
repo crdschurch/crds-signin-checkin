@@ -8,10 +8,13 @@ import { Room } from '../shared/models';
 export class AdminService {
   private roomGroupsUpdateEmitter: EventEmitter<Room>;
   private roomGroupsUpdateObserver: Observable<Room>;
+  private bumpingRoomsUpdateEmitter: EventEmitter<any>;
+  private bumpingRoomsUpdateObserver: Observable<any>;
   site: number;
 
   constructor(private http: HttpClientService) {
     this.configureUpdateRoomGroupsEmitterAndObserver();
+    this.configureUpdateBumpingRoomsEmitterAndObserver();
   }
 
   getRooms(eventId: string) {
@@ -19,6 +22,17 @@ export class AdminService {
     return this.http.get(url)
                     .map(res => res.json())
                     .catch(this.handleError);
+  }
+
+  getBumpingRooms(eventId: string, roomId: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
+    return this.http.get(url)
+                    .map(res => res.json())
+                    .catch(this.handleError);
+  }
+
+  updateBumpingRooms(eventId: string, roomId: string, rooms: Room[]) {
+    this.bumpingRoomsUpdateEmitter.emit({eventId: eventId, roomId: roomId, rooms: rooms});
   }
 
   updateRoom(eventId: string, roomId: string, body: Room) {
@@ -55,6 +69,13 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  private updateBumpingRoomsInternal(eventId: string, roomId: string, rooms: Room[]) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
+    return this.http.post(url, rooms)
+                    .map(res => res.json())
+                    .catch(this.handleError);
+  }
+
   private configureUpdateRoomGroupsEmitterAndObserver() {
     // Create an emitter to use when sending updates to the room
     this.roomGroupsUpdateEmitter = new EventEmitter<Room>();
@@ -72,6 +93,16 @@ export class AdminService {
     this.roomGroupsUpdateObserver.subscribe(room => {
       this.updateRoomGroupsInternal(room);
     });
+  }
+
+  private configureUpdateBumpingRoomsEmitterAndObserver() {
+    this.bumpingRoomsUpdateEmitter = new EventEmitter<any>();
+    this.bumpingRoomsUpdateObserver =
+      this.bumpingRoomsUpdateEmitter.map(obj => obj).debounceTime(2000);
+    this.bumpingRoomsUpdateObserver.subscribe(obj => {
+      this.updateBumpingRoomsInternal(obj.eventId, obj.roomId, obj.rooms);
+    });
+
   }
 
   private handleError (error: any) {

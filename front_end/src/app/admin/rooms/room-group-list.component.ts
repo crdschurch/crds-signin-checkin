@@ -29,19 +29,23 @@ export class RoomGroupListComponent implements OnInit {
   private getData(): void {
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
+
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
       },
       error => console.error(error)
     );
+
     this.apiService.getEvent(this.eventId).subscribe(
+
       event => {
         this.event = event;
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
     );
+
   }
 
   public isUpdating(): boolean {
@@ -82,4 +86,5 @@ export class RoomGroupListComponent implements OnInit {
     this.getData();
     this.openTabIfAlternateRoomsHash();
   }
+
 }
