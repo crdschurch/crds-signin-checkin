@@ -23,5 +23,9 @@ namespace Crossroads.Utilities.Services.Interfaces
         int AdultChildId { get; }
         int MinorChildId { get; }
         string HouseHoldIdsThatCanCheckIn { get; }
+
+        int SignedInParticipationStatusId { get; }
+        int CheckedInParticipationStatusId { get; }
+        string MachineConfigDetails { get; }
     }
 }

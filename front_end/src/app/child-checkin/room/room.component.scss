@@ -1,0 +1,42 @@
+/***************************************************************************************
+* Check In Screen
+***************************************************************************************/
+@import '../../../assets/scss/_variables.scss';
+@import '../../../assets/scss/_bootstrap.scss';
+
+.checkin-header {
+  span {
+    vertical-align: middle;
+  }
+}
+
+.echeck-list-group {
+  height: 65vh;
+  background: #fff;
+  @include border-radius( $border-radius );
+  overflow-y: auto;
+
+  .move-child {
+    background: red;
+    display: block;
+  }
+
+  .view-child-profile {
+    background: blue;
+    display: block;
+  }
+
+  .list-group-item:last-child {
+    border-radius: 0px;
+  }
+
+  .icon {
+    fill: $brand-blue;
+    padding-left: 5px;
+    cursor: pointer;
+
+    &:hover {
+      fill: $gray-dark;
+    }
+  }
+}

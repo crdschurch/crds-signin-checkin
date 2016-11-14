@@ -269,10 +269,23 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 },
             };
 
-            var expectedSearchString = string.Join(" OR ",
-                                           attrs.Select(
-                                               a => $"(Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {a.Type.Id} AND Group_Attributes.Attribute_ID = {a.Id})")
-                                               .ToList());
+            var expectedSearchString = string.Empty;
+            var first = true;
+            foreach (var typeId in attrs.Select(a => a.Type.Id).Distinct())
+            {
+                if (!first)
+                {
+                    expectedSearchString = $"{expectedSearchString} OR ";
+                }
+                else
+                {
+                    first = false;
+                }
+
+                expectedSearchString = $"{expectedSearchString} (Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {typeId} AND Group_Attributes.Attribute_ID IN ";
+                expectedSearchString = expectedSearchString + "(" + string.Join(",", attrs.FindAll(a => a.Type.Id == typeId).Select(a => a.Id).ToList()) + "))";
+            }
+
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);

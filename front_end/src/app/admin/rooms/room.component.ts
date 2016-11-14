@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../admin.service';
-import { Room } from './room';
+import { Room } from '../../shared/models';
 
 @Component({
   selector: '.room',

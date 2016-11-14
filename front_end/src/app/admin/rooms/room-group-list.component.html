@@ -8,7 +8,7 @@
       </div>
       <div class="col-sm-4 text-sm-right pb-1">
         <div>
-          <a (click)=goBack() href="#">
+          <a (click)=goBack()>
             <span class="icon icon-large">
               <svg height="20px" version="1.1" viewBox="0 0 16 16" width="20px" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g fill="none" fill-rule="evenodd" id="Icons with numbers" stroke="none" stroke-width="1"><g id="Group" transform="translate(-96.000000, -144.000000)">
@@ -33,35 +33,45 @@
       </div>
     </div>
 
-    <div class="col-sm-12 lead mt-1 mb-1">
-      <div class="row">
-          <span>
-            Select ages for this room. Within each age group, the room assigned is determined by the birth month of the child as indicated below.
-          </span>
-      </div>
+    <div class="row my-2">
+      <tabset class="col-xs-12">
+        <tab heading='Age Ranges' [active]="!alternateRoomsSelected">
+          <preloader *ngIf="!isReady()"></preloader>
+          <div class="row mt-1" *ngIf="isReady()">
+            <div class="col-xs-12 lead mb-1">
+              <p class="lead">
+                Select ages for this room. Within each age group, the room assigned is determined by the birth month of the child as indicated below.
+              </p>
+            </div>
+            <div class="col-xs-12">
+              <table class="table groups months">
+                <thead>
+                  <th>Ages</th>
+                  <th><span class="pr-3">Select All</span><span>Months</span></th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let g of getGroups() | slice:0:6" class="group" [group]="g" [eventId]="eventId" [roomId]="roomId" [room]="room"></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-xs-12 lead mt-1 mb-1">
+              <span>
+                <b>Grades</b> (All Months Automatically Assigned)
+              </span>
+            </div>
+            <div class="col-xs-12">
+              <table class="table groups all">
+                <tbody>
+                  <tr *ngFor="let g of getGroups() | slice:6" class="group" [group]="g" [eventId]="eventId" [roomId]="roomId" [room]="room"></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </tab>
+        <tab heading='Alternate Rooms' [active]="alternateRoomsSelected">
+          <alternate-rooms></alternate-rooms>
+        </tab>
+      </tabset>
     </div>
-    <table class="table groups months">
-      <thead>
-        <th>Ages</th>
-        <th><span>Select All</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Months</span></th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let g of getGroups() | slice:0:6" class="group" [group]="g" [eventId]="eventId" [roomId]="roomId" [room]="room"></tr>
-      </tbody>
-    </table>
-
-    <div class="col-sm-12 lead mt-1 mb-1">
-      <div class="row">
-          <span>
-            <b>Grades</b> (All Months Automatically Assigned)
-          </span>
-      </div>
-    </div>
-    <table class="table groups all">
-      <tbody>
-        <tr *ngFor="let g of getGroups() | slice:6" class="group" [group]="g" [eventId]="eventId" [roomId]="roomId" [room]="room"></tr>
-      </tbody>
-    </table>
-
   </div>
 </div>

@@ -113,6 +113,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Extensions\RestSharpExtensionsTest.cs" />
+    <Compile Include="Repositories\ChildCheckinRepositoryTest.cs" />
     <Compile Include="Repositories\ChildSigninRepositoryTest.cs" />
     <Compile Include="Extensions\JsonUnmappedDataExtensionsTest.cs" />
     <Compile Include="Extensions\MpEventGroupDtoExtensionsTest.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Repositories\AttributeRepositoryTest.cs" />
     <Compile Include="Repositories\EventRepositoryTest.cs" />
     <Compile Include="Repositories\GroupRepositoryTest.cs" />
+    <Compile Include="Repositories\KioskRepositoryTest.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepositoryTest.cs" />
     <Compile Include="Repositories\RoomRepositoryTest.cs" />
   </ItemGroup>

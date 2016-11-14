@@ -1,18 +1,23 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-
 import { HttpClientService } from '../shared/services';
 import { PhoneNumberPipe } from '../shared/pipes/phoneNumber.pipe';
-import { Child } from '../shared/models/child';
+import { Child, Event, EventParticipants } from '../shared/models';
 
 @Injectable()
 export class ChildSigninService {
   private url: string = '';
   private phoneNumber: string = '';
   private childrenAvailable: Array<Child> = [];
+  private event: Event;
 
-  constructor(private http: HttpClientService) {
+  constructor(private http: HttpClientService, private router: Router) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/signin`;
+  }
+
+  getEvent() {
+    return this.event;
   }
 
   getChildrenByPhoneNumber(phoneNumber: string) {
@@ -26,10 +31,13 @@ export class ChildSigninService {
       this.childrenAvailable = [];
       return this.http.get(url)
                   .map((response) => {
-                    for (let kid of response.json()) {
+                    this.event = response.json().CurrentEvent;
+                    for (let kid of response.json().Participants) {
                       let child = Object.create(Child.prototype);
                       Object.assign(child, kid);
-                      child.signIn = true;
+                      // set all selected to true
+                      // TODO: backend should probably do this
+                      child.Selected = true;
                       this.childrenAvailable.push(child);
                     }
 
@@ -39,8 +47,14 @@ export class ChildSigninService {
     }
   }
 
+  signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
+    const url = `${this.url}/children`;
+    return this.http.post(url, eventParticipants)
+                    .map(res => EventParticipants.fromJson(res.json()))
+                    .catch(this.handleError);
+  }
+
   private handleError (error: any) {
-    console.error(error);
     return Observable.throw(error.json().error || 'Server error');
   }
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 import { ChildSigninService } from './child-signin.service';
 
@@ -10,6 +11,8 @@ import { ChildSigninService } from './child-signin.service';
   providers: [ ChildSigninService ]
 })
 export class ChildSigninComponent {
+
+  clock = Observable.interval(10000).map(() => new Date());
 
   constructor(private router: Router) {}
 

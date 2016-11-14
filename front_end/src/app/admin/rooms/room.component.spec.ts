@@ -1,8 +1,16 @@
+import { Observable } from 'rxjs/Observable';
 import { RoomComponent } from './room.component';
-import { Room } from './room';
+import { Room } from '../../shared/models';
 
 let fixture: RoomComponent;
-let adminServiceStub: any = {};
+let adminServiceStub: any = {
+  updateRoom(eventId: number, roomId: number, room: Room): any {
+    let r = new Room();
+    r.Volunteers = 10;
+    r.Capacity = 6;
+    return Observable.of(r);
+  }
+};
 
 describe('RoomComponent', () => {
 

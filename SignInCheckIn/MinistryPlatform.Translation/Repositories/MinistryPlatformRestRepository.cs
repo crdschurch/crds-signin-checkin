@@ -36,11 +36,10 @@ namespace MinistryPlatform.Translation.Repositories
 
         public T Get<T>(int recordId, string selectColumns = null)
         {
-            var url = AddGetColumnSelection(string.Format("/tables/{0}/{1}", GetTableName<T>(), recordId), selectColumns);
-            var request = new RestRequest(url, Method.GET);
+            var request = new RestRequest($"/tables/{GetTableName<T>()}/{recordId}", Method.GET);
             request.RequestFormat = DataFormat.Json;
             request.AddHeader("Accept", "application/json");
-            AddAuthorization(request);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -57,9 +56,8 @@ namespace MinistryPlatform.Translation.Repositories
 
         public T Get<T>(string tableName, int recordId, string columnName)
         {
-            var url = AddGetColumnSelection(string.Format("/tables/{0}/{1}", tableName, recordId), columnName);
-            var request = new RestRequest(url, Method.GET);
-            AddAuthorization(request);
+            var request = new RestRequest($"/tables/{tableName}/{recordId}", Method.GET);
+            AddAuthorization(AddSelectAndFilter(request, columnName, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -107,10 +105,9 @@ namespace MinistryPlatform.Translation.Repositories
         private T ExecutePutOrPost<T>(T record, Method method, string selectColumns)
         {
             var tableName = GetTableName<T>();
-            var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
-            var request = new RestRequest(url, method).SetJsonBody(record);
+            var request = new RestRequest($"/tables/{tableName}", method).SetJsonBody(record);
 
-            AddAuthorization(request);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -127,10 +124,9 @@ namespace MinistryPlatform.Translation.Repositories
         private List<T> ExecutePutOrPost<T>(List<T> records, Method method, string selectColumns)
         {
             var tableName = GetTableName<T>();
-            var url = AddGetColumnSelection($"/tables/{tableName}", selectColumns);
-            var request = new RestRequest(url, method).SetJsonBody(records);
+            var request = new RestRequest($"/tables/{tableName}", method).SetJsonBody(records);
 
-            AddAuthorization(request);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
@@ -201,19 +197,23 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<T> SearchTable<T>(string tableName, string searchString = null, string selectColumns = null)
         {
-            var search = string.IsNullOrWhiteSpace(searchString) ? string.Empty : string.Format("?$filter={0}", searchString);
-
-            var url = AddColumnSelection(string.Format("/tables/{0}{1}", tableName, search), selectColumns);
-            var request = new RestRequest(url, Method.GET);
-            AddAuthorization(request);
+            var request = new RestRequest($"/tables/{tableName}", Method.GET);
+            AddAuthorization(AddSelectAndFilter(request, selectColumns, searchString));
 
             var response = _ministryPlatformRestClient.Execute(request);
             _authToken.Value = null;
-            response.CheckForErrors(string.Format("Error searching {0}", GetTableName<T>()));
+            response.CheckForErrors(string.Format($"Error searching table {tableName}"));
 
             var content = JsonConvert.DeserializeObject<List<T>>(response.Content);
 
             return content;
+        }
+
+        private static IRestRequest AddSelectAndFilter(IRestRequest request, string selectString, string filterString)
+        {
+            request.AddQueryParameterIfSpecified("$select", selectString);
+            request.AddQueryParameterIfSpecified("$filter", filterString);
+            return request;
         }
 
         public List<T> SearchTable<T>(string tableName, string searchString, List<string> selectColumns)
@@ -286,16 +286,6 @@ namespace MinistryPlatform.Translation.Repositories
                 throw new NoPrimaryKeyDefinitionException<T>();
             }
             return primaryKey.Name;
-        }
-
-        private static string AddColumnSelection(string url, string selectColumns)
-        {
-            return string.IsNullOrWhiteSpace(selectColumns) ? url : string.Format("{0}&$select={1}", url, selectColumns);
-        }
-
-        private static string AddGetColumnSelection(string url, string selectColumns)
-        {
-            return string.IsNullOrWhiteSpace(selectColumns) ? url : string.Format("{0}?$select={1}", url, selectColumns);
         }
     }
 

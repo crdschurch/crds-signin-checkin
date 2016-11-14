@@ -1,8 +1,6 @@
 @import '../../assets/scss/_variables.scss';
 
 admin {
-  background: white;
-
   .navbar {
     border-radius: 0px;
 
@@ -55,5 +53,52 @@ admin {
     &:hover {
       color: #fff;
     }
+  }
+}
+
+.gray-lighter {
+  background: $gray-lighter;
+}
+
+.white {
+  background: #fff;
+}
+
+.btn-unstyled {
+  padding: 0;
+  background: transparent;
+}
+
+.btn-unstyled.dropdown-toggle::after {
+  display: none;
+}
+
+.gear-dropdown {
+  .dropdown-menu-right {
+    right: 1rem;
+  }
+}
+
+.well-sm {
+  padding: 9px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+datepicker {
+  .text-success {
+    color: white !important;
+  }
+
+  .pull-right {
+    float: right;
+  }
+  
+  .glyphicon.glyphicon-chevron-left:after {
+    content: "<";
+  }
+
+  .glyphicon.glyphicon-chevron-right:after {
+    content: ">";
   }
 }

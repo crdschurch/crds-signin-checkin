@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using AutoMapper;
+using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -14,6 +14,8 @@ namespace SignInCheckIn.Tests.Services
     public class EventServiceTest
     {
         private Mock<IEventRepository> _eventRepository;
+        private Mock<IConfigRepository> _configRepository;
+        private Mock<IRoomRepository> _roomRepository;
 
         private EventService _fixture;
 
@@ -23,7 +25,29 @@ namespace SignInCheckIn.Tests.Services
             AutoMapperConfig.RegisterMappings();
 
             _eventRepository = new Mock<IEventRepository>();
-            _fixture = new EventService(_eventRepository.Object);
+            _configRepository = new Mock<IConfigRepository>();
+            _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
+
+            var mpConfigDtoEarly = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultEarlyCheckIn",
+                Value = "60"
+            };
+
+            var mpConfigDtoLate = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultLateCheckIn",
+                Value = "60"
+            };
+
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
+
+            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object);
         }
 
         [Test]
@@ -72,5 +96,132 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.VerifyAll();
             Assert.AreEqual(e.EventId, result.EventId);
         }
+
+        [Test]
+        public void TestGetCurrentEventForSite()
+        {
+            const int siteId = 1;
+            var events = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    CongregationId = 1,
+                    CongregationName = "Oakley",
+                    EarlyCheckinPeriod = 30,
+                    EventEndDate = DateTime.Now.AddDays(1),
+                    EventId = 1234567,
+                    EventStartDate = DateTime.Now,
+                    EventTitle = "test event",
+                    EventType = "type test",
+                    LateCheckinPeriod = 30,
+                    LocationId = 3
+                }
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
+            var result = _fixture.GetCurrentEventForSite(siteId);
+            _eventRepository.VerifyAll();
+
+            Assert.AreEqual(result.EventId, events[0].EventId);
+            Assert.AreEqual(result.EarlyCheckinPeriod, events[0].EarlyCheckinPeriod);
+            Assert.AreEqual(result.LateCheckinPeriod, events[0].LateCheckinPeriod);
+        }
+
+        [Test]
+        public void TestCheckEventTimeValidityTrue()
+        {
+            var eventDto = new EventDto
+            {
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(1),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now,
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30
+            };
+
+            var result = _fixture.CheckEventTimeValidity(eventDto);
+            Assert.AreEqual(result, true);
+        }
+
+        [Test]
+        public void TestCheckEventTimeValidityFalse()
+        {
+            var eventDto = new EventDto
+            {
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(2),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now.AddDays(1),
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30
+            };
+
+            var result = _fixture.CheckEventTimeValidity(eventDto);
+            Assert.AreEqual(result, false);
+        }
+
+        [Test]
+        public void TestImportEventSetup()
+        {
+            const int destinationEventId = 12345;
+            const int sourceEventId = 67890;
+            const int locationId = 937;
+            const string token = "tok123";
+            var destinationEvent = new MpEventDto
+            {
+                EventId = destinationEventId,
+                LocationId = locationId
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto(),
+                new MpEventRoomDto()
+            };
+
+            _eventRepository.Setup(mocked => mocked.GetEventById(destinationEventId)).Returns(destinationEvent);
+            _eventRepository.Setup(mocked => mocked.ResetEventSetup(token, destinationEventId));
+            _eventRepository.Setup(mocked => mocked.ImportEventSetup(token, destinationEventId, sourceEventId));
+            _roomRepository.Setup(mocked => mocked.GetRoomsForEvent(destinationEventId, locationId)).Returns(eventRooms);
+
+            var response = _fixture.ImportEventSetup(token, destinationEventId, sourceEventId);
+            _eventRepository.VerifyAll();
+            _roomRepository.VerifyAll();
+            response.Should().NotBeNull();
+            response.Count.Should().Be(eventRooms.Count);
+        }
+
+        [Test]
+        public void TestResetEventSetup()
+        {
+            const int eventId = 12345;
+            const int locationId = 937;
+            const string token = "tok123";
+            var destinationEvent = new MpEventDto
+            {
+                EventId = eventId,
+                LocationId = locationId
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto(),
+                new MpEventRoomDto()
+            };
+
+            _eventRepository.Setup(mocked => mocked.GetEventById(eventId)).Returns(destinationEvent);
+            _eventRepository.Setup(mocked => mocked.ResetEventSetup(token, eventId));
+            _roomRepository.Setup(mocked => mocked.GetRoomsForEvent(eventId, locationId)).Returns(eventRooms);
+
+            var response = _fixture.ResetEventSetup(token, eventId);
+            _eventRepository.VerifyAll();
+            _roomRepository.VerifyAll();
+            response.Should().NotBeNull();
+            response.Count.Should().Be(eventRooms.Count);
+        }
+
     }
 }

@@ -8,11 +8,12 @@ import './rxjs-operators';
 
 import { CookieService } from 'angular2-cookie/services/cookies.service';
 
-import { HttpClientService } from './shared/services';
 import { ContentService, RootService } from './shared/services';
 import { AdminModule } from './admin';
+import { ChildCheckinModule } from './child-checkin';
 import { ChildSigninModule } from './child-signin';
 import { HomeModule } from './home';
+import { SetupModule } from './setup';
 import { AppComponent } from './app.component';
 import { routing } from './app.routes';
 
@@ -25,6 +26,8 @@ import { routing } from './app.routes';
     FormsModule,
     HttpModule,
     HomeModule,
+    SetupModule,
+    ChildCheckinModule,
     ChildSigninModule,
     AdminModule,
     routing,
@@ -37,7 +40,6 @@ import { routing } from './app.routes';
   providers: [
     FormsModule,
     CookieService,
-    HttpClientService,
     ContentService,
     RootService,
     ToasterModule

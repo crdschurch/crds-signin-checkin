@@ -1,39 +1,20 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { RequestOptions, URLSearchParams } from '@angular/http';
-
-import * as moment from 'moment';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { Event } from './events/event';
-import { Room } from './rooms/room';
+import { Room } from '../shared/models';
 
 @Injectable()
 export class AdminService {
   private roomGroupsUpdateEmitter: EventEmitter<Room>;
   private roomGroupsUpdateObserver: Observable<Room>;
+  private bumpingRoomsUpdateEmitter: EventEmitter<any>;
+  private bumpingRoomsUpdateObserver: Observable<any>;
+  site: number;
 
   constructor(private http: HttpClientService) {
     this.configureUpdateRoomGroupsEmitterAndObserver();
-  }
-
-  getEvent(eventId: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}`;
-    return this.http.get(url)
-                    .map(res => Event.fromJson(res.json()))
-                    .catch(this.handleError);
-  }
-
-  getEvents(startDate: any, endDate: any, site: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events`;
-    let formattedStartDate = moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    let formattedEndDate = moment(endDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    let options = new RequestOptions({
-        search: new URLSearchParams(`site=${site}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
-    });
-    return this.http.get(url, options)
-                    .map(res => res.json())
-                    .catch(this.handleError);
+    this.configureUpdateBumpingRoomsEmitterAndObserver();
   }
 
   getRooms(eventId: string) {
@@ -41,6 +22,17 @@ export class AdminService {
     return this.http.get(url)
                     .map(res => res.json())
                     .catch(this.handleError);
+  }
+
+  getBumpingRooms(eventId: string, roomId: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
+    return this.http.get(url)
+                    .map(res => res.json())
+                    .catch(this.handleError);
+  }
+
+  updateBumpingRooms(eventId: string, roomId: string, rooms: Room[]) {
+    this.bumpingRoomsUpdateEmitter.emit({eventId: eventId, roomId: roomId, rooms: rooms});
   }
 
   updateRoom(eventId: string, roomId: string, body: Room) {
@@ -63,10 +55,24 @@ export class AdminService {
     this.roomGroupsUpdateEmitter.emit(body);
   }
 
+  importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${destinationEventId}/import/${sourceEventId}`;
+    return this.http.put(url, null, null)
+                    .map(res => { (<any[]>res.json()).map(r => Room.fromJson(r)); })
+                    .catch(this.handleError);
+  }
+
   private updateRoomGroupsInternal(room: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${room.EventId}/rooms/${room.RoomId}/groups`;
     return this.http.put(url, room)
                     .map(res => Room.fromJson(res.json()))
+                    .catch(this.handleError);
+  }
+
+  private updateBumpingRoomsInternal(eventId: string, roomId: string, rooms: Room[]) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
+    return this.http.post(url, rooms)
+                    .map(res => res.json())
                     .catch(this.handleError);
   }
 
@@ -83,10 +89,20 @@ export class AdminService {
     // Subscribe to the debounced event - now actually send the update to
     // the backend.
     // TODO - Should handle the response, and notify the user of success or failure
-    // TODO - Should have some sort of processing state while the update is running, since it can take several seconds to complete 
+    // TODO - Should have some sort of processing state while the update is running, since it can take several seconds to complete
     this.roomGroupsUpdateObserver.subscribe(room => {
       this.updateRoomGroupsInternal(room);
     });
+  }
+
+  private configureUpdateBumpingRoomsEmitterAndObserver() {
+    this.bumpingRoomsUpdateEmitter = new EventEmitter<any>();
+    this.bumpingRoomsUpdateObserver =
+      this.bumpingRoomsUpdateEmitter.map(obj => obj).debounceTime(2000);
+    this.bumpingRoomsUpdateObserver.subscribe(obj => {
+      this.updateBumpingRoomsInternal(obj.eventId, obj.roomId, obj.rooms);
+    });
+
   }
 
   private handleError (error: any) {

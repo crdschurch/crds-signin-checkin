@@ -1,14 +1,14 @@
 import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToasterModule, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
-import { ContentService, RootService } from './shared/services';
+import { ContentService, RootService, SetupService, HttpClientService, ApiService } from './shared/services';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  providers: [ToasterModule, ToasterService, ContentService]
+  providers: [ToasterModule, ToasterService, ContentService, SetupService, HttpClientService, ApiService]
 })
 export class AppComponent implements OnInit {
 
@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
               viewContainerRef: ViewContainerRef,
               private contentService: ContentService,
               private toasterService: ToasterService,
+              private setupService: SetupService,
               private rootService: RootService) {
 
     // You need this small hack in order to catch application root view container ref
@@ -61,4 +62,5 @@ export class AppComponent implements OnInit {
       this.toasterService.pop(toast);
     });
   }
+
 }

@@ -1,0 +1,76 @@
+<header-event></header-event>
+
+<form (ngSubmit)="submitForm(importForm)" #importForm="ngForm" novalidate>
+  <div class="wrapper">
+    <div class="container-fluid admin-content py-1">
+
+      <div class="row">
+        <div class="col-md-12 m-b-2">
+          <h1>Import Event Settings</h1>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="sourceEventDate">
+        <div class="col-sm-6 col-md-3">
+          Select an event date<br/>
+          <crds-datepicker
+            name="sourceEventDate"
+            autoClose="true"
+            [(date)]="sourceEventDate"
+            (onChange)="getSourceEventList()"></crds-datepicker>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <div class="checkbox mt-2">
+            <label><input type="checkbox" name="importAll" id="importAll" disabled/>&nbsp;&nbsp;Import all services for this weekend</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="!isReady()">
+        <div class="col-md-9 col-sm-8 col-xs-12">
+          <preloader></preloader>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="isReady()">
+        <div class="col-md-9 col-sm-8 col-xs-12">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Event Type</th>
+                <th>Day</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Site</th>
+                <th class="text-xs-center">Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of events">
+                <td>Service</td>
+                <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
+                <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
+                <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
+                <td>{{event.EventSite}}</td>
+                <td class="text-xs">
+                  <input type="radio" name="sourceEventId" value="{{event.EventId}}" class="form-control" [(ngModel)]="sourceEventId" required/>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="isReady()">
+        <div class="col-md-7"></div>
+        <div class="col-md-2">
+          <div class="text-md-right">
+            <button class="btn btn-standard" type="button" (click)="backToEventRooms()" [disabled]="import.processing">Cancel</button>
+            <loading-button buttonClasses="btn btn-primary" buttonType="submit" [loading]="import.processing" normalText="Import" loadingText="Importing..."></loading-button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

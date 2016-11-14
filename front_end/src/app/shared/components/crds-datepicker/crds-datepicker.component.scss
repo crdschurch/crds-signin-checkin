@@ -1,0 +1,22 @@
+/* Add some padding below the collapsed component */
+div.crds-datepicker-container {
+  padding-bottom: 9px;
+  display: inline-block;
+}
+
+/* Make the actual datepicker open on top of other elements */
+div.crds-datepicker-container > div.calendar {
+  z-index: 1;
+  position: absolute;
+}
+
+/* TODO: Trying to get the selected date button to be the 'primary' button color.  Not Working! */
+/* ng2-bootstrap datepicker sets .btn-info class on selected date, use that to change the color to styleguide primary button color */
+div.crds-datepicker-container > div.calendar > datepicker > datepicker-inner > div.well > daypicker > table > tbody > tr > td > button.btn-info {
+  background-color: #748FA2;
+  border-color: #748FA2;
+  :hover & {
+    background-color: #5b7588;
+    border-color: #577082;
+  }
+}
