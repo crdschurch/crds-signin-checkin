@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Services\ApplicationConfiguration.cs" />
+    <Compile Include="Services\AppSettingsTypeConverter.cs" />
     <Compile Include="Services\ConfigurationWrapper.cs" />
     <Compile Include="Services\EnvironmentVariableTypeConverter.cs" />
     <Compile Include="Services\Interfaces\IApplicationConfiguration.cs" />

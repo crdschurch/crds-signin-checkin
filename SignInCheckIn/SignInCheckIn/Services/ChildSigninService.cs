@@ -5,6 +5,7 @@ using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
@@ -21,8 +22,7 @@ namespace SignInCheckIn.Services
         private readonly IPdfEditor _pdfEditor;
 
         public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
-            IGroupRepository groupRepository, IEventService eventService, IPrintingService printingService,
-            IPdfEditor pdfEditor)
+            IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -84,7 +84,14 @@ namespace SignInCheckIn.Services
                 Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList()
             };
 
-            response.Participants.ForEach(p => p.Selected = true);
+            //response.Participants.ForEach(p => p.Selected = true);
+
+            foreach (var item in response.Participants)
+            {
+                item.Selected = true;
+                var label = _pdfEditor.PopulatePdfMergeFields("somepath", new Dictionary<string, string>());
+                var printId = _printingService.SendPrintRequest(new PrintRequestDto());
+            }
 
             return response;
         }

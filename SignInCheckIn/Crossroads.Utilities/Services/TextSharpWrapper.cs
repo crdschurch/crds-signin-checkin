@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Crossroads.Utilities.Services.Interfaces;
 using iTextSharp.text.pdf;
 
 namespace Crossroads.Utilities.Services
 {
-    public class TextSharpWrapper
+    public class TextSharpWrapper : IPdfEditor
     {
         // this function is probably not as robust as it could be - we depend on having the field key contained
         // as a merge value in the code that is being passed in - should probably do some exception handling or 

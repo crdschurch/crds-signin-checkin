@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
+using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.App_Start;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
@@ -17,6 +19,8 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IEventRepository> _eventRepository;
         private Mock<IGroupRepository> _groupRepository;
         private Mock<IEventService> _eventService;
+        private Mock<IPdfEditor> _pdfEditor;
+        private Mock<IPrintingService> _printingService;
 
         private ChildSigninService _fixture;
 
@@ -30,7 +34,8 @@ namespace SignInCheckIn.Tests.Services
             _groupRepository = new Mock<IGroupRepository>();
             _eventService = new Mock<IEventService>();
 
-            _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, _groupRepository.Object, _eventService.Object);
+            _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
+                _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object);
         }
 
         [Test]
