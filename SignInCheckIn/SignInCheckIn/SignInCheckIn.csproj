@@ -272,6 +272,10 @@
       <Project>{9ca5c91a-96e5-4968-b4ce-213b581b33f6}</Project>
       <Name>MinistryPlatform.Translation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Printing.Utilities\Printing.Utilities.csproj">
+      <Project>{c87c7588-00e6-40b4-95cb-c97f1df19f1f}</Project>
+      <Name>Printing.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

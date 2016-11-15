@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
 
@@ -15,13 +17,19 @@ namespace SignInCheckIn.Services
         private readonly IEventRepository _eventRepository;
         private readonly IEventService _eventService;
         private readonly IGroupRepository _groupRepository;
+        private readonly IPrintingService _printingService;
+        private readonly IPdfEditor _pdfEditor;
 
-        public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, IGroupRepository groupRepository, IEventService eventService)
+        public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
+            IGroupRepository groupRepository, IEventService eventService, IPrintingService printingService,
+            IPdfEditor pdfEditor)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
             _groupRepository = groupRepository;
             _eventService = eventService;
+            _printingService = printingService;
+            _pdfEditor = pdfEditor;
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
