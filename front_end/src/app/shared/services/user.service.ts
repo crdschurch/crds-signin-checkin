@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { CookieService, CookieOptions } from 'angular2-cookie/core';
 import { User } from '../models';
 import { LoginRedirectService } from './login-redirect.service';
@@ -11,7 +11,7 @@ export class UserService {
   private refreshTimeout: Subscription;
   private SessionLengthMilliseconds = 1800000;
 
-  constructor(private cookie: CookieService, private loginRedirectService: LoginRedirectService, private activatedRoute: ActivatedRoute) { }
+  constructor(private cookie: CookieService, private loginRedirectService: LoginRedirectService, private router: Router) { }
 
   public getUser(): User {
     let user: User;
@@ -38,7 +38,7 @@ export class UserService {
 
     if (user.isLoggedIn()) {
       this.refreshTimeout = Observable.timer(this.SessionLengthMilliseconds).subscribe(() => {
-        this.loginRedirectService.redirectToLogin(this.activatedRoute.snapshot.url.join('/'));
+        this.loginRedirectService.redirectToLogin(this.router.routerState.snapshot.url);
       });
     }
   }
