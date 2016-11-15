@@ -6,9 +6,7 @@ import { LoginRedirectService } from '../services/login-redirect.service';
 @Injectable()
 export class CanActivateIfLoggedInGuard implements CanActivate {
 
-  constructor(private userService: UserService, private redirectService: LoginRedirectService) {
-    console.log(`User: ${userService.getUser()}`);
-  }
+  constructor(private userService: UserService, private redirectService: LoginRedirectService) { }
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (!this.userService.isLoggedIn()) {

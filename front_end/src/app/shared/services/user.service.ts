@@ -6,6 +6,7 @@ import { LoginRedirectService } from './login-redirect.service';
 import { Observable, Subscription } from 'rxjs';
 
 import * as moment from 'moment';
+
 @Injectable()
 export class UserService {
   private refreshTimeout: Subscription;
