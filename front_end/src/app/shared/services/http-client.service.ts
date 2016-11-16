@@ -3,11 +3,12 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { CookieService } from 'angular2-cookie/core';
 import { User, MachineConfiguration } from '../models';
 import { Observable } from 'rxjs/Observable';
+import { UserService } from './user.service';
 
 @Injectable()
 export class HttpClientService {
 
-  constructor(private http: Http, private cookie: CookieService) {}
+  constructor(private http: Http, private cookie: CookieService, private userService: UserService) {}
 
   get(url: string, options?: RequestOptions) {
     let requestOptions = this.getRequestOption(options);
@@ -25,36 +26,33 @@ export class HttpClientService {
   }
 
   isLoggedIn(): boolean {
-    return this.user.isLoggedIn();
+    return this.getUser().isLoggedIn();
   }
 
   hasRefreshToken(): boolean {
-    return this.user.hasRefreshToken();
+    return this.getUser().hasRefreshToken();
   }
 
   logOut(): void {
-    let user = this.user;
-    user.logOut();
-
-    this.user = user;
+    this.getUser().logOut();
   }
 
   getUser(): User {
-    return this.user;
+    return this.userService.getUser();
   }
 
   private extractAuthToken(o: any) {
     let sharable = o.share();
     sharable.subscribe(
       (res: Response) => {
-        let user = this.user;
+        let user = this.getUser();
         if (res.headers.get('Authorization')) {
           user.token = res.headers.get('Authorization');
         };
         if (res.headers.get('RefreshToken')) {
           user.refreshToken = res.headers.get('RefreshToken');
         }
-        this.user = user;
+        this.userService.setUser(user);
       },
       (error) => {
         return Observable.throw(error || 'Server error');
@@ -71,8 +69,9 @@ export class HttpClientService {
 
   private createAuthorizationHeader(headers?: Headers) {
     let reqHeaders =  headers || new Headers();
-    reqHeaders.set('Authorization', this.user.token);
-    reqHeaders.set('RefreshToken', this.user.refreshToken);
+    let user = this.getUser();
+    reqHeaders.set('Authorization', user.token);
+    reqHeaders.set('RefreshToken', user.refreshToken);
     reqHeaders.set('Content-Type', 'application/json');
     reqHeaders.set('Accept', 'application/json, text/plain, */*');
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
@@ -83,22 +82,5 @@ export class HttpClientService {
     }
 
     return reqHeaders;
-  }
-
-  private get user(): User {
-    let user: User;
-
-    if (!this.cookie.getObject('user')) {
-      this.cookie.putObject('user', new User());
-    }
-
-    user = Object.create(User.prototype);
-    Object.assign(user, this.cookie.getObject('user'));
-
-    return user;
-  }
-
-  private set user(value: User) {
-    this.cookie.putObject('user', value);
   }
 }
