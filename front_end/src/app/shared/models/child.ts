@@ -11,14 +11,6 @@ export class Child {
   Selected: boolean;
   ParticipationStatusId: number;
 
-  static fromJsons(jsons: any): Child[] {
-    let children: Child[] = [];
-    for (let json of jsons) {
-        children.push(Child.fromJson(json));
-    }
-    return children;
-  }
-
   static fromJson(json: any): Child {
     let c = new Child();
     c.ParticipantId = json.ParticipantId;
