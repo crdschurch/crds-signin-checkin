@@ -31,6 +31,7 @@ export class ChildSigninService {
       this.childrenAvailable = [];
       return this.http.get(url)
                   .map((response) => {
+                    debugger
                     this.event = response.json().CurrentEvent;
                     for (let kid of response.json().Participants) {
                       let child = Object.create(Child.prototype);
@@ -43,15 +44,25 @@ export class ChildSigninService {
 
                     return this.childrenAvailable;
                   })
-                  .catch(this.handleError);
+                  .catch(err => {
+                    debugger
+                    // this.handleError(err);
+                    return Observable.throw('Server error');
+                  });
     }
   }
 
   signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
     const url = `${this.url}/children`;
     return this.http.post(url, eventParticipants)
-                    .map(res => EventParticipants.fromJson(res.json()))
-                    .catch(this.handleError);
+                    .map(res => {
+                      debugger
+                      EventParticipants.fromJson(res.json())
+                    })
+                    .catch(err => {
+                      debugger
+                      this.handleError(err);
+                    });
   }
 
   private handleError (error: any) {

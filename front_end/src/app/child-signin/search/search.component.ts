@@ -40,6 +40,8 @@ export class SearchComponent {
         } else {
           this.rootService.announceEvent('kcChildSigninNoAvailableChildren');
         }
+      }, (error) => {
+        debugger
       });
     } else {
       this.isReady = true;

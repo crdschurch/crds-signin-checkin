@@ -44,7 +44,8 @@ export class AvailableChildrenComponent implements OnInit {
    }
 
    this.isReady = false;
-   this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {      
+   this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {
+     debugger
      this.isReady = true;
      if (response && response.Participants && response.Participants.length > 0) {
        this.router.navigate(['/child-signin/assignment']);
