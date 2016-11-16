@@ -27,7 +27,7 @@ namespace SignInCheckIn.Services
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
         {
             var eventDto = _eventService.GetCurrentEventForSite(siteId);
-            var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
+            var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, Mapper.Map<MpEventDto>(eventDto));
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
 
             ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
