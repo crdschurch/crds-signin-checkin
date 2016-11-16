@@ -85,6 +85,7 @@ body {
 }
 .num-pad-value {
   @extend .display-4;
+  font-size: 2.5rem;
   text-align: center;
   background: none;
   border: none;
@@ -149,4 +150,14 @@ a.btn-primary:not([href]):not([tabindex]) {
 
 .add-child-guest {
   color: #fff;
+}
+
+.btn-primary:active,
+.btn-primary.active {
+  background: lighten($brand-blue, 30%);
+  color: $brand-dkblue;
+}
+
+a.btn-primary.active:not([href]):not([tabindex]) {
+    color: $brand-dkblue !important;
 }

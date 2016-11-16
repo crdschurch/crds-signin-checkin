@@ -16,7 +16,8 @@ export class AppComponent implements OnInit {
 
   public customToasterConfig: ToasterConfig =
     new ToasterConfig({
-      positionClass: 'toast-top-full-width'
+      positionClass: 'toast-top-full-width',
+      timeout: 3000
     });
 
     event: any;
