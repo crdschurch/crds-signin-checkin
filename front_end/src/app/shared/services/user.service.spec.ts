@@ -62,7 +62,7 @@ describe('UserService', () => {
     afterEach(() => {
       // Reset the hack so Observable.timer goes back to normal
       Observable['timer'] = originalObservableTimer;
-    })
+    });
 
     it('should set an unauthenticated user and cancel the existing subscription', () => {
       let user = new User();

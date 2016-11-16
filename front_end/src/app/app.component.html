@@ -1,4 +1,12 @@
 <div class="crossroads-growl">
   <toaster-container [toasterconfig]="customToasterConfig"></toaster-container>
 </div>
+<div *ngIf="kioskDisplay.length > 0 || loggedInDisplay" class="alert alert-info" role="alert">
+  <div *ngFor="let display of kioskDisplay">
+    {{display}}
+  </div>
+  <div *ngIf="loggedInDisplay">
+    {{loggedInDisplay}}
+  </div>
+</div>
 <router-outlet></router-outlet>
