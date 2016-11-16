@@ -7,9 +7,8 @@ using MinistryPlatform.Translation.Models.DTO;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
-    public interface IKioskRepository
+    public interface IContactRepository
     {
-        MpKioskConfigDto GetMpKioskConfigByIdentifier(Guid kioskConfigId);
-        MpPrinterMapDto GetPrinterMapById(int printerMapId);
+        List<MpContactDto> GetHeadsOfHouseholdByHouseholdId(int? householdId);
     }
 }

@@ -21,18 +21,16 @@ namespace MinistryPlatform.Translation.Repositories
             _applicationConfiguration = applicationConfiguration;
         }
 
-        public List<MpParticipantDto> GetChildrenByPhoneNumber(string phoneNumber)
+        public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId)
         {
-            var householdId = GetHouseholdIdByPhoneNumber(phoneNumber);
-
             if (householdId == null) return new List<MpParticipantDto>();
-            var children = GetChildParticpantsByPrimaryHousehold(householdId);
-            GetChildParticpantsByOtherHousehold(householdId, children);
+            var children = GetChildParticipantsByPrimaryHousehold(householdId);
+            GetChildParticipantsByOtherHousehold(householdId, children);
             children = GetOnlyKidsClubChildren(children);
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
-        private int? GetHouseholdIdByPhoneNumber(string phoneNumber)
+        public int? GetHouseholdIdByPhoneNumber(string phoneNumber)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -56,7 +54,7 @@ namespace MinistryPlatform.Translation.Repositories
             return household.First().HouseholdId;
         }
 
-        private List<MpParticipantDto> GetChildParticpantsByPrimaryHousehold(int? householdId)
+        private List<MpParticipantDto> GetChildParticipantsByPrimaryHousehold(int? householdId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -75,7 +73,7 @@ namespace MinistryPlatform.Translation.Repositories
                         Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList);
         }
 
-        private void GetChildParticpantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
+        private void GetChildParticipantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 

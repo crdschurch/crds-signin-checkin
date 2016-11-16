@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
+using Microsoft.Win32.SafeHandles;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
@@ -15,19 +16,24 @@ namespace SignInCheckIn.Services
     public class ChildSigninService : IChildSigninService
     {
         private readonly IChildSigninRepository _childSigninRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IEventRepository _eventRepository;
         private readonly IEventService _eventService;
         private readonly IGroupRepository _groupRepository;
+        private readonly IKioskRepository _kioskRepository;
         private readonly IPrintingService _printingService;
         private readonly IPdfEditor _pdfEditor;
 
         public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
-            IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService)
+            IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService,
+            IContactRepository contactRepository, IKioskRepository kioskRepository)
         {
             _childSigninRepository = childSigninRepository;
+            _contactRepository = contactRepository;
             _eventRepository = eventRepository;
             _groupRepository = groupRepository;
             _eventService = eventService;
+            _kioskRepository = kioskRepository;
             _printingService = printingService;
             _pdfEditor = pdfEditor;
         }
@@ -35,8 +41,13 @@ namespace SignInCheckIn.Services
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
         {
             var eventDto = _eventService.GetCurrentEventForSite(siteId);
-            var mpChildren = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
+            var householdId = _childSigninRepository.GetHouseholdIdByPhoneNumber(phoneNumber);
+
+            var mpChildren = _childSigninRepository.GetChildrenByHouseholdId(householdId);
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
+
+
+            var mpHouseholdContactDtos = _contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId);
 
             ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
             {
@@ -94,6 +105,34 @@ namespace SignInCheckIn.Services
             }
 
             return response;
+        }
+
+        public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
+        {
+            // TODO: Finish this
+            //var kiofkConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+
+            //if (kiofkConfig.PrinterMapId != null)
+            //{
+            //    var kioskPrinterMap = _kioskRepository.GetPrinterMapById(kiofkConfig.PrinterMapId.GetValueOrDefault());
+            //}
+            //else
+            //{
+            //    throw new Exception("Printer Map Id Not Set For Kisok " + kiofkConfig.KioskConfigId);
+            //}
+
+            //foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
+            //{
+            //    var participantRoom = _eventRepository.
+
+            //    Dictionary<string, string> printValues = new Dictionary<string, string>
+            //    {
+            //        { "ChildName", participant.FirstName },
+            //        { "ChildRoomName1", participant. }
+            //    }
+            //}
+
+            return participantEventMapDto;
         }
     }
 }

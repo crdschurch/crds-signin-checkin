@@ -6,5 +6,6 @@ namespace SignInCheckIn.Models.DTO
     {
         public EventDto CurrentEvent { get; set; }
         public List<ParticipantDto> Participants { get; set; } 
+        public List<ContactDto> Contacts { get; set; }
     }
 }
