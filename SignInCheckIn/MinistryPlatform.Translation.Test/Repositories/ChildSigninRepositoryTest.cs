@@ -41,7 +41,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Last_Name"
             };
 
-            _primaryHouseChildParticipantColumns = new System.Collections.Generic.List<string>
+            _primaryHouseChildParticipantColumns = new List<string>
             {
                 "Participant_ID",
                 "Contact_ID_Table.Contact_ID",
@@ -52,7 +52,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Contact_ID_Table.Date_of_Birth"
             };
 
-            _otherHouseChildParticipantColumns = new System.Collections.Generic.List<string>
+            _otherHouseChildParticipantColumns = new List<string>
             {
                 "Contact_ID_Table_Participant_Record_Table.Participant_ID",
                 "Contact_ID_Table.Contact_ID",
@@ -77,7 +77,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Group_ID_Table_Ministry_ID_Table.Ministry_ID"
             };
 
-            _contactColumns = new List<string>()
+            _contactColumns = new List<string>
             {
                 "Contact_ID",
                 "Household_ID_Table.Household_ID",
@@ -300,28 +300,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
         [Test]
         public void TestGetChildrenByPhoneNumberWithNoPhone()
         {
-            var phoneNumber = "812-812-8877";
             int? householdId = 1234567;
 
-            var houseHold = new List<MpContactDto>();
-            var headsOfHousehold = new List<MpContactDto>();
-            //var sameParticipants = new List<MpParticipantDto>
-            //{
-            //    new MpParticipantDto
-            //    {
-            //        ContactId = 1234567
-            //    }
-            //};
-
-            //var otherParticipants = new List<MpParticipantDto>
-            //{
-            //    new MpParticipantDto
-            //    {
-            //        ContactId = 1234567
-            //    }
-            //};
-
-            System.Collections.Generic.List<MpParticipantDto> sameParticipants = new System.Collections.Generic.List<MpParticipantDto>
+            var participants = new List<MpParticipantDto>
             {
                 new MpParticipantDto
                 {
@@ -329,13 +310,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            System.Collections.Generic.List<MpParticipantDto> otherParticipants = new System.Collections.Generic.List<MpParticipantDto>
-            {
-                new MpParticipantDto
-                {
-                    ContactId = 1234567
-                }
-            };
+
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
@@ -347,49 +322,35 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _applicationConfiguration.Setup(mocked => mocked.MinorChildId).Returns(2);
             _applicationConfiguration.Setup(mocked => mocked.HouseHoldIdsThatCanCheckIn).Returns("3,4,2");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpContactDto>(GetHousholdFilter(phoneNumber), _householdColumns)).Returns(houseHold);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpContactDto>(GetHeadsOfHouseholdFilter(householdId), _contactColumns)).Returns(headsOfHousehold);
             _ministryPlatformRestRepository.Setup(
-                mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(householdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns)).Returns(sameParticipants);
-            //_ministryPlatformRestRepository.Setup(
-            //    mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(householdId.GetValueOrDefault()), _contactColumns)).Returns(participants);
+                mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(householdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns)).Returns(participants);
 
-            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>()).SearchTable<MpParticipantDto>
-                (It.IsAny<string>(), GetChildParticpantsByOtherHouseholdFilter(householdId.GetValueOrDefault()), _otherHouseChildParticipantColumns)).Returns(otherParticipants);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>
+                (It.IsAny<string>(), GetChildParticpantsByOtherHouseholdFilter(householdId.GetValueOrDefault()), _otherHouseChildParticipantColumns)).Returns(participants);
 
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>
+                ("Group_Participants", GetChildParticpantsByGroupFilter("0"), _groupChildParticipantColumns)).Returns(participants);
             var result = _fixture.GetChildrenByHouseholdId(householdId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.Count, 0);
+            Assert.AreEqual(1, result.Count);
         }
 
-        private string GetHousholdFilter(string phoneNumber)
-        {
-            return $"Household_Position_ID_Table.[Household_Position_ID] IN (3,4,2) AND ([Mobile_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}')";
-        }
-
-        private string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
+        private static string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
         {
             return $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
         }
 
-        private string GetChildParticpantsByOtherHouseholdFilter(int householdId)
+        private static string GetChildParticpantsByOtherHouseholdFilter(int householdId)
         {
             return $"Household_Position_ID_Table.[Household_Position_ID] = 2  AND Household_ID_Table.[Household_ID] = {householdId}";
         }
 
-        private string GetChildParticpantsByGroupFilter(string participantIds)
+        private static string GetChildParticpantsByGroupFilter(string participantIds)
         {
             return $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = 5 AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = 2";
         }
-
-        private string GetHeadsOfHouseholdFilter(int? householdId)
-        {
-            return $"[Household_ID]='{householdId}' AND Household_Position_ID IN (1, 7)";
-        }
-
-
     }
 }
