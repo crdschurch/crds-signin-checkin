@@ -306,7 +306,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
         private string GetHousholdFilter(string phoneNumber)
         {
-            return $"Household_Position_ID_Table.[Household_Position_ID] IN (3,4,2) AND ([Mobile_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}')";
+            var phoneNumberWithoutDashes = phoneNumber.Replace("-", "");
+            return
+                $"Household_Position_ID_Table.[Household_Position_ID] IN (3,4,2) AND ([Mobile_Phone] = '{phoneNumber}' OR [Mobile_Phone] = '{phoneNumberWithoutDashes}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumberWithoutDashes}')";
         }
 
         private string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)

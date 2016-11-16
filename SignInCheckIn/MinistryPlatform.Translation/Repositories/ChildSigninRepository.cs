@@ -36,6 +36,9 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
+            // Phone number comes in with dashes, but we need to search for the number without dashes as well
+            var phoneNumberWithoutDashes = phoneNumber.Replace("-", "");
+
             var columnList = new List<string>
             {
                 "Contact_ID",
@@ -45,8 +48,11 @@ namespace MinistryPlatform.Translation.Repositories
                 "Mobile_Phone",
             };
 
-            var household = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                Search<MpContactDto>($"Household_Position_ID_Table.[Household_Position_ID] IN ({_applicationConfiguration.HouseHoldIdsThatCanCheckIn}) AND ([Mobile_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}')", columnList);
+            var household =
+                _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                    .Search<MpContactDto>(
+                        $"Household_Position_ID_Table.[Household_Position_ID] IN ({_applicationConfiguration.HouseHoldIdsThatCanCheckIn}) AND ([Mobile_Phone] = '{phoneNumber}' OR [Mobile_Phone] = '{phoneNumberWithoutDashes}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumberWithoutDashes}')",
+                        columnList);
 
             if (household == null || !household.Any())
             {
