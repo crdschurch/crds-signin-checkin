@@ -12,7 +12,7 @@ import { EventParticipants, Child } from '../../shared/models';
 })
 
 export class AvailableChildrenComponent implements OnInit {
-  private childrenAvailable: Array<Child> = [];
+  private childrenAvailable: Array<EventParticipants> = [];
   private isServing: boolean = false;
   private isReady: boolean = false;
 
@@ -49,14 +49,19 @@ export class AvailableChildrenComponent implements OnInit {
    }
 
    this.isReady = false;
-   this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {
-     this.isReady = true;
-     if (response && response.Participants && response.Participants.length > 0) {
-       this.router.navigate(['/child-signin/assignment']);
-     } else {
+   this.childSigninService.signInChildren(eventParticipants).subscribe(
+     (response: EventParticipants) => {
+       this.isReady = true;
+       if (response && response.Participants && response.Participants.length > 0) {
+         this.router.navigate(['/child-signin/assignment']);
+       } else {
+         this.rootService.announceEvent('generalError');
+       }
+     }, (err) => {
+       this.isReady = true;
        this.rootService.announceEvent('generalError');
      }
-   });
+   );
  }
 
  public showServiceSelectModal(): void {

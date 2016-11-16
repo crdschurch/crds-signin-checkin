@@ -10,6 +10,7 @@ export class ChildSigninService {
   private url: string = '';
   private phoneNumber: string = '';
   private childrenAvailable: Array<Child> = [];
+  private eventParticipantsResults: any; // TODO should be EventParticipants
   private event: Event;
 
   constructor(private http: HttpClientService, private router: Router) {
@@ -48,10 +49,26 @@ export class ChildSigninService {
   }
 
   signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
-    const url = `${this.url}/children`;
-    return this.http.post(url, eventParticipants)
-                    .map(res => EventParticipants.fromJson(res.json()))
-                    .catch(this.handleError);
+    // TODO uncomment when backend complete
+    // TODO EventParticipants.fromJson...
+    // const url = `${this.url}/children`;
+    // return this.http.post(url, eventParticipants)
+    //                 .map(res => EventParticipants.fromJson(res.json()))
+    //                 .catch(this.handleError);
+    let eventParticipants2 = {
+      CurrentEvent: { EventTitle: 'Current Event 123', EventId: 21312, EventStartDate: '123', EventType: '312', EventSite: '3', IsCurrentEvent: true, EventSiteId: 3 },
+      Participants: [
+        { ParticipantId: 123, ContactId: 123, HouseholdId: 123, HouseholdPositionId: 123, FirstName: 'Bob', LastName: 'string', DateOfBirth: new Date(), Selected: true, ParticipationStatusId: 123 },
+        { ParticipantId: 123, ContactId: 123, HouseholdId: 123, HouseholdPositionId: 123, FirstName: 'Kenny', LastName: 'string', DateOfBirth: new Date(), Selected: true, ParticipationStatusId: 123 }
+      ]
+    };
+    this.eventParticipantsResults = eventParticipants2;
+    return Observable.of(eventParticipants2);
+  }
+
+  // TODO should be Array<EventParticipants> {
+  getEventParticipantsResults(): Array<any> {
+    return this.eventParticipantsResults;
   }
 
   private handleError (error: any) {
