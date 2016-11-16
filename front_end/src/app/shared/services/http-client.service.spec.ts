@@ -56,7 +56,6 @@ describe('HttpClientService', () => {
     afterEach(() => {
       backend.resolveAllConnections();
       backend.verifyNoPendingRequests();
-      fixture.logOut();
     });
 
     it('should call http.get() with proper URL and use existing RequestOptions', () => {
@@ -97,18 +96,15 @@ describe('HttpClientService', () => {
       responseObject.userToken = '98765';
       let response = fixture.get('/events');
       response.subscribe((r) => {
-        expect(fixture.isLoggedIn()).toBeTruthy();
+        expect(userService.setUser).toHaveBeenCalled();
       });
     });
 
     it('should send authentication token if logged in', () => {
       user.token = undefined;
       user.refreshToken = undefined;
-      expect(fixture.isLoggedIn()).toBeFalsy();
       let response = fixture.get('/test/123');
       response.subscribe((r) => {
-        expect(fixture.isLoggedIn()).toBeTruthy();
-        expect(fixture.hasRefreshToken()).toBeTruthy();
         let r2 = fixture.get('/test/123');
         r2.subscribe(() => {
           expect(requestHeaders.has('Authorization')).toBeTruthy();
