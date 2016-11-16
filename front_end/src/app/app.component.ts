@@ -41,18 +41,6 @@ export class AppComponent implements OnInit {
     this.contentService.loadData();
   }
 
-  activeStep1() {
-    return this.router.url === '/child-signin';
-  }
-
-  activeStep2() {
-    return this.router.url === '/child-signin/results';
-  }
-
-  activeStep3() {
-    return this.router.url === '/child-signin/assignment';
-  }
-
   inRoom() {
     return this.router.url === '/child-signin/room';
   }
