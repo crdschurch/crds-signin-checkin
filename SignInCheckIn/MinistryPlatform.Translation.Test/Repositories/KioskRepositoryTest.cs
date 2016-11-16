@@ -37,7 +37,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "cr_Kiosk_Configs.[Room_ID]",
                 "Room_ID_Table.Room_Name",
                 "cr_Kiosk_Configs.[Start_Date]",
-                "cr_Kiosk_Configs.[End_Date]"
+                "cr_Kiosk_Configs.[End_Date]",
+                "Printer_Map_ID"
             };
 
             _fixture = new KioskRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);

@@ -66,8 +66,11 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
-                "Contact_ID_Table.Date_of_Birth",
+                "Contact_ID_Table.Date_of_Birth"
             };
+
+            var filter =
+                $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}";
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                         Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList);
@@ -85,7 +88,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
-                "Contact_ID_Table.Date_of_Birth",
+                "Contact_ID_Table.Date_of_Birth"
             };
 
             var otherChildren = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
