@@ -25,19 +25,7 @@ export class HttpClientService {
     return this.extractAuthToken(this.http.post(url, data, requestOptions));
   }
 
-  isLoggedIn(): boolean {
-    return this.getUser().isLoggedIn();
-  }
-
-  hasRefreshToken(): boolean {
-    return this.getUser().hasRefreshToken();
-  }
-
-  logOut(): void {
-    this.getUser().logOut();
-  }
-
-  getUser(): User {
+  private getUser(): User {
     return this.userService.getUser();
   }
 
