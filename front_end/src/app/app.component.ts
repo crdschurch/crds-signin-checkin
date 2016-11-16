@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   private viewContainerRef: ViewContainerRef;
   private kioskDisplay: Array<string> = [];
   private loggedInDisplay: string;
+  private displayHelp: boolean = false;
 
   public customToasterConfig: ToasterConfig =
     new ToasterConfig({
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.contentService.loadData();
     if (process.env.ENV !== 'PRODUCTION' && process.env.ENV !== 'DEMO') {
+      this.displayHelp = true;
       if (this.setupService.getMachineIdConfigCookie()) {
         this.kioskDisplay = [`Kiosk Config Id: ${this.setupService.getMachineIdConfigCookie()}`,
           `Kiosk Name: ${this.setupService.getMachineDetailsConfigCookie().KioskName}`,
@@ -76,6 +78,10 @@ export class AppComponent implements OnInit {
     this.contentService.getToastContent(contentBlockTitle).then((toast) => {
       this.toasterService.pop(toast);
     });
+  }
+
+  closeHelp() {
+    this.displayHelp = false;
   }
 
 }

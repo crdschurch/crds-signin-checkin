@@ -1,7 +1,8 @@
 <div class="crossroads-growl">
   <toaster-container [toasterconfig]="customToasterConfig"></toaster-container>
 </div>
-<div *ngIf="kioskDisplay.length > 0 || loggedInDisplay" class="alert alert-info" role="alert">
+<div *ngIf="(kioskDisplay.length > 0 || loggedInDisplay) && displayHelp" class="alert alert-info" role="alert">
+  <button type="button" class="close" aria-label="Close" (click)="closeHelp()"><span aria-hidden="true">&times;</span></button>
   <div *ngFor="let display of kioskDisplay">
     {{display}}
   </div>
