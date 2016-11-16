@@ -5,6 +5,8 @@ import { HttpClientService } from './http-client.service';
 import { Http, RequestOptions, Headers, Response, ResponseOptions } from '@angular/http';
 import { MockConnection, MockBackend } from '@angular/http/testing';
 import {CookieService, CookieOptions} from 'angular2-cookie/core';
+import { UserService } from './user.service';
+import { User } from '../models';
 
 describe('HttpClientService', () => {
   let fixture: HttpClientService;
@@ -13,19 +15,21 @@ describe('HttpClientService', () => {
   let backend: MockBackend;
   let responseObject: any;
   let cookie: CookieService;
+  let userService: UserService;
+  let user: User;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        HttpClientService
-      ],
-    });
+    user = new User();
+    user.token = 'tok123';
+    user.refreshToken = 'ref123';
+
     backend = new MockBackend();
     options = new RequestOptions();
     options.headers = new Headers();
-    http = new Http(backend, options);
+    http = new Http(backend, new RequestOptions());
     cookie = new CookieService(new CookieOptions());
-    fixture = new HttpClientService(http, cookie);
+    userService = jasmine.createSpyObj<UserService>('userService', ['getUser', 'setUser', 'logOut', 'isLoggedIn']);
+    fixture = new HttpClientService(http, cookie, userService);
   });
 
   describe('get method', () => {
@@ -33,14 +37,15 @@ describe('HttpClientService', () => {
     let requestHeaders: Headers;
     let requestUrl: string;
     beforeEach(() => {
+      (<jasmine.Spy>userService.getUser).and.returnValue(user);
       backend.connections.subscribe((connection: MockConnection) => {
         requestHeaders = connection.request.headers;
         requestUrl = connection.request.url;
 
         let responseOptions = new ResponseOptions();
         responseOptions.headers = new Headers();
-        responseOptions.headers.append('Authorization', '98765');
-        responseOptions.headers.append('RefreshToken', 'refresh-8885');
+        responseOptions.headers.append('Authorization', 'tok456');
+        responseOptions.headers.append('RefreshToken', 'ref456');
         connection.mockRespond(new Response(new ResponseOptions({
           body: responseObject,
           headers: responseOptions.headers
@@ -62,21 +67,28 @@ describe('HttpClientService', () => {
         expect(requestHeaders.get('Content-Type')).toEqual('application/json');
         expect(requestHeaders.get('Accept')).toEqual('application/json, text/plain, */*');
         expect(requestHeaders.get('Crds-Api-Key')).toEqual(process.env.ECHECK_API_TOKEN);
+        expect(requestHeaders.get('Authorization')).toEqual('tok123');
+        expect(requestHeaders.get('RefreshToken')).toEqual('ref123');
         expect(requestUrl).toEqual('/test/123');
+
+        expect(userService.getUser).toHaveBeenCalled();
+        expect(userService.setUser).toHaveBeenCalledWith(user);
+        expect(user.token).toEqual('tok456');
+        expect(user.refreshToken).toEqual('ref456');
       });
     });
 
     it('should call http.get() with proper URL and create new RequestOptions', () => {
-      options.headers.set('this', 'should not be here');
+      options.headers.set('this-one', 'should not be here');
       let response = fixture.get('/test/123');
       response.subscribe((res: Response) => {
         expect(res.json()).toEqual(responseObject);
         expect(requestHeaders).toBeDefined();
-        // expect(requestHeaders).not.toEqual(options.headers);
+        expect(requestHeaders).not.toEqual(options.headers);
         expect(requestHeaders.get('Content-Type')).toEqual('application/json');
         expect(requestHeaders.get('Accept')).toEqual('application/json, text/plain, */*');
         expect(requestHeaders.get('Crds-Api-Key')).toEqual(process.env.ECHECK_API_TOKEN);
-        expect(requestHeaders.has('this')).toBeFalsy();
+        expect(requestHeaders.has('this-one')).toBeFalsy();
         expect(requestUrl).toEqual('/test/123');
       });
     });
@@ -90,6 +102,8 @@ describe('HttpClientService', () => {
     });
 
     it('should send authentication token if logged in', () => {
+      user.token = undefined;
+      user.refreshToken = undefined;
       expect(fixture.isLoggedIn()).toBeFalsy();
       let response = fixture.get('/test/123');
       response.subscribe((r) => {
@@ -98,9 +112,9 @@ describe('HttpClientService', () => {
         let r2 = fixture.get('/test/123');
         r2.subscribe(() => {
           expect(requestHeaders.has('Authorization')).toBeTruthy();
-          expect(requestHeaders.get('Authorization')).toEqual('98765');
+          expect(requestHeaders.get('Authorization')).toEqual('tok456');
           expect(requestHeaders.has('RefreshToken')).toBeTruthy();
-          expect(requestHeaders.get('RefreshToken')).toEqual('refresh-8885');
+          expect(requestHeaders.get('RefreshToken')).toEqual('ref456');
         });
       });
     });
