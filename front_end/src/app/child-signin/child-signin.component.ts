@@ -30,8 +30,8 @@ export class ChildSigninComponent {
     }
   }
 
-  activeStep1() {
-    return this.router.url === '/child-signin/search';
+  activateStep1() {
+    return this.router.navigate(['/child-signin/search']);
   }
 
   inRoom() {

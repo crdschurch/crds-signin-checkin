@@ -20,8 +20,15 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 col-sm-6 offset-sm-3 text-xs-center">
-        <p class="mb-0">Printing&#x02026;</p>
-        <progress class="progress progress-striped progress-success m-b-2" value="55" max="100"></progress>
+        <div [hidden]="!error">
+          <p>
+            <strong class="text-danger">An error has occurred</strong>
+          </p>
+        </div>
+        <div [hidden]="error">
+          <p class="mb-0">Printing&#x02026;</p>
+          <progress class="progress progress-animated progress-striped progress-success" value="{{printed}}" max="{{printTotal}}"></progress>
+        </div>
       </div>
     </div>
   </div>
