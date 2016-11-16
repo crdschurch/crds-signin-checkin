@@ -63,6 +63,7 @@ export class ChildSigninService {
       ]
     };
     this.eventParticipantsResults = eventParticipants2;
+    debugger
     return Observable.of(eventParticipants2);
   }
 

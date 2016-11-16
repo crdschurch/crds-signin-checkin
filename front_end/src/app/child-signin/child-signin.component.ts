@@ -16,16 +16,22 @@ export class ChildSigninComponent {
 
   constructor(private router: Router) {}
 
+  isStepActive(step) {
+    if (step === 1) {
+      return true;
+    } else if (step === 2) {
+      if (this.router.url !== '/child-signin/search') {
+        return true;
+      }
+    } else if (step === 3) {
+      if (this.router.url === '/child-signin/assignment') {
+        return true;
+      }
+    }
+  }
+
   activeStep1() {
-    return this.router.url === '/child-signin';
-  }
-
-  activeStep2() {
-    return this.router.url === '/child-signin/results';
-  }
-
-  activeStep3() {
-    return this.router.url === '/child-signin/assignment';
+    return this.router.url === '/child-signin/search';
   }
 
   inRoom() {

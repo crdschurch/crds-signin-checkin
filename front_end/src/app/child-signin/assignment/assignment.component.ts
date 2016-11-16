@@ -8,10 +8,14 @@ import { ChildSigninService } from '../child-signin.service';
   styleUrls: ['../scss/_cards.scss', ]
 })
 export class AssignmentComponent  implements OnInit {
-  private childrenResult: Array<EventParticipants> = [];
+  // TODO should be childrenResult: Array<any> = [];
+  private childrenResult: any;
   constructor(private childSigninService: ChildSigninService) {}
 
   ngOnInit() {
-    this.childrenResult = this.childSigninService.getEventParticipantsResults();
+    const results: any = this.childSigninService.getEventParticipantsResults();
+    if (results) {
+      this.childrenResult = results.Participants;
+    }
   }
 }
