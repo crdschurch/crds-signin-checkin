@@ -71,8 +71,8 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childSigninRepository.VerifyAll();
 
@@ -108,7 +108,7 @@ namespace SignInCheckIn.Tests.Services
             List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>();
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber)).Returns(mpParticipantDto);
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
 
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childSigninRepository.VerifyAll();
