@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -20,6 +21,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private List<string> _primaryHouseChildParticipantColumns;
         private List<string> _otherHouseChildParticipantColumns;
         private List<string> _groupChildParticipantColumns;
+        private List<String> _eventGroupColumns;
         private List<string> _contactColumns;
 
         [SetUp]
@@ -74,7 +76,15 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Participant_ID_Table_Contact_ID_Table.Date_of_Birth",
                 "Group_ID_Table_Congregation_ID_Table.Congregation_ID",
                 "Group_ID_Table_Group_Type_ID_Table.Group_Type_ID",
-                "Group_ID_Table_Ministry_ID_Table.Ministry_ID"
+                "Group_ID_Table_Ministry_ID_Table.Ministry_ID",
+                "Group_ID_Table.Group_ID"
+            };
+
+            _eventGroupColumns = new List<string>
+            {
+                "Event_Group_ID",
+                "Event_ID_Table.Event_ID",
+                "Group_ID_Table.Group_ID"
             };
 
             _contactColumns = new List<string>
@@ -95,6 +105,20 @@ namespace MinistryPlatform.Translation.Test.Repositories
             var phoneNumber = "812-812-8877";
             int? primaryHouseholdId = 123;
             int? otherHouseholdId = 1222;
+
+            var eventDto = new MpEventDto
+            {
+                CongregationId = 1,
+                CongregationName = "Oakley",
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(1),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now,
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30,
+                LocationId = 3
+            };
 
             var houseHold = new List<MpContactDto>
             {
@@ -183,6 +207,15 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto(),
+                new MpEventGroupDto(),
+                new MpEventGroupDto()
+            };
+            mpEventGroupDtos[0].GroupId = 123;
+            mpEventGroupDtos[1].GroupId = 1234;
+            mpEventGroupDtos[2].GroupId = 12345;
             var headsOfHousehold = new List<MpContactDto>();
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
@@ -198,6 +231,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns)).Returns(primaryChild);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Contact_Households", GetChildParticpantsByOtherHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _otherHouseChildParticipantColumns)).Returns(otherChild);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns)).Returns(children);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns)).Returns(mpEventGroupDtos);
 
             var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId);
             _apiUserRepository.VerifyAll();
@@ -215,6 +249,20 @@ namespace MinistryPlatform.Translation.Test.Repositories
             var phoneNumber = "812-812-8877";
             int? primaryHouseholdId = 123;
             int? otherHouseholdId = 1222;
+
+            var eventDto = new MpEventDto
+            {
+                CongregationId = 1,
+                CongregationName = "Oakley",
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(1),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now,
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30,
+                LocationId = 3
+            };
 
             var houseHold = new List<MpContactDto>
             {
@@ -272,6 +320,15 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto(),
+                new MpEventGroupDto(),
+                new MpEventGroupDto()
+            };
+            mpEventGroupDtos[0].GroupId = 123;
+            mpEventGroupDtos[1].GroupId = 1234;
+            mpEventGroupDtos[2].GroupId = 12345;
             var headsOfHousehold = new List<MpContactDto>();
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
@@ -287,6 +344,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns)).Returns(primaryChild);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Contact_Households", GetChildParticpantsByOtherHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _otherHouseChildParticipantColumns)).Returns(otherChild);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns)).Returns(children);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns)).Returns(mpEventGroupDtos);
 
             var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId);
             _apiUserRepository.VerifyAll();
@@ -302,15 +360,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             int? householdId = 1234567;
 
-            var participants = new List<MpParticipantDto>
-            {
-                new MpParticipantDto
-                {
-                    ContactId = 1234567
-                }
-            };
-
-
+            var houseHold = new List<MpContactDto>();
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
@@ -338,7 +388,19 @@ namespace MinistryPlatform.Translation.Test.Repositories
             Assert.AreEqual(1, result.Count);
         }
 
-        private static string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
+        private string GetHousholdFilter(string phoneNumber)
+        {
+            var phoneNumberWithoutDashes = phoneNumber.Replace("-", "");
+            return
+                $"Household_Position_ID_Table.[Household_Position_ID] IN (3,4,2) AND ([Mobile_Phone] = '{phoneNumber}' OR [Mobile_Phone] = '{phoneNumberWithoutDashes}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumberWithoutDashes}')";
+        }
+
+	        private static string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
+        {
+            return $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
+        }
+
+        private string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
         {
             return $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
         }
@@ -350,7 +412,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
         private static string GetChildParticpantsByGroupFilter(string participantIds)
         {
-            return $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = 5 AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = 2";
+            return $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = 5 AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = 2 AND Group_ID_Table.[Group_ID] in (123,1234,12345)";
         }
     }
 }

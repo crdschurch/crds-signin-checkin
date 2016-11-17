@@ -85,6 +85,7 @@ namespace SignInCheckIn.Tests.Services
 
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>())).Returns(mpParticipantDto);
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childSigninRepository.VerifyAll();
 

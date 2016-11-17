@@ -49,4 +49,12 @@ export class MachineConfiguration {
   public isTypeRoomCheckin(): boolean {
     return this.KioskTypeId === this.KIOSK_TYPE.ROOM_CHECKIN;
   }
+
+  public kioskType(): string {
+    if (this.isTypeSignIn()) {
+      return 'Sign In';
+    }
+
+    return 'Check In';
+  }
 }
