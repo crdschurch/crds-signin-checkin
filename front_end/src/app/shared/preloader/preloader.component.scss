@@ -1,9 +1,12 @@
 $spinnerHeight: 80px;
 
 .preloader-wrapper {
-  height: calc(50% - $spinnerHeight/2 );
-  width: calc(50% - $spinnerHeight/2 );
+  // height: calc(50% - $spinnerHeight/2 );
+  // width: calc(50% - $spinnerHeight/2 );
 
+  &:not(.fullscreen) {
+    margin-top: 100px;
+  }
   &.fullscreen {
     width: 100%;
     height: 100%;

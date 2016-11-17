@@ -55,15 +55,15 @@ export class ChildSigninService {
     // return this.http.post(url, eventParticipants)
     //                 .map(res => EventParticipants.fromJson(res.json()))
     //                 .catch(this.handleError);
-    let eventParticipants2 = {
+    let eventParticipantsMock = {
       CurrentEvent: { EventTitle: 'Current Event 123', EventId: 21312, EventStartDate: '123', EventType: '312', EventSite: '3', IsCurrentEvent: true, EventSiteId: 3 },
       Participants: [
         { ParticipantId: 123, ContactId: 123, HouseholdId: 123, HouseholdPositionId: 123, FirstName: 'Bob', LastName: 'string', DateOfBirth: new Date(), Selected: true, ParticipationStatusId: 123 },
         { ParticipantId: 123, ContactId: 123, HouseholdId: 123, HouseholdPositionId: 123, FirstName: 'Kenny', LastName: 'string', DateOfBirth: new Date(), Selected: true, ParticipationStatusId: 123 }
       ]
     };
-    this.eventParticipantsResults = eventParticipants2;
-    return Observable.of(eventParticipants2);
+    this.eventParticipantsResults = eventParticipantsMock;
+    return Observable.of(eventParticipantsMock);
   }
 
   // TODO should be Array<EventParticipants> {

@@ -12,7 +12,7 @@ import { EventParticipants, Child } from '../../shared/models';
 })
 
 export class AvailableChildrenComponent implements OnInit {
-  private childrenAvailable: Array<EventParticipants> = [];
+  private childrenAvailable: Array<Child> = [];
   private isServing: boolean = false;
   private isReady: boolean = false;
 
