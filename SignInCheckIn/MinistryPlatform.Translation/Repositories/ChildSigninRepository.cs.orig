@@ -21,13 +21,23 @@ namespace MinistryPlatform.Translation.Repositories
             _applicationConfiguration = applicationConfiguration;
         }
 
-        public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, MpEventDto eventDto)
+<<<<<<< HEAD
+        public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId)
+=======
+        public List<MpParticipantDto> GetChildrenByPhoneNumber(string phoneNumber, MpEventDto eventDto)
+>>>>>>> origin/development
         {
             if (householdId == null) return new List<MpParticipantDto>();
+<<<<<<< HEAD
             var children = GetChildParticipantsByPrimaryHousehold(householdId);
             GetChildParticipantsByOtherHousehold(householdId, children);
+            children = GetOnlyKidsClubChildren(children);
+=======
+            var children = GetChildParticpantsByPrimaryHousehold(householdId);
+            GetChildParticpantsByOtherHousehold(householdId, children);
             var eventGroups = GetEventGroups(eventDto.EventId);
             children = GetOnlyKidsClubChildren(children, eventGroups);
+>>>>>>> origin/development
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
