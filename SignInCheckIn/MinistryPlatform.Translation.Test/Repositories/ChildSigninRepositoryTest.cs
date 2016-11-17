@@ -327,7 +327,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 {
                     ParticipantId = 13,
                     ContactId = 1444,
-                    HouseholdId = otherHouseholdId,
+                    HouseholdId = otherHouseholdId.GetValueOrDefault(),
                     HouseholdPositionId = 2,
                     FirstName = "First2",
                     LastName = "Last2",
