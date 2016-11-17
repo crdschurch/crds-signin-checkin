@@ -10,7 +10,7 @@ export class ChildSigninService {
   private url: string = '';
   private phoneNumber: string = '';
   private childrenAvailable: Array<Child> = [];
-  private eventParticipantsResults: EventParticipants[];
+  private eventParticipantsResults: EventParticipants;
   private event: Event;
 
   constructor(private http: HttpClientService, private router: Router) {
@@ -53,11 +53,12 @@ export class ChildSigninService {
     return this.http.post(url, eventParticipants)
                     .map(res => {
                       this.eventParticipantsResults = EventParticipants.fromJson(res.json());
+                      return this.eventParticipantsResults;
                     })
                     .catch(this.handleError);
   }
 
-  getEventParticipantsResults(): Array<EventParticipants> {
+  getEventParticipantsResults(): EventParticipants {
     return this.eventParticipantsResults;
   }
 

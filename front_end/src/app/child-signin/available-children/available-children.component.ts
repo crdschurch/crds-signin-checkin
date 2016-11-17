@@ -26,7 +26,6 @@ export class AvailableChildrenComponent implements OnInit {
  ngOnInit() {
    this.route.params.forEach((params: Params) => {
       let phoneNumber = params['phoneNumber'];
-
       this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe(
         (childrenAvailable) => {
           this.isReady = true;

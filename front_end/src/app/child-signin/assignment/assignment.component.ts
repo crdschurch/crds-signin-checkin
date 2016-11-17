@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { EventParticipants } from '../../shared/models';
+import { Child } from '../../shared/models';
 import { ChildSigninService } from '../child-signin.service';
 
 @Component({
@@ -9,7 +9,6 @@ import { ChildSigninService } from '../child-signin.service';
   styleUrls: ['../scss/_cards.scss', ]
 })
 export class AssignmentComponent implements OnInit {
-  // TODO should be childrenResult: Array<any> = [];
   private error: boolean;
   private childrenResult: Array<Child>;
   private printed: number = 0;
@@ -27,7 +26,7 @@ export class AssignmentComponent implements OnInit {
         this.printed++;
         if (this.printed === this.printTotal) {
           // redirect after a second when complete
-          setTimeout(() => { this.router.navigate(['/child-signin/search']) }, 1000);
+          setTimeout(() => { this.router.navigate(['/child-signin/search']); }, 1000);
         }
       }, 2000);
     } else {
