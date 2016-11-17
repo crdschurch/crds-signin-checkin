@@ -52,7 +52,7 @@ export class ChildSigninService {
     const url = `${this.url}/children`;
     return this.http.post(url, eventParticipants)
                     .map(res => {
-                      this.eventParticipantsResults = EventParticipants.fromJson(res.json())
+                      this.eventParticipantsResults = EventParticipants.fromJson(res.json());
                     })
                     .catch(this.handleError);
   }

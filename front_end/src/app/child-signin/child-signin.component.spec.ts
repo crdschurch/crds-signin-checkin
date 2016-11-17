@@ -1,4 +1,3 @@
-// import { Observable } from 'rxjs';
 import { ChildSigninComponent } from './child-signin.component';
 import { Router } from '@angular/router';
 
@@ -15,7 +14,7 @@ function getRouterStub(url: string) {
 };
 
 
-fdescribe('ChildSigninComponent', () => {
+describe('ChildSigninComponent', () => {
   describe('#isStepActive', () => {
 
     describe('while on step 1', () => {
