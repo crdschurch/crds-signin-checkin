@@ -39,17 +39,6 @@ body {
   position: relative;
 }
 
-.fade-out {
-  width: 100%;
-  background: transparent;
-  //@include gradient-vertical(rgba($brand-dkblue, 0), $brand-dkblue);
-  height: 20px;
-  margin-top: -20px;
-  display: block;
-  z-index: 2;
-  position: relative;
-}
-
 .footer {
   width: 100%;
   color: #fff;
@@ -70,7 +59,21 @@ body {
 .sticky-footer {
   position: fixed;
   bottom: 0;
-  background: rgba(00,00,00,.2);
+  background: #172B3A;
+
+  &:before {
+    content: "";
+    height: 20px;
+    width: 100%;
+    display: block;
+    position: absolute;
+    top: -20px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#27475c+0,27475c+100&0+0,1+100 */
+    background: -moz-linear-gradient(top,  rgba(39,71,92,0) 0%, rgba(39,71,92,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(39,71,92,0) 0%,rgba(39,71,92,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(39,71,92,0) 0%,rgba(39,71,92,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0027475c', endColorstr='#27475c',GradientType=0 ); /* IE6-9 */
+  }
 }
 
 .logo {
@@ -82,6 +85,7 @@ body {
 }
 .num-pad-value {
   @extend .display-4;
+  font-size: 2.5rem;
   text-align: center;
   background: none;
   border: none;
@@ -105,6 +109,7 @@ body {
   background-color: transparentize($brand-blue, .5);
   display: inline-block;
   padding: .45em 1em;
+  color: #fff;
 }
 .modal-full {
   position: absolute;
@@ -133,4 +138,38 @@ body {
 .label {
   vertical-align: bottom;
   font-weight: normal;
+}
+
+.text-white {
+  color: #fff;
+}
+
+a.btn-primary:not([href]):not([tabindex]) {
+    color: white !important;
+}
+
+.add-child-guest {
+  color: #fff;
+}
+
+.btn-primary:active,
+.btn-primary.active {
+  background: lighten($brand-blue, 30%);
+  color: $brand-dkblue;
+}
+
+a.btn-primary.active:not([href]):not([tabindex]) {
+    color: $brand-dkblue !important;
+}
+
+.btn-icon {
+  font-size: 1.5rem;
+}
+
+.line-height-1 {
+  line-height: 1;
+}
+
+.right-call-number {
+  line-height: 2;
 }

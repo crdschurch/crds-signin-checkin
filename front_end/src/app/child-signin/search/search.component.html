@@ -12,7 +12,7 @@
   </div>
 
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 my-1">
       <!--DEVNOTE: create an input mask that appears as user types https://igorescobar.github.io/jQuery-Mask-Plugin/ -->
       <input type="tel" class="num-pad-value col-xs-12 text-white"
         readonly placeholder="Enter your phone number to check in your kids."
@@ -24,7 +24,7 @@
     <div class="container-fluid col-md-8 offset-md-2">
       <number-pad (addNumber)="setPhoneNumber($event)" (deleteNumber)="delete($event)" (clearNumber)="clear($event)"></number-pad>
       <div class="mt-2">
-        <a class="btn btn-primary btn-lg float-xs-right" (click)="next()">Next &#10095;</a>
+        <a class="btn btn-primary btn-lg float-xs-right text-white" (click)="next()">Next &#10095;</a>
       </div>
     </div>
   </div>

@@ -50,13 +50,15 @@ describe('UserService', () => {
   describe('#setUser', () => {
     let originalObservableTimer = Observable['timer'];
     let timerSpy = jasmine.createSpy('timer');
+    let sessionTimeout: number;
 
-    let sessionTimeout = 1800000; // This needs to match SessionLengthMilliseconds in UserService
     beforeEach(() => {
       // This is a hack to override the static Observable.timer method with our own spy,
       // so we can share the subscription it creates, and validate the action.
       // TODO There *has* to be a better way to do this - without a major hack like this!  Maybe I designed the implementation wrong.
       Observable['timer'] = timerSpy;
+
+      sessionTimeout = fixture['SessionLengthMilliseconds']; // This needs to match SessionLengthMilliseconds in UserService
     });
 
     afterEach(() => {
@@ -74,6 +76,7 @@ describe('UserService', () => {
       fixture.setUser(user);
       expect(cookieService.putObject).toHaveBeenCalledWith('user', user, jasmine.any(CookieOptions));
       expect(subscription.unsubscribe).toHaveBeenCalled();
+      expect(timerSpy).not.toHaveBeenCalled();
       expect(fixture['refreshTimeout']).not.toBeDefined();
 
       // Make sure the cookie expiration was set appropriately.
@@ -95,6 +98,13 @@ describe('UserService', () => {
       fixture.setUser(user);
       expect(cookieService.putObject).toHaveBeenCalledWith('user', user, jasmine.any(CookieOptions));
       expect(fixture['refreshTimeout']).toBeDefined();
+
+      // Make sure the timer interval was set appropriately.
+      // It should be within 100ms or so of the current time + the timeout defined above
+      expect(timerSpy).toHaveBeenCalled();
+      let expiration = timerSpy.calls.mostRecent().args[0].getTime();
+      let expectedDate = moment().add(sessionTimeout, 'milliseconds').toDate().getTime();
+      expect((expectedDate - expiration) < 100).toBeTruthy();
 
       shared.subscribe(() => {
         expect(loginRedirectService.redirectToLogin).toHaveBeenCalledWith('/current/page');
