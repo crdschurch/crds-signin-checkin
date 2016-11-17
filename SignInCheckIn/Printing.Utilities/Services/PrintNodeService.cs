@@ -18,15 +18,12 @@ namespace Printing.Utilities.Services
         private string _printingApiKey;
 
         private readonly IRestClient _printingRestClient;
-        private readonly IAuthenticator _authenticator;
 
-        public PrintNodeService(IConfigRepository configRepository, IRestClient printingRestClient, IAuthenticator printNodeAuthenticator)
+        public PrintNodeService(IConfigRepository configRepository, IRestClient printingRestClient)
         {
-            //_printingUrl = ConfigurationManager.AppSettings["PrintingURL"];
             _printingApiKey = configRepository.GetMpConfigByKey("PrinterAPIKey").Value;
 
             _printingRestClient = printingRestClient;
-            _authenticator = printNodeAuthenticator;
 
             // printnode only asks for the api key in the username, no pw needed
             _printingRestClient.Authenticator = new HttpBasicAuthenticator(_printingApiKey, String.Empty);
