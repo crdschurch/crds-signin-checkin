@@ -11,7 +11,7 @@ import { ChildSigninService } from '../child-signin.service';
 export class AssignmentComponent implements OnInit {
   // TODO should be childrenResult: Array<any> = [];
   private error: boolean;
-  private childrenResult: any;
+  private childrenResult: Array<Child>;
   private printed: number = 0;
   private printTotal: number;
   constructor(private childSigninService: ChildSigninService, private router: Router) {}
@@ -23,11 +23,13 @@ export class AssignmentComponent implements OnInit {
       // TODO: call printer here
       // update every 2 seconds for now
       this.printTotal = this.childrenResult.length;
-      setInterval(() => { this.printed++; }, 1000);
-      // redirect after five seconds
-      setTimeout(() => {
-        this.router.navigate(['/child-signin/search']);
-      }, 5000);
+      setInterval(() => {
+        this.printed++;
+        if (this.printed === this.printTotal) {
+          // redirect after a second when complete
+          setTimeout(() => { this.router.navigate(['/child-signin/search']) }, 1000);
+        }
+      }, 2000);
     } else {
       this.error = true;
     }
