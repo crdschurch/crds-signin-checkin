@@ -174,6 +174,8 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Event_Participant_ID",
                 "Event_ID",
+                "First_Name",
+                "Last_Name",
                 "Participant_ID",
                 "Participation_Status_ID",
                 "Time_In",
