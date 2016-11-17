@@ -184,6 +184,7 @@
     </Compile>
     <Compile Include="Models\Authentication\Credentials.cs" />
     <Compile Include="Models\Authentication\LoginReturn.cs" />
+    <Compile Include="Models\DTO\ContactDto.cs" />
     <Compile Include="Models\DTO\ParticipantDto.cs" />
     <Compile Include="Models\DTO\AgeGradeDto.cs" />
     <Compile Include="Models\DTO\EventDto.cs" />
@@ -271,6 +272,10 @@
     <ProjectReference Include="..\MinistryPlatform.Translation\MinistryPlatform.Translation.csproj">
       <Project>{9ca5c91a-96e5-4968-b4ce-213b581b33f6}</Project>
       <Name>MinistryPlatform.Translation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Printing.Utilities\Printing.Utilities.csproj">
+      <Project>{c87c7588-00e6-40b4-95cb-c97f1df19f1f}</Project>
+      <Name>Printing.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

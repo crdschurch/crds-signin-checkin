@@ -21,19 +21,17 @@ namespace MinistryPlatform.Translation.Repositories
             _applicationConfiguration = applicationConfiguration;
         }
 
-        public List<MpParticipantDto> GetChildrenByPhoneNumber(string phoneNumber, MpEventDto eventDto)
+        public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, MpEventDto eventDto)
         {
-            var householdId = GetHouseholdIdByPhoneNumber(phoneNumber);
-
             if (householdId == null) return new List<MpParticipantDto>();
-            var children = GetChildParticpantsByPrimaryHousehold(householdId);
-            GetChildParticpantsByOtherHousehold(householdId, children);
+            var children = GetChildParticipantsByPrimaryHousehold(householdId);
+            GetChildParticipantsByOtherHousehold(householdId, children);
             var eventGroups = GetEventGroups(eventDto.EventId);
             children = GetOnlyKidsClubChildren(children, eventGroups);
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
-        private int? GetHouseholdIdByPhoneNumber(string phoneNumber)
+        public int? GetHouseholdIdByPhoneNumber(string phoneNumber)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -63,7 +61,7 @@ namespace MinistryPlatform.Translation.Repositories
             return household.First().HouseholdId;
         }
 
-        private List<MpParticipantDto> GetChildParticpantsByPrimaryHousehold(int? householdId)
+        private List<MpParticipantDto> GetChildParticipantsByPrimaryHousehold(int? householdId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -75,14 +73,17 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
-                "Contact_ID_Table.Date_of_Birth",
+                "Contact_ID_Table.Date_of_Birth"
             };
+
+            var filter =
+                $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}";
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                         Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList);
         }
 
-        private void GetChildParticpantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
+        private void GetChildParticipantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -94,7 +95,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
-                "Contact_ID_Table.Date_of_Birth",
+                "Contact_ID_Table.Date_of_Birth"
             };
 
             var otherChildren = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
@@ -145,10 +146,10 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var participantIds = string.Join(",", children.Select(x => x.ParticipantId));
-            var groupIds = string.Join(",", eventGroups.Select(x => x.GroupId));
+            var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                        SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId}", columnList);
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId} AND Group_ID_Table.[Group_ID] in ({groupIds})", columnList);
+            return participants.Where(p => eventGroups.Find(g => g.GroupId == p.GroupId) != null).ToList();
         }
 
         private class MpParticipantDtoComparer : IEqualityComparer<MpParticipantDto>
