@@ -42,5 +42,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "End_Date")]
         public DateTime? EndDate { get; set; }
+
+        [JsonProperty(PropertyName = "Printer_Map_ID")]
+        public int? PrinterMapId { get; set; }
     }
 }

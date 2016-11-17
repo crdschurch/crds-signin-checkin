@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
+using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.App_Start;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
@@ -17,6 +19,10 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IEventRepository> _eventRepository;
         private Mock<IGroupRepository> _groupRepository;
         private Mock<IEventService> _eventService;
+        private Mock<IPdfEditor> _pdfEditor;
+        private Mock<IPrintingService> _printingService;
+        private Mock<IContactRepository> _contactRepository;
+        private Mock<IKioskRepository> _kioskRepository;
 
         private ChildSigninService _fixture;
 
@@ -29,8 +35,14 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository = new Mock<IEventRepository>();
             _groupRepository = new Mock<IGroupRepository>();
             _eventService = new Mock<IEventService>();
+            _pdfEditor = new Mock<IPdfEditor>();
+            _printingService = new Mock<IPrintingService>();
+            _contactRepository = new Mock<IContactRepository>();
+            _kioskRepository = new Mock<IKioskRepository>();
 
-            _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, _groupRepository.Object, _eventService.Object);
+            _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
+                _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
+                _contactRepository.Object, _kioskRepository.Object);
         }
 
         [Test]
@@ -38,7 +50,7 @@ namespace SignInCheckIn.Tests.Services
         {
             var siteId = 1;
             var phoneNumber = "812-812-8877";
-            var primaryHouseholdId = 123;
+            int? primaryHouseholdId = 123;
 
             List<MpEventDto> events = new List<MpEventDto>
             {
@@ -63,7 +75,7 @@ namespace SignInCheckIn.Tests.Services
                 {
                     ParticipantId = 12,
                     ContactId = 1443,
-                    HouseholdId = primaryHouseholdId,
+                    HouseholdId = primaryHouseholdId.GetValueOrDefault(),
                     HouseholdPositionId = 2,
                     FirstName = "First1",
                     LastName = "Last1",
@@ -71,8 +83,8 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>(), It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childSigninRepository.VerifyAll();
 
@@ -87,6 +99,7 @@ namespace SignInCheckIn.Tests.Services
         {
             var siteId = 1;
             var phoneNumber = "812-812-8877";
+            int? householdId = 1234567;
 
             List<MpEventDto> events = new List<MpEventDto>
             {
@@ -108,7 +121,8 @@ namespace SignInCheckIn.Tests.Services
             List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>();
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
+            _childSigninRepository.Setup(m => m.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(householdId);
+            _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
 
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
             _childSigninRepository.VerifyAll();
