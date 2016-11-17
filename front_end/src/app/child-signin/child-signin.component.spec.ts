@@ -3,7 +3,16 @@ import { ChildSigninComponent } from './child-signin.component';
 import { Router } from '@angular/router';
 
 let fixture: ChildSigninComponent;
-let router: Router;
+function getRouterStub(url: string) {
+  return <Router> {
+    routerState: {
+      snapshot: {
+        url: url
+      }
+    },
+    url: url
+  };
+};
 
 
 fdescribe('ChildSigninComponent', () => {
@@ -11,15 +20,7 @@ fdescribe('ChildSigninComponent', () => {
 
     describe('while on step 1', () => {
       beforeEach(() => {
-        router = <Router> {
-          routerState: {
-            snapshot: {
-              url: '/child-signin/search'
-            }
-          },
-          url: '/child-signin/search'
-        };
-        fixture = new ChildSigninComponent(router);
+        fixture = new ChildSigninComponent(getRouterStub('/child-signin/search'));
       });
       it('should activate the breadcrumb step', () => {
         expect(fixture.isStepActive(1)).toBeTruthy();
@@ -30,15 +31,7 @@ fdescribe('ChildSigninComponent', () => {
 
     describe('while on step 2', () => {
       beforeEach(() => {
-        router = <Router> {
-          routerState: {
-            snapshot: {
-              url: '/child-signin/available-children/5138887777'
-            }
-          },
-          url: '/child-signin/available-children/5138887777'
-        };
-        fixture = new ChildSigninComponent(router);
+        fixture = new ChildSigninComponent(getRouterStub('/child-signin/available-children/5138887777'));
       });
       it('should activate the breadcrumb step', () => {
         expect(fixture.isStepActive(1)).toBeTruthy();
@@ -49,15 +42,7 @@ fdescribe('ChildSigninComponent', () => {
 
     describe('while on step 3', () => {
       beforeEach(() => {
-        router = <Router> {
-          routerState: {
-            snapshot: {
-              url: '/child-signin/assignment'
-            }
-          },
-          url: '/child-signin/assignment'
-        };
-        fixture = new ChildSigninComponent(router);
+        fixture = new ChildSigninComponent(getRouterStub('/child-signin/assignment'));
       });
       it('should activate the breadcrumb step', () => {
         expect(fixture.isStepActive(1)).toBeTruthy();
