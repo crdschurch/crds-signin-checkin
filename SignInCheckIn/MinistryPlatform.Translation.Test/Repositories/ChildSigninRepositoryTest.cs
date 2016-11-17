@@ -420,11 +420,6 @@ namespace MinistryPlatform.Translation.Test.Repositories
             return $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
         }
 
-        //private string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
-        //{
-        //    return $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
-        //}
-
         private static string GetChildParticpantsByOtherHouseholdFilter(int householdId)
         {
             return $"Household_Position_ID_Table.[Household_Position_ID] = 2  AND Household_ID_Table.[Household_ID] = {householdId}";
