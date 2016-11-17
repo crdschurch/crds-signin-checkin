@@ -96,7 +96,7 @@ namespace SignInCheckIn.Services
                 Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList()
             };
 
-            response.Participants.ForEach(p => p.Selected = true);
+            //response.Participants.ForEach(p => p.Selected = true);
 
             /**
             foreach (var item in response.Participants)
