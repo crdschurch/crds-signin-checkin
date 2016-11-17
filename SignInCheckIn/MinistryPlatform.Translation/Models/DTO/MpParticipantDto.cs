@@ -33,5 +33,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Participation_Status_ID")]
         public int ParticipationStatusId { get; set; }
+
+        [JsonProperty(PropertyName = "Group_ID")]
+        public int GroupId { get; set; }
     }
 }

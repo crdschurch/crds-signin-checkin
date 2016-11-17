@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -21,7 +20,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private List<string> _primaryHouseChildParticipantColumns;
         private List<string> _otherHouseChildParticipantColumns;
         private List<string> _groupChildParticipantColumns;
-        private List<String> _eventGroupColumns;
+        private List<string> _eventGroupColumns;
 
         [SetUp]
         public void SetUp()
@@ -166,7 +165,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     HouseholdPositionId = 2,
                     FirstName = "First1",
                     LastName = "Last1",
-                    DateOfBirth = new DateTime()
+                    DateOfBirth = new DateTime(),
+                    GroupId = 123
                 },
                 new MpParticipantDto
                 {
@@ -176,7 +176,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     HouseholdPositionId = 2,
                     FirstName = "First2",
                     LastName = "Last2",
-                    DateOfBirth = new DateTime()
+                    DateOfBirth = new DateTime(),
+                    GroupId = 12345
                 },
                 // Add a duplicate - this one should not appear in the final list
                 new MpParticipantDto
@@ -187,7 +188,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     HouseholdPositionId = 2,
                     FirstName = "First2",
                     LastName = "Last2",
-                    DateOfBirth = new DateTime()
+                    DateOfBirth = new DateTime(),
+                    GroupId = 12345
                 }
             };
 
@@ -222,7 +224,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.VerifyAll();
             
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.Count, 2);
+            Assert.AreEqual(2, result.Count);
             Assert.AreEqual(result[0].ContactId, primaryChild[0].ContactId);
             Assert.AreEqual(result[1].ContactId, otherChild[0].ContactId);
         }
@@ -270,7 +272,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     HouseholdPositionId = 2,
                     FirstName = "First1",
                     LastName = "Last1",
-                    DateOfBirth = new DateTime()
+                    DateOfBirth = new DateTime(),
+                    GroupId = 123
                 }
             };
 
@@ -284,7 +287,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     HouseholdPositionId = 2,
                     FirstName = "First2",
                     LastName = "Last2",
-                    DateOfBirth = new DateTime()
+                    DateOfBirth = new DateTime(),
+                    GroupId = 567
                 }
             };
 
@@ -298,7 +302,19 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     HouseholdPositionId = 2,
                     FirstName = "First1",
                     LastName = "Last1",
-                    DateOfBirth = new DateTime()
+                    DateOfBirth = new DateTime(),
+                    GroupId = 123
+                },
+                new MpParticipantDto
+                {
+                    ParticipantId = 13,
+                    ContactId = 1444,
+                    HouseholdId = otherHouseholdId,
+                    HouseholdPositionId = 2,
+                    FirstName = "First2",
+                    LastName = "Last2",
+                    DateOfBirth = new DateTime(),
+                    GroupId = 567
                 }
             };
 
@@ -333,8 +349,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.VerifyAll();
             
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.Count, 1);
-            Assert.AreEqual(result[0].ContactId, children[0].ContactId);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(children[0].ContactId, result[0].ContactId);
         }
         
         [Test]
@@ -397,7 +413,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
         private string GetChildParticpantsByGroupFilter(string participantIds)
         {
-            return $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = 5 AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = 2 AND Group_ID_Table.[Group_ID] in (123,1234,12345)";
+            return $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = 5 AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = 2";
         }
     }
 }
