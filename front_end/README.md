@@ -24,7 +24,7 @@ yarn install
 npm start
 ```
 
-#### Clean out dependencies
+#### Clean and reinstall dependencies
 
 ```sh
 npm run clean
