@@ -1,5 +1,9 @@
-﻿using MinistryPlatform.Translation.Models.Attributes;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
+using MinistryPlatform.Translation.Extensions;
+using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MinistryPlatform.Translation.Models.DTO
 {
@@ -47,6 +51,14 @@ namespace MinistryPlatform.Translation.Models.DTO
         public bool HasRoomReservation()
         {
             return RoomReservation != null && RoomReservation.RoomId > 0;
+        }
+
+        protected override void ProcessUnmappedData(IDictionary<string, JToken> unmappedData, StreamingContext context)
+        {
+            RoomReservation.Label = unmappedData.GetUnmappedDataField<string>("Label");
+            RoomReservation.AllowSignIn = unmappedData.GetUnmappedDataField<bool>("Allow_Checkin");
+            RoomReservation.Capacity = unmappedData.GetUnmappedDataField<int>("Capacity");
+            RoomReservation.Volunteers = unmappedData.GetUnmappedDataField<int>("Volunteers");
         }
     }
 }

@@ -27,7 +27,11 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_ID_Table.[Event_ID]",
                 "Group_ID_Table.[Group_ID]",
                 "Event_Room_ID_Table.[Event_Room_ID]",
-                "Event_Room_ID_Table_Room_ID_Table.[Room_ID]"
+                "Event_Room_ID_Table_Room_ID_Table.[Room_ID]",
+                "Event_Room_ID_Table.[Capacity]",
+                "Event_Room_ID_Table.[Label]",
+                "Event_Room_ID_Table.[Allow_Checkin]",
+                "Event_Room_ID_Table.[Volunteers]"
             };
 
             _eventColumns = new List<string>

@@ -169,6 +169,11 @@ namespace MinistryPlatform.Translation.Repositories
 
 	    public List<MpEventParticipantDto> CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
         {
+	        if (mpEventParticipantDtos == null || !mpEventParticipantDtos.Any())
+	        {
+	            return new List<MpEventParticipantDto>();
+	        }
+
             var token = _apiUserRepository.GetToken();
 
             var columnList = new List<string>

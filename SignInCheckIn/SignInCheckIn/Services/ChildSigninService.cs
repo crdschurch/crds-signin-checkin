@@ -79,7 +79,6 @@ namespace SignInCheckIn.Services
             var eventGroupsForEvent = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
             var eventRooms = eventGroupsForEvent.Select(r => r.RoomReservation).ToList();
 
-            // TODO: Also need to check capacity on the room here
             var mpEventParticipantDtoList = (from participant in participantEventMapDto.Participants.Where(r => r.Selected)
                 // Get groups for the participant
                 let groupIds = _groupRepository.GetGroupsForParticipantId(participant.ParticipantId)
@@ -103,11 +102,16 @@ namespace SignInCheckIn.Services
             {
                 var assignedRoomId = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId)?.RoomId;
                 var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
-                // TODO Temporarily checking if the room is closed, eventually move to bumping rules
+                // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
                 if (assignedRoom != null && assignedRoom.AllowSignIn)
                 {
                     eventParticipant.AssignedRoomId = assignedRoom.RoomId;
                     eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+                }
+                else
+                {
+                    eventParticipant.AssignedRoomId = null;
+                    eventParticipant.AssignedRoomName = null;
                 }
             }
 
@@ -115,9 +119,18 @@ namespace SignInCheckIn.Services
             var response = new ParticipantEventMapDto
             {
                 CurrentEvent = participantEventMapDto.CurrentEvent,
-                Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList(),
+                // TODO Only creating event participants for kids with a room assigned - should be handled in bumping rules eventually
+                Participants =
+                    _childSigninRepository.CreateEventParticipants(
+                        mpEventParticipantDtoList.Where(
+                            p => participantEventMapDto.Participants.Find(q => q.Selected && q.ParticipantId == p.ParticipantId && q.AssignedRoomId.HasValue) != null).ToList())
+                        .Select(Mapper.Map<ParticipantDto>)
+                        .ToList(),
                 Contacts = participantEventMapDto.Contacts
             };
+
+            // TODO Add back those participants that didn't get a room assigned - should be handled in bumping rules eventually
+            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => p.Selected && !p.AssignedRoomId.HasValue));
 
             response.Participants.ForEach(p => p.Selected = true);
 
@@ -138,7 +151,7 @@ namespace SignInCheckIn.Services
                 throw new Exception("Printer Map Id Not Set For Kisok " + kioskConfig.KioskConfigId);
             }
 
-            var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => c.Nickname).ToArray());
+            var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => $"{c.Nickname} {c.LastName}").ToArray());
 
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
             {
