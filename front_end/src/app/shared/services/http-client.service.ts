@@ -65,8 +65,13 @@ export class HttpClientService {
     reqHeaders.set('Crds-Api-Key', process.env.ECHECK_API_TOKEN);
 
     const machineConfig = MachineConfiguration.fromJson( this.cookie.getObject(MachineConfiguration.COOKIE_NAME_DETAILS) );
-    if (machineConfig && machineConfig.CongregationId) {
-      reqHeaders.set('Crds-Site-Id', machineConfig.CongregationId.toString());
+    if (machineConfig) {
+      if (machineConfig.CongregationId) {
+        reqHeaders.set('Crds-Site-Id', machineConfig.CongregationId.toString());
+      }
+      if (machineConfig.KioskConfigId) {
+        reqHeaders.set('Crds-Kiosk-Identifier', machineConfig.KioskIdentifier);
+      }
     }
 
     return reqHeaders;

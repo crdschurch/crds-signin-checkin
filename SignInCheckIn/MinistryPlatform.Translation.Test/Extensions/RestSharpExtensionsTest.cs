@@ -18,27 +18,27 @@ namespace MinistryPlatform.Translation.Test.Extensions
         }
 
         [Test]
-        public void TestSetJsonBodySingleItem()
+        public void TestSetJsonArrayBodySingleItem()
         {
             const string input = "hello world";
-            _fixture.SetJsonBody(input);
+            _fixture.SetJsonArrayBody(input);
             _fixture.Parameters.Should()
                 .Contain(p => p.Name.Equals("Accept") && p.Value.Equals("application/json"));
             _fixture.Parameters.Should()
                 .Contain(
                     p =>
                         p.Type == ParameterType.RequestBody && p.Name.Equals("application/json") &&
-                        p.Value.Equals(JsonConvert.SerializeObject(new List<string> {input})));
+                        p.Value.Equals(JsonConvert.SerializeObject(new List<string> { input })));
         }
 
         [Test]
-        public void TestSetJsonBodyCollection()
+        public void TestSetJsonArrayBodyCollection()
         {
             var list = new List<string>
             {
                 "hello world"
             };
-            _fixture.SetJsonBody(list);
+            _fixture.SetJsonArrayBody(list);
             _fixture.Parameters.Should()
                 .Contain(p => p.Name.Equals("Accept") && p.Value.Equals("application/json"));
             _fixture.Parameters.Should()
@@ -48,5 +48,18 @@ namespace MinistryPlatform.Translation.Test.Extensions
                         p.Value.Equals(JsonConvert.SerializeObject(list)));
         }
 
+        [Test]
+        public void TestSetJsonBody()
+        {
+            const string input = "hello world";
+            _fixture.SetJsonBody(input);
+            _fixture.Parameters.Should()
+                .Contain(p => p.Name.Equals("Accept") && p.Value.Equals("application/json"));
+            _fixture.Parameters.Should()
+                .Contain(
+                    p =>
+                        p.Type == ParameterType.RequestBody && p.Name.Equals("application/json") &&
+                        p.Value.Equals(JsonConvert.SerializeObject(input)));
+        }
     }
 }

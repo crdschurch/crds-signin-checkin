@@ -62,6 +62,16 @@ export class ChildSigninService {
     return this.eventParticipantsResults;
   }
 
+  printParticipantLabels(eventParticipants: EventParticipants): Observable<EventParticipants> {
+    const url = `${this.url}/participants/print`;
+    return this.http.post(url, eventParticipants)
+                    .map(res => {
+                      this.eventParticipantsResults = EventParticipants.fromJson(res.json());
+                      return this.eventParticipantsResults;
+                    })
+                    .catch(this.handleError);
+  }
+
   private handleError (error: any) {
     return Observable.throw(error.json().error || 'Server error');
   }

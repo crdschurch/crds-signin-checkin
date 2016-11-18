@@ -52,17 +52,30 @@ namespace MinistryPlatform.Translation.Extensions
         /// <summary>
         /// This is a hack to set a Json body on a request, making sure the object is serialized properly according to Json attributes.  RestSharp's JSON serializer does not pay attention to attributes when serializing using request.AddJsonBody(), so objects do not get sent appropriately. Note that this will clear all previously set parameters on the request, so use with caution.
         /// </summary>
-        /// <typeparam name="T">The type of object to serialize onto the body</typeparam>
         /// <param name="request">The IRestRequest to set body on</param>
-        /// <param name="record">The object to serialize onto the request body</param>
+        /// <param name="record">The object to serialize onto the request body - it will be wrapped in an array if it is not already a collection of some sort.</param>
         /// <returns>The IRestRequest, in case you want to chain method calls</returns>
-        public static IRestRequest SetJsonBody<T>(this IRestRequest request, T record)
+        public static IRestRequest SetJsonArrayBody(this IRestRequest request, object record)
+        {
+            // Wrap the record in an array, if it is not already some sort of collection.
+            var body = record.GetType().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof (ICollection<>)) ? record : new List<object> {record};
+
+            return request.SetJsonBody(body);
+        }
+
+        /// <summary>
+        /// This is a hack to set a Json body on a request, making sure the object is serialized properly according to Json attributes.  RestSharp's JSON serializer does not pay attention to attributes when serializing using request.AddJsonBody(), so objects do not get sent appropriately. Note that this will clear all previously set parameters on the request, so use with caution.
+        /// </summary>
+        /// <param name="request">The IRestRequest to set body on</param>
+        /// <param name="record">The object to serialize onto the request body.</param>
+        /// <returns>The IRestRequest, in case you want to chain method calls</returns>
+        public static IRestRequest SetJsonBody(this IRestRequest request, object record)
         {
             // This nonsense is needed because request.setJsonBody() does not honor Json name
             // attributes on the object, so proper names are not sent to MP. If the input
             // record is already a collection of some sort, just serialize it onto the body,
             // otherwise create a new collection containing the single record.
-            var jsonBody = record.GetType().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof (ICollection<>)) ? JsonConvert.SerializeObject(record) : JsonConvert.SerializeObject(new List<T> {record});
+            var jsonBody = JsonConvert.SerializeObject(record);
             request.Parameters.Clear();
             request.AddHeader("Accept", "application/json");
             request.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
@@ -70,6 +83,7 @@ namespace MinistryPlatform.Translation.Extensions
 
             return request;
         }
+
 
         public static IRestRequest AddQueryParameterIfSpecified(this IRestRequest request, string name, string value)
         {

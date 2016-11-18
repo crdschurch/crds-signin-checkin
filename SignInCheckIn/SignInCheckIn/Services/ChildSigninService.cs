@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
-using Microsoft.Win32.SafeHandles;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
@@ -17,7 +15,6 @@ namespace SignInCheckIn.Services
     public class ChildSigninService : IChildSigninService
     {
         private readonly IChildSigninRepository _childSigninRepository;
-        private readonly IContactRepository _contactRepository;
         private readonly IEventRepository _eventRepository;
         private readonly IEventService _eventService;
         private readonly IGroupRepository _groupRepository;
@@ -30,10 +27,9 @@ namespace SignInCheckIn.Services
 
         public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
             IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService,
-            IContactRepository contactRepository, IKioskRepository kioskRepository)
+            IKioskRepository kioskRepository)
         {
             _childSigninRepository = childSigninRepository;
-            _contactRepository = contactRepository;
             _eventRepository = eventRepository;
             _groupRepository = groupRepository;
             _eventService = eventService;
@@ -53,9 +49,7 @@ namespace SignInCheckIn.Services
             var mpChildren = _childSigninRepository.GetChildrenByHouseholdId(householdId, Mapper.Map<MpEventDto>(eventDto));
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
 
-            //var mpHouseholdContactDtos = _contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId);
-
-            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            var participantEventMapDto = new ParticipantEventMapDto
             {
                 Participants = childrenDtos,
                 CurrentEvent = eventDto
@@ -75,7 +69,7 @@ namespace SignInCheckIn.Services
 
             // Get groups that are configured for the event
             var eventGroupsForEvent = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
-            var eventRooms = eventGroupsForEvent.Select(r => r.RoomReservation);
+            var eventRooms = eventGroupsForEvent.Select(r => r.RoomReservation).ToList();
 
             // TODO: Also need to check capacity on the room here
             var mpEventParticipantDtoList = (from participant in participantEventMapDto.Participants.Where(r => r.Selected)
@@ -101,7 +95,7 @@ namespace SignInCheckIn.Services
             // TODO: Get the room ID and room name back on the returned participant dtos
             foreach (var eventParticipant in participantEventMapDto.Participants)
             {
-                eventParticipant.AssignedRoomId = mpEventParticipantDtoList.First(r => r.ParticipantId == eventParticipant.ParticipantId).RoomId;
+                eventParticipant.AssignedRoomId = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId)?.RoomId;
 
                 if (eventParticipant.AssignedRoomId != null)
                 {
@@ -117,6 +111,8 @@ namespace SignInCheckIn.Services
                 Contacts = participantEventMapDto.Contacts
             };
 
+            response.Participants.ForEach(p => p.Selected = true);
+
             /**
             **/
             return response;
@@ -125,22 +121,23 @@ namespace SignInCheckIn.Services
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
         {
             // TODO: Finish this
-            var kiofkConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+            var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+            MpPrinterMapDto kioskPrinterMap;
 
-            if (kiofkConfig.PrinterMapId != null)
+            if (kioskConfig.PrinterMapId != null)
             {
-                var kioskPrinterMap = _kioskRepository.GetPrinterMapById(kiofkConfig.PrinterMapId.GetValueOrDefault());
+                kioskPrinterMap = _kioskRepository.GetPrinterMapById(kioskConfig.PrinterMapId.GetValueOrDefault());
             }
             else
             {
-                throw new Exception("Printer Map Id Not Set For Kisok " + kiofkConfig.KioskConfigId);
+                throw new Exception("Printer Map Id Not Set For Kisok " + kioskConfig.KioskConfigId);
             }
 
             // TODO: Correctly build out the list here - just a temporary field for now
             //var headsOfHouseholdString = participantEventMapDto.Contacts.Select(r => r.Nickname).First();
             var headsOfHouseholdString = "some random parents";
 
-            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
+            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
             {
                 if (participant.AssignedRoomId == null)
                 {
@@ -148,7 +145,7 @@ namespace SignInCheckIn.Services
                 }
                 else
                 {
-                    Dictionary<string, string> printValues = new Dictionary<string, string>
+                    var printValues = new Dictionary<string, string>
                     {
                         {"ChildName", participant.FirstName},
                         {"ChildRoomName1", participant.AssignedRoomName},
@@ -166,17 +163,16 @@ namespace SignInCheckIn.Services
                     var checkinLabel = Properties.Resources.Checkin_KC_Label;
                     var processedPdfBytes = _pdfEditor.PopulatePdfMergeFields(checkinLabel, printValues);
 
-                    // TODO: Update with data from MP for printer id
-                    PrintRequestDto printRequestDto = new PrintRequestDto
+                    var printRequestDto = new PrintRequestDto
                     {
-                        printerId = 175030,
+                        printerId = kioskPrinterMap.PrinterId,
                         content = processedPdfBytes + "=",
                         contentType = "pdf_base64",
-                        title = "Print job for event and participant",
+                        title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.FirstName} (id #{participant.ParticipantId})",
                         source = "CRDS Checkin"
                     };
 
-                    var printJobId = _printingService.SendPrintRequest(printRequestDto);
+                    _printingService.SendPrintRequest(printRequestDto);
                 }
             }
 

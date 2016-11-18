@@ -63,16 +63,16 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [Route("participants/print")]
+        [Route("signin/participants/print")]
         public IHttpActionResult PrintParticipants(ParticipantEventMapDto participantEventMapDto)
         {
             try
             {
-                string kioskIdentifier = String.Empty;
+                string kioskIdentifier;
 
                 if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
                 {
-                    kioskIdentifier = (Request.Headers.GetValues("Crds-Kiosk-Identifier").First());
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
                 }
                 else
                 {
