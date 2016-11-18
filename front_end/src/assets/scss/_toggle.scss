@@ -78,3 +78,17 @@
   position: relative;
   bottom: 0.85em;
 }
+
+.card {
+  .tgl-light{
+  	+ .tgl-btn{
+  		background: $brand-danger;
+    }
+
+		&:checked{
+			+ .tgl-btn{
+				background: $brand-success;
+			}
+		}
+  }
+}

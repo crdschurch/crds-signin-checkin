@@ -146,10 +146,10 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var participantIds = string.Join(",", children.Select(x => x.ParticipantId));
-            var groupIds = string.Join(",", eventGroups.Select(x => x.GroupId));
+            var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                        SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId}", columnList);
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId} AND Group_ID_Table.[Group_ID] in ({groupIds})", columnList);
+            return participants.Where(p => eventGroups.Find(g => g.GroupId == p.GroupId) != null).ToList();
         }
 
         private class MpParticipantDtoComparer : IEqualityComparer<MpParticipantDto>
@@ -175,13 +175,14 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Event_Participant_ID",
                 "Event_ID",
-                "Participant_ID",
+                "Participant_ID_Table_Contact_ID_Table.[First_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table.[Participant_ID]",
                 "Participation_Status_ID",
                 "Time_In",
                 "Time_Confirmed",
                 "Time_Out",
-                "Notes",
-                "Domain_ID",
+                "Event_Participants.[Notes]",
                 "Group_Participant_ID",
                 "[Check-in_Station]",
                 "Group_ID",

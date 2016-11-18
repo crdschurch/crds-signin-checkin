@@ -10,6 +10,7 @@ export class ChildSigninService {
   private url: string = '';
   private phoneNumber: string = '';
   private childrenAvailable: Array<Child> = [];
+  private eventParticipantsResults: EventParticipants;
   private event: Event;
 
   constructor(private http: HttpClientService, private router: Router) {
@@ -50,8 +51,15 @@ export class ChildSigninService {
   signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
     const url = `${this.url}/children`;
     return this.http.post(url, eventParticipants)
-                    .map(res => EventParticipants.fromJson(res.json()))
+                    .map(res => {
+                      this.eventParticipantsResults = EventParticipants.fromJson(res.json());
+                      return this.eventParticipantsResults;
+                    })
                     .catch(this.handleError);
+  }
+
+  getEventParticipantsResults(): EventParticipants {
+    return this.eventParticipantsResults;
   }
 
   private handleError (error: any) {

@@ -28,8 +28,9 @@ export class UserService {
   }
 
   public setUser(user: User): void {
+    let expiration = moment().add(this.SessionLengthMilliseconds, 'milliseconds').toDate();
     let cookieOptions = new CookieOptions();
-    cookieOptions.expires = moment().add(this.SessionLengthMilliseconds, 'milliseconds').toDate();
+    cookieOptions.expires = expiration;
 
     this.cookie.putObject('user', user, cookieOptions);
     if (this.refreshTimeout) {
@@ -38,7 +39,7 @@ export class UserService {
     }
 
     if (user.isLoggedIn()) {
-      this.refreshTimeout = Observable.timer(this.SessionLengthMilliseconds).subscribe(() => {
+      this.refreshTimeout = Observable.timer(expiration).subscribe(() => {
         this.loginRedirectService.redirectToLogin(this.router.routerState.snapshot.url);
       });
     }

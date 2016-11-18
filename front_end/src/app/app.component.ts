@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
 
   public customToasterConfig: ToasterConfig =
     new ToasterConfig({
-      positionClass: 'toast-top-center'
+      positionClass: 'toast-top-full-width',
+      timeout: 3000
     });
 
     event: any;
@@ -56,18 +57,6 @@ export class AppComponent implements OnInit {
       }
       this.loggedInDisplay = `User Logged In: ${this.userService.isLoggedIn()}`;
     }
-  }
-
-  activeStep1() {
-    return this.router.url === '/child-signin';
-  }
-
-  activeStep2() {
-    return this.router.url === '/child-signin/results';
-  }
-
-  activeStep3() {
-    return this.router.url === '/child-signin/assignment';
   }
 
   inRoom() {

@@ -26,11 +26,15 @@ export class AvailableChildrenComponent implements OnInit {
  ngOnInit() {
    this.route.params.forEach((params: Params) => {
       let phoneNumber = params['phoneNumber'];
-
-      this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe((childrenAvailable) => {
-        this.isReady = true;
-        this.childrenAvailable = childrenAvailable;
-      });
+      this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe(
+        (childrenAvailable) => {
+          this.isReady = true;
+          this.childrenAvailable = childrenAvailable;
+        }, (err) => {
+          this.isReady = true;
+          this.rootService.announceEvent('generalError');
+        }
+      );
     });
  }
 
@@ -44,14 +48,19 @@ export class AvailableChildrenComponent implements OnInit {
    }
 
    this.isReady = false;
-   this.childSigninService.signInChildren(eventParticipants).subscribe((response: EventParticipants) => {      
-     this.isReady = true;
-     if (response && response.Participants && response.Participants.length > 0) {
-       this.router.navigate(['/child-signin/assignment']);
-     } else {
+   this.childSigninService.signInChildren(eventParticipants).subscribe(
+     (response: EventParticipants) => {
+       this.isReady = true;
+       if (response && response.Participants && response.Participants.length > 0) {
+         this.router.navigate(['/child-signin/assignment']);
+       } else {
+         this.rootService.announceEvent('generalError');
+       }
+     }, (err) => {
+       this.isReady = true;
        this.rootService.announceEvent('generalError');
      }
-   });
+   );
  }
 
  public showServiceSelectModal(): void {

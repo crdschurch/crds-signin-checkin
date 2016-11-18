@@ -91,6 +91,8 @@ namespace SignInCheckIn.Services
                         EventId = participantEventMapDto.CurrentEvent.EventId,
                         ParticipantId = participant.ParticipantId,
                         ParticipantStatusId = 3, // Status ID of 3 = "Attended"
+                        FirstName = participant.FirstName,
+                        LastName = participant.LastName,
                         TimeIn = DateTime.Now,
                         OpportunityId = null,
                         RoomId = eventGroup.RoomReservation.RoomId
@@ -115,6 +117,8 @@ namespace SignInCheckIn.Services
                 Contacts = participantEventMapDto.Contacts
             };
 
+            /**
+            **/
             return response;
         }
 

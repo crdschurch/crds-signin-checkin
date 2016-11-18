@@ -4,67 +4,12 @@
     <div class="col-md-12">
       <h3 class="text-white text-xs-center pb-2">You have successfully signed in the following kids.</h3>
       <div class="eqWrap">
-        <div class="card">
+        <div class="card" *ngFor="let child of childrenResult">
           <div class="card-block">
-            <h4 class="card-title">James Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
+            <h4 class="card-title">{{child.name()}}</h4>
+            <p class="mb-0"><span class="text-muted">Signed In</span></p>
           </div>
         </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Josiah Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Lizett Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Boone Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Boone Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Boone Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Boone Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Boone Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Boone Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-        <div class="card">
-          <div class="card-block">
-            <h4 class="card-title">Boone Kerstanoff</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>Ones & Twos D (K113)</p>
-          </div>
-        </div><!--/card-->
-
       </div><!--/eqWrap-->
     </div>
   </div>
@@ -75,8 +20,15 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 col-sm-6 offset-sm-3 text-xs-center">
-        <p class="mb-0">Printing&#x02026;</p>
-        <progress class="progress progress-striped progress-success m-b-2" value="55" max="100"></progress>
+        <div [hidden]="!error">
+          <p>
+            <strong class="text-danger">An error has occurred</strong>
+          </p>
+        </div>
+        <div [hidden]="error">
+          <p class="mb-0">Printing&#x02026;</p>
+          <progress class="progress progress-animated progress-striped progress-success" value="{{printed}}" max="{{printTotal}}"></progress>
+        </div>
       </div>
     </div>
   </div>
