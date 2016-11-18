@@ -19,15 +19,15 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
         }
 
-        public List<MpContactDto> GetHeadsOfHouseholdByHouseholdId(int? householdId)
+        public List<MpContactDto> GetHeadsOfHouseholdByHouseholdId(int householdId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
             var contactColumnList = new List<string>
             {
                 "Contact_ID",
-                "Household_ID_Table.Household_ID",
-                "Household_Position_ID_Table.Household_Position_ID",
+                "Contacts.Household_ID",
+                "Contacts.Household_Position_ID",
                 "Household_ID_Table.Home_Phone",
                 "Mobile_Phone",
                 "Nickname",
@@ -35,7 +35,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var contacts = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpContactDto>($"[Household_ID]='{householdId}' AND Household_Position_ID IN (1, 7)", contactColumnList);
+                .Search<MpContactDto>($"Contacts.Household_ID={householdId} AND Contacts.Household_Position_ID IN (1, 7)", contactColumnList);
 
             return contacts;
         }

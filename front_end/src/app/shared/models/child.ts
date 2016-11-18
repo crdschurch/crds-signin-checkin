@@ -10,6 +10,11 @@ export class Child {
   DateOfBirth: Date;
   Selected: boolean;
   ParticipationStatusId: number;
+  AssignedRoomId: number;
+  AssignedRoomName: string;
+  AssignedSecondaryRoomId: number;
+  AssignedSecondaryRoomName: string;
+  CallNumber: string;
 
   static fromJson(json: any): Child {
     let c = new Child();
@@ -22,6 +27,11 @@ export class Child {
     c.DateOfBirth = json.DateOfBirth;
     c.Selected = json.Selected;
     c.ParticipationStatusId = json.ParticipationStatusId;
+    c.AssignedRoomId = json.AssignedRoomId;
+    c.AssignedRoomName = json.AssignedRoomName;
+    c.AssignedSecondaryRoomId = json.AssignedSecondaryRoomId;
+    c.AssignedSecondaryRoomName = json.AssignedSecondaryRoomName;
+    c.CallNumber = json.CallNumber;
     return c;
   }
 

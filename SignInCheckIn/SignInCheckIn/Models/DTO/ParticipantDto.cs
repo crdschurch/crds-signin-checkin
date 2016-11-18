@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
 
 namespace SignInCheckIn.Models.DTO
@@ -19,5 +20,14 @@ namespace SignInCheckIn.Models.DTO
         public string AssignedRoomName { get; set; }
         public int? AssignedSecondaryRoomId { get; set; } // adventure club field
         public string AssignedSecondaryRoomName { get; set; } // adventure club field
+
+        public string CallNumber
+        {
+            get
+            {
+                var c = $"0000{EventParticipantId}";
+                return c.Substring(c.Length - 4);
+            }
+        }
     }
 }

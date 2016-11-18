@@ -1,4 +1,5 @@
 export { Child } from './child';
+export { Contact } from './contact';
 export { ContentBlock } from './content-block';
 export { Event } from './event';
 export { EventParticipants } from './event-participants';

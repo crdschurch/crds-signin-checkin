@@ -19,6 +19,7 @@ namespace SignInCheckIn.Services
         private readonly IEventService _eventService;
         private readonly IGroupRepository _groupRepository;
         private readonly IKioskRepository _kioskRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IPrintingService _printingService;
         private readonly IPdfEditor _pdfEditor;
 
@@ -27,13 +28,14 @@ namespace SignInCheckIn.Services
 
         public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
             IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService,
-            IKioskRepository kioskRepository)
+            IKioskRepository kioskRepository, IContactRepository contactRepository)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
             _groupRepository = groupRepository;
             _eventService = eventService;
             _kioskRepository = kioskRepository;
+            _contactRepository = contactRepository;
             _printingService = printingService;
             _pdfEditor = pdfEditor;
 
@@ -45,12 +47,19 @@ namespace SignInCheckIn.Services
         {
             var eventDto = _eventService.GetCurrentEventForSite(siteId);
             var householdId = _childSigninRepository.GetHouseholdIdByPhoneNumber(phoneNumber);
+            if (householdId == null)
+            {
+                throw new ApplicationException($"Could not locate household for phone number {phoneNumber}");
+            }
 
             var mpChildren = _childSigninRepository.GetChildrenByHouseholdId(householdId, Mapper.Map<MpEventDto>(eventDto));
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
 
+            var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId.Value));
+
             var participantEventMapDto = new ParticipantEventMapDto
             {
+                Contacts = headsOfHousehold,
                 Participants = childrenDtos,
                 CurrentEvent = eventDto
             };

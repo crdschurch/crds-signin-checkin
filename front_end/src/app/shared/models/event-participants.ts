@@ -1,6 +1,7 @@
-import { Child, Event } from '.';
+import { Child, Contact, Event } from '.';
 
 export class EventParticipants {
+  Contacts: Array<Contact>;
   CurrentEvent: Event;
   Participants: Array<Child>;
 
@@ -15,6 +16,7 @@ export class EventParticipants {
     for (let p of json.Participants) {
       eventParticipants.Participants.push(Child.fromJson(p));
     }
+    eventParticipants.Contacts = Array.isArray(json.Contacts) ? (<Array<any>>(json.Contacts)).map(c => Contact.fromJson(c)) : [];
     return eventParticipants;
   }
 
