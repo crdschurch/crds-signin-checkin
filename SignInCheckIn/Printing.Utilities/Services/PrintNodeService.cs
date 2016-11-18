@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Printing.Utilities.Services.Interfaces;
+﻿using Printing.Utilities.Services.Interfaces;
 using RestSharp;
-using System.Configuration;
-using System.Runtime.InteropServices.WindowsRuntime;
 using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
-using Printing.Utilities.Serializers;
 using RestSharp.Authenticators;
 
 namespace Printing.Utilities.Services

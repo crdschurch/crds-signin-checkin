@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { ChildSigninService } from '../child-signin.service';
 import { RootService } from '../../shared/services';
+import { EventParticipants } from '../../shared/models';
 
 @Component({
   selector: 'search',
@@ -34,9 +35,9 @@ export class SearchComponent {
     this.isReady = false;
     if (this.phoneNumber.length === 10) {
       this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe(
-        (availableChildren) => {
+        (result: EventParticipants) => {
         this.isReady = true;
-        if (availableChildren.length > 0) {
+        if (result.hasParticipants()) {
           this.router.navigate(['/child-signin/available-children', this.phoneNumber]);
         } else {
           this.rootService.announceEvent('kcChildSigninNoAvailableChildren');

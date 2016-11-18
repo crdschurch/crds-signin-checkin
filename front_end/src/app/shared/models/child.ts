@@ -1,6 +1,7 @@
 import { Constants } from '../constants';
 
 export class Child {
+  EventParticipantId: number;
   ParticipantId: number;
   ContactId: number;
   HouseholdId: number;
@@ -18,6 +19,7 @@ export class Child {
 
   static fromJson(json: any): Child {
     let c = new Child();
+    c.EventParticipantId = json.EventParticipantId;
     c.ParticipantId = json.ParticipantId;
     c.ContactId = json.ContactId;
     c.HouseholdId = json.HouseholdId;

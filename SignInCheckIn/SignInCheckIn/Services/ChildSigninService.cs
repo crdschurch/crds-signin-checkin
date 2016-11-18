@@ -23,12 +23,14 @@ namespace SignInCheckIn.Services
         private readonly IPrintingService _printingService;
         private readonly IPdfEditor _pdfEditor;
 
-        private string _kcLabelPath;
-        private string _activityKitLabelPath;
-
-        public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
-            IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService,
-            IKioskRepository kioskRepository, IContactRepository contactRepository)
+        public ChildSigninService(IChildSigninRepository childSigninRepository,
+                                  IEventRepository eventRepository,
+                                  IGroupRepository groupRepository,
+                                  IEventService eventService,
+                                  IPdfEditor pdfEditor,
+                                  IPrintingService printingService,
+                                  IKioskRepository kioskRepository,
+                                  IContactRepository contactRepository)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -38,9 +40,6 @@ namespace SignInCheckIn.Services
             _contactRepository = contactRepository;
             _printingService = printingService;
             _pdfEditor = pdfEditor;
-
-            _kcLabelPath = @"C:..\Printing.Utilities\Templates\DefaultLabel.pdf";
-            _activityKitLabelPath = @"C:..\Printing.Utilities\Templates\Activity_Kit_Label.pdf";
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
@@ -87,7 +86,6 @@ namespace SignInCheckIn.Services
 
                 // TODO: Gracefully handle exception for mix of valid and invalid signins
                 let eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g.Id))
-
                 select
                     new MpEventParticipantDto
                     {
@@ -101,7 +99,6 @@ namespace SignInCheckIn.Services
                         RoomId = eventGroup.RoomReservation.RoomId
                     }).ToList();
 
-            // TODO: Get the room ID and room name back on the returned participant dtos
             foreach (var eventParticipant in participantEventMapDto.Participants)
             {
                 eventParticipant.AssignedRoomId = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId)?.RoomId;
@@ -122,14 +119,11 @@ namespace SignInCheckIn.Services
 
             response.Participants.ForEach(p => p.Selected = true);
 
-            /**
-            **/
             return response;
         }
 
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
         {
-            // TODO: Finish this
             var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
             MpPrinterMapDto kioskPrinterMap;
 
@@ -142,47 +136,37 @@ namespace SignInCheckIn.Services
                 throw new Exception("Printer Map Id Not Set For Kisok " + kioskConfig.KioskConfigId);
             }
 
-            // TODO: Correctly build out the list here - just a temporary field for now
-            //var headsOfHouseholdString = participantEventMapDto.Contacts.Select(r => r.Nickname).First();
-            var headsOfHouseholdString = "some random parents";
+            var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => c.Nickname).ToArray());
 
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
             {
-                if (participant.AssignedRoomId == null)
+                var printValues = new Dictionary<string, string>
                 {
-                    // print an "I Got a rock" label
-                }
-                else
+                    {"ChildName", participant.FirstName},
+                    {"ChildRoomName1", participant.AssignedRoomName},
+                    {"ChildRoomName2", participant.AssignedSecondaryRoomName},
+                    {"ChildEventName", participantEventMapDto.CurrentEvent.EventTitle},
+                    {"ChildParentName", headsOfHousehold},
+                    {"ChildCallNumber", participant.CallNumber},
+                    {"ParentCallNumber", participant.CallNumber},
+                    {"ParentRoomName1", participant.AssignedRoomName},
+                    {"ParentRoomName2", participant.AssignedSecondaryRoomName},
+                    {"Informative1", "This label is worn by a parent/guardian"},
+                    {"Informative2", "You must have this label to pick up your child"}
+                };
+                var labelTemplate = participant.AssignedRoomId == null ? Properties.Resources.Activity_Kit_Label : Properties.Resources.Checkin_KC_Label;
+                var mergedPdf = _pdfEditor.PopulatePdfMergeFields(labelTemplate, printValues);
+
+                var printRequestDto = new PrintRequestDto
                 {
-                    var printValues = new Dictionary<string, string>
-                    {
-                        {"ChildName", participant.FirstName},
-                        {"ChildRoomName1", participant.AssignedRoomName},
-                        {"ChildRoomName2", participant.AssignedSecondaryRoomName},
-                        {"ChildEventName", participantEventMapDto.CurrentEvent.EventTitle},
-                        {"ChildParentName", headsOfHouseholdString},
-                        {"ChildCallNumber", 1234.ToString()},
-                        {"ParentCallNumber", 1234.ToString()},
-                        {"ParentRoomName1", participant.AssignedRoomName},
-                        {"ParentRoomName2", participant.AssignedSecondaryRoomName},
-                        {"Informative1", "This label is worn by a parent/guardian"},
-                        {"Informative2", "You must have this label to pick up your child"}
-                    };
- 
-                    var checkinLabel = Properties.Resources.Checkin_KC_Label;
-                    var processedPdfBytes = _pdfEditor.PopulatePdfMergeFields(checkinLabel, printValues);
+                    printerId = kioskPrinterMap.PrinterId,
+                    content = mergedPdf + "=",
+                    contentType = "pdf_base64",
+                    title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.FirstName} (id #{participant.ParticipantId})",
+                    source = "CRDS Checkin"
+                };
 
-                    var printRequestDto = new PrintRequestDto
-                    {
-                        printerId = kioskPrinterMap.PrinterId,
-                        content = processedPdfBytes + "=",
-                        contentType = "pdf_base64",
-                        title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.FirstName} (id #{participant.ParticipantId})",
-                        source = "CRDS Checkin"
-                    };
-
-                    _printingService.SendPrintRequest(printRequestDto);
-                }
+                _printingService.SendPrintRequest(printRequestDto);
             }
 
             return participantEventMapDto;
