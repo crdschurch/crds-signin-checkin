@@ -27,7 +27,7 @@ npm start
 #### Clean and reinstall dependencies
 
 ```sh
-npm run clean
+npm run refresh
 ```
 
 
