@@ -29,8 +29,8 @@ namespace SignInCheckIn.Services
                                   IEventService eventService,
                                   IPdfEditor pdfEditor,
                                   IPrintingService printingService,
-                                  IKioskRepository kioskRepository,
-                                  IContactRepository contactRepository)
+                                  IContactRepository contactRepository,
+                                  IKioskRepository kioskRepository)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;

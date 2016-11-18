@@ -48,11 +48,11 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void ShouldGetChildrenByPhoneNumber()
         {
-            var siteId = 1;
-            var phoneNumber = "812-812-8877";
+            const int siteId = 1;
+            const string phoneNumber = "812-812-8877";
             int? primaryHouseholdId = 123;
 
-            List<MpEventDto> events = new List<MpEventDto>
+            var events = new List<MpEventDto>
             {
                 new MpEventDto
                 {
@@ -69,7 +69,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>
+            var mpParticipantDto = new List<MpParticipantDto>
             {
                 new MpParticipantDto
                 {
@@ -83,6 +83,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _childSigninRepository.Setup(mocked => mocked.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(primaryHouseholdId.Value);
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>(), It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
@@ -97,11 +98,11 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void ShouldNotGetChildrenByPhoneNumber()
         {
-            var siteId = 1;
-            var phoneNumber = "812-812-8877";
+            const int siteId = 1;
+            const string phoneNumber = "812-812-8877";
             int? householdId = 1234567;
 
-            List<MpEventDto> events = new List<MpEventDto>
+            var events = new List<MpEventDto>
             {
                 new MpEventDto
                 {
@@ -118,7 +119,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            List<MpParticipantDto> mpParticipantDto = new List<MpParticipantDto>();
+            var mpParticipantDto = new List<MpParticipantDto>();
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
             _childSigninRepository.Setup(m => m.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(householdId);
