@@ -33,14 +33,19 @@ export class SearchComponent {
   next(): void {
     this.isReady = false;
     if (this.phoneNumber.length === 10) {
-      this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe((availableChildren) => {
+      this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe(
+        (availableChildren) => {
         this.isReady = true;
         if (availableChildren.length > 0) {
           this.router.navigate(['/child-signin/available-children', this.phoneNumber]);
         } else {
           this.rootService.announceEvent('kcChildSigninNoAvailableChildren');
         }
-      });
+      }, (err) => {
+        this.isReady = true;
+        this.rootService.announceEvent('generalError');
+      }
+    );
     } else {
       this.isReady = true;
       this.rootService.announceEvent('kcChildSigninPhoneNumberNotValid');

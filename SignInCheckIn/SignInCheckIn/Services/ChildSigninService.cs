@@ -82,6 +82,8 @@ namespace SignInCheckIn.Services
                         EventId = participantEventMapDto.CurrentEvent.EventId,
                         ParticipantId = participant.ParticipantId,
                         ParticipantStatusId = 3, // Status ID of 3 = "Attended"
+                        FirstName = participant.FirstName,
+                        LastName = participant.LastName,
                         TimeIn = DateTime.Now,
                         OpportunityId = null,
                         RoomId = eventGroup.RoomReservation.RoomId
@@ -96,12 +98,14 @@ namespace SignInCheckIn.Services
 
             //response.Participants.ForEach(p => p.Selected = true);
 
+            /**
             foreach (var item in response.Participants)
             {
                 item.Selected = true;
                 var label = _pdfEditor.PopulatePdfMergeFields("somepath", new Dictionary<string, string>());
                 var printId = _printingService.SendPrintRequest(new PrintRequestDto());
             }
+            **/
 
             return response;
         }
