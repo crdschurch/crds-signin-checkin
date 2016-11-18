@@ -23,7 +23,11 @@ namespace SignInCheckIn.App_Start
 
             config.CreateMap<MpKioskConfigDto, KioskConfigDto>().ReverseMap();
             config.CreateMap<MpParticipantDto, ParticipantDto>().ReverseMap();
-            config.CreateMap<MpEventParticipantDto, ParticipantDto>().ReverseMap();
+            config.CreateMap<MpEventParticipantDto, ParticipantDto>()
+                .ForMember(dest => dest.AssignedRoomId, opts => opts.MapFrom(src => src.RoomId))
+                //.ForMember(dest => dest.AssignedRoomName, opts => opts.MapFrom(src => src.))
+                .ReverseMap()
+                .ForMember(dest => dest.RoomId, opts => opts.MapFrom(src => src.AssignedRoomId));
             config.CreateMap<MpRoomDto, RoomDto>().ReverseMap();
         }
     }
