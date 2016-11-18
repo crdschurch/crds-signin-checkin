@@ -31,7 +31,9 @@ export class ChildSigninService {
       return this.http.get(url)
                   .map((response) => {
                     this.eventParticipantsResults = EventParticipants.fromJson(response.json());
-
+                    if (this.eventParticipantsResults.hasParticipants()) {
+                      this.eventParticipantsResults.Participants.forEach(p => p.Selected = true);
+                    }
                     return this.eventParticipantsResults;
                   })
                   .catch(this.handleError);

@@ -101,11 +101,13 @@ namespace SignInCheckIn.Services
 
             foreach (var eventParticipant in participantEventMapDto.Participants)
             {
-                eventParticipant.AssignedRoomId = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId)?.RoomId;
-
-                if (eventParticipant.AssignedRoomId != null)
+                var assignedRoomId = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId)?.RoomId;
+                var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
+                // TODO Temporarily checking if the room is closed, eventually move to bumping rules
+                if (assignedRoom != null && assignedRoom.AllowSignIn)
                 {
-                    eventParticipant.AssignedRoomName = eventRooms.First(r => r.RoomId == eventParticipant.AssignedRoomId).RoomName;
+                    eventParticipant.AssignedRoomId = assignedRoom.RoomId;
+                    eventParticipant.AssignedRoomName = assignedRoom.RoomName;
                 }
             }
 
