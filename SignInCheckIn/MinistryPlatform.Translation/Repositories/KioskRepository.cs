@@ -60,7 +60,7 @@ namespace MinistryPlatform.Translation.Repositories
             var apiUserToken = _apiUserRepository.GetToken();
 
             var configs = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpPrinterMapDto>($"[Printer_Map_ID]='{printerMapId}'", _printerMapColumns);
+                .Search<MpPrinterMapDto>($"[Printer_Map_ID]={printerMapId}", _printerMapColumns);
 
             return configs.FirstOrDefault();
         }

@@ -8,6 +8,6 @@ namespace Crossroads.Utilities.Services.Interfaces
 {
     public interface IPdfEditor
     {
-        string PopulatePdfMergeFields(string pdfFilepath, Dictionary<string, string> mergeValues);
+        string PopulatePdfMergeFields(byte[] pdfFile, Dictionary<string, string> mergeValues);
     }
 }

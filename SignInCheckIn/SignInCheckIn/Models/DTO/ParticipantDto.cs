@@ -15,5 +15,9 @@ namespace SignInCheckIn.Models.DTO
         public DateTime DateOfBirth { get; set; }
         public bool Selected { get; set; } = false;
         public int ParticipationStatusId { get; set; }
+        public int? AssignedRoomId { get; set; }
+        public string AssignedRoomName { get; set; }
+        public int? AssignedSecondaryRoomId { get; set; } // adventure club field
+        public string AssignedSecondaryRoomName { get; set; } // adventure club field
     }
 }

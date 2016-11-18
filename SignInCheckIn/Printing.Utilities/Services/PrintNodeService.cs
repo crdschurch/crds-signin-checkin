@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Printing.Utilities.Services.Interfaces;
 using RestSharp;
 using System.Configuration;
+using System.Runtime.InteropServices.WindowsRuntime;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
+using Printing.Utilities.Serializers;
 using RestSharp.Authenticators;
 
 namespace Printing.Utilities.Services
@@ -31,13 +33,24 @@ namespace Printing.Utilities.Services
 
         public int SendPrintRequest(PrintRequestDto printRequestDto)
         {
-            var request = new RestRequest("/printjobs", Method.POST);
+            //var request = new RestSharp.RestRequest("https://api.printnode.com/printjobs", RestSharp.Method.POST) { RequestFormat = RestSharp.DataFormat.Json }
+            //    .AddBody(printRequestDto);
+            //var request = new RestRequest("/printjobs", Method.POST);
+            var request = new RestRequest("https://api.printnode.com/printjobs", Method.POST);
 
-            request.AddJsonBody(printRequestDto);
+            //var x = Jso
+            //request.RequestFormat = DataFormat.Json;
+            var x = Newtonsoft.Json.JsonConvert.SerializeObject(printRequestDto);
+            //request.AddParameter("body", x);
+            //request.AddJsonBody(printRequestDto);
+
+            request.AddParameter("content", printRequestDto.content);
 
             // TODO: verify this is properly deserializing
-            var response = _printingRestClient.Execute<int>(request);
-            return response.Data;
+            //var response = _printingRestClient.Execute<int>(request);
+            var response = _printingRestClient.Execute(request);
+            //return response.Data;
+            return int.Parse(response.Content);
         }
     }
 }

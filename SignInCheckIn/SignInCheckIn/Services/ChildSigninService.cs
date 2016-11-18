@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
@@ -24,6 +25,9 @@ namespace SignInCheckIn.Services
         private readonly IPrintingService _printingService;
         private readonly IPdfEditor _pdfEditor;
 
+        private string _kcLabelPath;
+        private string _activityKitLabelPath;
+
         public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
             IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService,
             IContactRepository contactRepository, IKioskRepository kioskRepository)
@@ -36,6 +40,9 @@ namespace SignInCheckIn.Services
             _kioskRepository = kioskRepository;
             _printingService = printingService;
             _pdfEditor = pdfEditor;
+
+            _kcLabelPath = @"C:..\Printing.Utilities\Templates\DefaultLabel.pdf";
+            _activityKitLabelPath = @"C:..\Printing.Utilities\Templates\Activity_Kit_Label.pdf";
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
@@ -68,7 +75,9 @@ namespace SignInCheckIn.Services
 
             // Get groups that are configured for the event
             var eventGroupsForEvent = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
+            var eventRooms = eventGroupsForEvent.Select(r => r.RoomReservation);
 
+            // TODO: Also need to check capacity on the room here
             var mpEventParticipantDtoList = (from participant in participantEventMapDto.Participants.Where(r => r.Selected)
                 // Get groups for the participant
                 let groupIds = _groupRepository.GetGroupsForParticipantId(participant.ParticipantId)
@@ -87,21 +96,24 @@ namespace SignInCheckIn.Services
                         RoomId = eventGroup.RoomReservation.RoomId
                     }).ToList();
 
+            // TODO: Get the room ID and room name back on the returned participant dtos
+            foreach (var eventParticipant in participantEventMapDto.Participants)
+            {
+                eventParticipant.AssignedRoomId = mpEventParticipantDtoList.First(r => r.ParticipantId == eventParticipant.ParticipantId).RoomId;
 
+                if (eventParticipant.AssignedRoomId != null)
+                {
+                    eventParticipant.AssignedRoomName = eventRooms.First(r => r.RoomId == eventParticipant.AssignedRoomId).RoomName;
+                }
+            }
+
+            // populate the room info on the dto
             var response = new ParticipantEventMapDto
             {
                 CurrentEvent = participantEventMapDto.CurrentEvent,
-                Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList()
+                Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList(),
+                Contacts = participantEventMapDto.Contacts
             };
-
-            //response.Participants.ForEach(p => p.Selected = true);
-
-            foreach (var item in response.Participants)
-            {
-                item.Selected = true;
-                var label = _pdfEditor.PopulatePdfMergeFields("somepath", new Dictionary<string, string>());
-                var printId = _printingService.SendPrintRequest(new PrintRequestDto());
-            }
 
             return response;
         }
@@ -109,27 +121,60 @@ namespace SignInCheckIn.Services
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
         {
             // TODO: Finish this
-            //var kiofkConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+            var kiofkConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
 
-            //if (kiofkConfig.PrinterMapId != null)
-            //{
-            //    var kioskPrinterMap = _kioskRepository.GetPrinterMapById(kiofkConfig.PrinterMapId.GetValueOrDefault());
-            //}
-            //else
-            //{
-            //    throw new Exception("Printer Map Id Not Set For Kisok " + kiofkConfig.KioskConfigId);
-            //}
+            if (kiofkConfig.PrinterMapId != null)
+            {
+                var kioskPrinterMap = _kioskRepository.GetPrinterMapById(kiofkConfig.PrinterMapId.GetValueOrDefault());
+            }
+            else
+            {
+                throw new Exception("Printer Map Id Not Set For Kisok " + kiofkConfig.KioskConfigId);
+            }
 
-            //foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
-            //{
-            //    var participantRoom = _eventRepository.
+            // TODO: Correctly build out the list here - just a temporary field for now
+            //var headsOfHouseholdString = participantEventMapDto.Contacts.Select(r => r.Nickname).First();
+            var headsOfHouseholdString = "some random parents";
 
-            //    Dictionary<string, string> printValues = new Dictionary<string, string>
-            //    {
-            //        { "ChildName", participant.FirstName },
-            //        { "ChildRoomName1", participant. }
-            //    }
-            //}
+            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
+            {
+                if (participant.AssignedRoomId == null)
+                {
+                    // print an "I Got a rock" label
+                }
+                else
+                {
+                    Dictionary<string, string> printValues = new Dictionary<string, string>
+                    {
+                        {"ChildName", participant.FirstName},
+                        {"ChildRoomName1", participant.AssignedRoomName},
+                        {"ChildRoomName2", participant.AssignedSecondaryRoomName},
+                        {"ChildEventName", participantEventMapDto.CurrentEvent.EventTitle},
+                        {"ChildParentName", headsOfHouseholdString},
+                        {"ChildCallNumber", 1234.ToString()},
+                        {"ParentCallNumber", 1234.ToString()},
+                        {"ParentRoomName1", participant.AssignedRoomName},
+                        {"ParentRoomName2", participant.AssignedSecondaryRoomName},
+                        {"Informative1", "This label is worn by a parent/guardian"},
+                        {"Informative2", "You must have this label to pick up your child"}
+                    };
+ 
+                    var checkinLabel = Properties.Resources.Checkin_KC_Label;
+                    var processedPdfBytes = _pdfEditor.PopulatePdfMergeFields(checkinLabel, printValues);
+
+                    // TODO: Update with data from MP for printer id
+                    PrintRequestDto printRequestDto = new PrintRequestDto
+                    {
+                        printerId = 175030,
+                        content = processedPdfBytes + "=",
+                        contentType = "pdf_base64",
+                        title = "Print job for event and participant",
+                        source = "CRDS Checkin"
+                    };
+
+                    var printJobId = _printingService.SendPrintRequest(printRequestDto);
+                }
+            }
 
             return participantEventMapDto;
         }
