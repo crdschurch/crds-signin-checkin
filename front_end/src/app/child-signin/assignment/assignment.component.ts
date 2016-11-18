@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { EventParticipants } from '../../shared/models';
+import { Child } from '../../shared/models';
 import { ChildSigninService } from '../child-signin.service';
 
 @Component({
@@ -9,9 +9,8 @@ import { ChildSigninService } from '../child-signin.service';
   styleUrls: ['../scss/_cards.scss', ]
 })
 export class AssignmentComponent implements OnInit {
-  // TODO should be childrenResult: Array<any> = [];
   private error: boolean;
-  private childrenResult: any;
+  private childrenResult: Array<Child>;
   private printed: number = 0;
   private printTotal: number;
   constructor(private childSigninService: ChildSigninService, private router: Router) {}
@@ -23,11 +22,13 @@ export class AssignmentComponent implements OnInit {
       // TODO: call printer here
       // update every 2 seconds for now
       this.printTotal = this.childrenResult.length;
-      setInterval(() => { this.printed++; }, 1000);
-      // redirect after five seconds
-      setTimeout(() => {
-        this.router.navigate(['/child-signin/search']);
-      }, 5000);
+      setInterval(() => {
+        this.printed++;
+        if (this.printed === this.printTotal) {
+          // redirect after a second when complete
+          setTimeout(() => { this.router.navigate(['/child-signin/search']); }, 1000);
+        }
+      }, 2000);
     } else {
       this.error = true;
     }

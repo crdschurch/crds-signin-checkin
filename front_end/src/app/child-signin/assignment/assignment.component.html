@@ -6,8 +6,8 @@
       <div class="eqWrap">
         <div class="card" *ngFor="let child of childrenResult">
           <div class="card-block">
-            <h4 class="card-title">{{child.FirstName}}</h4>
-            <p class="mb-0"><span class="text-muted">Classroom</span><br>{{child.HouseholdId}}</p>
+            <h4 class="card-title">{{child.name()}}</h4>
+            <p class="mb-0"><span class="text-muted">Signed In</span></p>
           </div>
         </div><!--/card-->
       </div><!--/eqWrap-->

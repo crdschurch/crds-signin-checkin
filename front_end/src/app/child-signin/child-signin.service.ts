@@ -10,7 +10,7 @@ export class ChildSigninService {
   private url: string = '';
   private phoneNumber: string = '';
   private childrenAvailable: Array<Child> = [];
-  private eventParticipantsResults: any; // TODO should be EventParticipants
+  private eventParticipantsResults: EventParticipants;
   private event: Event;
 
   constructor(private http: HttpClientService, private router: Router) {
@@ -49,25 +49,16 @@ export class ChildSigninService {
   }
 
   signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
-    // TODO uncomment when backend complete
-    // TODO EventParticipants.fromJson...
-    // const url = `${this.url}/children`;
-    // return this.http.post(url, eventParticipants)
-    //                 .map(res => EventParticipants.fromJson(res.json()))
-    //                 .catch(this.handleError);
-    let eventParticipantsMock = {
-      CurrentEvent: { EventTitle: 'Current Event 123', EventId: 21312, EventStartDate: '123', EventType: '312', EventSite: '3', IsCurrentEvent: true, EventSiteId: 3 },
-      Participants: [
-        { ParticipantId: 123, ContactId: 123, HouseholdId: 123, HouseholdPositionId: 123, FirstName: 'Bob', LastName: 'string', DateOfBirth: new Date(), Selected: true, ParticipationStatusId: 123 },
-        { ParticipantId: 123, ContactId: 123, HouseholdId: 123, HouseholdPositionId: 123, FirstName: 'Kenny', LastName: 'string', DateOfBirth: new Date(), Selected: true, ParticipationStatusId: 123 }
-      ]
-    };
-    this.eventParticipantsResults = eventParticipantsMock;
-    return Observable.of(eventParticipantsMock);
+    const url = `${this.url}/children`;
+    return this.http.post(url, eventParticipants)
+                    .map(res => {
+                      this.eventParticipantsResults = EventParticipants.fromJson(res.json());
+                      return this.eventParticipantsResults;
+                    })
+                    .catch(this.handleError);
   }
 
-  // TODO should be Array<EventParticipants> {
-  getEventParticipantsResults(): Array<any> {
+  getEventParticipantsResults(): EventParticipants {
     return this.eventParticipantsResults;
   }
 
