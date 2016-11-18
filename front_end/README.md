@@ -24,8 +24,14 @@ yarn install
 npm start
 ```
 
+#### Clean out dependencies
 
-#### Run locally with Hot Module Replacement
+```sh
+npm run clean
+```
+
+
+#### Run locally with Hot Module Replacement (not sure if this works)
 
 ```sh
 npm run server:dev:hmr
