@@ -93,12 +93,25 @@ datepicker {
   .pull-right {
     float: right;
   }
-  
+
   .glyphicon.glyphicon-chevron-left:after {
     content: "<";
   }
 
   .glyphicon.glyphicon-chevron-right:after {
     content: ">";
+  }
+
+  .btn-default {
+    color: $btn-secondary-color;
+    background-color: $btn-secondary-bg;
+    border-color: $btn-secondary-border;
+    border-radius: 0.15rem;
+
+    &:hover {
+      color: $btn-secondary-color;
+      background-color: #e6e6e6;
+      border-color: #adadad;
+    }
   }
 }
