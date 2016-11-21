@@ -13,7 +13,8 @@ namespace Printing.Utilities.Services
 
         public PrintNodeService(IConfigRepository configRepository, IRestClient printingRestClient)
         {
-            var printingApiKey = configRepository.GetMpConfigByKey("PrinterAPIKey").Value;
+           var printingApiKey = configRepository.GetMpConfigByKey("PrinterAPIKey").Value;
+
             _printingRestClient = printingRestClient;
 
             // printnode only asks for the api key in the username, no pw needed
