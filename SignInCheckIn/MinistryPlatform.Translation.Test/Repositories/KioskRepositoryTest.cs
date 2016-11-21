@@ -17,6 +17,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
         private List<string> _kioskConfigColumns;
+        private List<string> _printerMapColumns;
 
         [SetUp]
         public void SetUp()
@@ -39,6 +40,15 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "cr_Kiosk_Configs.[Start_Date]",
                 "cr_Kiosk_Configs.[End_Date]",
                 "Printer_Map_ID"
+            };
+
+            _printerMapColumns = new List<string>
+            {
+                "[Printer_Map_ID]",
+                "[Printer_ID]",
+                "[Printer_Name]",
+                "[Computer_ID]",
+                "[Computer_Name]"
             };
 
             _fixture = new KioskRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
@@ -65,6 +75,31 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
             result.Should().BeSameAs(kioskConfigs.First());
+        }
+
+
+        [Test]
+        public void TestGetKioskPrinterMapById()
+        {
+            int printerMapId = 1234567;
+            const string token = "tok 123";
+
+            var mpPrinterMapDtos = new List<MpPrinterMapDto>();
+
+            var mpPrinterMapDto = new MpPrinterMapDto
+            {
+                PrinterMapId = 1234567
+            };
+
+            mpPrinterMapDtos.Add(mpPrinterMapDto);
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpPrinterMapDto>($"[Printer_Map_ID]={printerMapId}", _printerMapColumns)).Returns(mpPrinterMapDtos);
+            var result = _fixture.GetPrinterMapById(printerMapId);
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
+            result.Should().BeSameAs(mpPrinterMapDto);
         }
     }
 }
