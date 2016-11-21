@@ -72,7 +72,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Serializers\RestsharpJsonNetSerializer.cs" />
     <Compile Include="Services\Interfaces\IPrintingService.cs" />
     <Compile Include="Services\PrintNodeService.cs" />
   </ItemGroup>
