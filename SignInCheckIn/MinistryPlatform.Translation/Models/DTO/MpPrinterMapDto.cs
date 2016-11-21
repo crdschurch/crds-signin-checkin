@@ -13,12 +13,12 @@ namespace MinistryPlatform.Translation.Models.DTO
         public int PrinterId { get; set; }
 
         [JsonProperty(PropertyName = "Printer_Name")]
-        public int PrinterName { get; set; }
+        public string PrinterName { get; set; }
 
         [JsonProperty(PropertyName = "Computer_ID")]
         public int ComputerId { get; set; }
 
         [JsonProperty(PropertyName = "Computer_Name")]
-        public int ComputerName { get; set; }
+        public string ComputerName { get; set; }
     }
 }

@@ -12,7 +12,7 @@ import { EventParticipants, Child } from '../../shared/models';
 })
 
 export class AvailableChildrenComponent implements OnInit {
-  private childrenAvailable: Array<Child> = [];
+  private eventParticipants: EventParticipants;
   private isServing: boolean = false;
   private isReady: boolean = false;
 
@@ -27,9 +27,9 @@ export class AvailableChildrenComponent implements OnInit {
    this.route.params.forEach((params: Params) => {
       let phoneNumber = params['phoneNumber'];
       this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe(
-        (childrenAvailable) => {
+        (result) => {
           this.isReady = true;
-          this.childrenAvailable = childrenAvailable;
+          this.eventParticipants = result;
         }, (err) => {
           this.isReady = true;
           this.rootService.announceEvent('generalError');
@@ -39,16 +39,13 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  signIn() {
-   const event = this.childSigninService.getEvent();
-   const children = this.childrenAvailable;
-   const eventParticipants = EventParticipants.fromJson({ CurrentEvent: event, Participants: children });
-   if (!eventParticipants.hasSelectedParticipants()) {
+   if (!this.eventParticipants.hasSelectedParticipants()) {
      this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
      return;
    }
 
    this.isReady = false;
-   this.childSigninService.signInChildren(eventParticipants).subscribe(
+   this.childSigninService.signInChildren(this.eventParticipants).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;
        if (response && response.Participants && response.Participants.length > 0) {
@@ -61,6 +58,10 @@ export class AvailableChildrenComponent implements OnInit {
        this.rootService.announceEvent('generalError');
      }
    );
+ }
+
+ public childrenAvailable(): Child[] {
+   return this.eventParticipants.Participants;
  }
 
  public showServiceSelectModal(): void {

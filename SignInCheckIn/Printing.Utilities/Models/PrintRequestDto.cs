@@ -5,15 +5,18 @@ namespace Printing.Utilities.Models
     public class PrintRequestDto
     {
         [JsonProperty(PropertyName = "printerId")]
-        public int PrinterId { get; set; }
+        public int printerId { get; set; }
 
         [JsonProperty(PropertyName = "title")]
-        public string Title { get; set; } // should be descriptive of origin and purpose
+        public string title { get; set; } // should be descriptive of origin and purpose
 
         [JsonProperty(PropertyName = "contentType")]
-        public string ContentType { get; set; }
+        public string contentType { get; set; }
 
         [JsonProperty(PropertyName = "content")]
-        public string Content { get; set; }
+        public string content { get; set; }
+
+        [JsonProperty(PropertyName = "source")]
+        public string source { get; set; }
     }
 }

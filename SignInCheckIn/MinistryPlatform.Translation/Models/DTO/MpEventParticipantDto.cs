@@ -49,6 +49,15 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty("Room_ID")]
         public int? RoomId { get; set; }
 
+        [JsonProperty("Room_Name")]
+        public string RoomName { get; set; }
+
+        [JsonIgnore]
+        public int? SecondaryRoomId { get; set; }
+
+        [JsonIgnore]
+        public string SecondaryRoomName { get; set; }
+
         [JsonProperty("Call_Parents")]
         public bool CallParents { get; set; }
 

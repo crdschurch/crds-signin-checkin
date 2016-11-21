@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
-using Microsoft.Win32.SafeHandles;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
@@ -16,24 +15,29 @@ namespace SignInCheckIn.Services
     public class ChildSigninService : IChildSigninService
     {
         private readonly IChildSigninRepository _childSigninRepository;
-        private readonly IContactRepository _contactRepository;
         private readonly IEventRepository _eventRepository;
         private readonly IEventService _eventService;
         private readonly IGroupRepository _groupRepository;
         private readonly IKioskRepository _kioskRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IPrintingService _printingService;
         private readonly IPdfEditor _pdfEditor;
 
-        public ChildSigninService(IChildSigninRepository childSigninRepository, IEventRepository eventRepository, 
-            IGroupRepository groupRepository, IEventService eventService, IPdfEditor pdfEditor, IPrintingService printingService,
-            IContactRepository contactRepository, IKioskRepository kioskRepository)
+        public ChildSigninService(IChildSigninRepository childSigninRepository,
+                                  IEventRepository eventRepository,
+                                  IGroupRepository groupRepository,
+                                  IEventService eventService,
+                                  IPdfEditor pdfEditor,
+                                  IPrintingService printingService,
+                                  IContactRepository contactRepository,
+                                  IKioskRepository kioskRepository)
         {
             _childSigninRepository = childSigninRepository;
-            _contactRepository = contactRepository;
             _eventRepository = eventRepository;
             _groupRepository = groupRepository;
             _eventService = eventService;
             _kioskRepository = kioskRepository;
+            _contactRepository = contactRepository;
             _printingService = printingService;
             _pdfEditor = pdfEditor;
         }
@@ -42,14 +46,19 @@ namespace SignInCheckIn.Services
         {
             var eventDto = _eventService.GetCurrentEventForSite(siteId);
             var householdId = _childSigninRepository.GetHouseholdIdByPhoneNumber(phoneNumber);
+            if (householdId == null)
+            {
+                throw new ApplicationException($"Could not locate household for phone number {phoneNumber}");
+            }
 
             var mpChildren = _childSigninRepository.GetChildrenByHouseholdId(householdId, Mapper.Map<MpEventDto>(eventDto));
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
 
-            //var mpHouseholdContactDtos = _contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId);
+            var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId.Value));
 
-            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            var participantEventMapDto = new ParticipantEventMapDto
             {
+                Contacts = headsOfHousehold,
                 Participants = childrenDtos,
                 CurrentEvent = eventDto
             };
@@ -68,6 +77,7 @@ namespace SignInCheckIn.Services
 
             // Get groups that are configured for the event
             var eventGroupsForEvent = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
+            var eventRooms = eventGroupsForEvent.Select(r => r.RoomReservation).ToList();
 
             var mpEventParticipantDtoList = (from participant in participantEventMapDto.Participants.Where(r => r.Selected)
                 // Get groups for the participant
@@ -75,7 +85,6 @@ namespace SignInCheckIn.Services
 
                 // TODO: Gracefully handle exception for mix of valid and invalid signins
                 let eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g.Id))
-
                 select
                     new MpEventParticipantDto
                     {
@@ -89,51 +98,91 @@ namespace SignInCheckIn.Services
                         RoomId = eventGroup.RoomReservation.RoomId
                     }).ToList();
 
+            foreach (var eventParticipant in participantEventMapDto.Participants)
+            {
+                var assignedRoomId = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId)?.RoomId;
+                var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
+                // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
+                if (assignedRoom != null && assignedRoom.AllowSignIn)
+                {
+                    eventParticipant.AssignedRoomId = assignedRoom.RoomId;
+                    eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+                }
+                else
+                {
+                    eventParticipant.AssignedRoomId = null;
+                    eventParticipant.AssignedRoomName = null;
+                }
+            }
 
+            // populate the room info on the dto
             var response = new ParticipantEventMapDto
             {
                 CurrentEvent = participantEventMapDto.CurrentEvent,
-                Participants = _childSigninRepository.CreateEventParticipants(mpEventParticipantDtoList).Select(Mapper.Map<ParticipantDto>).ToList()
+                // TODO Only creating event participants for kids with a room assigned - should be handled in bumping rules eventually
+                Participants =
+                    _childSigninRepository.CreateEventParticipants(
+                        mpEventParticipantDtoList.Where(
+                            p => participantEventMapDto.Participants.Find(q => q.Selected && q.ParticipantId == p.ParticipantId && q.AssignedRoomId.HasValue) != null).ToList())
+                        .Select(Mapper.Map<ParticipantDto>)
+                        .ToList(),
+                Contacts = participantEventMapDto.Contacts
             };
 
-            //response.Participants.ForEach(p => p.Selected = true);
+            // TODO Add back those participants that didn't get a room assigned - should be handled in bumping rules eventually
+            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => p.Selected && !p.AssignedRoomId.HasValue));
 
-            /**
-            foreach (var item in response.Participants)
-            {
-                item.Selected = true;
-                var label = _pdfEditor.PopulatePdfMergeFields("somepath", new Dictionary<string, string>());
-                var printId = _printingService.SendPrintRequest(new PrintRequestDto());
-            }
-            **/
+            response.Participants.ForEach(p => p.Selected = true);
 
             return response;
         }
 
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
         {
-            // TODO: Finish this
-            //var kiofkConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+            var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+            MpPrinterMapDto kioskPrinterMap;
 
-            //if (kiofkConfig.PrinterMapId != null)
-            //{
-            //    var kioskPrinterMap = _kioskRepository.GetPrinterMapById(kiofkConfig.PrinterMapId.GetValueOrDefault());
-            //}
-            //else
-            //{
-            //    throw new Exception("Printer Map Id Not Set For Kisok " + kiofkConfig.KioskConfigId);
-            //}
+            if (kioskConfig.PrinterMapId != null)
+            {
+                kioskPrinterMap = _kioskRepository.GetPrinterMapById(kioskConfig.PrinterMapId.GetValueOrDefault());
+            }
+            else
+            {
+                throw new Exception("Printer Map Id Not Set For Kisok " + kioskConfig.KioskConfigId);
+            }
 
-            //foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected == true))
-            //{
-            //    var participantRoom = _eventRepository.
+            var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => $"{c.Nickname} {c.LastName}").ToArray());
 
-            //    Dictionary<string, string> printValues = new Dictionary<string, string>
-            //    {
-            //        { "ChildName", participant.FirstName },
-            //        { "ChildRoomName1", participant. }
-            //    }
-            //}
+            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
+            {
+                var printValues = new Dictionary<string, string>
+                {
+                    {"ChildName", participant.FirstName},
+                    {"ChildRoomName1", participant.AssignedRoomName},
+                    {"ChildRoomName2", participant.AssignedSecondaryRoomName},
+                    {"ChildEventName", participantEventMapDto.CurrentEvent.EventTitle},
+                    {"ChildParentName", headsOfHousehold},
+                    {"ChildCallNumber", participant.CallNumber},
+                    {"ParentCallNumber", participant.CallNumber},
+                    {"ParentRoomName1", participant.AssignedRoomName},
+                    {"ParentRoomName2", participant.AssignedSecondaryRoomName},
+                    {"Informative1", "This label is worn by a parent/guardian"},
+                    {"Informative2", "You must have this label to pick up your child"}
+                };
+                var labelTemplate = participant.AssignedRoomId == null ? Properties.Resources.Activity_Kit_Label : Properties.Resources.Checkin_KC_Label;
+                var mergedPdf = _pdfEditor.PopulatePdfMergeFields(labelTemplate, printValues);
+
+                var printRequestDto = new PrintRequestDto
+                {
+                    printerId = kioskPrinterMap.PrinterId,
+                    content = mergedPdf + "=",
+                    contentType = "pdf_base64",
+                    title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.FirstName} (id #{participant.ParticipantId})",
+                    source = "CRDS Checkin"
+                };
+
+                _printingService.SendPrintRequest(printRequestDto);
+            }
 
             return participantEventMapDto;
         }

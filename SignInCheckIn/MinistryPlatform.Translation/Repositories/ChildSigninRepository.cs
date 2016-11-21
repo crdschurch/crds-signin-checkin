@@ -169,6 +169,11 @@ namespace MinistryPlatform.Translation.Repositories
 
 	    public List<MpEventParticipantDto> CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
         {
+	        if (mpEventParticipantDtos == null || !mpEventParticipantDtos.Any())
+	        {
+	            return new List<MpEventParticipantDto>();
+	        }
+
             var token = _apiUserRepository.GetToken();
 
             var columnList = new List<string>
@@ -186,7 +191,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Group_Participant_ID",
                 "[Check-in_Station]",
                 "Group_ID",
-                "Room_ID",
+                "Room_ID_Table.[Room_ID]",
+                "Room_ID_Table.[Room_Name]",
                 "Call_Parents",
                 "Group_Role_ID",
                 "Response_ID",
@@ -194,7 +200,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Registrant_Message_Sent"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
+            var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
+	        return participants;
         }
     }
 }

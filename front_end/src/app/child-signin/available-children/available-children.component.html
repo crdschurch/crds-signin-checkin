@@ -14,7 +14,7 @@
           </a>
         </div>
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
-        <div class="card" *ngFor="let kid of childrenAvailable" >
+        <div class="card" *ngFor="let kid of childrenAvailable()" >
           <available-child [child]="kid">
           </available-child>
         </div><!--/card-->
