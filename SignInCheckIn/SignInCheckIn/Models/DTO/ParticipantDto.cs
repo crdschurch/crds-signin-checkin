@@ -30,5 +30,7 @@ namespace SignInCheckIn.Models.DTO
                 return c.Substring(c.Length - 4);
             }
         }
+
+        public string SignInErrorMessage { get; set; }
     }
 }
