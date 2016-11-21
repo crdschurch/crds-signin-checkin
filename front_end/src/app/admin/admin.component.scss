@@ -103,13 +103,13 @@ datepicker {
   }
 
   .btn-default {
-    color: #373a3c;
-    background-color: #fff;
-    border-color: #ccc;
+    color: $btn-secondary-color;
+    background-color: $btn-secondary-bg;
+    border-color: $btn-secondary-border;
     border-radius: 0.15rem;
 
     &:hover {
-      color: #373a3c;
+      color: $btn-secondary-color;
       background-color: #e6e6e6;
       border-color: #adadad;
     }
