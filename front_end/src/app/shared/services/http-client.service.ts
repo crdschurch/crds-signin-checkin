@@ -69,7 +69,7 @@ export class HttpClientService {
       if (machineConfig.CongregationId) {
         reqHeaders.set('Crds-Site-Id', machineConfig.CongregationId.toString());
       }
-      if (machineConfig.KioskConfigId) {
+      if (machineConfig.KioskIdentifier) {
         reqHeaders.set('Crds-Kiosk-Identifier', machineConfig.KioskIdentifier);
       }
     }

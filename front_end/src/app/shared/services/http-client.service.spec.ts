@@ -6,7 +6,7 @@ import { Http, RequestOptions, Headers, Response, ResponseOptions } from '@angul
 import { MockConnection, MockBackend } from '@angular/http/testing';
 import {CookieService, CookieOptions} from 'angular2-cookie/core';
 import { UserService } from './user.service';
-import { User } from '../models';
+import { User, MachineConfiguration } from '../models';
 
 describe('HttpClientService', () => {
   let fixture: HttpClientService;
@@ -112,6 +112,21 @@ describe('HttpClientService', () => {
           expect(requestHeaders.has('RefreshToken')).toBeTruthy();
           expect(requestHeaders.get('RefreshToken')).toEqual('ref456');
         });
+      });
+    });
+
+    it('should send site id and kiosk id if they exist', () => {
+      let machineConfig = new MachineConfiguration();
+      machineConfig.CongregationId = 678;
+      machineConfig.KioskIdentifier = '12345678';
+
+      spyOn(cookie, 'getObject').and.returnValue(machineConfig);
+      let response = fixture.get('/test/123');
+      response.subscribe((r) => {
+        expect(requestHeaders.has('Crds-Site-Id')).toBeTruthy();
+        expect(requestHeaders.get('Crds-Site-Id')).toEqual(`${machineConfig.CongregationId}`);
+        expect(requestHeaders.has('Crds-Kiosk-Identifier')).toBeTruthy();
+        expect(requestHeaders.get('Crds-Kiosk-Identifier')).toEqual(machineConfig.KioskIdentifier);
       });
     });
   });
