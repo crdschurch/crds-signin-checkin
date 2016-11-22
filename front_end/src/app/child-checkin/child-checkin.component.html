@@ -39,7 +39,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 text-xs-left">
-          <a (click)="showServiceSelectModal.show()" class="btn btn-primary btn-block"  [ngClass]="{'disabled': !selectedEvent }">
+          <a (click)="showServiceSelectModal()" class="btn btn-primary btn-block"  [ngClass]="{'disabled': !selectedEvent }">
             <span [hidden]="ready">...</span>
             <span [hidden]="!ready">
               <span [hidden]="!selectedEvent">
@@ -59,10 +59,10 @@
 
 
 
-<div bsModal #showServiceSelectModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="serviceSelectModal" aria-hidden="true">
+<div bsModal #serviceSelectModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="serviceSelectModal" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <button type="button" class="close mr-1 mt-1" (click)="showServiceSelectModal.hide()" aria-label="Close">
+      <button type="button" class="close mr-1 mt-1" (click)="hideServiceSelectModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
       <div class="modal-body pt-3 pb-3">
@@ -71,7 +71,7 @@
         </h4>
         <div class="row mx-1">
           <div class="col-xs-4 mb-1" *ngFor="let event of todaysEvents">
-            <button class="btn btn-primary btn-block" [ngClass]="{'active': isActive(event)}" (click)="selectedEvent = event; showServiceSelectModal.hide();">
+            <button class="btn btn-primary btn-block" [ngClass]="{'active': isActive(event)}" (click)="selectedEvent = event; hideServiceSelectModal();">
               {{event.EventStartDate | amDateFormat :'dddd'}}&nbsp;{{event.EventStartDate | amDateFormat :'h:mma'}}
             </button>
           </div>

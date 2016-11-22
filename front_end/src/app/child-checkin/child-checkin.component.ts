@@ -86,6 +86,10 @@ export class ChildCheckinComponent implements OnInit {
     this.serviceSelectModal.show();
   }
 
+  public hideServiceSelectModal() {
+    this.serviceSelectModal.hide();
+  }
+
   public showChildDetailModal() {
     this.childDetailModal.show();
   }
