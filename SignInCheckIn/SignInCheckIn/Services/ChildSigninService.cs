@@ -104,12 +104,12 @@ namespace SignInCheckIn.Services
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
-                    eventParticipant.SignInErrorMessage = $"{eventDto.EventTitle}: {eventParticipant.FirstName} is not in a Kids Club Group";
+                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: {eventParticipant.FirstName} is not in a Kids Club Group ({eventDto.EventTitle})";
                 }
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
-                    eventParticipant.SignInErrorMessage = $"{eventDto.EventTitle}: {eventParticipant.FirstName} is in '{group?.Name}', but group is not configured on event.";
+                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: '{group?.Name}' is not assigned to any rooms for {eventDto.EventTitle} for {eventParticipant.FirstName}";
                 }
                 else
                 {
