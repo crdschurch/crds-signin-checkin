@@ -7,7 +7,7 @@
         <div class="card" *ngFor="let child of childrenResult">
           <div class="card-block">
             <h4 class="card-title">{{child.name()}}</h4>
-            <p class="mb-0"><span class="text-muted">Signed In</span></p>
+            <p class="mb-0"><span class="text-muted">{{child.assignedRoom()}}</span></p>
           </div>
         </div><!--/card-->
       </div><!--/eqWrap-->

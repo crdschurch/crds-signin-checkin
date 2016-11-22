@@ -72,5 +72,9 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Registrant_Message_Sent")]
         public bool RegistrantMessageSent { get; set; }
+
+        public bool HasKidsClubGroup => GroupId.HasValue;
+
+        public bool HasRoomAssignment => RoomId.HasValue;
     }
 }
