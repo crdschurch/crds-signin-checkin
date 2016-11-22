@@ -79,5 +79,15 @@ namespace SignInCheckIn.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] Error_Label {
+            get {
+                object obj = ResourceManager.GetObject("Error_Label", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

@@ -124,4 +124,7 @@
   <data name="Checkin_KC_Label" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Checkin_KC_Label.pdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Error_Label" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Error_Label.pdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

@@ -295,6 +295,16 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 333,
                     Selected = false
+                },
+                new ParticipantDto
+                {
+                    FirstName = "Child4First",
+                    AssignedRoomId = null,
+                    AssignedSecondaryRoomId = 2345678,
+                    AssignedSecondaryRoomName = "TestSecondaryRoom",
+                    ParticipantId = 333,
+                    Selected = false,
+                    SignInErrorMessage = "testerror"
                 }
             };
 
