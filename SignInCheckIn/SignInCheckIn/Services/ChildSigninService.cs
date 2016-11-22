@@ -104,7 +104,7 @@ namespace SignInCheckIn.Services
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
-                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: {eventParticipant.FirstName} is not in a Kids Club Group ({eventDto.EventTitle})";
+                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth})";
                 }
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
