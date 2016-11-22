@@ -153,30 +153,7 @@ namespace SignInCheckIn.Services
 
             var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => $"{c.Nickname} {c.LastName}").ToArray());
 
-            // handle error labels first
-            foreach (var participant in participantEventMapDto.Participants.Where(r => r.SignInErrorMessage != null))
-            {
-                var printValues = new Dictionary<string, string>
-                {
-                    {"ErrorText", participant.SignInErrorMessage}
-                };
-
-                var mergedPdf = _pdfEditor.PopulatePdfMergeFields(Properties.Resources.Error_Label, printValues);
-
-                var printRequestDto = new PrintRequestDto
-                {
-                    printerId = kioskPrinterMap.PrinterId,
-                    content = mergedPdf + "=",
-                    contentType = "pdf_base64",
-                    title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.FirstName} (id #{participant.ParticipantId})",
-                    source = "CRDS Checkin"
-                };
-
-                _printingService.SendPrintRequest(printRequestDto);
-            }
-
-            // handle signed in and activity kit labels second
-            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected && r.SignInErrorMessage == null))
+            foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
             {
                 var printValues = new Dictionary<string, string>
                 {
@@ -190,9 +167,14 @@ namespace SignInCheckIn.Services
                     {"ParentRoomName1", participant.AssignedRoomName},
                     {"ParentRoomName2", participant.AssignedSecondaryRoomName},
                     {"Informative1", "This label is worn by a parent/guardian"},
-                    {"Informative2", "You must have this label to pick up your child"}
+                    {"Informative2", "You must have this label to pick up your child"},
+                    {"ErrorText", participant.SignInErrorMessage}
                 };
-                var labelTemplate = participant.AssignedRoomId == null ? Properties.Resources.Activity_Kit_Label : Properties.Resources.Checkin_KC_Label;
+
+                // Choose the correct label template
+                var labelTemplate = participant.ErrorSigningIn
+                    ? Properties.Resources.Error_Label
+                    : participant.NotSignedIn ? Properties.Resources.Activity_Kit_Label : Properties.Resources.Checkin_KC_Label;
                 var mergedPdf = _pdfEditor.PopulatePdfMergeFields(labelTemplate, printValues);
 
                 var printRequestDto = new PrintRequestDto

@@ -32,5 +32,11 @@ namespace SignInCheckIn.Models.DTO
         }
 
         public string SignInErrorMessage { get; set; }
+
+        public bool ErrorSigningIn => Selected && !string.IsNullOrWhiteSpace(SignInErrorMessage);
+
+        public bool SignedIn => Selected && AssignedRoomId != null;
+
+        public bool NotSignedIn => Selected && AssignedRoomId == null && string.IsNullOrWhiteSpace(SignInErrorMessage);
     }
 }
