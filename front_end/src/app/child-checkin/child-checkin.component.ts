@@ -36,13 +36,16 @@ export class ChildCheckinComponent implements OnInit {
         for (let event of events) {
           this.todaysEvents.push(Event.fromJson(event));
         }
+
         if (this.todaysEvents && this.todaysEvents.length) {
-          for (let event of this.todaysEvents) {
-            if (event.IsCurrentEvent) {
-              this.selectedEvent = event;
-              break;
-            }
-          }
+          // Sort by date
+          this.todaysEvents = this.todaysEvents.sort((a: Event, b: Event) => {
+            return a.EventStartDate.localeCompare(b.EventStartDate);
+          });
+
+          // Set current service
+          this.selectedEvent = this.todaysEvents.find(e => e.IsCurrentEvent);
+
           // if no current service, pick the first one in list
           if (!this.selectedEvent) {
             this.selectedEvent = this.todaysEvents[0];
