@@ -7,22 +7,24 @@ import { EventParticipants, Child } from '../../shared/models';
 
 let fixture: SearchComponent;
 let routerStub: Router;
-
-let childSigninServiceStub: any = {
-  getChildrenByPhoneNumber() {
-    return Observable.of([1, 2, 3]);
-  }
-};
-
 let rootServiceStub: RootService;
+let childSigninService: ChildSigninService;
 
 describe('SearchComponent', () => {
 
   beforeEach(() => {
     routerStub = jasmine.createSpyObj<Router>('router', ['navigate']);
     rootServiceStub = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
+    childSigninService = jasmine.createSpyObj<ChildSigninService>('childSigninService', ['getChildrenByPhoneNumber', 'reset']);
 
-    fixture = new SearchComponent(routerStub, childSigninServiceStub, rootServiceStub);
+    fixture = new SearchComponent(routerStub, childSigninService, rootServiceStub);
+  });
+
+  describe('#ngOnInit', () => {
+    it('should reset the service so nothing is cached', () => {
+      fixture.ngOnInit();
+      expect(childSigninService.reset).toHaveBeenCalled();
+    });
   });
 
   describe('#constructor', () => {
@@ -98,7 +100,6 @@ describe('SearchComponent', () => {
 
     describe('with valid phone number', () => {
       let phoneNumber = '5135551212';
-      let childSigninService: ChildSigninService;
       beforeEach(() => {
         childSigninService = jasmine.createSpyObj<ChildSigninService>('childSigninService', ['getChildrenByPhoneNumber']);
         fixture = new SearchComponent(routerStub, childSigninService, rootServiceStub);

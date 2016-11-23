@@ -128,4 +128,17 @@ describe('ChildSigninService', () => {
       });
     });
   });
+
+  describe('#reset', () => {
+    it('should reset event participants and phone number', () => {
+      httpClientService.get.and.callFake((url: string, data: any, opts: any) => {
+        return Observable.of();
+      });
+      // set the phone number
+      fixture.getChildrenByPhoneNumber('8128128123');
+      fixture.reset();
+      expect(fixture.getPhoneNumber()).toEqual('');
+      expect(fixture.getEventParticipantsResults()).not.toBeDefined();
+    });
+  });
 });

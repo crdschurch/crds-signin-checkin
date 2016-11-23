@@ -50,6 +50,10 @@ export class ChildSigninService {
                     .catch(this.handleError);
   }
 
+  getPhoneNumber(): string {
+    return this.phoneNumber;
+  }
+
   getEventParticipantsResults(): EventParticipants {
     return this.eventParticipantsResults;
   }
@@ -62,6 +66,11 @@ export class ChildSigninService {
                       return this.eventParticipantsResults;
                     })
                     .catch(this.handleError);
+  }
+
+  reset() {
+    this.phoneNumber = '';
+    this.eventParticipantsResults = undefined;
   }
 
   private handleError (error: any) {
