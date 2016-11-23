@@ -108,6 +108,83 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(false, result.Participants.Any());
         }
 
+        /**
+         
+        [Test]
+        public void ShouldSignInParticipants()
+        {
+            // Arrange
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    AssignedRoomId = 1234567,
+                    AssignedRoomName = "TestRoom",
+                    AssignedSecondaryRoomId = 2345678,
+                    AssignedSecondaryRoomName = "TestSecondaryRoom",
+                    ParticipantId = 111,
+                    Selected = true
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventId = 321
+            };
+
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        AllowSignIn = true,
+                        Capacity = 1,
+                        CheckedIn = 2,
+                        EventId = 3,
+                        EventRoomId = null,
+                        Hidden = true,
+                        RoomId = 4,
+                        RoomName = "name",
+                        RoomNumber = "number",
+                        SignedIn = 5,
+                        Volunteers = 6
+                    }
+                }
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto();
+            participantEventMapDto.Participants = participantDtos;
+            participantEventMapDto.Contacts = contactDtos;
+            participantEventMapDto.CurrentEvent = eventDto;
+
+            _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
+            _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns((List<MpEventGroupDto>)null);
+            _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns((List<MpEventParticipantDto>)null);
+
+            // Act
+            var response = _fixture.SigninParticipants(participantEventMapDto);
+
+            // Assert
+            Assert.IsNotNull(response);
+        }
+
+        **/
+
         [Test]
         public void ShouldPrintLabelsForAllParticipants()
         {
