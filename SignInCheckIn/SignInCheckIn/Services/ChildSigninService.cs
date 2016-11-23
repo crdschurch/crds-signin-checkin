@@ -98,28 +98,31 @@ namespace SignInCheckIn.Services
 
             foreach (var eventParticipant in participantEventMapDto.Participants)
             {
-                var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
-                eventParticipant.AssignedRoomId = null;
-                eventParticipant.AssignedRoomName = null;
+                if (eventParticipant.Selected)
+                {
+                    var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
+                    eventParticipant.AssignedRoomId = null;
+                    eventParticipant.AssignedRoomName = null;
 
-                if (!mpEventParticipant.HasKidsClubGroup)
-                {
-                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth})";
-                }
-                else if (!mpEventParticipant.HasRoomAssignment)
-                {
-                    var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
-                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: '{group?.Name}' is not assigned to any rooms for {eventDto.EventTitle} for {eventParticipant.FirstName}";
-                }
-                else
-                {
-                    var assignedRoomId = mpEventParticipant.RoomId;
-                    var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
-                    // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
-                    if (assignedRoom != null && assignedRoom.AllowSignIn)
+                    if (!mpEventParticipant.HasKidsClubGroup)
                     {
-                        eventParticipant.AssignedRoomId = assignedRoom.RoomId;
-                        eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+                        eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth})";
+                    }
+                    else if (!mpEventParticipant.HasRoomAssignment)
+                    {
+                        var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
+                        eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: '{group?.Name}' is not assigned to any rooms for {eventDto.EventTitle} for {eventParticipant.FirstName}";
+                    }
+                    else
+                    {
+                        var assignedRoomId = mpEventParticipant.RoomId;
+                        var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
+                        // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
+                        if (assignedRoom != null && assignedRoom.AllowSignIn)
+                        {
+                            eventParticipant.AssignedRoomId = assignedRoom.RoomId;
+                            eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+                        }
                     }
                 }
             }
