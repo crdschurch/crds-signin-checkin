@@ -80,11 +80,8 @@ namespace SignInCheckIn.Services
             var eventRooms = eventGroupsForEvent.Select(r => r.RoomReservation).ToList();
 
             var mpEventParticipantDtoList = (from participant in participantEventMapDto.Participants.Where(r => r.Selected)
-                // Get groups for the participant
-                let groupIds = _groupRepository.GetGroupsForParticipantId(participant.ParticipantId)
-
                 // TODO: Gracefully handle exception for mix of valid and invalid signins
-                let eventGroup = eventGroupsForEvent.Find(r => groupIds.Exists(g => r.GroupId == g.Id))
+                let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
                 select
                     new MpEventParticipantDto
                     {
@@ -95,23 +92,35 @@ namespace SignInCheckIn.Services
                         LastName = participant.LastName,
                         TimeIn = DateTime.Now,
                         OpportunityId = null,
-                        RoomId = eventGroup.RoomReservation.RoomId
+                        RoomId = eventGroup?.RoomReservation.RoomId,
+                        GroupId = participant.GroupId
                     }).ToList();
 
             foreach (var eventParticipant in participantEventMapDto.Participants)
             {
-                var assignedRoomId = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId)?.RoomId;
-                var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
-                // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
-                if (assignedRoom != null && assignedRoom.AllowSignIn)
+                var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
+                eventParticipant.AssignedRoomId = null;
+                eventParticipant.AssignedRoomName = null;
+
+                if (!mpEventParticipant.HasKidsClubGroup)
                 {
-                    eventParticipant.AssignedRoomId = assignedRoom.RoomId;
-                    eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth})";
+                }
+                else if (!mpEventParticipant.HasRoomAssignment)
+                {
+                    var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
+                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: '{group?.Name}' is not assigned to any rooms for {eventDto.EventTitle} for {eventParticipant.FirstName}";
                 }
                 else
                 {
-                    eventParticipant.AssignedRoomId = null;
-                    eventParticipant.AssignedRoomName = null;
+                    var assignedRoomId = mpEventParticipant.RoomId;
+                    var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
+                    // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
+                    if (assignedRoom != null && assignedRoom.AllowSignIn)
+                    {
+                        eventParticipant.AssignedRoomId = assignedRoom.RoomId;
+                        eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+                    }
                 }
             }
 
@@ -167,9 +176,14 @@ namespace SignInCheckIn.Services
                     {"ParentRoomName1", participant.AssignedRoomName},
                     {"ParentRoomName2", participant.AssignedSecondaryRoomName},
                     {"Informative1", "This label is worn by a parent/guardian"},
-                    {"Informative2", "You must have this label to pick up your child"}
+                    {"Informative2", "You must have this label to pick up your child"},
+                    {"ErrorText", participant.SignInErrorMessage}
                 };
-                var labelTemplate = participant.AssignedRoomId == null ? Properties.Resources.Activity_Kit_Label : Properties.Resources.Checkin_KC_Label;
+
+                // Choose the correct label template
+                var labelTemplate = participant.ErrorSigningIn
+                    ? Properties.Resources.Error_Label
+                    : participant.NotSignedIn ? Properties.Resources.Activity_Kit_Label : Properties.Resources.Checkin_KC_Label;
                 var mergedPdf = _pdfEditor.PopulatePdfMergeFields(labelTemplate, printValues);
 
                 var printRequestDto = new PrintRequestDto

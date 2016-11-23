@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Components.DictionaryAdapter;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -71,7 +70,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            List<MpContactDto> contactDtos = new List<MpContactDto>();
+            var contactDtos = new List<MpContactDto>();
     
             _childSigninRepository.Setup(mocked => mocked.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(primaryHouseholdId.Value);
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>(), It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
@@ -95,7 +94,7 @@ namespace SignInCheckIn.Tests.Services
 
             var mpParticipantDto = new List<MpParticipantDto>();
             var eventDto = new EventDto();
-            List<MpContactDto> contactDtos = new List<MpContactDto>();
+            var contactDtos = new List<MpContactDto>();
 
             _childSigninRepository.Setup(m => m.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(householdId);
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
@@ -109,29 +108,13 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(false, result.Participants.Any());
         }
 
+        /**
+         
         [Test]
-        public void ShouldPrintLabelsForAllParticipants()
+        public void ShouldSignInParticipants()
         {
             // Arrange
-            Guid kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
-
-            MpKioskConfigDto mpKioskConfigDto = new MpKioskConfigDto
-            {
-                KioskIdentifier = kioskId,
-                CongregationId = 1,
-                PrinterMapId = 1111111
-            };
-
-            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
-
-            MpPrinterMapDto mpPrinterMapDto = new MpPrinterMapDto
-            {
-                PrinterMapId = 1111111
-            };
-
-            _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
-
-            List<ParticipantDto> participantDtos = new List<ParticipantDto>
+            var participantDtos = new List<ParticipantDto>
             {
                 new ParticipantDto
                 {
@@ -145,7 +128,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            List<ContactDto> contactDtos = new List<ContactDto>
+            var contactDtos = new List<ContactDto>
             {
                 new ContactDto
                 {
@@ -155,18 +138,111 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            EventDto eventDto = new EventDto
+            var eventDto = new EventDto
             {
-                EventTitle = "test event"
+                EventTitle = "test event",
+                EventId = 321
             };
 
-            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto();
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        AllowSignIn = true,
+                        Capacity = 1,
+                        CheckedIn = 2,
+                        EventId = 3,
+                        EventRoomId = null,
+                        Hidden = true,
+                        RoomId = 4,
+                        RoomName = "name",
+                        RoomNumber = "number",
+                        SignedIn = 5,
+                        Volunteers = 6
+                    }
+                }
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
             participantEventMapDto.Contacts = contactDtos;
             participantEventMapDto.CurrentEvent = eventDto;
 
-            string base64pdf = "aaa";
-            _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<Byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns(base64pdf);
+            _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
+            _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns((List<MpEventGroupDto>)null);
+            _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns((List<MpEventParticipantDto>)null);
+
+            // Act
+            var response = _fixture.SigninParticipants(participantEventMapDto);
+
+            // Assert
+            Assert.IsNotNull(response);
+        }
+
+        **/
+
+        [Test]
+        public void ShouldPrintLabelsForAllParticipants()
+        {
+            // Arrange
+            var kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
+
+            var mpKioskConfigDto = new MpKioskConfigDto
+            {
+                KioskIdentifier = kioskId,
+                CongregationId = 1,
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+
+            var mpPrinterMapDto = new MpPrinterMapDto
+            {
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
+
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    AssignedRoomId = 1234567,
+                    AssignedRoomName = "TestRoom",
+                    AssignedSecondaryRoomId = 2345678,
+                    AssignedSecondaryRoomName = "TestSecondaryRoom",
+                    ParticipantId = 111,
+                    Selected = true
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event"
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto();
+            participantEventMapDto.Participants = participantDtos;
+            participantEventMapDto.Contacts = contactDtos;
+            participantEventMapDto.CurrentEvent = eventDto;
+
+            const string base64Pdf = "aaa";
+            _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<Byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns(base64Pdf);
 
             _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1234567);
 
@@ -183,9 +259,9 @@ namespace SignInCheckIn.Tests.Services
         public void ShouldPrintLabelsForNoParticipants()
         {
             // Arrange
-            Guid kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
+            var kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
 
-            MpKioskConfigDto mpKioskConfigDto = new MpKioskConfigDto
+            var mpKioskConfigDto = new MpKioskConfigDto
             {
                 KioskIdentifier = kioskId,
                 CongregationId = 1,
@@ -194,14 +270,14 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
 
-            MpPrinterMapDto mpPrinterMapDto = new MpPrinterMapDto
+            var mpPrinterMapDto = new MpPrinterMapDto
             {
                 PrinterMapId = 1111111
             };
 
             _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
 
-            List<ParticipantDto> participantDtos = new List<ParticipantDto>
+            var participantDtos = new List<ParticipantDto>
             {
                 new ParticipantDto
                 {
@@ -215,7 +291,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            List<ContactDto> contactDtos = new List<ContactDto>
+            var contactDtos = new List<ContactDto>
             {
                 new ContactDto
                 {
@@ -225,15 +301,17 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            EventDto eventDto = new EventDto
+            var eventDto = new EventDto
             {
                 EventTitle = "test event"
             };
 
-            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto();
-            participantEventMapDto.Participants = participantDtos;
-            participantEventMapDto.Contacts = contactDtos;
-            participantEventMapDto.CurrentEvent = eventDto;
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = participantDtos,
+                Contacts = contactDtos,
+                CurrentEvent = eventDto
+            };
 
             // Act
             _fixture.PrintParticipants(participantEventMapDto, kioskId.ToString());
@@ -248,9 +326,9 @@ namespace SignInCheckIn.Tests.Services
         public void ShouldPrintLabelsForSomeParticipants()
         {
             // Arrange
-            Guid kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
+            var kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
 
-            MpKioskConfigDto mpKioskConfigDto = new MpKioskConfigDto
+            var mpKioskConfigDto = new MpKioskConfigDto
             {
                 KioskIdentifier = kioskId,
                 CongregationId = 1,
@@ -259,14 +337,14 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
 
-            MpPrinterMapDto mpPrinterMapDto = new MpPrinterMapDto
+            var mpPrinterMapDto = new MpPrinterMapDto
             {
                 PrinterMapId = 1111111
             };
 
             _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
 
-            List<ParticipantDto> participantDtos = new List<ParticipantDto>
+            var participantDtos = new List<ParticipantDto>
             {
                 new ParticipantDto
                 {
@@ -295,10 +373,20 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 333,
                     Selected = false
+                },
+                new ParticipantDto
+                {
+                    FirstName = "Child4First",
+                    AssignedRoomId = null,
+                    AssignedSecondaryRoomId = 2345678,
+                    AssignedSecondaryRoomName = "TestSecondaryRoom",
+                    ParticipantId = 333,
+                    Selected = true,
+                    SignInErrorMessage = "testerror"
                 }
             };
 
-            List<ContactDto> contactDtos = new List<ContactDto>
+            var contactDtos = new List<ContactDto>
             {
                 new ContactDto
                 {
@@ -308,28 +396,46 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            EventDto eventDto = new EventDto
+            var eventDto = new EventDto
             {
                 EventTitle = "test event"
             };
 
-            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto();
-            participantEventMapDto.Participants = participantDtos;
-            participantEventMapDto.Contacts = contactDtos;
-            participantEventMapDto.CurrentEvent = eventDto;
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = participantDtos,
+                Contacts = contactDtos,
+                CurrentEvent = eventDto
+            };
 
-            string successLabel = "aaa";
-            _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<Byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns(successLabel);
-
+            const string successLabel = "aaa";
+            _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns(successLabel);
             _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1234567);
 
             // Act
             _fixture.PrintParticipants(participantEventMapDto, kioskId.ToString());
 
             // Assert
-            _kioskRepository.VerifyAll();
+
+            // Verify specific calls, to make sure we populated the right PDFs for the right participants
+            _pdfEditor.Verify(
+                mocked =>
+                    mocked.PopulatePdfMergeFields(Properties.Resources.Checkin_KC_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[0].FirstName))));
+            _pdfEditor.Verify(
+                mocked =>
+                    mocked.PopulatePdfMergeFields(Properties.Resources.Activity_Kit_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[1].FirstName))));
+            _pdfEditor.Verify(
+                mocked =>
+                    mocked.PopulatePdfMergeFields(Properties.Resources.Error_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[3].FirstName))));
             _pdfEditor.VerifyAll();
+
+            // Verify that we called the print service for each expected participant
+            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[0].FirstName))));
+            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[1].FirstName))));
+            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[3].FirstName))));
             _printingService.VerifyAll();
+
+            _kioskRepository.VerifyAll();
         } 
     }
 }

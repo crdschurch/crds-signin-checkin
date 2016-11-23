@@ -254,6 +254,7 @@
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <None Include="Resources\Activity_Kit_Label.pdf" />
     <None Include="Resources\Checkin_KC_Label.pdf" />
+    <None Include="Resources\Error_Label.pdf" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

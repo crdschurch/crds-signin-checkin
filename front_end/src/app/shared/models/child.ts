@@ -16,6 +16,8 @@ export class Child {
   AssignedSecondaryRoomId: number;
   AssignedSecondaryRoomName: string;
   CallNumber: string;
+  SignInErrorMessage: string;
+  GroupId: number;
 
   static fromJson(json: any): Child {
     let c = new Child();
@@ -34,11 +36,17 @@ export class Child {
     c.AssignedSecondaryRoomId = json.AssignedSecondaryRoomId;
     c.AssignedSecondaryRoomName = json.AssignedSecondaryRoomName;
     c.CallNumber = json.CallNumber;
+    c.SignInErrorMessage = json.SignInErrorMessage;
+    c.GroupId = json.GroupId;
     return c;
   }
 
   name(): string {
     return `${this.FirstName} ${this.LastName}`;
+  }
+
+  assignedRoom() {
+    return this.AssignedRoomName ? this.AssignedRoomName : 'Error';
   }
 
   selected(): boolean {

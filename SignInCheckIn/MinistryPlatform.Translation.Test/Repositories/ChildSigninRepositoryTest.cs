@@ -367,7 +367,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.VerifyAll();
             
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(2, result.Count);
             Assert.AreEqual(children[0].ContactId, result[0].ContactId);
         }
         
