@@ -42,7 +42,7 @@ namespace SignInCheckIn.Tests.Services
             _contactRepository = new Mock<IContactRepository>(MockBehavior.Strict);
             _kioskRepository = new Mock<IKioskRepository>(MockBehavior.Strict);
 
-            _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
+            _fixture = new ChildSigninService(_childSigninRepository.Object, _eventRepository.Object,
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object);
         }
@@ -55,7 +55,7 @@ namespace SignInCheckIn.Tests.Services
             int? primaryHouseholdId = 123;
 
             var eventDto = new EventDto();
- 
+
             var mpParticipantDto = new List<MpParticipantDto>
             {
                 new MpParticipantDto
@@ -71,7 +71,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             var contactDtos = new List<MpContactDto>();
-    
+
             _childSigninRepository.Setup(mocked => mocked.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(primaryHouseholdId.Value);
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>(), It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
@@ -108,8 +108,6 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(false, result.Participants.Any());
         }
 
-        /**
-         
         [Test]
         public void ShouldSignInParticipants()
         {
@@ -165,6 +163,14 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            var mpEventParticipants = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    RoomId = 321
+                }
+            };
+
             var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
             participantEventMapDto.Contacts = contactDtos;
@@ -172,9 +178,9 @@ namespace SignInCheckIn.Tests.Services
 
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
-            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns((List<MpEventGroupDto>)null);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
-            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns((List<MpEventParticipantDto>)null);
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipants);
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -183,7 +189,6 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsNotNull(response);
         }
 
-        **/
 
         [Test]
         public void ShouldPrintLabelsForAllParticipants()
