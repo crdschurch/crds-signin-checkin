@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ChildSigninService } from '../child-signin.service';
@@ -9,13 +9,17 @@ import { EventParticipants } from '../../shared/models';
   selector: 'search',
   templateUrl: 'search.component.html'
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit {
   private isReady: boolean = true;
   phoneNumber: string = '';
 
   constructor(private router: Router,
               private childSigninService: ChildSigninService,
               private rootService: RootService) {}
+
+  ngOnInit() {
+    this.childSigninService.reset();
+  }
 
   setPhoneNumber(num: string) {
     if (this.phoneNumber.length < 10) {
