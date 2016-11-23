@@ -86,9 +86,9 @@ admin {
 }
 
 datepicker {
-  .text-success {
-    color: white !important;
-  }
+  // .text-success {
+  //   color: white !important;
+  // }
 
   .pull-right {
     float: right;
@@ -112,6 +112,36 @@ datepicker {
       color: $btn-secondary-color;
       background-color: #e6e6e6;
       border-color: #adadad;
+    }
+
+    &.btn-info {
+      &:hover {
+        color: #fff;
+        background-color: #005a89;
+        border-color: #003f61;
+      }
+    }
+
+    &.btn-link {
+      .text-success {
+        color: $btn-secondary-color !important;
+      }
+    }
+
+    .text-success {
+      color: white !important;
+    }
+  }
+
+  .btn-info {
+    color: #fff;
+    background-color: $brand-primary;
+    border-color: $brand-primary;
+
+    &:hover {
+      color: #fff;
+      background-color: #005a89;
+      border-color: #003f61;
     }
   }
 }
