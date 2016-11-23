@@ -108,7 +108,6 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(false, result.Participants.Any());
         }
 
-        /**
          
         [Test]
         public void ShouldSignInParticipants()
@@ -165,6 +164,15 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            var mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    GroupId = 432,
+                    RoomId = 4
+                }
+            };
+
             var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
             participantEventMapDto.Contacts = contactDtos;
@@ -172,18 +180,18 @@ namespace SignInCheckIn.Tests.Services
 
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
-            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns((List<MpEventGroupDto>)null);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
-            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns((List<MpEventParticipantDto>)null);
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
 
             // Assert
             Assert.IsNotNull(response);
+            Assert.IsNull(response.Participants[0].SignInErrorMessage);
+            StringAssert.Contains("not in a Kids Club Group", response.Participants[1].SignInErrorMessage);
         }
-
-        **/
 
         [Test]
         public void ShouldPrintLabelsForAllParticipants()
