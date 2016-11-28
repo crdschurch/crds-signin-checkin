@@ -10,5 +10,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     public interface IKioskRepository
     {
         MpKioskConfigDto GetMpKioskConfigByIdentifier(Guid kioskConfigId);
+        MpPrinterMapDto GetPrinterMapById(int printerMapId);
     }
 }

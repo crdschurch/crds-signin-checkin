@@ -1,20 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ChildSigninService } from '../child-signin.service';
 import { RootService } from '../../shared/services';
+import { EventParticipants } from '../../shared/models';
 
 @Component({
   selector: 'search',
   templateUrl: 'search.component.html'
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit {
   private isReady: boolean = true;
   phoneNumber: string = '';
 
   constructor(private router: Router,
               private childSigninService: ChildSigninService,
               private rootService: RootService) {}
+
+  ngOnInit() {
+    this.childSigninService.reset();
+  }
 
   setPhoneNumber(num: string) {
     if (this.phoneNumber.length < 10) {
@@ -33,14 +38,19 @@ export class SearchComponent {
   next(): void {
     this.isReady = false;
     if (this.phoneNumber.length === 10) {
-      this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe((availableChildren) => {
+      this.childSigninService.getChildrenByPhoneNumber(this.phoneNumber).subscribe(
+        (result: EventParticipants) => {
         this.isReady = true;
-        if (availableChildren.length > 0) {
+        if (result.hasParticipants()) {
           this.router.navigate(['/child-signin/available-children', this.phoneNumber]);
         } else {
           this.rootService.announceEvent('kcChildSigninNoAvailableChildren');
         }
-      });
+      }, (err) => {
+        this.isReady = true;
+        this.rootService.announceEvent('generalError');
+      }
+    );
     } else {
       this.isReady = true;
       this.rootService.announceEvent('kcChildSigninPhoneNumberNotValid');

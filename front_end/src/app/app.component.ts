@@ -1,7 +1,9 @@
 import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToasterModule, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
-import { ContentService, RootService, SetupService, HttpClientService, ApiService } from './shared/services';
+import { ContentService, RootService, SetupService, HttpClientService, ApiService, UserService } from './shared/services';
+
+import { ComponentsHelper } from 'ng2-bootstrap/ng2-bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -13,10 +15,14 @@ import { ContentService, RootService, SetupService, HttpClientService, ApiServic
 export class AppComponent implements OnInit {
 
   private viewContainerRef: ViewContainerRef;
+  private kioskDisplay: Array<string> = [];
+  private loggedInDisplay: string;
+  private displayHelp: boolean = false;
 
   public customToasterConfig: ToasterConfig =
     new ToasterConfig({
-      positionClass: 'toast-top-center'
+      positionClass: 'toast-top-full-width',
+      timeout: 3000
     });
 
     event: any;
@@ -26,10 +32,13 @@ export class AppComponent implements OnInit {
               private contentService: ContentService,
               private toasterService: ToasterService,
               private setupService: SetupService,
-              private rootService: RootService) {
+              private rootService: RootService,
+              private userService: UserService) {
 
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
+
+    this.hackToFixNg221BugForNg2Bootstrap();
 
     rootService.eventAnnounced$.subscribe(
       event => {
@@ -39,18 +48,19 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.contentService.loadData();
-  }
-
-  activeStep1() {
-    return this.router.url === '/child-signin';
-  }
-
-  activeStep2() {
-    return this.router.url === '/child-signin/results';
-  }
-
-  activeStep3() {
-    return this.router.url === '/child-signin/assignment';
+    if (process.env.ENV !== 'PRODUCTION' && process.env.ENV !== 'DEMO') {
+      this.displayHelp = true;
+      if (this.setupService.getMachineIdConfigCookie()) {
+        this.kioskDisplay = [`Kiosk Config Id: ${this.setupService.getMachineIdConfigCookie()}`,
+          `Kiosk Name: ${this.setupService.getMachineDetailsConfigCookie().KioskName}`,
+          `Kiosk Type: ${this.setupService.getMachineDetailsConfigCookie().kioskType()}`,
+          `Kiosk Site Id: ${this.setupService.getMachineDetailsConfigCookie().CongregationId}`,
+          `Kiosk Site Name: ${this.setupService.getMachineDetailsConfigCookie().CongregationName}`,
+          `Kiosk Room Id: ${this.setupService.getMachineDetailsConfigCookie().RoomId}`,
+          `Kiosk Room Name: ${this.setupService.getMachineDetailsConfigCookie().RoomName}`];
+      }
+      this.loggedInDisplay = `User Logged In: ${this.userService.isLoggedIn()}`;
+    }
   }
 
   inRoom() {
@@ -63,4 +73,30 @@ export class AppComponent implements OnInit {
     });
   }
 
+  closeHelp() {
+    this.displayHelp = false;
+  }
+
+  // https://github.com/valor-software/ng2-bootstrap/issues/986#issuecomment-262293199
+  private hackToFixNg221BugForNg2Bootstrap(): void {
+    ComponentsHelper.prototype.getRootViewContainerRef = function () {
+      // https://github.com/angular/angular/issues/9293
+      if (this.root) {
+        return this.root;
+      }
+      let comps = this.applicationRef.components;
+      if (!comps.length) {
+        throw new Error('ApplicationRef instance not found');
+      }
+      try {
+        /* one more ugly hack, read issue above for details */
+        let rootComponent = this.applicationRef._rootComponents[0];
+        // this.root = rootComponent._hostElement.vcRef;
+        this.root = rootComponent._component.viewContainerRef;
+        return this.root;
+      } catch (e) {
+        throw new Error('ApplicationRef instance not found');
+      }
+    };
+  }
 }

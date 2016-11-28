@@ -1,6 +1,7 @@
 import { Constants } from '../constants';
 
 export class Child {
+  EventParticipantId: number;
   ParticipantId: number;
   ContactId: number;
   HouseholdId: number;
@@ -10,9 +11,17 @@ export class Child {
   DateOfBirth: Date;
   Selected: boolean;
   ParticipationStatusId: number;
+  AssignedRoomId: number;
+  AssignedRoomName: string;
+  AssignedSecondaryRoomId: number;
+  AssignedSecondaryRoomName: string;
+  CallNumber: string;
+  SignInErrorMessage: string;
+  GroupId: number;
 
   static fromJson(json: any): Child {
     let c = new Child();
+    c.EventParticipantId = json.EventParticipantId;
     c.ParticipantId = json.ParticipantId;
     c.ContactId = json.ContactId;
     c.HouseholdId = json.HouseholdId;
@@ -22,11 +31,22 @@ export class Child {
     c.DateOfBirth = json.DateOfBirth;
     c.Selected = json.Selected;
     c.ParticipationStatusId = json.ParticipationStatusId;
+    c.AssignedRoomId = json.AssignedRoomId;
+    c.AssignedRoomName = json.AssignedRoomName;
+    c.AssignedSecondaryRoomId = json.AssignedSecondaryRoomId;
+    c.AssignedSecondaryRoomName = json.AssignedSecondaryRoomName;
+    c.CallNumber = json.CallNumber;
+    c.SignInErrorMessage = json.SignInErrorMessage;
+    c.GroupId = json.GroupId;
     return c;
   }
 
   name(): string {
     return `${this.FirstName} ${this.LastName}`;
+  }
+
+  assignedRoom() {
+    return this.AssignedRoomName ? this.AssignedRoomName : 'Error';
   }
 
   selected(): boolean {

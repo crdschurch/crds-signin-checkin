@@ -6,9 +6,9 @@ import { Observable } from 'rxjs/Observable';
 
 let fixture: ChildCheckinComponent;
 let thisMachineConfig: MachineConfiguration;
-const event = { EventId: '123', IsCurrentEvent: false };
-const event2 = { EventId: '456', IsCurrentEvent: false };
-const eventCurrent = { EventId: '789', IsCurrentEvent: true };
+const event = { EventId: '123', EventStartDate: '2016-11-22 10:00:00', IsCurrentEvent: false };
+const event2 = { EventId: '456', EventStartDate: '2016-11-22 09:00:00', IsCurrentEvent: false };
+const eventCurrent = { EventId: '789', EventStartDate: '2016-11-22 08:00:00', IsCurrentEvent: true };
 let setupService = jasmine.createSpyObj('setupService', ['getMachineDetailsConfigCookie']);
 setupService.getMachineDetailsConfigCookie.and.returnValue(thisMachineConfig);
 let apiService = jasmine.createSpyObj('apiService', ['getEvents']);
@@ -51,7 +51,7 @@ describe('ChildCheckinComponent', () => {
 
          it('should set first when no IsCurrentEvent', () => {
            fixture2.ngOnInit();
-           expect(fixture2.selectedEvent.EventId).toEqual(event.EventId);
+           expect(fixture2.selectedEvent.EventId).toEqual(event2.EventId);
          });
        });
     });

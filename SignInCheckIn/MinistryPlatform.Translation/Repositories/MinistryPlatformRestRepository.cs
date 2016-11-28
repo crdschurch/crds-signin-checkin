@@ -105,7 +105,7 @@ namespace MinistryPlatform.Translation.Repositories
         private T ExecutePutOrPost<T>(T record, Method method, string selectColumns)
         {
             var tableName = GetTableName<T>();
-            var request = new RestRequest($"/tables/{tableName}", method).SetJsonBody(record);
+            var request = new RestRequest($"/tables/{tableName}", method).SetJsonArrayBody(record);
 
             AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
@@ -124,7 +124,7 @@ namespace MinistryPlatform.Translation.Repositories
         private List<T> ExecutePutOrPost<T>(List<T> records, Method method, string selectColumns)
         {
             var tableName = GetTableName<T>();
-            var request = new RestRequest($"/tables/{tableName}", method).SetJsonBody(records);
+            var request = new RestRequest($"/tables/{tableName}", method).SetJsonArrayBody(records);
 
             AddAuthorization(AddSelectAndFilter(request, selectColumns, null));
 
