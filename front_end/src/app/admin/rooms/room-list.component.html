@@ -18,6 +18,113 @@
           </div>
         </div>
       </div>
+      <div class="col-xs-12">
+        <preloader *ngIf="!isReady()"></preloader>
+        <table class="table table-striped" *ngIf="isReady()">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th></th>
+              <th>Call Number</th>
+              <th>Room Assigned</th>
+              <th>Time Signed In</th>
+              <th>Guardians</th>
+              <th>Reverse Sign In</th>
+              <th>Label</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                Andrea
+              </td>
+              <td>
+                Smith
+              </td>
+              <td>
+
+              </td>
+              <td>
+                1234
+              </td>
+              <td>
+                Nursery A K112
+              </td>
+              <td>
+                4:15pm
+              </td>
+              <td>
+                Bob Smith, Dee Dee Smith
+              </td>
+              <td>
+                <a class="btn btn-primary btn-sm" href="#">Reverse</a>
+              </td>
+              <td>
+                <a class="btn btn-primary btn-sm" href="#">Reprint</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Andrea
+              </td>
+              <td>
+                Smith
+              </td>
+              <td>
+                <span class="tag tag-pill tag-default">Guest</span>
+              </td>
+              <td>
+                1234
+              </td>
+              <td>
+                Nursery A K112
+              </td>
+              <td>
+                4:15pm
+              </td>
+              <td>
+                Bob Smith, Dee Dee Smith
+              </td>
+              <td>
+                <a class="btn btn-primary btn-sm" href="#">Reverse</a>
+              </td>
+              <td>
+                <a class="btn btn-primary btn-sm" href="#">Reprint</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Andrea
+              </td>
+              <td>
+                Smith
+              </td>
+              <td>
+
+              </td>
+              <td>
+                1234
+              </td>
+              <td>
+                Nursery A K112
+              </td>
+              <td>
+                4:15pm
+              </td>
+              <td>
+                Bob Smith, Dee Dee Smith
+              </td>
+              <td>
+                <a class="btn btn-primary btn-sm" href="#">Reverse</a>
+              </td>
+              <td>
+                <a class="btn btn-primary btn-sm" href="#">Reprint</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div><!--/wrapper children-->
