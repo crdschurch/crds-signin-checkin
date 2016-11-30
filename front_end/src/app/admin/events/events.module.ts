@@ -4,6 +4,7 @@ import { MomentModule } from 'angular2-moment';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { HeaderModule } from '../header';
+import { NewFamilyRegistrationComponent } from './new-family-registration';
 import { EventImportComponent } from './import/event-import.component';
 import { EventListComponent } from './event-list.component';
 import { EventResetComponent } from './reset/event-reset.component';
@@ -25,6 +26,7 @@ import { eventsRouting } from './events.routes';
     RoomGroupComponent,
     RoomComponent,
     AlternateRoomsComponent,
+    NewFamilyRegistrationComponent,
     RoomBumpComponent
   ],
   imports: [

@@ -1,6 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { NewFamilyRegistrationComponent } from './new-family-registration';
 import { EventListComponent } from './event-list.component';
 import { RoomListComponent } from './rooms/room-list.component';
 import { RoomGroupListComponent } from './rooms/room-group-list.component';
@@ -12,7 +13,8 @@ export const eventsRoutes: Routes = [
   { path: ':eventId/rooms', component: RoomListComponent },
   { path: ':eventId/rooms/:roomId', component: RoomGroupListComponent },
   { path: ':eventId/import', component: EventImportComponent },
-  { path: ':eventId/reset', component: EventResetComponent }
+  { path: ':eventId/reset', component: EventResetComponent },
+  { path: ':eventId/new-family-registration', component: NewFamilyRegistrationComponent }
 ];
 
 export const eventsRouting: ModuleWithProviders = RouterModule.forChild(eventsRoutes);
