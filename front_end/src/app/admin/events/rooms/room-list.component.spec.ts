@@ -1,10 +1,10 @@
 import { RoomListComponent } from './room-list.component';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { AdminService } from '../admin.service';
-import { Event, Room } from '../../shared/models';
-import { ApiService } from '../../shared/services';
-import { HeaderService } from '../header/header.service';
-import { RootService } from '../../shared/services/root.service';
+import { AdminService } from '../../admin.service';
+import { Event, Room } from '../../../shared/models';
+import { ApiService } from '../../../shared/services';
+import { HeaderService } from '../../header/header.service';
+import { RootService } from '../../../shared/services/root.service';
 import { Observable } from 'rxjs';
 
 import * as moment from 'moment';
