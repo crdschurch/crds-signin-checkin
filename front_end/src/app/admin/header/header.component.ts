@@ -25,4 +25,12 @@ export class HeaderComponent {
     this.userService.logOut();
     this.router.navigate(['/admin/sign-in']);
   }
+
+  isManageRoomsRoute() {
+    return /\/admin\/events\/.*\/rooms/.test(this.router.url);
+  }
+
+  isEventsRoute() {
+    return this.router.url === '/admin/events';
+  }
 }
