@@ -2,8 +2,8 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { EventListComponent } from './event-list.component';
-import { RoomListComponent } from '../rooms/room-list.component';
-import { RoomGroupListComponent } from '../rooms/room-group-list.component';
+import { RoomListComponent } from './rooms/room-list.component';
+import { RoomGroupListComponent } from './rooms/room-group-list.component';
 import { EventImportComponent } from './import/event-import.component';
 import { EventResetComponent } from './reset/event-reset.component';
 

@@ -7,7 +7,7 @@ import { UserService } from '../../shared/services';
 @Component({
   selector: 'header-event',
   templateUrl: 'header.component.html',
-  styleUrls: ['header.component.scss']
+  styleUrls: ['header.component.scss'],
 })
 export class HeaderComponent {
   event: Event;

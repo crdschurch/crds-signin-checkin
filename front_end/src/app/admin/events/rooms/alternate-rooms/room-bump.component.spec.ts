@@ -1,6 +1,6 @@
 import { RoomBumpComponent } from './room-bump.component';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { Room } from '../../../shared/models';
+import { Room } from '../../../../shared/models';
 
 describe('RoomBumpComponent', () => {
   let fixture: RoomBumpComponent;

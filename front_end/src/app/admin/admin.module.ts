@@ -5,7 +5,6 @@ import { MomentModule } from 'angular2-moment';
 import { AdminComponent } from './admin.component';
 import { SignInComponent } from './sign-in';
 import { NewFamilyRegistrationComponent } from './new-family-registration';
-import { HeaderComponent } from './header/header.component';
 import { EventsModule } from './events/events.module';
 import { adminRouting } from './admin.routes';
 
@@ -16,7 +15,6 @@ import { adminRouting } from './admin.routes';
   declarations: [
     AdminComponent,
     SignInComponent,
-    HeaderComponent,
     NewFamilyRegistrationComponent,
   ],
   // other modules whose exported classes are needed

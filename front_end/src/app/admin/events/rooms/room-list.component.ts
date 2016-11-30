@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Event, Room } from '../../shared/models';
-import { AdminService } from '../admin.service';
-import { ApiService } from '../../shared/services';
-import { HeaderService } from '../header/header.service';
-import { RootService } from '../../shared/services/root.service';
+import { Event, Room } from '../../../shared/models';
+import { AdminService } from '../../admin.service';
+import { ApiService } from '../../../shared/services';
+import { HeaderService } from '../../header/header.service';
+import { RootService } from '../../../shared/services/root.service';
 
 import * as moment from 'moment';
 

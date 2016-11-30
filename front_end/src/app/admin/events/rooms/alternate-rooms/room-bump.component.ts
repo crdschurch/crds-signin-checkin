@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Room } from '../../../shared/models';
-import { AdminService } from '../../admin.service';
+import { Room } from '../../../../shared/models';
+import { AdminService } from '../../../admin.service';
 
 @Component({
   selector: '.room-bump',
