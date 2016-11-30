@@ -62,7 +62,9 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID",
                 "Capacity",
                 "Volunteers",
-                "Allow_CheckIn"
+                "Allow_CheckIn",
+                $"[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 3) AS Signed_In",
+                $"[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 4) AS Checked_In"
             };
 
             var eventRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
