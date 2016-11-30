@@ -7,7 +7,7 @@
         <h1>New Family Registration</h1>
       </div><!--/col-sm-12-->
 
-      <form>
+      <form  #newFamilyRegistrationForm="ngForm">
         <div class="col-xs-12 mb-2">
           <h4>Parent/Guardian Info</h4>
 
@@ -33,8 +33,8 @@
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
                 <label for="formGroupExampleInput" class="control-label">Number of Children</label>
-                <select class="form-control">
-                  <option *ngFor="let number of numberOfPossibleKids;">{{number}}</option>
+                <select class="form-control" (change)="updateNumberOfKids($event.target.value)">
+                  <option *ngFor="let number of numberOfPossibleKids;">{{ number }}</option>
                 </select>
               </div>
             </div>
@@ -42,53 +42,30 @@
         </div>
 
 
-        <div class="col-xs-12 mb-2">
-          <h4>Child 2</h4>
+        <div class="col-xs-12 mb-2" *ngFor="let child of children; let idx = index;">
+          <h4>Child {{ idx+1 }}</h4>
 
           <div class="row">
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
-                <label for="formGroupExampleInput" class="control-label">First Name</label>
-                <input type="text" class="form-control" id="formGroupExampleInput">
+                <label for="firstName" class="control-label">First Name</label>
+                <input type="text" class="form-control" [(ngModel)]="child.FirstName" name="firstName">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
-                <label for="formGroupExampleInput" class="control-label">Last Name</label>
-                <input type="text" class="form-control" id="formGroupExampleInput">
+                <label for="lastName" class="control-label">Last Name</label>
+                <input type="text" class="form-control" [(ngModel)]="child.LastName" name="lastName">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
-                <label for="formGroupExampleInput" class="control-label">Year / Grade</label>
-                <select class="form-control">
-                  <option></option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                </select>
+                <label for="birthDate" class="control-label">Birth Date</label>
+                <br/>
+                <crds-datepicker name="birthDate" autoClose="true" [(date)]="child.DateOfBirth"></crds-datepicker>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 mb-2">
-          <h4>Child 1</h4>
-
-          <div class="row">
-            <div class="col-xs-12 col-sm-6">
-              <div class="form-group required">
-                <label for="formGroupExampleInput" class="control-label">First Name</label>
-                <input type="text" class="form-control" id="formGroupExampleInput">
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-6">
-              <div class="form-group required">
-                <label for="formGroupExampleInput" class="control-label">Last Name</label>
-                <input type="text" class="form-control" id="formGroupExampleInput">
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(child)">
               <div class="form-group required">
                 <label for="formGroupExampleInput" class="control-label">Year / Grade</label>
                 <select class="form-control">
