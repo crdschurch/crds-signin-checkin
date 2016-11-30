@@ -155,6 +155,7 @@
     <Compile Include="Controllers\MPAuthTestExtensions.cs" />
     <Compile Include="Filters\DomainLockedApiKeyFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ChildCheckinServiceTest.cs" />
     <Compile Include="Services\ChildSigninServiceTest.cs" />
     <Compile Include="Services\EventServiceTest.cs" />
     <Compile Include="Services\KioskServiceTest.cs" />
@@ -174,6 +175,10 @@
     <ProjectReference Include="..\MinistryPlatform.Translation\MinistryPlatform.Translation.csproj">
       <Project>{9ca5c91a-96e5-4968-b4ce-213b581b33f6}</Project>
       <Name>MinistryPlatform.Translation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Printing.Utilities\Printing.Utilities.csproj">
+      <Project>{c87c7588-00e6-40b4-95cb-c97f1df19f1f}</Project>
+      <Name>Printing.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\SignInCheckIn\SignInCheckIn.csproj">
       <Project>{178426a1-78f0-456f-b3d8-eaec78a9f348}</Project>

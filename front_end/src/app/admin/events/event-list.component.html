@@ -7,7 +7,10 @@
         <h1>Events</h1>
         <h4>{{currentWeekFilter.start | amDateFormat :'dddd, MMMM Do'}} - {{currentWeekFilter.end | amDateFormat :'dddd, MMMM Do'}}</h4>
       </div>
-      <div class="col-md-9 col-sm-8 col-xs-12">
+      <div class="col-md-9 col-sm-8 col-xs-12" *ngIf="!isReady()">
+        <preloader></preloader>
+      </div>
+      <div class="col-md-9 col-sm-8 col-xs-12" *ngIf="isReady()">
         <table class="table table-striped">
           <thead>
             <tr>
@@ -41,7 +44,7 @@
             </option>
           </select>
         </section>
-        <section class="sidebar-section m-b-1">
+        <section class="sidebar-section my-1">
           <label><strong>Site Filter</strong></label>
           <div class="form-check">
             <label class="form-check-label">

@@ -16,6 +16,12 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty("Participant_ID")]
         public int ParticipantId { get; set; }
 
+        [JsonProperty("First_Name")]
+        public string FirstName { get; set; }
+
+        [JsonProperty("Last_Name")]
+        public string LastName { get; set; }
+
         [JsonProperty("Participation_Status_ID")]
         public int ParticipantStatusId { get; set; }
 
@@ -43,6 +49,15 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty("Room_ID")]
         public int? RoomId { get; set; }
 
+        [JsonProperty("Room_Name")]
+        public string RoomName { get; set; }
+
+        [JsonIgnore]
+        public int? SecondaryRoomId { get; set; }
+
+        [JsonIgnore]
+        public string SecondaryRoomName { get; set; }
+
         [JsonProperty("Call_Parents")]
         public bool CallParents { get; set; }
 
@@ -57,5 +72,9 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Registrant_Message_Sent")]
         public bool RegistrantMessageSent { get; set; }
+
+        public bool HasKidsClubGroup => GroupId.HasValue;
+
+        public bool HasRoomAssignment => RoomId.HasValue;
     }
 }

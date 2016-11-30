@@ -4,6 +4,7 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IChildCheckinService
     {
-        //ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int siteId, int roomId);
+        ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId);
+        ParticipantDto CheckinChildrenForCurrentEventAndRoom(ParticipantDto eventParticipant);
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -32,7 +28,11 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_ID_Table.[Event_ID]",
                 "Group_ID_Table.[Group_ID]",
                 "Event_Room_ID_Table.[Event_Room_ID]",
-                "Event_Room_ID_Table_Room_ID_Table.[Room_ID]"
+                "Event_Room_ID_Table_Room_ID_Table.[Room_ID]",
+                "Event_Room_ID_Table.[Capacity]",
+                "Event_Room_ID_Table.[Label]",
+                "Event_Room_ID_Table.[Allow_Checkin]",
+                "Event_Room_ID_Table.[Volunteers]"
             };
 
             _fixture = new EventRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
@@ -52,6 +52,42 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
             result.Should().BeSameAs(events);
+        }
+
+        [Test]
+        public void TestImportEventSetup()
+        {
+            const string token = "tok123";
+            const int sourceEventId = 12345;
+            const int destinationEventId = 67890;
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.PostStoredProc("api_crds_ImportEcheckEvent", It.IsAny<Dictionary<string, object>>())).Returns(1);
+
+            _fixture.ImportEventSetup(token, destinationEventId, sourceEventId);
+
+            _ministryPlatformRestRepository.VerifyAll();
+            _ministryPlatformRestRepository.Verify(
+                mocked =>
+                    mocked.PostStoredProc("api_crds_ImportEcheckEvent",
+                                          It.Is<Dictionary<string, object>>(d => (int) d["@SourceEventId"] == sourceEventId && (int) d["@DestinationEventId"] == destinationEventId)));
+        }
+
+        [Test]
+        public void TestResetEventSetup()
+        {
+            const string token = "tok123";
+            const int eventId = 12345;
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.PostStoredProc("api_crds_ResetEcheckEvent", It.IsAny<Dictionary<string, object>>())).Returns(1);
+
+            _fixture.ResetEventSetup(token, eventId);
+
+            _ministryPlatformRestRepository.VerifyAll();
+            _ministryPlatformRestRepository.Verify(
+                mocked =>
+                    mocked.PostStoredProc("api_crds_ResetEcheckEvent", It.Is<Dictionary<string, object>>(d => (int) d["@EventId"] == eventId)));
         }
     }
 }

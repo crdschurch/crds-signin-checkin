@@ -1,15 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AdminService } from '../admin.service';
-import { HttpClientService } from '../../shared/services';
 import { Router } from '@angular/router';
-import { RootService } from '../../shared/services';
-import { SetupService } from '../../setup/setup.service';
-import { MachineConfiguration } from '../../setup/machine-configuration';
-
-import { Event } from './event';
-import { Timeframe } from '../models/timeframe';
+import { ApiService, HttpClientService, RootService, SetupService } from '../../shared/services';
+import { MachineConfiguration, Event, Timeframe } from '../../shared/models';
 import { HeaderService } from '../header/header.service';
-
 import * as moment from 'moment';
 
 @Component({
@@ -22,7 +15,7 @@ export class EventListComponent implements OnInit {
   currentWeekFilter: any;
   weekFilters: Timeframe[];
 
-  constructor(private adminService: AdminService,
+  constructor(private apiService: ApiService,
               private headerService: HeaderService,
               private httpClientService: HttpClientService,
               private router: Router,
@@ -31,7 +24,7 @@ export class EventListComponent implements OnInit {
   }
 
   private getData() {
-    this.adminService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
+    this.apiService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
       events => {
         this.events = events;
       },
@@ -63,6 +56,10 @@ export class EventListComponent implements OnInit {
   private setupSite(config: MachineConfiguration) {
     // default to Oakley (1) if setup cookie is not present or does not have a site id
     this.site = config && config.CongregationId ? config.CongregationId : 1;
+  }
+
+  public isReady(): boolean {
+    return this.events !== undefined;
   }
 
   ngOnInit(): void {

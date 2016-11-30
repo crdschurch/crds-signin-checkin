@@ -11,6 +11,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly List<string> _eventRoomColumns;
         private readonly List<string> _roomColumnList;
+        private readonly List<string> _bumpingRuleColumns; 
 
         public RoomRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
@@ -36,6 +37,14 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID",
                 "Room_Name",
                 "Room_Number"
+            };
+
+            _bumpingRuleColumns = new List<string>
+            {
+                "Bumping_Rules_ID",
+                "From_Event_Room_ID",
+                "To_Event_Room_ID",
+                "Priority_Order"
             };
         }
 
@@ -99,14 +108,34 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom)
         {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+
             MpEventRoomDto response;
+            // TODO Modify all frontend calls that get to this service to ensure they send eventRoomId if there is already a reservation
+            // There are several instances where the frontend calls the backend, and an Event_Room gets created, but the frontend model is not
+            // being updated with the EventRoomId.  This is causing the backend to create additional Event_Room records for the same room, because
+            // we are only checking for the existence of EventRoomId to determine if this is a create or an update.
             if (eventRoom.EventRoomId.HasValue)
             {
-                response = _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Update(eventRoom, _eventRoomColumns);
+                response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(eventRoom, _eventRoomColumns);
             }
             else
             {
-                response = _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Create(eventRoom, _eventRoomColumns);
+                // Make sure it doesn't exist, in case we got a request without an eventRoomId, but there actually is already a reservation for this room
+                var existingEventRoom = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                    .Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", _eventRoomColumns).FirstOrDefault();
+
+                // If we did not find a record for this Event and Room, create one, otherwise update the existing one
+                if (existingEventRoom == null)
+                {
+                    response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventRoom, _eventRoomColumns);
+                }
+                else
+                {
+                    eventRoom.EventRoomId = existingEventRoom.EventRoomId;
+                    response = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(eventRoom, _eventRoomColumns);
+                }
+                
             }
 
             return response;
@@ -123,6 +152,46 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var apiUserToken = _apiUserRepository.GetToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Get<MpRoomDto>(roomId, _roomColumnList);
+        }
+
+        public List<MpBumpingRuleDto> GetBumpingRulesByRoomId(int fromRoomId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"From_Event_Room_ID={fromRoomId}", _bumpingRuleColumns);
+        }
+
+        public void DeleteBumpingRules(string authenticationToken, IEnumerable<int> ruleIds)
+        {
+            _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Delete<MpBumpingRuleDto>(ruleIds);
+        }
+
+        public List<MpRoomDto> GetAvailableRoomsBySite(int locationId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
+        }
+
+        public void CreateBumpingRules(string authenticationToken, List<MpBumpingRuleDto> bumpingRules)
+        {
+            _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Create(bumpingRules, _bumpingRuleColumns);
+        }
+
+        public List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds, int? fromEventRoomId)
+        {
+            var queryString = "(";
+
+            foreach (var id in eventRoomIds)
+            {
+                queryString += id + ",";
+            }
+
+            queryString = queryString.TrimEnd(',');
+            queryString += ")";
+
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString} AND From_Event_Room_ID = {fromEventRoomId}", _bumpingRuleColumns);
         }
     }
 }

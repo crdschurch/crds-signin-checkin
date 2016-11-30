@@ -8,8 +8,8 @@ import './rxjs-operators';
 
 import { CookieService } from 'angular2-cookie/services/cookies.service';
 
-import { HttpClientService } from './shared/services';
-import { ContentService, RootService } from './shared/services';
+import { ContentService, RootService, UserService } from './shared/services';
+import { CanActivateIfLoggedInGuard } from './shared/guards';
 import { AdminModule } from './admin';
 import { ChildCheckinModule } from './child-checkin';
 import { ChildSigninModule } from './child-signin';
@@ -41,10 +41,11 @@ import { routing } from './app.routes';
   providers: [
     FormsModule,
     CookieService,
-    HttpClientService,
     ContentService,
     RootService,
-    ToasterModule
+    ToasterModule,
+    UserService,
+    CanActivateIfLoggedInGuard
   ],
   bootstrap: [
     AppComponent

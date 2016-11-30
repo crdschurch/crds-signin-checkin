@@ -60,5 +60,32 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpPost]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("signin/participants/print")]
+        public IHttpActionResult PrintParticipants(ParticipantEventMapDto participantEventMapDto)
+        {
+            try
+            {
+                string kioskIdentifier;
+
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+                else
+                {
+                    throw new Exception("No kiosk identifier");
+                }
+
+                return Ok(_childSigninService.PrintParticipants(participantEventMapDto, kioskIdentifier));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Print Participants", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }

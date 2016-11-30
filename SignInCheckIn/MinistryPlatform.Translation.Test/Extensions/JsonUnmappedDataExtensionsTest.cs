@@ -39,6 +39,29 @@ namespace MinistryPlatform.Translation.Test.Extensions
         }
 
         [Test]
+        public void TestGetUnmappedDataFieldNonNullableIsNull()
+        {
+            _fixture = new Dictionary<string, JToken>
+            {
+                {FieldName, JToken.Parse("null")}
+            };
+            var field = _fixture.GetUnmappedDataField<int>(FieldName);
+            Assert.IsNotNull(field);
+            Assert.AreEqual(default(int), field);
+        }
+
+        [Test]
+        public void TestGetUnmappedDataFieldNullableIsNull()
+        {
+            _fixture = new Dictionary<string, JToken>
+            {
+                {FieldName, JToken.Parse("null")}
+            };
+            var field = _fixture.GetUnmappedDataField<int?>(FieldName);
+            Assert.IsNull(field);
+        }
+
+        [Test]
         public void TestGetAttribute()
         {
             const string prefix = "prefix";

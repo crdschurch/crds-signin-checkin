@@ -57,6 +57,9 @@
           width: auto;
           font-size: 1rem;
         }
+        &.clickable {
+          cursor: pointer;
+        }
     }
 
     .current{

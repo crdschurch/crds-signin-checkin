@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { AdminService } from '../admin.service';
 import { HeaderService } from '../header/header.service';
-import { Group } from './group';
-import { Room } from './room';
-import { Event } from '../events/event';
+import { Group, Room, Event } from '../../shared/models';
+import { AdminService } from '../admin.service';
+import { ApiService } from '../../shared/services';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -18,8 +17,10 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   alternateRoomsSelected: boolean = false;
+  updating: boolean = false;
 
-  constructor( private adminService: AdminService,
+  constructor( private apiService: ApiService,
+               private adminService: AdminService,
                private route: ActivatedRoute,
                private headerService: HeaderService,
                private location: Location) {
@@ -28,19 +29,31 @@ export class RoomGroupListComponent implements OnInit {
   private getData(): void {
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
+
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
       },
       error => console.error(error)
     );
-    this.adminService.getEvent(this.eventId).subscribe(
+
+    this.apiService.getEvent(this.eventId).subscribe(
+
       event => {
         this.event = event;
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
     );
+
+  }
+
+  public isUpdating(): boolean {
+    return this.updating;
+  }
+
+  public setUpdating(updating: boolean): void {
+    this.updating = updating;
   }
 
   getEvent(): Event {
@@ -73,4 +86,5 @@ export class RoomGroupListComponent implements OnInit {
     this.getData();
     this.openTabIfAlternateRoomsHash();
   }
+
 }

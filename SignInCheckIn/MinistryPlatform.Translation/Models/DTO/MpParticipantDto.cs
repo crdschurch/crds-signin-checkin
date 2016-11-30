@@ -7,6 +7,9 @@ namespace MinistryPlatform.Translation.Models.DTO
     [MpRestApiTable(Name = "Participants")]
     public class MpParticipantDto
     {
+        [JsonProperty(PropertyName = "Event_Participant_ID")]
+        public int EventParticipantId { get; set; }
+
         [JsonProperty(PropertyName = "Participant_ID")]
         public int ParticipantId { get; set; }
 
@@ -27,5 +30,11 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Date_of_Birth")]
         public DateTime DateOfBirth { get; set; }
+
+        [JsonProperty(PropertyName = "Participation_Status_ID")]
+        public int ParticipationStatusId { get; set; }
+
+        [JsonProperty(PropertyName = "Group_ID")]
+        public int? GroupId { get; set; }
     }
 }

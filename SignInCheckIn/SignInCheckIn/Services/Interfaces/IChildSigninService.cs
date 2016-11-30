@@ -8,5 +8,6 @@ namespace SignInCheckIn.Services.Interfaces
     {
         ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId);
         ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto);
+        ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier);
     }
 }

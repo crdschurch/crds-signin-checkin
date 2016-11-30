@@ -64,6 +64,84 @@ admin {
   background: #fff;
 }
 
+.btn-unstyled {
+  padding: 0;
+  background: transparent;
+}
+
+.btn-unstyled.dropdown-toggle::after {
+  display: none;
+}
+
+.gear-dropdown {
+  .dropdown-menu-right {
+    right: 1rem;
+  }
+}
+
+.well-sm {
+  padding: 9px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+datepicker {
+  .pull-right {
+    float: right;
+  }
+
+  .glyphicon.glyphicon-chevron-left:after {
+    content: "<";
+  }
+
+  .glyphicon.glyphicon-chevron-right:after {
+    content: ">";
+  }
+
+  .btn-default {
+    color: $btn-secondary-color;
+    background-color: $btn-secondary-bg;
+    border-color: $btn-secondary-border;
+    border-radius: 0.15rem;
+
+    &:hover {
+      color: $btn-secondary-color;
+      background-color: #e6e6e6;
+      border-color: #adadad;
+    }
+
+    &.btn-info {
+      &:hover {
+        color: #fff;
+        background-color: #005a89;
+        border-color: #003f61;
+      }
+    }
+
+    &.btn-link {
+      .text-success {
+        color: $btn-secondary-color !important;
+      }
+    }
+
+    .text-success {
+      color: white !important;
+    }
+  }
+
+  .btn-info {
+    color: #fff;
+    background-color: $brand-primary;
+    border-color: $brand-primary;
+
+    &:hover {
+      color: #fff;
+      background-color: #005a89;
+      border-color: #003f61;
+    }
+  }
+}
+
 .form-group.required .control-label:after {
   content:"*";
   color: #d9534f;

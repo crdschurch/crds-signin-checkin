@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderService } from './header.service';
-import { Event } from '../events/event';
-import { HttpClientService } from '../../shared/services';
+import { Event } from '../../shared/models';
+import { UserService } from '../../shared/services';
 
 @Component({
   selector: 'header-event',
@@ -13,7 +13,7 @@ export class HeaderComponent {
   event: Event;
 
   constructor(private headerService: HeaderService,
-              private httpClientService: HttpClientService,
+              private userService: UserService,
               private router: Router) {
     headerService.eventAnnounced$.subscribe(
       event => {
@@ -22,7 +22,7 @@ export class HeaderComponent {
   }
 
   logOut() {
-    this.httpClientService.logOut();
+    this.userService.logOut();
     this.router.navigate(['/admin/sign-in']);
   }
 }

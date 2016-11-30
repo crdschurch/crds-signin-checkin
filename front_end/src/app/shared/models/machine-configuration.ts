@@ -15,6 +15,7 @@ export class MachineConfiguration {
   KioskTypeId: number;
   LocationId: number;
   CongregationId: number;
+  CongregationName: string;
   RoomId: number;
   RoomName: string;
   StartDate: string;
@@ -33,6 +34,7 @@ export class MachineConfiguration {
     machineConfig.KioskTypeId = json.KioskTypeId;
     machineConfig.LocationId = json.LocationId;
     machineConfig.CongregationId = json.CongregationId;
+    machineConfig.CongregationName = json.CongregationName;
     machineConfig.RoomId = json.RoomId;
     machineConfig.RoomName = json.RoomName;
     machineConfig.StartDate = json.StartDate;
@@ -46,5 +48,13 @@ export class MachineConfiguration {
 
   public isTypeRoomCheckin(): boolean {
     return this.KioskTypeId === this.KIOSK_TYPE.ROOM_CHECKIN;
+  }
+
+  public kioskType(): string {
+    if (this.isTypeSignIn()) {
+      return 'Sign In';
+    }
+
+    return 'Check In';
   }
 }

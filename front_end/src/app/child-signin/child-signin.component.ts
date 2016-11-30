@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 import { ChildSigninService } from './child-signin.service';
 
@@ -11,18 +12,26 @@ import { ChildSigninService } from './child-signin.service';
 })
 export class ChildSigninComponent {
 
+  clock = Observable.interval(10000).map(() => new Date());
+
   constructor(private router: Router) {}
 
-  activeStep1() {
-    return this.router.url === '/child-signin';
+  isStepActive(step) {
+    if (step === 1) {
+      return true;
+    } else if (step === 2) {
+      if (this.router.url !== '/child-signin/search') {
+        return true;
+      }
+    } else if (step === 3) {
+      if (this.router.url === '/child-signin/assignment') {
+        return true;
+      }
+    }
   }
 
-  activeStep2() {
-    return this.router.url === '/child-signin/results';
-  }
-
-  activeStep3() {
-    return this.router.url === '/child-signin/assignment';
+  activateStep1() {
+    return this.router.navigate(['/child-signin/search']);
   }
 
   inRoom() {

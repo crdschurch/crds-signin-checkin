@@ -28,6 +28,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Congregation_ID")]
         public int CongregationId { get; set; }
 
+        [JsonProperty(PropertyName = "Congregation_Name")]
+        public string CongregationName { get; set; }
+
         [JsonProperty(PropertyName = "Room_ID")]
         public int RoomId { get; set; }
 
@@ -39,5 +42,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "End_Date")]
         public DateTime? EndDate { get; set; }
+
+        [JsonProperty(PropertyName = "Printer_Map_ID")]
+        public int? PrinterMapId { get; set; }
     }
 }

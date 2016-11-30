@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { Http } from '@angular/http';
 import { Toast, BodyOutputType } from 'angular2-toaster/angular2-toaster';
-import { ContentBlock } from '../models/contentBlock';
+import { ContentBlock } from '../models';
 
 @Injectable()
 export class ContentService {
@@ -21,7 +21,7 @@ export class ContentService {
   }
 
   getContentBlocks () {
-      const url = `${process.env.CRDS_CMS_ENDPOINT}/api/contentblock?category=main&category=common&category=echeck`;
+      const url = `${process.env.CRDS_CMS_ENDPOINT}/api/contentblock?category[]=main&category[]=common&category[]=echeck`;
       return this.http.get(url).toPromise()
                     .then(res => { return res.json().contentblocks; })
                     .catch(this.handleError);

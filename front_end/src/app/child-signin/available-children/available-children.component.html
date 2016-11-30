@@ -1,4 +1,6 @@
-<div class="container text-xs-left mt-3 pb-2">
+<preloader *ngIf="!isReady" [fullscreen]="true"></preloader>
+
+<div class="container text-xs-left mt-3 pb-3 mb-3">
   <div class="row">
     <div class="col-md-12">
 
@@ -12,7 +14,7 @@
           </a>
         </div>
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
-        <div class="card" *ngFor="let kid of childrenAvailable" >
+        <div class="card" *ngFor="let kid of childrenAvailable()" >
           <available-child [child]="kid">
           </available-child>
         </div><!--/card-->
@@ -52,10 +54,10 @@
         <span aria-hidden="true">&times;</span>
       </button>
       <div class="modal-body">
-        <h5 class="m-b-3">
+        <h5 class="mb-3">
           How many services will your children be in Kids’ Club?
         </h5>
-        <div class="row m-b-3">
+        <div class="row mb-3">
           <div class="col-sm-4 offset-sm-2">
             <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block py-3">1 HOUR</a>
           </div>

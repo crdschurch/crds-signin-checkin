@@ -124,5 +124,32 @@ namespace SignInCheckIn.Tests.Controllers
             result.Should().BeOfType<OkNegotiatedContentResult<EventDto>>();
             ((OkNegotiatedContentResult<EventDto>)result).Content.Should().BeSameAs(e);
         }
+
+        [Test]
+        public void TestImportEventSetup()
+        {
+            const int destinationEventId = 12345;
+            const int sourceEventId = 67890;
+            var rooms = new List<EventRoomDto>();
+            _eventService.Setup(mocked => mocked.ImportEventSetup(_auth, destinationEventId, sourceEventId)).Returns(rooms);
+
+            var result = _fixture.ImportEventSetup(destinationEventId, sourceEventId);
+            _eventService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<List<EventRoomDto>>>();
+            ((OkNegotiatedContentResult<List<EventRoomDto>>)result).Content.Should().BeSameAs(rooms);
+        }
+
+        [Test]
+        public void TestResetEventSetup()
+        {
+            const int eventId = 12345;
+            var rooms = new List<EventRoomDto>();
+            _eventService.Setup(mocked => mocked.ResetEventSetup(_auth, eventId)).Returns(rooms);
+
+            var result = _fixture.ResetEventSetup(eventId);
+            _eventService.VerifyAll();
+            result.Should().BeOfType<OkNegotiatedContentResult<List<EventRoomDto>>>();
+            ((OkNegotiatedContentResult<List<EventRoomDto>>)result).Content.Should().BeSameAs(rooms);
+        }
     }
 }

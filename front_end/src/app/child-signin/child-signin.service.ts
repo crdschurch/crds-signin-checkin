@@ -1,50 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-
 import { HttpClientService } from '../shared/services';
 import { PhoneNumberPipe } from '../shared/pipes/phoneNumber.pipe';
-import { EventParticipants } from '../shared/models/eventParticipants';
-import { Child } from '../shared/models/child';
-import { Event } from '../admin/events/event';
+import { EventParticipants } from '../shared/models';
 
 @Injectable()
 export class ChildSigninService {
   private url: string = '';
   private phoneNumber: string = '';
-  private childrenAvailable: Array<Child> = [];
-  private event: Event;
+  private eventParticipantsResults: EventParticipants;
 
   constructor(private http: HttpClientService, private router: Router) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/signin`;
   }
 
   getEvent() {
-    return this.event;
+    return this.eventParticipantsResults.CurrentEvent;
   }
 
-  getChildrenByPhoneNumber(phoneNumber: string) {
+  getChildrenByPhoneNumber(phoneNumber: string): Observable<EventParticipants> {
     let pipe = new PhoneNumberPipe();
     const url = `${this.url}/children/${pipe.transform(phoneNumber, true)}`;
 
-   if (this.childrenAvailable.length > 0 && this.phoneNumber === phoneNumber) {
-      return Observable.of(this.childrenAvailable);
+   if (this.eventParticipantsResults && this.eventParticipantsResults.hasParticipants() && this.phoneNumber === phoneNumber) {
+      return Observable.of(this.eventParticipantsResults);
     } else {
       this.phoneNumber = phoneNumber;
-      this.childrenAvailable = [];
+      this.eventParticipantsResults = new EventParticipants();
       return this.http.get(url)
                   .map((response) => {
-                    this.event = response.json().CurrentEvent;
-                    for (let kid of response.json().Participants) {
-                      let child = Object.create(Child.prototype);
-                      Object.assign(child, kid);
-                      // set all selected to true
-                      // TODO: backend should probably do this
-                      child.Selected = true;
-                      this.childrenAvailable.push(child);
+                    this.eventParticipantsResults = EventParticipants.fromJson(response.json());
+                    if (this.eventParticipantsResults.hasParticipants()) {
+                      this.eventParticipantsResults.Participants.forEach(p => p.Selected = true);
                     }
-
-                    return this.childrenAvailable;
+                    return this.eventParticipantsResults;
                   })
                   .catch(this.handleError);
     }
@@ -53,8 +43,34 @@ export class ChildSigninService {
   signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
     const url = `${this.url}/children`;
     return this.http.post(url, eventParticipants)
-                    .map(res => EventParticipants.fromJson(res.json()))
+                    .map(res => {
+                      this.eventParticipantsResults = EventParticipants.fromJson(res.json());
+                      return this.eventParticipantsResults;
+                    })
                     .catch(this.handleError);
+  }
+
+  getPhoneNumber(): string {
+    return this.phoneNumber;
+  }
+
+  getEventParticipantsResults(): EventParticipants {
+    return this.eventParticipantsResults;
+  }
+
+  printParticipantLabels(eventParticipants: EventParticipants): Observable<EventParticipants> {
+    const url = `${this.url}/participants/print`;
+    return this.http.post(url, eventParticipants)
+                    .map(res => {
+                      this.eventParticipantsResults = EventParticipants.fromJson(res.json());
+                      return this.eventParticipantsResults;
+                    })
+                    .catch(this.handleError);
+  }
+
+  reset() {
+    this.phoneNumber = '';
+    this.eventParticipantsResults = undefined;
   }
 
   private handleError (error: any) {
