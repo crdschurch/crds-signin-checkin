@@ -3,10 +3,9 @@ import { Router } from '@angular/router';
 import { AdminService } from '../admin.service';
 
 @Component({
-  templateUrl: 'guest-check-in.component.html'
+  templateUrl: 'new-family-registration.component.html'
 })
-export class GuestCheckInComponent {
-  constructor(
-    private adminService: AdminService) {
+export class NewFamilyRegistrationComponent {
+  constructor(private adminService: AdminService) {
   }
 }
