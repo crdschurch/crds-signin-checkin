@@ -17,7 +17,4 @@ export class RoomChildComponent {
     this.toggleCheckIn.emit(this.child);
   }
 
-  getCallNumber() {
-    return this.child.callNumber().toString();
-  }
 }
