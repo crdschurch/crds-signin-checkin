@@ -38,10 +38,10 @@ export class RoomComponent implements OnInit {
     return this.room.CheckedIn >= this.room.Capacity;
   }
 
-  signedInEqualsCapacity() {
+  signedInWillEqualCapacity() {
     // only return true if checkedInEqualsCapacity isnt true
     if (!this.checkedInEqualsCapacity()) {
-      return this.room.SignedIn >= this.room.Capacity;
+      return this.room.SignedIn + this.room.CheckedIn === this.room.Capacity;
     }
   }
 
