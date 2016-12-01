@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { AdminService } from '../admin.service';
-import { Room } from '../../shared/models';
+import { AdminService } from '../../admin.service';
+import { Room } from '../../../shared/models';
 
 @Component({
   selector: '.room',
@@ -28,6 +28,14 @@ export class RoomComponent implements OnInit {
   toggle(field) {
     this.room[field] = !this.room[field];
     this.roomForm.controls[field].setValue(this.room[field]);
+  }
+
+  getRoomRatioString() {
+    if (this.room.CheckedIn || this.room.Volunteers) {
+      return `${this.room.CheckedIn}/${this.room.Volunteers}`;
+    } else {
+      return '0';
+    }
   }
 
   toggleClick() {

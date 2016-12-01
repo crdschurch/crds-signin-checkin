@@ -30,9 +30,9 @@
     </div>
   </div>
 </td>
-<td>{{room.SignedIn}}</td>
-<td>{{room.CheckedIn}}</td>
-<td>-</td>
+<td class="text-xs-right">{{room.SignedIn}}</td>
+<td class="text-xs-right">{{room.CheckedIn}}</td>
+<td class="text-xs-right">{{getRoomRatioString()}}</td>
 <td class="text-xs-right">
   <a class="btn btn-primary btn-sm" routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
 </td>
