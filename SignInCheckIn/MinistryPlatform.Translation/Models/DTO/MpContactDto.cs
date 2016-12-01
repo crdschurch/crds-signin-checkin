@@ -22,10 +22,19 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Mobile_Phone")]
         public string MobilePhone { get; set; }
 
+        [JsonProperty(PropertyName = "First_Name")]
+        public string FirstName { get; set; }
+
         [JsonProperty(PropertyName = "Nickname")]
         public string Nickname { get; set; }
 
         [JsonProperty(PropertyName = "Last_Name")]
         public string LastName { get; set; }
+
+        [JsonProperty(PropertyName = "Display_Name")]
+        public string DisplayName { get; set; }
+
+        [JsonProperty(PropertyName = "Company")]
+        public bool Company { get; set; }
     }
 }

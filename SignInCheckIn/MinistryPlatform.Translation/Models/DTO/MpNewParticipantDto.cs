@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace MinistryPlatform.Translation.Models.DTO
 {
     [MpRestApiTable(Name = "Participants")]
-    public class MpParticipantDto
+    public class MpNewParticipantDto
     {
         [JsonProperty(PropertyName = "Event_Participant_ID")]
         public int EventParticipantId { get; set; }
@@ -13,8 +13,8 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Participant_ID")]
         public int ParticipantId { get; set; }
 
-        [JsonProperty(PropertyName = "Contact_ID")]
-        public int ContactId { get; set; }
+        //[JsonProperty(PropertyName = "Contact_ID")]
+        //public int ContactId { get; set; }
 
         [JsonProperty(PropertyName = "Household_ID")]
         public int HouseholdId { get; set; }

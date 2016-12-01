@@ -94,6 +94,8 @@
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
     <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpHouseholdDto.cs" />
+    <Compile Include="Models\DTO\MpNewParticipantDto.cs" />
     <Compile Include="Models\DTO\MpParticipantDto.cs" />
     <Compile Include="Models\DTO\MpContactDto.cs" />
     <Compile Include="Models\DTO\MpAttributeTypeDto.cs" />
@@ -127,9 +129,11 @@
     <Compile Include="Repositories\Interfaces\IGroupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IKioskRepository.cs" />
     <Compile Include="Repositories\Interfaces\IMinistryPlatformRestRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IParticipantRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRoomRepository.cs" />
     <Compile Include="Repositories\KioskRepository.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepository.cs" />
+    <Compile Include="Repositories\ParticipantRepository.cs" />
     <Compile Include="Repositories\RoomRepository.cs" />
   </ItemGroup>
   <ItemGroup>

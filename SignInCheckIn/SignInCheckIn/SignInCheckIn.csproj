@@ -185,6 +185,9 @@
     <Compile Include="Models\Authentication\Credentials.cs" />
     <Compile Include="Models\Authentication\LoginReturn.cs" />
     <Compile Include="Models\DTO\ContactDto.cs" />
+    <Compile Include="Models\DTO\NewChildDto.cs" />
+    <Compile Include="Models\DTO\NewFamilyDto.cs" />
+    <Compile Include="Models\DTO\NewParentDto.cs" />
     <Compile Include="Models\DTO\ParticipantDto.cs" />
     <Compile Include="Models\DTO\AgeGradeDto.cs" />
     <Compile Include="Models\DTO\EventDto.cs" />

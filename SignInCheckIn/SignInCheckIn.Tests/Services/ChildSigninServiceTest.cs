@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Components.DictionaryAdapter;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -25,6 +26,8 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IPrintingService> _printingService;
         private Mock<IContactRepository> _contactRepository;
         private Mock<IKioskRepository> _kioskRepository;
+        private Mock<IParticipantRepository> _participantRepository;
+        private Mock<IApplicationConfiguration> _applicationConfiguration;
 
         private ChildSigninService _fixture;
 
@@ -41,10 +44,13 @@ namespace SignInCheckIn.Tests.Services
             _printingService = new Mock<IPrintingService>(MockBehavior.Strict);
             _contactRepository = new Mock<IContactRepository>(MockBehavior.Strict);
             _kioskRepository = new Mock<IKioskRepository>(MockBehavior.Strict);
+            _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
+            _applicationConfiguration = new Mock<IApplicationConfiguration>();
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
-                _contactRepository.Object, _kioskRepository.Object);
+                _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
+                _applicationConfiguration.Object);
         }
 
         [Test]
@@ -444,6 +450,56 @@ namespace SignInCheckIn.Tests.Services
             _printingService.VerifyAll();
 
             _kioskRepository.VerifyAll();
+        }
+
+        [Test]
+        public void ItShouldSaveNewFamilyData()
+        {
+            // Arrange
+            string token = "123abc";
+
+            EventDto eventDto = new EventDto
+            {
+                EventSiteId = 1
+            };
+
+            NewParentDto newParentDto = new NewParentDto
+            {
+                FirstName = "TestParentFirst",
+                LastName = "TestParentLast",
+                PhoneNumber = "123-456-7890"
+            };
+
+            List<NewChildDto> newChildDtos = new List<NewChildDto>
+            {
+                new NewChildDto
+                {
+                    DateOfBirth = new DateTime(2016, 12, 1, 00, 00, 00),
+                    FirstName = "TestChildFirst",
+                    LastName = "TestChildLast",
+                    YearGrade = 1
+                }
+            };
+
+            NewFamilyDto newFamilyDto = new NewFamilyDto
+            {
+                EventDto = eventDto,
+                ParentContactDto = newParentDto,
+                ChildContactDtos = newChildDtos
+            };
+
+            MpHouseholdDto mpHouseholdDto = new MpHouseholdDto();
+            List<MpNewParticipantDto> newParticipantDtos = new List<MpNewParticipantDto>();
+
+            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _participantRepository.Setup(m => m.CreateParticipantsWithContacts(token, It.IsAny<List<MpNewParticipantDto>>())).Returns(newParticipantDtos);
+
+            // Act
+            _fixture.CreateNewFamily(token, newFamilyDto);
+
+            // Assert
+            _contactRepository.VerifyAll();
+            _participantRepository.VerifyAll();
         } 
     }
 }
