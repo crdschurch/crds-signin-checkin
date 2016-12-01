@@ -1,3 +1,5 @@
+@import '../../../../assets/scss/_variables.scss';
+
 td {
   input[type=number] {
     $width: 70px;
@@ -14,4 +16,12 @@ td {
   .disabled {
     opacity: .7;
   }
+}
+
+svg.brand-danger path {
+  fill: $brand-danger;
+}
+
+svg.brand-warning path {
+  fill: $brand-warning;
 }
