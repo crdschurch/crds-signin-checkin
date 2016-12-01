@@ -1,4 +1,5 @@
 import { Constants } from '../constants';
+const CALL_NUMBER_LENGTH = 4;
 
 export class Child {
   EventParticipantId: number;
@@ -62,6 +63,15 @@ export class Child {
       this.ParticipationStatusId = Constants.SignedInParticipationStatusId;
     } else {
       this.ParticipationStatusId = Constants.CheckedInParticipationStatusId;
+    }
+  }
+
+  callNumber(): string {
+    const callNumberString = this.EventParticipantId.toString().substr(this.EventParticipantId.toString().length - CALL_NUMBER_LENGTH);
+    if (callNumberString.length === CALL_NUMBER_LENGTH) {
+      return callNumberString;
+    } else {
+      return (`000${callNumberString}`).slice(-CALL_NUMBER_LENGTH);
     }
   }
 }
