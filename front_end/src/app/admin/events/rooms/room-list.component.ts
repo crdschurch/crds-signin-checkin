@@ -7,6 +7,7 @@ import { HeaderService } from '../../header/header.service';
 import { RootService } from '../../../shared/services/root.service';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
   templateUrl: 'room-list.component.html',
@@ -50,6 +51,14 @@ export class RoomListComponent implements OnInit {
 
   public isReady(): boolean {
     return this.event !== undefined && this.rooms !== undefined;
+  }
+
+  public getOpenRooms() {
+    return this.rooms ? _.filter(this.rooms, {'AllowSignIn': true}).length : ' ';
+  }
+
+  public getTotalRooms() {
+    return this.rooms ? this.rooms.length : ' ';
   }
 
   public goToImport(): void {

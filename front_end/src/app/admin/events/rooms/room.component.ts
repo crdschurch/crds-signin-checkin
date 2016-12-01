@@ -30,6 +30,29 @@ export class RoomComponent implements OnInit {
     this.roomForm.controls[field].setValue(this.room[field]);
   }
 
+  hasCapacity() {
+    return this.room.Capacity;
+  }
+
+  checkedInEqualsCapacity() {
+    return this.room.CheckedIn >= this.room.Capacity;
+  }
+
+  signedInWillEqualCapacity() {
+    // only return true if checkedInEqualsCapacity isnt true
+    if (!this.checkedInEqualsCapacity()) {
+      return this.room.SignedIn + this.room.CheckedIn === this.room.Capacity;
+    }
+  }
+
+  getRoomRatioString() {
+    if (this.room.CheckedIn || this.room.Volunteers) {
+      return `${this.room.CheckedIn}/${this.room.Volunteers}`;
+    } else {
+      return '0';
+    }
+  }
+
   toggleClick() {
     if (this.pending) {
       return false;

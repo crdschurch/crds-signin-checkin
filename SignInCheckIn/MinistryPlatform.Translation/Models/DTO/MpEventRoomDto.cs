@@ -30,8 +30,10 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Capacity")]
         public int Capacity { get; set; }
 
+        [JsonProperty(PropertyName = "Signed_In")]
         public int SignedIn { get; set; }
 
+        [JsonProperty(PropertyName = "Checked_In")]
         public int CheckedIn { get; set; }
 
         [JsonProperty(PropertyName = "Label")]
