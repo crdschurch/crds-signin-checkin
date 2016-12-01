@@ -65,6 +65,21 @@ describe('RoomListComponent', () => {
     });
   });
 
+  describe('#getOpenRooms and #getTotalRooms', () => {
+    it('should calculate correct open and total rooms', () => {
+      let rooms: Room[] = [ new Room(), new Room(), new Room(), new Room(), new Room() ];
+      rooms[0].AllowSignIn = false;
+      rooms[1].AllowSignIn = true;
+      rooms[2].AllowSignIn = false;
+      rooms[3].AllowSignIn = false;
+      rooms[4].AllowSignIn = true;
+      fixture.rooms = rooms;
+
+      expect(fixture.getOpenRooms()).toEqual(2);
+      expect(fixture.getTotalRooms()).toEqual(5);
+    });
+  });
+
   describe('#goToImport', () => {
     it('should not navigate if event is in the past', () => {
       fixture.event = new Event();

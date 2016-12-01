@@ -19,12 +19,27 @@ describe('RoomComponent', () => {
     fixture.room = new Room();
     fixture.room.Volunteers = 10;
     fixture.room.Capacity = 6;
+    fixture.room.CheckedIn = 4;
+    fixture.room.SignedIn = 20;
     fixture.ngOnInit();
   });
 
   describe('#constructor', () => {
     it('should intitalize', () => {
       expect(fixture.pending).toBeFalsy();
+    });
+  });
+
+  describe('#getRoomRatioString', () => {
+    it('should return correct ration', () => {
+      expect(fixture.getRoomRatioString()).toEqual('4/10');
+    });
+    it('should return 0 if no CheckedIn and Volunteers', () => {
+      fixture.room.Volunteers = 0;
+      fixture.room.Capacity = 6;
+      fixture.room.CheckedIn = 0;
+      fixture.room.SignedIn = 0;
+      expect(fixture.getRoomRatioString()).toEqual('0');
     });
   });
 
