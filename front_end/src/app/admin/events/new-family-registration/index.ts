@@ -1,1 +1,1 @@
-export { NewFamilyRegistrationComponent } from './new-family-registration.component';
+export { NewFamilyRegistrationModule } from './new-family-registration.module';
