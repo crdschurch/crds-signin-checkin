@@ -22,6 +22,8 @@ namespace SignInCheckIn.Services
         private readonly IContactRepository _contactRepository;
         private readonly IPrintingService _printingService;
         private readonly IPdfEditor _pdfEditor;
+        private readonly IParticipantRepository _participantRepository;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
         public ChildSigninService(IChildSigninRepository childSigninRepository,
                                   IEventRepository eventRepository,
@@ -30,7 +32,9 @@ namespace SignInCheckIn.Services
                                   IPdfEditor pdfEditor,
                                   IPrintingService printingService,
                                   IContactRepository contactRepository,
-                                  IKioskRepository kioskRepository)
+                                  IKioskRepository kioskRepository,
+                                  IParticipantRepository participantRepository,
+                                  IApplicationConfiguration applicationConfiguration)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -40,6 +44,8 @@ namespace SignInCheckIn.Services
             _contactRepository = contactRepository;
             _printingService = printingService;
             _pdfEditor = pdfEditor;
+            _participantRepository = participantRepository;
+            _applicationConfiguration = applicationConfiguration;
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
@@ -202,6 +208,71 @@ namespace SignInCheckIn.Services
             }
 
             return participantEventMapDto;
+        }
+
+        public void CreateNewFamily(string token, NewFamilyDto newFamilyDto)
+        {
+            SaveNewFamilyData(token, newFamilyDto);
+            // following stories will work assign to groups and print labels
+        }
+
+        private void SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
+        {
+            // Step 1 - create the household
+            MpHouseholdDto mpHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdName = newFamilyDto.ParentContactDto.LastName,
+                HomePhone = newFamilyDto.ParentContactDto.PhoneNumber,
+                CongregationId = newFamilyDto.EventDto.EventSiteId,
+                HouseholdSourceId = _applicationConfiguration.KidsClubRegistrationSourceId
+            };
+
+            mpHouseholdDto = _contactRepository.CreateHousehold(token, mpHouseholdDto);
+
+            List<MpNewParticipantDto> mpNewParticipantDtos = new List<MpNewParticipantDto>();
+
+            // Step 2 - create the parent contact w/participant
+            MpNewParticipantDto parentNewParticipantDto = new MpNewParticipantDto
+            {
+                ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
+                ParticipantStartDate = System.DateTime.Now,
+                Contact = new MpContactDto
+                {
+                    FirstName = newFamilyDto.ParentContactDto.FirstName,
+                    Nickname = newFamilyDto.ParentContactDto.FirstName,
+                    LastName = newFamilyDto.ParentContactDto.LastName,
+                    DisplayName = newFamilyDto.ParentContactDto.FirstName + " " + newFamilyDto.ParentContactDto.LastName,
+                    HouseholdId = mpHouseholdDto.HouseholdId,
+                    HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId, 
+                    Company = false
+                }
+            };
+
+            mpNewParticipantDtos.Add(parentNewParticipantDto);
+
+            // Step 3 create the children contacts
+            foreach (var childContactDto in newFamilyDto.ChildContactDtos)
+            {
+                MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
+                {
+                    ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
+                    ParticipantStartDate = System.DateTime.Now,
+                    Contact = new MpContactDto
+                    {
+                        FirstName = childContactDto.FirstName,
+                        Nickname = childContactDto.FirstName,
+                        LastName = childContactDto.LastName,
+                        DisplayName = childContactDto.FirstName + " " + childContactDto.LastName,
+                        HouseholdId = mpHouseholdDto.HouseholdId,
+                        HouseholdPositionId = _applicationConfiguration.MinorChildId,
+                        Company = false
+                    }
+                };
+
+                mpNewParticipantDtos.Add(childNewParticipantDto);
+            }
+
+            _participantRepository.CreateParticipantsWithContacts(token, mpNewParticipantDtos);
         }
     }
 }

@@ -2,17 +2,27 @@
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
+using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
+using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Controllers
 {
-    public class ChildSigninController : ApiController
+    public class ChildSigninController : MpAuth
     {
+
+        //private readonly IRoomService _roomService;
+
+        //public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
+        //{
+        //    _roomService = roomService;
+        //}
+
         private readonly IChildSigninService _childSigninService;
 
-        public ChildSigninController(IChildSigninService childSigninService)
+        public ChildSigninController(IChildSigninService childSigninService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
         {
             _childSigninService = childSigninService;
         }
@@ -86,6 +96,26 @@ namespace SignInCheckIn.Controllers
                 var apiError = new ApiErrorDto("Print Participants", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(NewFamilyDto))]
+        [Route("signin/newfamily")]
+        public IHttpActionResult CreateNewFamily(NewFamilyDto newFamilyDto)
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    _childSigninService.CreateNewFamily(token, newFamilyDto);
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
         }
     }
 }

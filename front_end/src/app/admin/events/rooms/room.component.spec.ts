@@ -19,12 +19,47 @@ describe('RoomComponent', () => {
     fixture.room = new Room();
     fixture.room.Volunteers = 10;
     fixture.room.Capacity = 6;
+    fixture.room.CheckedIn = 4;
+    fixture.room.SignedIn = 20;
     fixture.ngOnInit();
   });
 
   describe('#constructor', () => {
     it('should intitalize', () => {
       expect(fixture.pending).toBeFalsy();
+    });
+  });
+
+  describe('capacity alerts', () => {
+    describe('#checkedInEqualsCapacity', () => {
+      it('should return true if checked in >= capacity', () => {
+        fixture.room.Capacity = 6;
+        fixture.room.CheckedIn = 6;
+        fixture.room.SignedIn = 0;
+        expect(fixture.checkedInEqualsCapacity()).toBeTruthy();
+        expect(fixture.signedInWillEqualCapacity()).toBeFalsy();
+      });
+    });
+    describe('#signedInWillEqualCapacity', () => {
+      it('should return true if checked in equals capacity and checked in will equal capacity when all signed ins are checked in', () => {
+        fixture.room.Capacity = 5;
+        fixture.room.CheckedIn = 3;
+        fixture.room.SignedIn = 2;
+        expect(fixture.checkedInEqualsCapacity()).toBeFalsy();
+        expect(fixture.signedInWillEqualCapacity()).toBeTruthy();
+      });
+    });
+  });
+  describe('#getRoomRatioString', () => {
+    it('should return correct ration', () => {
+      expect(fixture.getRoomRatioString()).toEqual('4/10');
+    });
+    it('should return 0 if no CheckedIn and Volunteers', () => {
+      fixture.room.Volunteers = 0;
+      fixture.room.Capacity = 6;
+      fixture.room.CheckedIn = 0;
+      fixture.room.SignedIn = 0;
+      expect(fixture.getRoomRatioString()).toEqual('0');
     });
   });
 

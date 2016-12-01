@@ -47,5 +47,13 @@ namespace MinistryPlatform.Translation.Repositories
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).UpdateRecord("Event_Participants", eventParticipantId, updateObject);
         }
+
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(int eventId)
+        {
+
+
+
+            return null;
+        }
     }
 }
