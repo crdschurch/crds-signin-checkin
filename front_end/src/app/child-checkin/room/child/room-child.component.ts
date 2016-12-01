@@ -16,5 +16,4 @@ export class RoomChildComponent {
   toggle() {
     this.toggleCheckIn.emit(this.child);
   }
-
 }

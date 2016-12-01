@@ -1,5 +1,4 @@
 import { Constants } from '../constants';
-const CALL_NUMBER_LENGTH = 4;
 
 export class Child {
   EventParticipantId: number;
