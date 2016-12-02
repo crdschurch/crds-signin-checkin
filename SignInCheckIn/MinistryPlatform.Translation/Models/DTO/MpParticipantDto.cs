@@ -40,10 +40,6 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Participant_Type_ID")]
         public int ParticipantTypeId { get; set; }
 
-        // TODO: Make sure this is created properly in MP
-        [JsonProperty(PropertyName = "Contact_ID")]
-        public MpContactDto Contact { get; set; }
-
         [JsonProperty(PropertyName = "Participant_Start_Date")]
         public DateTime ParticipantStartDate { get; set; }
     }

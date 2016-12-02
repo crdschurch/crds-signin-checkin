@@ -6,7 +6,8 @@
 
       <div class="eqWrap">
         <div class="card text-xs-center">
-          <a routerLink="/child-signin/guest">
+          <!-- <a routerLink="/child-signin/guest"> -->
+          <a (click)="addGuestModal.show()">
           <div class="card-block">
             <span class="round-plus">+</span>
             <h4 class="card-title text-uppercase">Add A Guest</h4>
@@ -64,8 +65,29 @@
           <div class="col-sm-4">
             <a (click)="showServiceSelectModal.hide()" class="btn btn-primary btn-block py-3">2 HOURS</a>
           </div>
-        </div><!--/row-->
-      </div><!--/modal-body-->
-    </div><!--/modal-content-->
-  </div><!--/modal-dialog-->
-</div><!--/modal-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #addGuestModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addGuestModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <button type="button" class="close mr-1 mt-1" (click)="addGuestModal.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="modal-body py-3">
+        <h3>
+          We love guests!
+        </h3>
+        <h5 class="text-muted">
+          Please sign in your children and then bring your guest(s) over to the New Family desk
+        </h5>
+      </div>
+      <div class="modal-footer text-xs-center">
+        <button type="button" class="btn btn-primary btn-lg" (click)="addGuestModal.hide()">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

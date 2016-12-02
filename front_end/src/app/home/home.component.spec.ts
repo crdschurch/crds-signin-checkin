@@ -11,6 +11,7 @@ let router: Router;
 let cookieService: CookieService;
 let childSigninRedirectSpy: any;
 let childCheckinRedirectSpy: any;
+let adminToolsRedirectSpy: any;
 let setupErrorRedirectSpy: any;
 let machineIdConfig: any;
 let thisMachineConfig: any;
@@ -41,6 +42,7 @@ describe('HomeComponent', () => {
       fixture = new HomeComponent(router, cookieService, setupServiceStub);
       childSigninRedirectSpy = spyOn(fixture, 'goToChildSignin');
       childCheckinRedirectSpy = spyOn(fixture, 'goToChildCheckin');
+      adminToolsRedirectSpy = spyOn(fixture, 'goToAdminTools');
       setupErrorRedirectSpy = spyOn(fixture, 'goToSetupError');
     });
 
@@ -56,8 +58,14 @@ describe('HomeComponent', () => {
       expect(childCheckinRedirectSpy).toHaveBeenCalled();
     });
 
-    it('should redirect to error page when cookie is an unknown type', () => {
+    it('should redirect to admin signin when cookie is type = Admin', () => {
       thisMachineConfig = Observable.of(MachineConfiguration.fromJson({'MachineId': '123', 'KioskTypeId': 3}));
+      fixture.ngOnInit();
+      expect(adminToolsRedirectSpy).toHaveBeenCalled();
+    });
+
+    it('should redirect to error page when cookie is an unknown type', () => {
+      thisMachineConfig = Observable.of(MachineConfiguration.fromJson({'MachineId': '123', 'KioskTypeId': 46}));
       fixture.ngOnInit();
       expect(setupErrorRedirectSpy).toHaveBeenCalled();
     });
