@@ -10,5 +10,6 @@ namespace SignInCheckIn.Services.Interfaces
         ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto);
         ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier);
         void CreateNewFamily(string token, NewFamilyDto newFamilyDto);
+        int GetAgeGroupId(TempAgeGroupEvalDto dto);
     }
 }

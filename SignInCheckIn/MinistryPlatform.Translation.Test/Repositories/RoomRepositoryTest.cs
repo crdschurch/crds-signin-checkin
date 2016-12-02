@@ -32,7 +32,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_Rooms.Allow_Checkin",
                 "Event_Rooms.Volunteers",
                 "Event_Rooms.Capacity",
-                "Event_Rooms.Label"
+                "Event_Rooms.Label",
+                $"[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 3) AS Signed_In",
+                $"[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 4) AS Checked_In"
             };
 
             _roomColumns = new List<string>
@@ -69,6 +71,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(
                 mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>()))
                 .Returns(new List<MpEventRoomDto>());
+            //_ministryPlatformRestRepository.Setup(
+            //    mocked => mocked.Search<MpEventRoomDto>(It.IsAny<string>(), It.IsAny<List<string>>()))
+            //    .Returns(new List<MpEventRoomDto>());
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create(eventRoom, _eventRoomColumns)).Returns(created);
             var result = _fixture.CreateOrUpdateEventRoom("auth", eventRoom);
             _ministryPlatformRestRepository.VerifyAll();
@@ -155,7 +160,12 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns))
+            //_ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns))
+            //    .Returns(new List<MpEventRoomDto>
+            //    {
+            //        eventRoom
+            //    });
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventRoomDto>(It.IsAny<string>(), It.IsAny<List<string>>()))
                 .Returns(new List<MpEventRoomDto>
                 {
                     eventRoom

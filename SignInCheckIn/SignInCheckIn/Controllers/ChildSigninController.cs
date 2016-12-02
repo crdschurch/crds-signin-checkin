@@ -99,7 +99,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPost]
-        [ResponseType(typeof(NewFamilyDto))]
+        [ResponseType(typeof(int))]
         [Route("signin/newfamily")]
         public IHttpActionResult CreateNewFamily(NewFamilyDto newFamilyDto)
         {
@@ -108,6 +108,26 @@ namespace SignInCheckIn.Controllers
                 try
                 {
                     _childSigninService.CreateNewFamily(token, newFamilyDto);
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(NewFamilyDto))]
+        [Route("signin/getgroup")]
+        public IHttpActionResult GetAgeGroupByBirthdate()
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    //_childSigninService.CreateNewFamily(token, newFamilyDto);
                     return Ok();
                 }
                 catch (Exception e)
