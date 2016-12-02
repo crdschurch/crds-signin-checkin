@@ -27,6 +27,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
     private router: Router) {}
 
   ngOnInit() {
+    this.setUp();
+  }
+
+  setUp() {
    this.processing = false;
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
@@ -63,9 +67,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
   onSubmit() {
     this.processing = true;
-    this.adminService.createNewFamily(this.family).subscribe((resp) => {
-      this.router.navigate(['admin/events', this.eventId, 'new-family-registration']);
-      this.processing = false;
+    this.adminService.createNewFamily(this.family).subscribe((res) => {
+      this.setUp();
     }, (error) => {
       this.rootService.announceEvent('generalError');
       this.processing = false;

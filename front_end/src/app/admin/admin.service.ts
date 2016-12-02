@@ -71,9 +71,7 @@ export class AdminService {
 
   createNewFamily(family: NewFamily) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`;
-    return this.http.put(url, family)
-                    .map(res => res.json())
-                    .catch(this.handleError);
+    return this.http.post(url, family).map(res => { return res; }).catch(this.handleError);
   }
 
   private updateRoomGroupsInternal(room: Room) {
