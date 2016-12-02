@@ -34,11 +34,14 @@ export class NewFamilyRegistrationComponent implements OnInit {
         this.family.event = event;
         this.family.children = [this.newChild()];
         this.headerService.announceEvent(event);
+        this.adminService.getGradeGroups().subscribe((groups) => {
+            this.gradeGroups = groups;
+          },
+          error => console.error(error)
+        );
       },
       error => console.error(error)
     );
-
-    this.adminService.getGradeGroups().subscribe((groups) => this.gradeGroups = groups);
   }
 
   updateNumberOfKids(numberOfKids: number): void {

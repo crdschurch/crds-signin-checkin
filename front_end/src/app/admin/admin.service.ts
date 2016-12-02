@@ -66,7 +66,7 @@ export class AdminService {
   getGradeGroups() {
     const url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
     return this.http.get(url)
-                    .map(res => { (<Group[]>res.json()).map(r => Group.fromJson(r)); })
+                    .map(res => { return (<Group[]>res.json()).map(r => Group.fromJson(r)); })
                     .catch(this.handleError);
   }
 
