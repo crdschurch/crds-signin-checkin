@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Room } from '../shared/models';
+import { Room, Group } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -83,6 +83,25 @@ describe('AdminService', () => {
 
       fixture.importEvent(destinationEventId, sourceEventId).subscribe((r) => {
         expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${destinationEventId}/import/${sourceEventId}`, null, null);
+      });
+
+    });
+  });
+
+  describe('#getGradeGroups', () => {
+    it('should return list of rooms imported', () => {
+      let groups: Group[] = [
+        new Group(),
+        new Group()
+      ];
+      groups[0].Id = 12345;
+      groups[1].Id = 67890;
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(groups);
+
+      fixture.getGradeGroups().subscribe((r) => {
+        expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/grade-groups`);
       });
 
     });
