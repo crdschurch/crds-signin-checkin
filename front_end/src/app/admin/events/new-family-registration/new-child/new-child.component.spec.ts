@@ -2,7 +2,7 @@ import { NewChildComponent } from './new-child.component';
 import { NewChild } from '../../../../shared/models';
 import * as moment from 'moment';
 
-fdescribe('NewChildComponent', () => {
+describe('NewChildComponent', () => {
   it('should return true when child > 5 years old', () => {
     let fixture = new NewChildComponent();
     let child = new NewChild();
