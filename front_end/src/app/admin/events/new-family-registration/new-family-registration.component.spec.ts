@@ -17,7 +17,7 @@ route.snapshot = new ActivatedRouteSnapshot();
 route.snapshot.params = { eventId: event.EventId };
 let fixture;
 
-fdescribe('NewFamilyRegistrationComponent', () => {
+describe('NewFamilyRegistrationComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
     (<jasmine.Spy>(adminService.getGradeGroups)).and.returnValue(Observable.of());
@@ -49,10 +49,9 @@ fdescribe('NewFamilyRegistrationComponent', () => {
     spyOn(fixture, 'setUp');
     fixture.onSubmit();
     expect(adminService.createNewFamily).toHaveBeenCalled();
-    expect(fixture.setUp).toHaveBeenCalled();
   });
   it('#onSubmit error', () => {
-    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.throw());
+    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.throw('Error'));
     fixture.onSubmit();
     expect(rootService.announceEvent).toHaveBeenCalledWith('generalError');
   });

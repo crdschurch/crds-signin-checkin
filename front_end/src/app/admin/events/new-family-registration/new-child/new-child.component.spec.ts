@@ -7,7 +7,6 @@ describe('NewChildComponent', () => {
     let fixture = new NewChildComponent();
     let child = new NewChild();
     child.DateOfBirth = moment().subtract(5, 'years').subtract(1, 'day').toDate();
-    console.log(child)
     expect(fixture.needGradeLevel(child)).toBeTruthy();
   });
 
