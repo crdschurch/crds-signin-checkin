@@ -1,19 +1,16 @@
 import { Observable } from 'rxjs';
 import { NewFamilyRegistrationComponent } from './new-family-registration.component';
-import { Router, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { NewFamily, NewParent, NewChild } from '../../../shared/models';
-import * as moment from 'moment';
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 
 const event = {
   'EventTitle': 'Cool Event 83',
   'EventId': '92398420398',
 };
-const eventTitle = 'Cool Event';
 let router;
 let apiService = jasmine.createSpyObj('apiService', ['getEvent']);
-let adminService = jasmine.createSpyObj('adminService', ['getGradeGroups']);
+let adminService = jasmine.createSpyObj('adminService', ['getGradeGroups', 'createNewFamily']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
-let rootService;
+let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
 let route: ActivatedRoute;
 route = new ActivatedRoute();
 route.snapshot = new ActivatedRouteSnapshot();
@@ -24,6 +21,8 @@ fdescribe('NewFamilyRegistrationComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
     (<jasmine.Spy>(adminService.getGradeGroups)).and.returnValue(Observable.of());
+    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
+    (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
     fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
   });
   it('#ngOnInit', () => {
@@ -33,7 +32,6 @@ fdescribe('NewFamilyRegistrationComponent', () => {
   });
   it('#setUp', () => {
     fixture.setUp();
-    console.log("fixture", fixture)
     expect(fixture.family).toBeDefined();
     expect(fixture.family.parent).toBeDefined(1);
     expect(fixture.family.children.length).toEqual(1);
@@ -47,7 +45,16 @@ fdescribe('NewFamilyRegistrationComponent', () => {
     fixture.updateNumberOfKids(4);
     expect(fixture.family.children.length).toEqual(4);
   });
-  // it('#onSubmit', () => {
-  // });
+  it('#onSubmit success', () => {
+    spyOn(fixture, 'setUp');
+    fixture.onSubmit();
+    expect(adminService.createNewFamily).toHaveBeenCalled();
+    expect(fixture.setUp).toHaveBeenCalled();
+  });
+  it('#onSubmit error', () => {
+    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.throw());
+    fixture.onSubmit();
+    expect(rootService.announceEvent).toHaveBeenCalledWith('generalError');
+  });
 
 });
