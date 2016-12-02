@@ -22,7 +22,7 @@
     </div>
     <div class="col-xs-12 col-sm-6">
       <div class="form-group required">
-        <label for="formGroupExampleInput" class="control-label">Number of Children</label>
+        <label for="numberOfPossibleKids" class="control-label">Number of Children</label>
         <select class="form-control" (change)="update($event.target.value)">
           <option *ngFor="let number of numberOfPossibleKids;">{{ number }}</option>
         </select>

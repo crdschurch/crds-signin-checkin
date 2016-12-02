@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
 import { Room } from '../shared/models';
+import { Group } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -59,6 +60,13 @@ export class AdminService {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${destinationEventId}/import/${sourceEventId}`;
     return this.http.put(url, null, null)
                     .map(res => { (<any[]>res.json()).map(r => Room.fromJson(r)); })
+                    .catch(this.handleError);
+  }
+
+  getGradeGroups() {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
+    return this.http.get(url)
+                    .map(res => { return (<Group[]>res.json()).map(r => Group.fromJson(r)); })
                     .catch(this.handleError);
   }
 

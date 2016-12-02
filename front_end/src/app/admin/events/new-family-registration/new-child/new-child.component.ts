@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
-import { NewChild } from '../../../../shared/models';
+import { NewChild, Group } from '../../../../shared/models';
 
 import * as moment from 'moment';
 
@@ -8,16 +8,18 @@ import * as moment from 'moment';
   selector: 'new-child',
   templateUrl: 'new-child.component.html'
 })
-export class NewChildComponent implements OnInit {
+export class NewChildComponent {
   @Input() childNumber: number;
   @Input() child: NewChild;
+  @Input() gradeGroups: Array<Group>;
 
   constructor() {}
 
-  ngOnInit() {
-  }
-
   needGradeLevel(child: NewChild): boolean {
     return moment(child.DateOfBirth).isBefore(moment().startOf('day').subtract(5, 'y'));
+  }
+
+  update(groupId: number) {
+    this.child.YearGrade = groupId;
   }
 }

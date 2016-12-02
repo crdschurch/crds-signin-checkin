@@ -79,6 +79,12 @@ namespace SignInCheckIn.Services
             return response;
         }
 
+        public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)
+        {
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            return GetGradesAndCurrentSelection(grades, new List<MpEventGroupDto>(), 0).ToList();
+        }
+
         private EventRoomDto GetEventRoom(int eventId, int roomId)
         {
             var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);

@@ -22,12 +22,10 @@
   </div>
   <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(child)">
     <div class="form-group required">
-      <label for="formGroupExampleInput" class="control-label">Year / Grade</label>
-      <select class="form-control">
-        <option></option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
+      <label for="grade" class="control-label">Year / Grade</label>
+      <select class="form-control" (change)="update($event.target.value)">
+        <option>Has not started Kindergarten yet</option>
+        <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}">{{ grade.Name }}</option>
       </select>
     </div>
   </div>
