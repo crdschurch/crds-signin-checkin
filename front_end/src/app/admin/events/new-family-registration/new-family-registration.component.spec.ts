@@ -33,13 +33,20 @@ fdescribe('NewFamilyRegistrationComponent', () => {
   });
   it('#setUp', () => {
     fixture.setUp();
+    console.log("fixture", fixture)
+    expect(fixture.family).toBeDefined();
+    expect(fixture.family.parent).toBeDefined(1);
+    expect(fixture.family.children.length).toEqual(1);
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
     expect(apiService.getEvent).toHaveBeenCalledWith(event.EventId);
     expect(adminService.getGradeGroups).toHaveBeenCalled();
     expect(headerService.announceEvent).toHaveBeenCalledWith(event);
   });
-  // it('#updateNumberOfKids', () => {
-  // });
+  it('#updateNumberOfKids', () => {
+    fixture.setUp();
+    fixture.updateNumberOfKids(4);
+    expect(fixture.family.children.length).toEqual(4);
+  });
   // it('#onSubmit', () => {
   // });
 
