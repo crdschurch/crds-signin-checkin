@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { NewChild } from '../../../../shared/models';
+import { NewChild, Group } from '../../../../shared/models';
 
 import * as moment from 'moment';
 
@@ -11,6 +11,7 @@ import * as moment from 'moment';
 export class NewChildComponent implements OnInit {
   @Input() childNumber: number;
   @Input() child: NewChild;
+  @Input() gradeGroups: Array<Group>;
 
   constructor() {}
 

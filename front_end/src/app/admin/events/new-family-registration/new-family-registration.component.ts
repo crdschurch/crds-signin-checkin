@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { NewFamily, NewParent, NewChild } from '../../../shared/models';
+import { NewFamily, NewParent, NewChild, Group } from '../../../shared/models';
+import { AdminService } from '../../admin.service';
 import { ApiService } from '../../../shared/services';
 import { HeaderService } from '../../header/header.service';
 
@@ -14,11 +15,13 @@ import * as moment from 'moment';
 export class NewFamilyRegistrationComponent implements OnInit {
   private eventId: string;
   private family: NewFamily;
+  private gradeGroups: Array<Group> = [];
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
     private headerService: HeaderService,
+    private adminService: AdminService,
     private router: Router) {}
 
   ngOnInit() {
@@ -34,6 +37,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
       },
       error => console.error(error)
     );
+
+    this.adminService.getGradeGroups().subscribe((groups) => this.gradeGroups = groups);
   }
 
   updateNumberOfKids(numberOfKids: number): void {
