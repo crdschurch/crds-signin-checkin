@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Room, Group } from '../shared/models';
+import { Room, Group, NewFamily } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -100,8 +100,25 @@ describe('AdminService', () => {
       (<jasmine.Spy>httpClientService.get).and.returnValue(response);
       (<jasmine.Spy>responseObject.json).and.returnValue(groups);
 
-      fixture.getGradeGroups().subscribe((r) => {
-        expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/grade-groups`);
+      let result = fixture.getGradeGroups();
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/grade-groups`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((p) => {
+        expect(p[0].Id).toEqual(groups[0].Id);
+      });
+    });
+  });
+
+  describe('#createNewFamily', () => {
+    it('should return list of rooms imported', () => {
+      let family = new NewFamily();
+
+      (<jasmine.Spy>httpClientService.post).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(undefined);
+
+      fixture.createNewFamily(family).subscribe((res) => {
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`, family);
       });
 
     });
