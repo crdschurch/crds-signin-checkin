@@ -7,7 +7,7 @@
         <h1>New Family Registration</h1>
       </div><!--/col-sm-12-->
 
-      <form  novalidate #newFamilyRegistrationForm="ngForm" (ngSubmit)="onSubmit(newFamilyRegistrationForm)">
+      <form (ngSubmit)="onSubmit(newFamilyRegistrationForm)" #newFamilyRegistrationForm="ngForm" novalidate>
         <new-parent [parent]="family.parent" [submitted]="submitted" (updateNumberOfKids)="updateNumberOfKids($event)"></new-parent>
 
         <div class="col-xs-12 mb-2" *ngFor="let child of family.children; let idx = index;">
