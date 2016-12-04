@@ -87,6 +87,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
       this.processing = true;
       this.adminService.createNewFamily(this.family).subscribe((res) => {
         this.setUp();
+        form.reset();
       }, (error) => {
         this.rootService.announceEvent('generalError');
         this.processing = false;
