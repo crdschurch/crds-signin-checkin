@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { NewFamily, NewParent, NewChild, Group } from '../../../shared/models';
@@ -17,6 +18,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private family: NewFamily;
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
+  private submitted: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -32,6 +34,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
   setUp() {
    this.processing = false;
+   this.submitted = false;
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
    this.family.parent = new NewParent();
@@ -65,14 +68,17 @@ export class NewFamilyRegistrationComponent implements OnInit {
     this.family.children = tmpChildren;
   }
 
-  onSubmit() {
-    this.processing = true;
-    this.adminService.createNewFamily(this.family).subscribe((res) => {
-      this.setUp();
-    }, (error) => {
-      this.rootService.announceEvent('generalError');
-      this.processing = false;
-    });
+  onSubmit(form: NgForm) {
+    this.submitted = true;
+    if (!form.pristine && form.valid) {
+      this.processing = true;
+      this.adminService.createNewFamily(this.family).subscribe((res) => {
+        this.setUp();
+      }, (error) => {
+        this.rootService.announceEvent('generalError');
+        this.processing = false;
+      });
+    }
   }
 
   private newChild(): NewChild {
