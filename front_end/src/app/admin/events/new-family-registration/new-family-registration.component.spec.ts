@@ -1,6 +1,8 @@
 import { Observable } from 'rxjs';
 import { NewFamilyRegistrationComponent } from './new-family-registration.component';
+import { NewChild } from '../../../shared/models';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import * as moment from 'moment';
 
 const event = {
   'EventTitle': 'Cool Event 83',
@@ -46,14 +48,34 @@ describe('NewFamilyRegistrationComponent', () => {
     expect(fixture.family.children.length).toEqual(4);
   });
   it('#onSubmit success', () => {
+    let form = {
+      pristine: false,
+      valid: true
+    };
+    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.throw('Error'));
     spyOn(fixture, 'setUp');
-    fixture.onSubmit();
+    fixture.onSubmit(form);
     expect(adminService.createNewFamily).toHaveBeenCalled();
   });
   it('#onSubmit error', () => {
-    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.throw('Error'));
-    fixture.onSubmit();
+    let form = {
+      pristine: false,
+      valid: true
+    };
+    fixture.onSubmit(form);
     expect(rootService.announceEvent).toHaveBeenCalledWith('generalError');
   });
+  it('should return true when child > 5 years old', () => {
+    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+    let child = new NewChild();
+    child.DateOfBirth = moment().subtract(5, 'years').subtract(1, 'day').toDate();
+    expect(fixture.needGradeLevel(child)).toBeTruthy();
+  });
 
+  it('should return false when child < 5 years old', () => {
+    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+    let child = new NewChild();
+    child.DateOfBirth = moment().subtract(5, 'years').add(1, 'day').toDate();
+    expect(fixture.needGradeLevel(child)).toBeFalsy();
+  });
 });

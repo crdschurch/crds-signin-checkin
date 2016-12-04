@@ -10,6 +10,7 @@ import { HeaderService } from '../../header/header.service';
 import * as moment from 'moment';
 
 @Component({
+  styleUrls: ['new-family-registration.component.scss'],
   selector: 'new-family-registration',
   templateUrl: 'new-family-registration.component.html'
 })
@@ -19,6 +20,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
+  private numberOfPossibleKids: Array<number> = [];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -39,6 +42,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.family = new NewFamily();
    this.family.parent = new NewParent();
    this.family.children = [];
+   this.numberOfPossibleKids = Array.from({length: 12}, (v, k) => k + 1);
+
 
     this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.family.event = event;
@@ -66,6 +71,14 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
 
     this.family.children = tmpChildren;
+  }
+
+  needGradeLevel(child: NewChild): boolean {
+    return moment(child.DateOfBirth).isBefore(moment().startOf('day').subtract(5, 'y'));
+  }
+
+  updateChildYearGradeGroup(child: NewChild, groupId: number) {
+    child.YearGrade = groupId;
   }
 
   onSubmit(form: NgForm) {

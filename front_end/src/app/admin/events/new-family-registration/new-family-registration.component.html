@@ -8,10 +8,90 @@
       </div><!--/col-sm-12-->
 
       <form (ngSubmit)="onSubmit(newFamilyRegistrationForm)" #newFamilyRegistrationForm="ngForm" novalidate>
-        <new-parent [parent]="family.parent" [submitted]="submitted" (updateNumberOfKids)="updateNumberOfKids($event)"></new-parent>
+        
+        <div class="col-xs-12 mb-2">
+          <div class="row">
+            {{ newFamilyRegistrationForm.value | json }}
+          </div>
+        </div>
+        
+        
+        <div class="col-xs-12 mb-2">
+          <h4>Parent/Guardian Info</h4>
 
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="firstName" class="control-label">First Name</label>
+                <input type="text" class="form-control" [(ngModel)]="family.parent.FirstName" name="firstName" #firstName="ngModel"
+                  [class.has-error]="!firstName.valid && submitted" required>
+                <span [hidden]="firstName.valid || (firstName.pristine && !submitted)" class="has-error"><p>Please enter a value.</p></span>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="lastName" class="control-label">Last Name</label>
+                <input type="text" class="form-control" [(ngModel)]="family.parent.LastName" name="lastName" #lastName="ngModel"
+                  [class.has-error]="!lastName.valid && submitted" required>
+                <span [hidden]="lastName.valid || (lastName.pristine && !submitted)" class="has-error"><p>Please enter a value.</p></span>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="phoneNumber" class="control-label">Phone Number</label>
+                <input type="text" class="form-control" [(ngModel)]="family.parent.PhoneNumber" name="phoneNumber" #phoneName="ngModel"
+                  [class.has-error]="!phoneName.valid && submitted" required>
+                <span [hidden]="phoneName.valid || (phoneName.pristine && !submitted)" class="has-error"><p>Please enter a value.</p></span>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="numberOfPossibleKids" class="control-label">Number of Children</label>
+                <select class="form-control" (change)="updateNumberOfKids($event.target.value)">
+                  <option *ngFor="let number of numberOfPossibleKids;">{{ number }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div class="col-xs-12 mb-2" *ngFor="let child of family.children; let idx = index;">
-          <new-child [submitted]="submitted" [child]="child" [childNumber]="idx" [gradeGroups]="gradeGroups"></new-child>
+          <h4>Child {{ idx + 1 }}</h4>
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="firstName" class="control-label">First Name</label>
+                <input type="text" class="form-control" [(ngModel)]="child.FirstName" name="childFirstName{{idx}}" #`childFirstName{idx}`="ngModel" required
+                  [class.has-error]="!firstName.valid && submitted">
+                <span [hidden]="firstName.valid || (firstName.pristine && !submitted)" class="has-error"><p>Please enter a value.</p></span>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="lastName" class="control-label">Last Name</label>
+                <input type="text" class="form-control" [(ngModel)]="child.LastName" name="childLastName{{idx}}" #childLastName="ngModel" required
+                  [class.has-error]="!lastName.valid && submitted">
+                <span [hidden]="lastName.valid || (lastName.pristine && !submitted)" class="has-error"><p>Please enter a value.</p></span>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="birthDate" class="control-label">Birth Date</label>
+                <br/>
+                <crds-datepicker name="birthDate" autoClose="true" [(date)]="child.DateOfBirth"></crds-datepicker>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(child)">
+              <div class="form-group required">
+                <label for="grade" class="control-label">Year / Grade</label>
+                <select class="form-control" (change)="updateChildYearGradeGroup(child, $event.target.value)">
+                  <option>Has not started Kindergarten yet</option>
+                  <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}">{{ grade.Name }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="col-xs-12">
