@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { Room } from '../shared/models';
+import { Room, Group, NewFamily } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -60,6 +60,18 @@ export class AdminService {
     return this.http.put(url, null, null)
                     .map(res => { (<any[]>res.json()).map(r => Room.fromJson(r)); })
                     .catch(this.handleError);
+  }
+
+  getGradeGroups() {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
+    return this.http.get(url)
+                    .map(res => { return (<Group[]>res.json()).map(r => Group.fromJson(r)); })
+                    .catch(this.handleError);
+  }
+
+  createNewFamily(family: NewFamily) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`;
+    return this.http.post(url, family).map(res => { return res; }).catch(this.handleError);
   }
 
   private updateRoomGroupsInternal(room: Room) {

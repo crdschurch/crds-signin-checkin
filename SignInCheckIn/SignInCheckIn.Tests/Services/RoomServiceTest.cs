@@ -575,5 +575,17 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.VerifyAll();
             _roomRepository.VerifyAll();
         }
+
+        [Test]
+        public void TestGetGradeAttributes()
+        {
+            const string token = "token 123";
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            
+            var result = _fixture.GetGradeAttributes(token);
+            result.Should().NotBeNull();
+            Assert.IsTrue(result.Count == 8);
+            Assert.AreEqual(_gradeList[1].Id, result[0].Id);
+        }
     }
 }

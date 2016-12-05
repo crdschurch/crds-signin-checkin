@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -52,6 +49,26 @@ namespace SignInCheckIn.Controllers
                     try
                 {
                     var roomList = _roomService.UpdateAvailableRooms(token, eventId, roomId, eventRooms);
+                    return Ok(roomList);
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Get Rooms By Location ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(List<RoomDto>))]
+        [Route("grade-groups")]
+        public IHttpActionResult GetGradeGroups()
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    var roomList = _roomService.GetGradeAttributes(token);
                     return Ok(roomList);
                 }
                 catch (Exception e)

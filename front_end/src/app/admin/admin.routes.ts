@@ -3,10 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AdminComponent } from './admin.component';
 import { SignInComponent } from './sign-in';
-import { NewFamilyRegistrationComponent } from './new-family-registration';
-
 import { eventsRoutes } from './events/events.routes';
-
 import { CanActivateIfLoggedInGuard } from '../shared/guards';
 
 const adminRoutes: Routes = [
@@ -15,8 +12,7 @@ const adminRoutes: Routes = [
     children: [
       { path: 'dashboard', redirectTo: 'events' },
       { path: 'sign-in', component: SignInComponent },
-      { path: 'events', children: [...eventsRoutes], canActivate: [CanActivateIfLoggedInGuard] },
-      { path: 'new-family-registration', component: NewFamilyRegistrationComponent }
+      { path: 'events', children: [...eventsRoutes], canActivate: [CanActivateIfLoggedInGuard] }
     ]
   }
 ];
