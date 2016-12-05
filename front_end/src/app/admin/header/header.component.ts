@@ -26,11 +26,7 @@ export class HeaderComponent {
     this.router.navigate(['/admin/sign-in']);
   }
 
-  isManageRoomsRoute() {
-    return /\/admin\/events\/.*\/rooms/.test(this.router.url);
-  }
-
   isEventsRoute() {
-    return this.router.url === '/admin/events';
+    return this.event !== undefined;
   }
 }

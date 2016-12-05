@@ -33,8 +33,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_Rooms.Volunteers",
                 "Event_Rooms.Capacity",
                 "Event_Rooms.Label",
-                $"[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 3) AS Signed_In",
-                $"[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 4) AS Checked_In"
+                "[dbo].crds_getEventParticipantStatusCount(Event_Rooms.Event_ID, Event_Rooms.Room_ID, 3) AS Signed_In",
+                "[dbo].crds_getEventParticipantStatusCount(Event_Rooms.Event_ID, Event_Rooms.Room_ID, 4) AS Checked_In"
             };
 
             _roomColumns = new List<string>

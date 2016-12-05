@@ -25,16 +25,16 @@ namespace MinistryPlatform.Translation.Models.DTO
         public bool AllowSignIn { get; set; }
 
         [JsonProperty(PropertyName = "Volunteers")]
-        public int Volunteers { get; set; }
+        public int? Volunteers { get; set; }
 
         [JsonProperty(PropertyName = "Capacity")]
-        public int Capacity { get; set; }
+        public int? Capacity { get; set; }
 
         [JsonProperty(PropertyName = "Signed_In")]
-        public int SignedIn { get; set; }
+        public int? SignedIn { get; set; }
 
         [JsonProperty(PropertyName = "Checked_In")]
-        public int CheckedIn { get; set; }
+        public int? CheckedIn { get; set; }
 
         [JsonProperty(PropertyName = "Label")]
         public string Label { get; set; }

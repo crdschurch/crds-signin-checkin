@@ -9,3 +9,6 @@ export { Range } from './range';
 export { Room } from './room';
 export { Timeframe } from './timeframe';
 export { User } from './user';
+export { NewParent } from './new-parent';
+export { NewChild } from './new-child';
+export { NewFamily } from './new-family';
