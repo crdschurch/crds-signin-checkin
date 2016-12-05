@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.DynamicData;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
+using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
@@ -24,6 +26,7 @@ namespace SignInCheckIn.Services
         private readonly IPdfEditor _pdfEditor;
         private readonly IParticipantRepository _participantRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IGroupLookupRepository _groupLookupRepository;
 
         public ChildSigninService(IChildSigninRepository childSigninRepository,
                                   IEventRepository eventRepository,
@@ -34,7 +37,8 @@ namespace SignInCheckIn.Services
                                   IContactRepository contactRepository,
                                   IKioskRepository kioskRepository,
                                   IParticipantRepository participantRepository,
-                                  IApplicationConfiguration applicationConfiguration)
+                                  IApplicationConfiguration applicationConfiguration,
+                                  IGroupLookupRepository groupLookupRepository)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -46,6 +50,7 @@ namespace SignInCheckIn.Services
             _pdfEditor = pdfEditor;
             _participantRepository = participantRepository;
             _applicationConfiguration = applicationConfiguration;
+            _groupLookupRepository = groupLookupRepository;
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
@@ -212,11 +217,15 @@ namespace SignInCheckIn.Services
 
         public void CreateNewFamily(string token, NewFamilyDto newFamilyDto)
         {
-            SaveNewFamilyData(token, newFamilyDto);
+            var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
+            CreateGroupParticipants(token, newFamilyParticipants);
+
             // following stories will work assign to groups and print labels
+            // we should just be able to do a search at that point, and get the typical sign in dto, and 
+            // then send that over
         }
 
-        private void SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
+        private List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
         {
             // Step 1 - create the household
             MpHouseholdDto mpHouseholdDto = new MpHouseholdDto
@@ -228,8 +237,6 @@ namespace SignInCheckIn.Services
             };
 
             mpHouseholdDto = _contactRepository.CreateHousehold(token, mpHouseholdDto);
-
-            List<MpNewParticipantDto> mpNewParticipantDtos = new List<MpNewParticipantDto>();
 
             // Step 2 - create the parent contact w/participant
             MpNewParticipantDto parentNewParticipantDto = new MpNewParticipantDto
@@ -248,15 +255,18 @@ namespace SignInCheckIn.Services
                 }
             };
 
-            mpNewParticipantDtos.Add(parentNewParticipantDto);
+            _participantRepository.CreateParticipantWithContact(token, parentNewParticipantDto);
 
             // Step 3 create the children contacts
+            List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
+
             foreach (var childContactDto in newFamilyDto.ChildContactDtos)
             {
                 MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
                 {
                     ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
                     ParticipantStartDate = System.DateTime.Now,
+                    DateOfBirth = childContactDto.DateOfBirth,
                     Contact = new MpContactDto
                     {
                         FirstName = childContactDto.FirstName,
@@ -269,19 +279,37 @@ namespace SignInCheckIn.Services
                     }
                 };
 
-                mpNewParticipantDtos.Add(childNewParticipantDto);
+                var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
+                newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
+                newParticipant.DateOfBirth = childContactDto.DateOfBirth;
+                mpNewChildParticipantDtos.Add(newParticipant);
             }
 
-            _participantRepository.CreateParticipantsWithContacts(token, mpNewParticipantDtos);
+            return mpNewChildParticipantDtos;
         }
 
-        public int GetAgeGroupId(TempAgeGroupEvalDto dto)
+        // this really can just return void, but we need to get the grade group id on the mp new participant dto
+        public void CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
         {
+            // Step 4 - create the group participants
+            List<MpGroupParticipantDto> groupParticipantDtos = new List<MpGroupParticipantDto>();
 
+            foreach (var tempItem in mpParticipantDtos)
+            {
+                MpGroupParticipantDto groupParticipantDto = new MpGroupParticipantDto
+                {
+                    GroupId = _groupLookupRepository.GetGroupId(tempItem.DateOfBirth, tempItem.GradeGroupAttributeId),
+                    ParticipantId = tempItem.ParticipantId,
+                    GroupRoleId = _applicationConfiguration.GroupRoleMemberId,
+                    StartDate = System.DateTime.Now,
+                    EmployeeRole = false,
+                    AutoPromote = true
+                };
 
+                groupParticipantDtos.Add(groupParticipantDto);
+            }
 
-
-            return 0;
+            var newGroupParticipants = _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
     }
 }

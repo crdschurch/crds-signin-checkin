@@ -118,24 +118,21 @@ namespace SignInCheckIn.Controllers
             });
         }
 
-        [HttpPost]
-        [ResponseType(typeof(NewFamilyDto))]
-        [Route("signin/getgroup")]
-        public IHttpActionResult GetAgeGroupByBirthdate()
-        {
-            return Authorized(token =>
-            {
-                try
-                {
-                    //_childSigninService.CreateNewFamily(token, newFamilyDto);
-                    return Ok();
-                }
-                catch (Exception e)
-                {
-                    var apiError = new ApiErrorDto("Create new family error: ", e);
-                    throw new HttpResponseException(apiError.HttpResponseMessage);
-                }
-            });
-        }
+        //[HttpPost]
+        //[ResponseType(typeof(int))]
+        //[Route("signin/getgroup")]
+        //public IHttpActionResult GetAgeGroupByBirthdate(TempAgeGroupEvalDto dto)
+        //{
+        //    try
+        //    {
+        //        var result = _childSigninService.GetAgeGroupId(dto);
+        //        return Ok(result);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        var apiError = new ApiErrorDto("Create new family error: ", e);
+        //        throw new HttpResponseException(apiError.HttpResponseMessage);
+        //    }
+        //}
     }
 }

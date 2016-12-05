@@ -8,5 +8,6 @@ namespace SignInCheckIn.Models.DTO
     public class TempAgeGroupEvalDto
     {
         public string Birthdate { get; set; }
+        public int? GradeGroup { get; set; }
     }
 }
