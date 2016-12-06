@@ -496,11 +496,12 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository.Setup(m => m.CreateParticipantWithContact(token, It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
 
             // Act
-            _fixture.SaveNewFamilyData(token, newFamilyDto);
+            var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
 
             // Assert
             _contactRepository.VerifyAll();
             _participantRepository.VerifyAll();
+            Assert.IsNotNull(result);
         } 
     }
 }

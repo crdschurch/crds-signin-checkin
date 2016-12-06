@@ -89,16 +89,27 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            MpNewParticipantDto returnDto = new MpNewParticipantDto();
+            MpNewParticipantDto returnDto = new MpNewParticipantDto
+            {
+                ParticipantId = 1234567,
+                FirstName = "TestFirst1",
+                LastName = "TestLast1",
+                Contact = new MpContactDto
+                {
+                    ContactId = 2345678
+                }
+            };
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
             // Act
-            _fixture.CreateParticipantWithContact(token, mpNewParticipantDto);
+            var result = _fixture.CreateParticipantWithContact(token, mpNewParticipantDto);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
+
+            Assert.AreEqual(returnDto, result);
         }
     }
 }
