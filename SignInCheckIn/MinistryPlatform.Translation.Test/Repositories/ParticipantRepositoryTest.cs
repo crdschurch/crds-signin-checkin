@@ -65,5 +65,36 @@ namespace MinistryPlatform.Translation.Test.Repositories
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
         }
+
+        [Test]
+        public void ItShouldCreateParticipantWithContact()
+        {
+            //// Arrange
+            //string token = "123abc";
+
+            //List<string> participantColumns = new List<string>
+            //{
+            //    "Participants.Participant_ID",
+            //    "Participants.Participant_Type_ID",
+            //    "Participants.Participant_Start_Date"
+            //};
+
+            //MpNewParticipantDto mpNewParticipantDto = new MpNewParticipantDto
+            //{
+            //    FirstName = "TestFirst1",
+            //    LastName = "TestLast1",
+            //    Contact = new MpContactDto
+            //    {
+                    
+            //    }
+            //};
+
+
+            //// Act
+            //_fixture.CreateParticipantWithContact(token, mpNewParticipantDto);
+
+            //// Assert
+            //_ministryPlatformRestRepository.VerifyAll();
+        }
     }
 }

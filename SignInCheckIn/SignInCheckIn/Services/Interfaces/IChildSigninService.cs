@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MinistryPlatform.Translation.Models.DTO;
 using SignInCheckIn.Models.DTO;
 
 namespace SignInCheckIn.Services.Interfaces
@@ -10,7 +11,6 @@ namespace SignInCheckIn.Services.Interfaces
         ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto);
         ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier);
         void CreateNewFamily(string token, NewFamilyDto newFamilyDto);
-
-        //int GetAgeGroupId(TempAgeGroupEvalDto dto);
+        List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto);
     }
 }

@@ -490,13 +490,13 @@ namespace SignInCheckIn.Tests.Services
             };
 
             MpHouseholdDto mpHouseholdDto = new MpHouseholdDto();
-            List<MpNewParticipantDto> newParticipantDtos = new List<MpNewParticipantDto>();
+            MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _participantRepository.Setup(m => m.CreateParticipantsWithContacts(token, It.IsAny<List<MpNewParticipantDto>>())).Returns(newParticipantDtos);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(token, It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
 
             // Act
-            _fixture.CreateNewFamily(token, newFamilyDto);
+            _fixture.SaveNewFamilyData(token, newFamilyDto);
 
             // Assert
             _contactRepository.VerifyAll();
