@@ -36,5 +36,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Company")]
         public bool Company { get; set; }
+
+        [JsonProperty(PropertyName = "Date_of_Birth")]
+        public DateTime DateOfBirth { get; set; }
     }
 }
