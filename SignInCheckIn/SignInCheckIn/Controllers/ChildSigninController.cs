@@ -45,7 +45,7 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id is Invalid");
                 }
 
-                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
+                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
                 return Ok(children);
             }
             catch (Exception e)
