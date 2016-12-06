@@ -266,7 +266,6 @@ namespace SignInCheckIn.Services
                 {
                     ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
                     ParticipantStartDate = System.DateTime.Now,
-                    DateOfBirth = childContactDto.DateOfBirth,
                     Contact = new MpContactDto
                     {
                         FirstName = childContactDto.FirstName,
@@ -275,13 +274,13 @@ namespace SignInCheckIn.Services
                         DisplayName = childContactDto.FirstName + " " + childContactDto.LastName,
                         HouseholdId = mpHouseholdDto.HouseholdId,
                         HouseholdPositionId = _applicationConfiguration.MinorChildId,
-                        Company = false
+                        Company = false,
+                        DateOfBirth = childContactDto.DateOfBirth
                     }
                 };
 
                 var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
                 newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
-                newParticipant.DateOfBirth = childContactDto.DateOfBirth;
                 mpNewChildParticipantDtos.Add(newParticipant);
             }
 
@@ -298,7 +297,7 @@ namespace SignInCheckIn.Services
             {
                 MpGroupParticipantDto groupParticipantDto = new MpGroupParticipantDto
                 {
-                    GroupId = _groupLookupRepository.GetGroupId(tempItem.DateOfBirth, tempItem.GradeGroupAttributeId),
+                    GroupId = _groupLookupRepository.GetGroupId(tempItem.Contact.DateOfBirth, tempItem.GradeGroupAttributeId),
                     ParticipantId = tempItem.ParticipantId,
                     GroupRoleId = _applicationConfiguration.GroupRoleMemberId,
                     StartDate = System.DateTime.Now,
