@@ -20,8 +20,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  private numberOfPossibleKids: Array<number> = [];
-
 
   constructor(
     private route: ActivatedRoute,
@@ -41,11 +39,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
    this.family.parent = new NewParent();
+   this.family.numberOfKids = 1;
    this.family.children = [this.newChild()];
-   this.numberOfPossibleKids = Array.from({length: 12}, (v, k) => k + 1);
 
-
-    this.apiService.getEvent(this.eventId).subscribe((event) => {
+   this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.family.event = event;
         this.headerService.announceEvent(event);
         this.adminService.getGradeGroups().subscribe((groups) => {
@@ -58,10 +55,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
     );
   }
 
-  updateNumberOfKids(numberOfKids: number): void {
+  updateNumberOfKids(): void {
     let tmpChildren: Array<NewChild> = [];
 
-    for (let i = 0; i < numberOfKids; i++) {
+    for (let i = 0; i < this.family.numberOfKids; i++) {
       if (this.family.children[i] === undefined) {
         tmpChildren.push(this.newChild());
       } else {
@@ -85,8 +82,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
     if (!form.pristine && form.valid) {
       this.processing = true;
       this.adminService.createNewFamily(this.family).subscribe((res) => {
-        this.setUp();
         form.reset();
+        this.setUp();
       }, (error) => {
         this.rootService.announceEvent('generalError');
         this.processing = false;

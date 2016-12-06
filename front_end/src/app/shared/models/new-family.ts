@@ -4,6 +4,7 @@ export class NewFamily {
   event: Event;
   parent: NewParent;
   children: Array<NewChild> = [];
+  numberOfKids: number = 1;
 
   static fromJson(json: any): NewFamily {
     if (!json) {
