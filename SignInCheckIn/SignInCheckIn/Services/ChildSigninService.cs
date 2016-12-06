@@ -228,7 +228,7 @@ namespace SignInCheckIn.Services
             // then send that over
         }
 
-        private List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
+        public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
         {
             // Step 1 - create the household
             MpHouseholdDto mpHouseholdDto = new MpHouseholdDto
