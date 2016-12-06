@@ -27,6 +27,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IKioskRepository> _kioskRepository;
         private Mock<IParticipantRepository> _participantRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
+        private Mock<IGroupLookupRepository> _groupLookupRepository;
 
         private ChildSigninService _fixture;
 
@@ -45,11 +46,12 @@ namespace SignInCheckIn.Tests.Services
             _kioskRepository = new Mock<IKioskRepository>(MockBehavior.Strict);
             _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
+            _groupLookupRepository = new Mock<IGroupLookupRepository>();
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
-                _applicationConfiguration.Object);
+                _applicationConfiguration.Object, _groupLookupRepository.Object);
         }
 
         [Test]
@@ -488,17 +490,18 @@ namespace SignInCheckIn.Tests.Services
             };
 
             MpHouseholdDto mpHouseholdDto = new MpHouseholdDto();
-            List<MpNewParticipantDto> newParticipantDtos = new List<MpNewParticipantDto>();
+            MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _participantRepository.Setup(m => m.CreateParticipantsWithContacts(token, It.IsAny<List<MpNewParticipantDto>>())).Returns(newParticipantDtos);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(token, It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
 
             // Act
-            _fixture.CreateNewFamily(token, newFamilyDto);
+            var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
 
             // Assert
             _contactRepository.VerifyAll();
             _participantRepository.VerifyAll();
+            Assert.IsNotNull(result);
         } 
     }
 }

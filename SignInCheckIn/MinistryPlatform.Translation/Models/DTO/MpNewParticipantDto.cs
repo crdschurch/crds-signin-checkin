@@ -43,5 +43,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Participant_Start_Date")]
         public DateTime ParticipantStartDate { get; set; }
+
+        [JsonIgnore]
+        public int? GradeGroupAttributeId { get; set; }
     }
 }

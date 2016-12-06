@@ -72,5 +72,33 @@ namespace MinistryPlatform.Translation.Repositories
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDtos, participantColumns);
         }
+
+        public MpNewParticipantDto CreateParticipantWithContact(string token, MpNewParticipantDto mpNewParticipantDto)
+        {
+            List<string> participantColumns = new List<string>
+            {
+                "Participants.Participant_ID",
+                "Participants.Participant_Type_ID",
+                "Participants.Participant_Start_Date"
+            };
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
+        }
+
+        public List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpGroupParticipantDto> mpGroupParticipantDtos)
+        {
+            List<string> groupParticipantColumns = new List<string>
+            {
+                "Group_Participant_ID",
+                "Group_ID",
+                "Participant_ID",
+                "Group_Role_ID",
+                "Start_Date",
+                "Employee_Role",
+                "Auto_Promote"
+            };
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpGroupParticipantDtos, groupParticipantColumns);
+        }
     }
 }

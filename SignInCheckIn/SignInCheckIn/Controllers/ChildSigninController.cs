@@ -99,7 +99,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPost]
-        [ResponseType(typeof(NewFamilyDto))]
+        [ResponseType(typeof(int))]
         [Route("signin/newfamily")]
         public IHttpActionResult CreateNewFamily(NewFamilyDto newFamilyDto)
         {
