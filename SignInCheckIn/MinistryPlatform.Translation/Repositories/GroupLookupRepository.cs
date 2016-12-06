@@ -568,17 +568,17 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 switch (gradeGroupAttributeId)
                 {
-                    case 18071:
+                    case 9032:
                         return _applicationConfiguration.KcKindergarten;
-                    case 18072:
+                    case 9033:
                         return _applicationConfiguration.KcFirstGrade;
-                    case 18073:
+                    case 9034:
                         return _applicationConfiguration.KcSecondGrade;
-                    case 18074:
+                    case 9035:
                         return _applicationConfiguration.KcThirdGrade;
-                    case 18075:
+                    case 9036:
                         return _applicationConfiguration.KcFourthGrade;
-                    case 18076:
+                    case 9037:
                         return _applicationConfiguration.KcFifthGrade;
                 }
             }

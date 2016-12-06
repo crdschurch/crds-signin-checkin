@@ -41,13 +41,12 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
    this.family.parent = new NewParent();
-   this.family.children = [];
+   this.family.children = [this.newChild()];
    this.numberOfPossibleKids = Array.from({length: 12}, (v, k) => k + 1);
 
 
     this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.family.event = event;
-        this.family.children = [this.newChild()];
         this.headerService.announceEvent(event);
         this.adminService.getGradeGroups().subscribe((groups) => {
             this.gradeGroups = groups;
@@ -97,7 +96,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
   private newChild(): NewChild {
     let child = new NewChild();
-    child.DateOfBirth = moment(this.family.event.EventStartDate).startOf('day').toDate();
+    child.DateOfBirth = moment().startOf('day').toDate();
 
     return child;
   }
