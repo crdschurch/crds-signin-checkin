@@ -220,6 +220,9 @@ namespace SignInCheckIn.Services
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
 
+            // GetChildrenAndEventByPhoneNumber();
+            // SigninParticipants(ParticipantEventMapDto participantEventMapDto);
+
             // following stories will work assign to groups and print labels
             // we should just be able to do a search at that point, and get the typical sign in dto, and 
             // then send that over
