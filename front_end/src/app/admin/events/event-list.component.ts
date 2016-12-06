@@ -34,15 +34,18 @@ export class EventListComponent implements OnInit {
 
   private getWeekObject(offset = 0): any {
     // if today is sunday subtract a day to get the proper start day this is because isoweek does not work.
+    // create duplicate copies because the moment object itself changes when you modify it
     let startDay = moment();
+    let endDay = moment();
     if (startDay.day() === 0) {
       startDay = startDay.subtract(1, 'day');
+      endDay = endDay.subtract(1, 'day');
     }
 
     // add one day so it starts on monday rather than sunday
     return {
         start: startDay.add(offset, 'weeks').startOf('week').add(1, 'day'),
-        end: startDay.add(offset, 'weeks').endOf('week').add(1, 'day')
+        end: endDay.add(offset, 'weeks').endOf('week').add(1, 'day')
     };
   }
 
