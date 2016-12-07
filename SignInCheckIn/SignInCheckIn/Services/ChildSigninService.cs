@@ -223,7 +223,7 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public void CreateNewFamily(string token, NewFamilyDto newFamilyDto)
+        public void CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier)
         {
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
@@ -237,7 +237,7 @@ namespace SignInCheckIn.Services
             SigninParticipants(participantEventMapDto);
 
             // print labels
-            // PrintParticipants(participantEventMapDto, kioskIdentifier);
+            PrintParticipants(participantEventMapDto, kioskIdentifier);
         }
 
         public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)

@@ -13,16 +13,13 @@
       <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'rooms']" [routerLinkActive]="['active']">Manage Rooms</a>
     </li>
     <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'new-family-registration']" [routerLinkActive]="['active']">New Family Registration</a>
+    </li>
+    <li class="nav-item">
       <a class="nav-link">Manage Children</a>
     </li>
     <li class="nav-item">
       <a class="nav-link">Reports</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link">Registration</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'new-family-registration']" [routerLinkActive]="['active']">New Family Registration</a>
     </li>
   </ul>
   <form class="form-inline float-xs-right">
@@ -57,4 +54,3 @@
     <button type="button" class="btn btn-secondary" disabled>Next Event</button>
   </div>
 </nav>
-
