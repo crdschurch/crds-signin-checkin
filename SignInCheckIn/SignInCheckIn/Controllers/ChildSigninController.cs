@@ -107,7 +107,18 @@ namespace SignInCheckIn.Controllers
             {
                 try
                 {
-                    _childSigninService.CreateNewFamily(token, newFamilyDto);
+                    string kioskIdentifier;
+
+                    if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                    {
+                        kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    }
+                    else
+                    {
+                        throw new Exception("No kiosk identifier");
+                    }
+
+                    _childSigninService.CreateNewFamily(token, newFamilyDto, kioskIdentifier);
                     return Ok();
                 }
                 catch (Exception e)

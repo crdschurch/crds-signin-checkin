@@ -223,7 +223,7 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public void CreateNewFamily(string token, NewFamilyDto newFamilyDto)
+        public void CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier)
         {
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
