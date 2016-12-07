@@ -227,10 +227,16 @@ namespace SignInCheckIn.Services
         {
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
-
-            // GetChildrenAndEventByPhoneNumber();
+            
             var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto);
-            // SigninParticipants(ParticipantEventMapDto participantEventMapDto);
+
+            // mark all as Selected so all children will be signed in
+            foreach (var participant in participantEventMapDto.Participants)
+            {
+                participant.Selected = true;
+            }
+
+            // sign them all into a room
             SigninParticipants(participantEventMapDto);
 
             // following stories will work assign to groups and print labels
