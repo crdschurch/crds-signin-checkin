@@ -293,9 +293,10 @@ namespace SignInCheckIn.Services
                     }
                 };
 
-                _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
-                childNewParticipantDto.GradeGroupAttributeId = childContactDto.YearGrade;
-                mpNewChildParticipantDtos.Add(childNewParticipantDto);
+                var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
+                newParticipant.Contact = childNewParticipantDto.Contact;
+                newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
+                mpNewChildParticipantDtos.Add(newParticipant);
             }
 
             return mpNewChildParticipantDtos;
