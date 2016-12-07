@@ -42,11 +42,6 @@ describe('NewFamilyRegistrationComponent', () => {
     expect(adminService.getGradeGroups).toHaveBeenCalled();
     expect(headerService.announceEvent).toHaveBeenCalledWith(event);
   });
-  it('#updateNumberOfKids', () => {
-    fixture.setUp();
-    fixture.updateNumberOfKids(4);
-    expect(fixture.family.children.length).toEqual(4);
-  });
   it('#onSubmit success', () => {
     let form = {
       pristine: false,
