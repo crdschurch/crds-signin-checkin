@@ -227,15 +227,17 @@ namespace SignInCheckIn.Services
         {
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
-
-            // GetChildrenAndEventByPhoneNumber();
+            
             var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto);
-            // SigninParticipants(ParticipantEventMapDto participantEventMapDto);
+
+            // mark all as Selected so all children will be signed in
+            participantEventMapDto.Participants.ForEach(p => p.Selected = true);
+
+            // sign them all into a room
             SigninParticipants(participantEventMapDto);
 
-            // following stories will work assign to groups and print labels
-            // we should just be able to do a search at that point, and get the typical sign in dto, and 
-            // then send that over
+            // print labels
+            // PrintParticipants(participantEventMapDto, kioskIdentifier);
         }
 
         public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
