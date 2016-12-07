@@ -1,13 +1,23 @@
 @import '../../../../assets/scss/_bootstrap.scss';
 @import '../../../../assets/scss/_variables.scss';
 
-td:first-of-type {
-  width: 200px;
+td {
+  padding-bottom: 0px;
+
+  &:first-of-type {
+    width: 200px;
+  }
 }
+
+
 .btn-default {
   width: 65px;
-  margin-right: 15px;
+  margin: 0 15px 15px 0;
   background-color: $gray-lighter;
+
+  &:first-child {
+    width: 90px;
+  }
 
   &.selected {
     @include button-variant($btn-primary-color, $brand-primary, $brand-primary);
