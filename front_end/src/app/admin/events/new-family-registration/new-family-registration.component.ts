@@ -15,11 +15,13 @@ import * as moment from 'moment';
   templateUrl: 'new-family-registration.component.html'
 })
 export class NewFamilyRegistrationComponent implements OnInit {
+  private mask: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
   private eventId: string;
   private family: NewFamily;
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
+  private maxDate: Date = moment().toDate();
 
   constructor(
     private route: ActivatedRoute,
