@@ -53,9 +53,17 @@ namespace SignInCheckIn.Services
             _groupLookupRepository = groupLookupRepository;
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto exitingEventDto)
         {
-            var eventDto = _eventService.GetCurrentEventForSite(siteId);
+            var eventDto = new EventDto();
+            if (exitingEventDto != null)
+            {
+                eventDto = exitingEventDto;
+            } else
+            {
+                eventDto = _eventService.GetCurrentEventForSite(siteId);
+            }
+
             var householdId = _childSigninRepository.GetHouseholdIdByPhoneNumber(phoneNumber);
             if (householdId == null)
             {
@@ -220,6 +228,11 @@ namespace SignInCheckIn.Services
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
 
+            // GetChildrenAndEventByPhoneNumber();
+            var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto);
+            // SigninParticipants(ParticipantEventMapDto participantEventMapDto);
+            SigninParticipants(participantEventMapDto);
+
             // following stories will work assign to groups and print labels
             // we should just be able to do a search at that point, and get the typical sign in dto, and 
             // then send that over
@@ -255,6 +268,7 @@ namespace SignInCheckIn.Services
                 }
             };
 
+            // parentNewParticipantDto.Contact.DateOfBirth = null;
             _participantRepository.CreateParticipantWithContact(token, parentNewParticipantDto);
 
             // Step 3 create the children contacts
@@ -280,6 +294,7 @@ namespace SignInCheckIn.Services
                 };
 
                 var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
+                newParticipant.Contact = childNewParticipantDto.Contact;
                 newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
                 mpNewChildParticipantDtos.Add(newParticipant);
             }
@@ -297,7 +312,7 @@ namespace SignInCheckIn.Services
             {
                 MpGroupParticipantDto groupParticipantDto = new MpGroupParticipantDto
                 {
-                    GroupId = _groupLookupRepository.GetGroupId(tempItem.Contact.DateOfBirth, tempItem.GradeGroupAttributeId),
+                    GroupId = _groupLookupRepository.GetGroupId(tempItem.Contact.DateOfBirth ?? new DateTime(), tempItem.GradeGroupAttributeId),
                     ParticipantId = tempItem.ParticipantId,
                     GroupRoleId = _applicationConfiguration.GroupRoleMemberId,
                     StartDate = System.DateTime.Now,
