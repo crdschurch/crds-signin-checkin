@@ -31,7 +31,7 @@
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
                 <label for="phoneNumber" class="control-label">Phone Number</label>
-                <input type="text" class="form-control" [(ngModel)]="family.parent.PhoneNumber" name="phoneNumber" #phoneName="ngModel"
+                <input type="text" class="form-control" [textMask]="{mask: mask}" [(ngModel)]="family.parent.PhoneNumber" name="phoneNumber" #phoneName="ngModel"
                   [class.has-error]="!phoneName.valid && submitted" required>
                 <span [hidden]="phoneName.valid || (phoneName.pristine && !submitted)" class="has-error"><p>Please enter a value.</p></span>
               </div>
