@@ -16,6 +16,7 @@ export class RoomGroupListComponent implements OnInit {
   roomId: string;
   private room: Room;
   private event: Event;
+  private isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
 
