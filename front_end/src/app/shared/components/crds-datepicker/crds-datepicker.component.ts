@@ -10,7 +10,9 @@ export class CrdsDatePickerComponent implements OnInit {
   @Output() dateChange: EventEmitter<Date> = new EventEmitter<Date>();
   @Input() isOpen: boolean = false;
   @Input() autoClose: boolean = false;
+  @Input() maxDate: Date;
   @Output() onChange: EventEmitter<any> = new EventEmitter<any>();
+
 
   constructor() { }
 

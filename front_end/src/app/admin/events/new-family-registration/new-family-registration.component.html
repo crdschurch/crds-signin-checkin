@@ -83,7 +83,7 @@
               <div class="form-group required">
                 <label for="childBirthDate1" class="control-label">Birth Date</label>
                 <br/>
-                <crds-datepicker name="childBirthDate1" autoClose="true" [(date)]="family.children[0].DateOfBirth"></crds-datepicker>
+                <crds-datepicker name="childBirthDate1" autoClose="true" [(date)]="family.children[0].DateOfBirth" [maxDate]="maxDate"></crds-datepicker>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(family.children[0])">

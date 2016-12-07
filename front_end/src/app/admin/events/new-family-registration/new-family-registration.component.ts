@@ -21,6 +21,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
+  private maxDate: Date = moment().toDate();
 
   constructor(
     private route: ActivatedRoute,
