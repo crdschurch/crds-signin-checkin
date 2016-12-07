@@ -237,7 +237,7 @@ namespace SignInCheckIn.Services
             SigninParticipants(participantEventMapDto);
 
             // print labels
-            // PrintParticipants(participantEventMapDto, kioskIdentifier);
+            PrintParticipants(participantEventMapDto, kioskIdentifier);
         }
 
         public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
