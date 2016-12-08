@@ -533,7 +533,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
             }
 
-            if (ageYears == 5 && gradeGroupAttributeId == null)
+            if (ageYears >= 5 && gradeGroupAttributeId == null)
             {
                 switch (birthDate.Month)
                 {
