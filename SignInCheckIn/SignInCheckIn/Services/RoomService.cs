@@ -316,7 +316,7 @@ namespace SignInCheckIn.Services
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
             // make sure to filter null values
-            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().ToList();
+            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().Where(r => r != null).ToList();
 
             if (eventRoomIds.Any(r => r != null))
             {
