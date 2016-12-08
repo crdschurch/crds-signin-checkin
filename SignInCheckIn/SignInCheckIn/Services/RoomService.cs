@@ -315,16 +315,21 @@ namespace SignInCheckIn.Services
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
+            // make sure to filter null values
             var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().ToList();
-            var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
 
-            foreach (var rule in bumpingRules)
+            if (eventRoomIds.Any(r => r != null))
             {
-                // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
-                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
+                var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
+
+                foreach (var rule in bumpingRules)
                 {
-                    room.BumpingRuleId = rule.BumpingRuleId;
-                    room.BumpingRulePriority = rule.PriorityOrder;
+                    // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
+                    foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
+                    {
+                        room.BumpingRuleId = rule.BumpingRuleId;
+                        room.BumpingRulePriority = rule.PriorityOrder;
+                    }
                 }
             }
 
