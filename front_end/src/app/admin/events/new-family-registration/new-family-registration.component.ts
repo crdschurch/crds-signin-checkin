@@ -86,8 +86,16 @@ export class NewFamilyRegistrationComponent implements OnInit {
       this.adminService.createNewFamily(this.family).subscribe((res) => {
         form.reset();
         this.setUp();
+        this.rootService.announceEvent('echeckNewFamilyCreated');
       }, (error) => {
-        this.rootService.announceEvent('generalError');
+        switch (error.status) {
+          case 412:
+            this.rootService.announceEvent('echeckNewFamilyAdminSetupWrong');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+          }
         this.processing = false;
       });
     }
