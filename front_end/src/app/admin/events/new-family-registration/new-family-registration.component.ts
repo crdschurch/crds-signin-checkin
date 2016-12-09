@@ -41,8 +41,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
    this.family.parent = new NewParent();
-   this.family.numberOfKids = 1;
    this.family.children = [this.newChild()];
+   this.family.numberOfKids = 1;
 
    this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.family.event = event;
@@ -84,8 +84,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
     if (!form.pristine && form.valid) {
       this.processing = true;
       this.adminService.createNewFamily(this.family).subscribe((res) => {
-        form.reset();
-        this.setUp();
+        form.resetForm();
+        setTimeout(() => {
+          this.setUp();
+        });
       }, (error) => {
         this.rootService.announceEvent('generalError');
         this.processing = false;
