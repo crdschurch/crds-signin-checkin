@@ -139,6 +139,7 @@ namespace SignInCheckIn.Services
                         // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
                         if (assignedRoom != null && assignedRoom.AllowSignIn)
                         {
+                            eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
                             eventParticipant.AssignedRoomId = assignedRoom.RoomId;
                             eventParticipant.AssignedRoomName = assignedRoom.RoomName;
                         }
@@ -234,7 +235,7 @@ namespace SignInCheckIn.Services
             participantEventMapDto.Participants.ForEach(p => p.Selected = true);
 
             // sign them all into a room
-            SigninParticipants(participantEventMapDto);
+            participantEventMapDto = SigninParticipants(participantEventMapDto);
 
             // print labels
             PrintParticipants(participantEventMapDto, kioskIdentifier);
