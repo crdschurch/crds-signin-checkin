@@ -6,6 +6,7 @@ import { RoomListComponent } from './rooms/room-list.component';
 import { RoomGroupListComponent } from './rooms/room-group-list.component';
 import { EventImportComponent } from './import/event-import.component';
 import { EventResetComponent } from './reset/event-reset.component';
+import { ManageChildrenComponent } from './manage-children/manage-children.component';
 import { newFamilyRegistrationRoutes } from './new-family-registration/new-family-registration.routes'
 
 export const eventsRoutes: Routes = [
@@ -13,6 +14,7 @@ export const eventsRoutes: Routes = [
   { path: ':eventId/rooms', component: RoomListComponent },
   { path: ':eventId/rooms/:roomId', component: RoomGroupListComponent },
   { path: ':eventId/import', component: EventImportComponent },
+  { path: ':eventId/children', component: ManageChildrenComponent },
   { path: ':eventId/reset', component: EventResetComponent },
   { path: ':eventId/new-family-registration', children: [...newFamilyRegistrationRoutes]}
 ];

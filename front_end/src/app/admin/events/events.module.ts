@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { HeaderModule } from '../header';
 import { NewFamilyRegistrationModule } from './new-family-registration';
+import { ManageChildrenComponent } from './manage-children/manage-children.component';
 import { EventImportComponent } from './import/event-import.component';
 import { EventListComponent } from './event-list.component';
 import { EventResetComponent } from './reset/event-reset.component';
@@ -25,6 +26,7 @@ import { eventsRouting } from './events.routes';
     RoomGroupListComponent,
     RoomGroupComponent,
     RoomComponent,
+    ManageChildrenComponent,
     AlternateRoomsComponent,
     RoomBumpComponent
   ],
