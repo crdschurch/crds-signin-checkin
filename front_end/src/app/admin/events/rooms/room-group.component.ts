@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { AdminService } from '../admin.service';
-import { Range, Group, Room } from '../../shared/models';
+import { AdminService } from '../../admin.service';
+import { Range, Group, Room } from '../../../shared/models';
 import * as _ from 'lodash';
 
 @Component({

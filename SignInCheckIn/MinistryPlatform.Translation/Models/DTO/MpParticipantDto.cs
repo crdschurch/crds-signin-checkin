@@ -29,12 +29,18 @@ namespace MinistryPlatform.Translation.Models.DTO
         public string LastName { get; set; }
 
         [JsonProperty(PropertyName = "Date_of_Birth")]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         [JsonProperty(PropertyName = "Participation_Status_ID")]
         public int ParticipationStatusId { get; set; }
 
         [JsonProperty(PropertyName = "Group_ID")]
         public int? GroupId { get; set; }
+
+        [JsonProperty(PropertyName = "Participant_Type_ID")]
+        public int ParticipantTypeId { get; set; }
+
+        [JsonProperty(PropertyName = "Participant_Start_Date")]
+        public DateTime ParticipantStartDate { get; set; }
     }
 }

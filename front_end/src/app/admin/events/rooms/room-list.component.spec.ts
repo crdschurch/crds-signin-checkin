@@ -1,10 +1,10 @@
 import { RoomListComponent } from './room-list.component';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { AdminService } from '../admin.service';
-import { Event, Room } from '../../shared/models';
-import { ApiService } from '../../shared/services';
-import { HeaderService } from '../header/header.service';
-import { RootService } from '../../shared/services/root.service';
+import { AdminService } from '../../admin.service';
+import { Event, Room } from '../../../shared/models';
+import { ApiService } from '../../../shared/services';
+import { HeaderService } from '../../header/header.service';
+import { RootService } from '../../../shared/services/root.service';
 import { Observable } from 'rxjs';
 
 import * as moment from 'moment';
@@ -62,6 +62,21 @@ describe('RoomListComponent', () => {
       expect(fixture.eventId).toEqual(eventId);
       expect(fixture.rooms).toBe(rooms);
       expect(fixture.event).toBe(event);
+    });
+  });
+
+  describe('#getOpenRooms and #getTotalRooms', () => {
+    it('should calculate correct open and total rooms', () => {
+      let rooms: Room[] = [ new Room(), new Room(), new Room(), new Room(), new Room() ];
+      rooms[0].AllowSignIn = false;
+      rooms[1].AllowSignIn = true;
+      rooms[2].AllowSignIn = false;
+      rooms[3].AllowSignIn = false;
+      rooms[4].AllowSignIn = true;
+      fixture.rooms = rooms;
+
+      expect(fixture.getOpenRooms()).toEqual(2);
+      expect(fixture.getTotalRooms()).toEqual(5);
     });
   });
 

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.DynamicData;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
+using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
@@ -22,6 +24,9 @@ namespace SignInCheckIn.Services
         private readonly IContactRepository _contactRepository;
         private readonly IPrintingService _printingService;
         private readonly IPdfEditor _pdfEditor;
+        private readonly IParticipantRepository _participantRepository;
+        private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IGroupLookupRepository _groupLookupRepository;
 
         public ChildSigninService(IChildSigninRepository childSigninRepository,
                                   IEventRepository eventRepository,
@@ -30,7 +35,10 @@ namespace SignInCheckIn.Services
                                   IPdfEditor pdfEditor,
                                   IPrintingService printingService,
                                   IContactRepository contactRepository,
-                                  IKioskRepository kioskRepository)
+                                  IKioskRepository kioskRepository,
+                                  IParticipantRepository participantRepository,
+                                  IApplicationConfiguration applicationConfiguration,
+                                  IGroupLookupRepository groupLookupRepository)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -40,11 +48,22 @@ namespace SignInCheckIn.Services
             _contactRepository = contactRepository;
             _printingService = printingService;
             _pdfEditor = pdfEditor;
+            _participantRepository = participantRepository;
+            _applicationConfiguration = applicationConfiguration;
+            _groupLookupRepository = groupLookupRepository;
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId)
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto exitingEventDto)
         {
-            var eventDto = _eventService.GetCurrentEventForSite(siteId);
+            var eventDto = new EventDto();
+            if (exitingEventDto != null)
+            {
+                eventDto = exitingEventDto;
+            } else
+            {
+                eventDto = _eventService.GetCurrentEventForSite(siteId);
+            }
+
             var householdId = _childSigninRepository.GetHouseholdIdByPhoneNumber(phoneNumber);
             if (householdId == null)
             {
@@ -120,6 +139,7 @@ namespace SignInCheckIn.Services
                         // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
                         if (assignedRoom != null && assignedRoom.AllowSignIn)
                         {
+                            eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
                             eventParticipant.AssignedRoomId = assignedRoom.RoomId;
                             eventParticipant.AssignedRoomName = assignedRoom.RoomName;
                         }
@@ -202,6 +222,111 @@ namespace SignInCheckIn.Services
             }
 
             return participantEventMapDto;
+        }
+
+        public void CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier)
+        {
+            var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
+            CreateGroupParticipants(token, newFamilyParticipants);
+            
+            var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto);
+
+            // mark all as Selected so all children will be signed in
+            participantEventMapDto.Participants.ForEach(p => p.Selected = true);
+
+            // sign them all into a room
+            participantEventMapDto = SigninParticipants(participantEventMapDto);
+
+            // print labels
+            PrintParticipants(participantEventMapDto, kioskIdentifier);
+        }
+
+        public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
+        {
+            // Step 1 - create the household
+            MpHouseholdDto mpHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdName = newFamilyDto.ParentContactDto.LastName,
+                HomePhone = newFamilyDto.ParentContactDto.PhoneNumber,
+                CongregationId = newFamilyDto.EventDto.EventSiteId,
+                HouseholdSourceId = _applicationConfiguration.KidsClubRegistrationSourceId
+            };
+
+            mpHouseholdDto = _contactRepository.CreateHousehold(token, mpHouseholdDto);
+
+            // Step 2 - create the parent contact w/participant
+            MpNewParticipantDto parentNewParticipantDto = new MpNewParticipantDto
+            {
+                ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
+                ParticipantStartDate = System.DateTime.Now,
+                Contact = new MpContactDto
+                {
+                    FirstName = newFamilyDto.ParentContactDto.FirstName,
+                    Nickname = newFamilyDto.ParentContactDto.FirstName,
+                    LastName = newFamilyDto.ParentContactDto.LastName,
+                    DisplayName = newFamilyDto.ParentContactDto.FirstName + " " + newFamilyDto.ParentContactDto.LastName,
+                    HouseholdId = mpHouseholdDto.HouseholdId,
+                    HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId, 
+                    Company = false
+                }
+            };
+
+            // parentNewParticipantDto.Contact.DateOfBirth = null;
+            _participantRepository.CreateParticipantWithContact(token, parentNewParticipantDto);
+
+            // Step 3 create the children contacts
+            List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
+
+            foreach (var childContactDto in newFamilyDto.ChildContactDtos)
+            {
+                MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
+                {
+                    ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
+                    ParticipantStartDate = System.DateTime.Now,
+                    Contact = new MpContactDto
+                    {
+                        FirstName = childContactDto.FirstName,
+                        Nickname = childContactDto.FirstName,
+                        LastName = childContactDto.LastName,
+                        DisplayName = childContactDto.FirstName + " " + childContactDto.LastName,
+                        HouseholdId = mpHouseholdDto.HouseholdId,
+                        HouseholdPositionId = _applicationConfiguration.MinorChildId,
+                        Company = false,
+                        DateOfBirth = childContactDto.DateOfBirth
+                    }
+                };
+
+                var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
+                newParticipant.Contact = childNewParticipantDto.Contact;
+                newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
+                mpNewChildParticipantDtos.Add(newParticipant);
+            }
+
+            return mpNewChildParticipantDtos;
+        }
+
+        // this really can just return void, but we need to get the grade group id on the mp new participant dto
+        public void CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
+        {
+            // Step 4 - create the group participants
+            List<MpGroupParticipantDto> groupParticipantDtos = new List<MpGroupParticipantDto>();
+
+            foreach (var tempItem in mpParticipantDtos)
+            {
+                MpGroupParticipantDto groupParticipantDto = new MpGroupParticipantDto
+                {
+                    GroupId = _groupLookupRepository.GetGroupId(tempItem.Contact.DateOfBirth ?? new DateTime(), tempItem.GradeGroupAttributeId),
+                    ParticipantId = tempItem.ParticipantId,
+                    GroupRoleId = _applicationConfiguration.GroupRoleMemberId,
+                    StartDate = System.DateTime.Now,
+                    EmployeeRole = false,
+                    AutoPromote = true
+                };
+
+                groupParticipantDtos.Add(groupParticipantDto);
+            }
+
+            var newGroupParticipants = _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
     }
 }

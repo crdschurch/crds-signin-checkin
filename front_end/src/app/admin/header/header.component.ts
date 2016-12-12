@@ -7,7 +7,7 @@ import { UserService } from '../../shared/services';
 @Component({
   selector: 'header-event',
   templateUrl: 'header.component.html',
-  styleUrls: ['header.component.scss']
+  styleUrls: ['header.component.scss'],
 })
 export class HeaderComponent {
   event: Event;
@@ -24,5 +24,9 @@ export class HeaderComponent {
   logOut() {
     this.userService.logOut();
     this.router.navigate(['/admin/sign-in']);
+  }
+
+  isEventsRoute() {
+    return this.event !== undefined;
   }
 }

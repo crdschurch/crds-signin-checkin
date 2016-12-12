@@ -42,6 +42,8 @@ export class HomeComponent implements OnInit {
               return this.goToChildSignin();
             } else if (machineConfig.isTypeRoomCheckin()) {
               return this.goToChildCheckin();
+            } else if (machineConfig.isTypeAdmin()) {
+              return this.goToAdminTools();
             } else {
               return this.goToSetupError();
             }

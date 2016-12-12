@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Event, Room } from '../../shared/models';
-import { AdminService } from '../admin.service';
-import { ApiService } from '../../shared/services';
-import { HeaderService } from '../header/header.service';
-import { RootService } from '../../shared/services/root.service';
+import { Event, Room } from '../../../shared/models';
+import { AdminService } from '../../admin.service';
+import { ApiService } from '../../../shared/services';
+import { HeaderService } from '../../header/header.service';
+import { RootService } from '../../../shared/services/root.service';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
   templateUrl: 'room-list.component.html',
@@ -50,6 +51,14 @@ export class RoomListComponent implements OnInit {
 
   public isReady(): boolean {
     return this.event !== undefined && this.rooms !== undefined;
+  }
+
+  public getOpenRooms() {
+    return this.rooms ? _.filter(this.rooms, {'AllowSignIn': true}).length : ' ';
+  }
+
+  public getTotalRooms() {
+    return this.rooms ? this.rooms.length : ' ';
   }
 
   public goToImport(): void {

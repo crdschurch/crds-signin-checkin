@@ -79,6 +79,12 @@ namespace SignInCheckIn.Services
             return response;
         }
 
+        public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)
+        {
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            return GetGradesAndCurrentSelection(grades, new List<MpEventGroupDto>(), 0).ToList();
+        }
+
         private EventRoomDto GetEventRoom(int eventId, int roomId)
         {
             var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
@@ -309,16 +315,21 @@ namespace SignInCheckIn.Services
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
-            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().ToList();
-            var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
+            // make sure to filter null values
+            var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().Where(r => r != null).ToList();
 
-            foreach (var rule in bumpingRules)
+            if (eventRoomIds.Any(r => r != null))
             {
-                // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
-                foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
+                var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
+
+                foreach (var rule in bumpingRules)
                 {
-                    room.BumpingRuleId = rule.BumpingRuleId;
-                    room.BumpingRulePriority = rule.PriorityOrder;
+                    // set the rule id and priority on the matching event room - which is the "to" field, if it's a "bumping" event room
+                    foreach (var room in eventRooms.Where(room => room.EventRoomId == rule.ToEventRoomId))
+                    {
+                        room.BumpingRuleId = rule.BumpingRuleId;
+                        room.BumpingRulePriority = rule.PriorityOrder;
+                    }
                 }
             }
 

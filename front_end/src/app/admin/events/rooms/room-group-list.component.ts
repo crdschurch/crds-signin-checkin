@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { HeaderService } from '../header/header.service';
-import { Group, Room, Event } from '../../shared/models';
-import { AdminService } from '../admin.service';
-import { ApiService } from '../../shared/services';
+import { HeaderService } from '../../header/header.service';
+import { Group, Room, Event } from '../../../shared/models';
+import { AdminService } from '../../admin.service';
+import { ApiService } from '../../../shared/services';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -16,6 +16,7 @@ export class RoomGroupListComponent implements OnInit {
   roomId: string;
   private room: Room;
   private event: Event;
+  private isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
 

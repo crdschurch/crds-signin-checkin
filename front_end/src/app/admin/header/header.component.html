@@ -8,13 +8,12 @@
     </svg>
     <span>eCheck</span>
   </a>
-  <ul class="nav navbar-nav">
-    <li class="nav-item" [routerLinkActive]="['active']">
-      <a class="nav-link" [routerLink]="['/admin/events']">Events List</a>
-    </li>
-    <!-- TODO? -->
+  <ul class="nav navbar-nav" *ngIf="isEventsRoute()">
     <li class="nav-item">
-      <a class="nav-link">Manage Rooms</a>
+      <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'rooms']" [routerLinkActive]="['active']">Manage Rooms</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'new-family-registration']" [routerLinkActive]="['active']">New Family Registration</a>
     </li>
     <li class="nav-item">
       <a class="nav-link">Manage Children</a>
@@ -22,16 +21,17 @@
     <li class="nav-item">
       <a class="nav-link">Reports</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link">Registration</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link">Guest Check In</a>
-    </li>
-    <li class="float-sm-right">
-      <a class="btn btn-primary" (click)="logOut()">Sign Out</a>
-    </li>
   </ul>
+  <form class="form-inline float-xs-right">
+    <ul class="nav navbar-nav">
+      <li class="nav-item" [routerLinkActive]="['active']" *ngIf="isEventsRoute()">
+        <a class="nav-link" [routerLink]="['/admin/events']">Events List</a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-primary" (click)="logOut()">Sign Out</a>
+      </li>
+    </ul>
+  </form>
 </nav>
 <nav class="subnav navbar navbar-light bg-faded" [hidden]="!event">
   <ul class="list-inline float-xs-left lead mb-0">

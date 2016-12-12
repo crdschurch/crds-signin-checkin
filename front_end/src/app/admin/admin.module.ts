@@ -13,7 +13,7 @@ import { adminRouting } from './admin.routes';
   // components, directives, and pipes.
   declarations: [
     AdminComponent,
-    SignInComponent
+    SignInComponent,
   ],
   // other modules whose exported classes are needed
   // by component templates declared in this module.
