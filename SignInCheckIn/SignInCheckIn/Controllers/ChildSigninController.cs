@@ -21,10 +21,12 @@ namespace SignInCheckIn.Controllers
         //}
 
         private readonly IChildSigninService _childSigninService;
+        private readonly IKioskRepository _kioskRepository;
 
-        public ChildSigninController(IChildSigninService childSigninService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
+        public ChildSigninController(IChildSigninService childSigninService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository) : base(authenticationRepository)
         {
             _childSigninService = childSigninService;
+            _kioskRepository = kioskRepository;
         }
 
         [HttpGet]
@@ -45,7 +47,7 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id is Invalid");
                 }
 
-                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
+                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
                 return Ok(children);
             }
             catch (Exception e)
@@ -105,9 +107,27 @@ namespace SignInCheckIn.Controllers
         {
             return Authorized(token =>
             {
+                string kioskIdentifier;
+
+                // make sure kiosk is admin type and configured for printing
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    // must be kiosk type admin and have a printer set up
+                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    {
+                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    }
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                }
+                
                 try
                 {
-                    _childSigninService.CreateNewFamily(token, newFamilyDto);
+                    _childSigninService.CreateNewFamily(token, newFamilyDto, kioskIdentifier);
                     return Ok();
                 }
                 catch (Exception e)

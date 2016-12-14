@@ -31,7 +31,7 @@
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
                 <label for="phoneNumber" class="control-label">Phone Number</label>
-                <input type="text" class="form-control" [(ngModel)]="family.parent.PhoneNumber" name="phoneNumber" #phoneName="ngModel"
+                <input type="text" class="form-control" [textMask]="{mask: mask}" [(ngModel)]="family.parent.PhoneNumber" name="phoneNumber" #phoneName="ngModel"
                   [class.has-error]="!phoneName.valid && submitted" required>
                 <span [hidden]="phoneName.valid || (phoneName.pristine && !submitted)" class="has-error"><p>Please enter a value.</p></span>
               </div>
@@ -57,7 +57,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Child 1 -->
         <div class="col-xs-12 mb-2" *ngIf="family.numberOfKids > 0">
           <h4>Child 1</h4>
@@ -83,7 +83,7 @@
               <div class="form-group required">
                 <label for="childBirthDate1" class="control-label">Birth Date</label>
                 <br/>
-                <crds-datepicker name="childBirthDate1" autoClose="true" [(date)]="family.children[0].DateOfBirth"></crds-datepicker>
+                <crds-datepicker name="childBirthDate1" autoClose="true" [(date)]="family.children[0].DateOfBirth" [maxDate]="maxDate"></crds-datepicker>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(family.children[0])">
@@ -137,7 +137,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Child 3 -->
         <div class="col-xs-12 mb-2" *ngIf="family.numberOfKids > 2">
           <h4>Child 3</h4>
@@ -217,9 +217,9 @@
             </div>
           </div>
         </div>
-               
+
         <!-- Child 5 -->
-        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKidsh > 4">
+        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKids > 4">
           <h4>Child 5</h4>
 
           <div class="row">
@@ -259,7 +259,7 @@
         </div>
 
         <!-- Child 6 -->
-        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKidsh > 5">
+        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKids > 5">
           <h4>Child 6</h4>
 
           <div class="row">
@@ -297,9 +297,9 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Child 7 -->
-        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKidsh > 6">
+        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKids > 6">
           <h4>Child 7</h4>
 
           <div class="row">
@@ -376,10 +376,10 @@
               </div>
             </div>
           </div>
-        </div> 
-                
+        </div>
+
         <!-- Child 9 -->
-        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKidsh > 8">
+        <div class="col-xs-12 mb-2" *ngIf="family.numberOfKids > 8">
           <h4>Child 9</h4>
 
           <div class="row">
@@ -457,7 +457,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Child 11 -->
         <div class="col-xs-12 mb-2" *ngIf="family.numberOfKids > 10">
           <h4>Child 11</h4>
@@ -537,7 +537,7 @@
             </div>
           </div>
         </div>
- 
+
         <div class="col-xs-12">
           <div class="float-sm-right mb-3">
             <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Sign In" loadingText="Signing In..." [loading]="processing"></loading-button>

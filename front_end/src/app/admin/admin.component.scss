@@ -147,3 +147,11 @@ datepicker {
   color: #d9534f;
   padding-left: 5px;
 }
+
+.adventure-club-toggle {
+  margin-top: 8px;
+
+  .tgl + .tgl-btn {
+    margin-left: 0px;
+  }
+}

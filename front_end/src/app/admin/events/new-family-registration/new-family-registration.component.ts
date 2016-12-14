@@ -15,11 +15,13 @@ import * as moment from 'moment';
   templateUrl: 'new-family-registration.component.html'
 })
 export class NewFamilyRegistrationComponent implements OnInit {
+  private mask: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
   private eventId: string;
   private family: NewFamily;
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
+  private maxDate: Date = moment().toDate();
 
   constructor(
     private route: ActivatedRoute,
@@ -39,8 +41,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
    this.family.parent = new NewParent();
-   this.family.numberOfKids = 1;
    this.family.children = [this.newChild()];
+   this.family.numberOfKids = 1;
 
    this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.family.event = event;
@@ -82,10 +84,20 @@ export class NewFamilyRegistrationComponent implements OnInit {
     if (!form.pristine && form.valid) {
       this.processing = true;
       this.adminService.createNewFamily(this.family).subscribe((res) => {
-        form.reset();
-        this.setUp();
+        this.rootService.announceEvent('echeckNewFamilyCreated');
+        form.resetForm();
+        setTimeout(() => {
+          this.setUp();
+        });
       }, (error) => {
-        this.rootService.announceEvent('generalError');
+        switch (error.status) {
+          case 412:
+            this.rootService.announceEvent('echeckNewFamilyAdminSetupWrong');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+          }
         this.processing = false;
       });
     }

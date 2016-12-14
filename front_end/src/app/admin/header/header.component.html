@@ -6,23 +6,20 @@
         <path fill="#FFF" d="M22.334 27.03l-7.856 7.863-4.69-4.702 7.85-7.853L9.91 14.61l4.695-4.707 7.73 7.734 7.85-7.852 4.7 4.7-7.844 7.85 8.015 8.023-4.702 4.702"/>
       </g>
     </svg>
-    <span>eCheck</span>
+    <span>Check In</span>
   </a>
   <ul class="nav navbar-nav" *ngIf="isEventsRoute()">
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'rooms']" [routerLinkActive]="['active']">Manage Rooms</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link">Manage Children</a>
+      <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'new-family-registration']" [routerLinkActive]="['active']">New Family Registration</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'children']" [routerLinkActive]="['active']">Manage Children</a>
     </li>
     <li class="nav-item">
       <a class="nav-link">Reports</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link">Registration</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'new-family-registration']" [routerLinkActive]="['active']">New Family Registration</a>
     </li>
   </ul>
   <form class="form-inline float-xs-right">
@@ -57,4 +54,3 @@
     <button type="button" class="btn btn-secondary" disabled>Next Event</button>
   </div>
 </nav>
-

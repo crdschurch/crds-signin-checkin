@@ -83,7 +83,7 @@ namespace SignInCheckIn.Tests.Services
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>(), It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
-            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
             _childSigninRepository.VerifyAll();
 
             // Assert
@@ -107,7 +107,7 @@ namespace SignInCheckIn.Tests.Services
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
-            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId);
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
             _childSigninRepository.VerifyAll();
 
             // Assert
