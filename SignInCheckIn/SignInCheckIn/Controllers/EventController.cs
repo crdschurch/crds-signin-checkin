@@ -159,5 +159,27 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpPut]
+        [ResponseType(typeof(EventRoomDto))]
+        [Route("events/{eventId:int}/rooms/{roomId:int}/adventureclub/toggle")]
+        public IHttpActionResult UpdateAdventureClubRoom([FromUri]int eventId, [FromUri]int roomId, [FromBody]EventRoomDto eventRoom)
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    eventRoom.EventId = eventId;
+                    eventRoom.RoomId = roomId;
+                   // return Ok(_roomService.CreateOrUpdateEventRoom(token, eventRoom));
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto($"Error updating event room for event {eventId}, room {roomId}", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
     }
 }

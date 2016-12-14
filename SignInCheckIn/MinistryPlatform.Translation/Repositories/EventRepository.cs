@@ -37,6 +37,7 @@ namespace MinistryPlatform.Translation.Repositories
             _eventColumns = new List<string>
             {
                 "Event_ID",
+                "Parent_Event_ID",
                 "Event_Title",
                 "Event_Start_Date",
                 "Event_End_Date",
@@ -45,7 +46,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_Type_ID_Table.Event_Type",
                 "Congregation_ID_Table.Congregation_Name",
                 "Events.Congregation_ID",
-                "Congregation_ID_Table.Location_ID"
+                "Congregation_ID_Table.Location_ID",
+                "Allow_Check-in"
             };
         }
 
@@ -67,6 +69,11 @@ namespace MinistryPlatform.Translation.Repositories
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Get<MpEventDto>(eventId, _eventColumns);
+        }
+
+        public MpEventDto CreateSubEvent(string token, MpEventDto mpEventDto)
+        {
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventDto, _eventColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEvent(int eventId)
