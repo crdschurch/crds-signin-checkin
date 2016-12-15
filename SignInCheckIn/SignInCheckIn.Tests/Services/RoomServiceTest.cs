@@ -160,6 +160,16 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 12345,
+                EventTypeId = 11
+            };
+
+            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
+
             var eventRoom = new MpEventRoomDto
             {
                 RoomName = "the room"
@@ -225,6 +235,16 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 12345,
+                EventTypeId = 11
+            };
+
+            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
 
             var events = new List<MpEventGroupDto>
             {
@@ -293,6 +313,16 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 12345,
+                EventTypeId = 11
+            };
+
+            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
+
             var events = new List<MpEventGroupDto>
             {
                 new MpEventGroupDto
@@ -358,6 +388,16 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 12345,
+                EventTypeId = 11
+            };
+
+            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
 
             var events = new List<MpEventGroupDto>
             {

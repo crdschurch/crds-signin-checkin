@@ -104,7 +104,15 @@ namespace SignInCheckIn.Services
                     RoomNumber = room.RoomNumber
                 };
             }
-            return Mapper.Map<EventRoomDto>(eventRoom);
+
+            var returnRoomDto = Mapper.Map<EventRoomDto>(eventRoom);
+
+            // check to see if the event is a service event or ac event
+            var mpEventDto = _eventRepository.GetEventById(eventId);
+
+            returnRoomDto.AdventureClub = (mpEventDto.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId) ? true : false;
+
+            return returnRoomDto;
         }
 
         private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, int eventId, int roomId)
