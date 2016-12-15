@@ -1,10 +1,10 @@
 <header-event></header-event>
 
 <div class="wrapper new-family-registration">
-  <div class="container-fluid">
+  <div class="container-fluid mb-3">
     <div class="row">
-      <div class="col-sm-12 mb-2">
-        <h1>New Family Registration</h1>
+      <div class="col-sm-12 my-2">
+        <h3>New Family Registration</h3>
       </div><!--/col-sm-12-->
 
       <form (ngSubmit)="onSubmit(newFamilyRegistrationForm)" #newFamilyRegistrationForm="ngForm" novalidate>
@@ -538,9 +538,9 @@
           </div>
         </div>
 
-        <div class="col-xs-12">
-          <div class="float-sm-right mb-3">
-            <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Sign In" loadingText="Signing In..." [loading]="processing"></loading-button>
+        <div class="col-xs-12 mb-3">
+          <div class="float-sm-right">
+            <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Register & Sign In Children" loadingText="Signing In..." [loading]="processing"></loading-button>
           </div>
         </div>
       </form>

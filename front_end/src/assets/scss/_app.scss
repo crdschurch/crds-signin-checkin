@@ -173,3 +173,15 @@ a.btn-primary.active:not([href]):not([tabindex]) {
 .line-height-2 {
   line-height: 2;
 }
+
+datepicker {
+  .btn-info {
+    .text-muted {
+      color: #fff !important;
+    }
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
