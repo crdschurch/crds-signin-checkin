@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Configuration;
 using System.Web.DynamicData;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
@@ -129,8 +130,13 @@ namespace SignInCheckIn.Services
                     {
                         var assignedRoomId = mpEventParticipant.RoomId;
                         var assignedRoom = assignedRoomId != null ? eventRooms.First(r => r.RoomId == assignedRoomId.Value) : null;
+                        var signedAndCheckedIn = 0;
+                        if (assignedRoom != null)
+                        {
+                            signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
+                        }
                         // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
-                        if (assignedRoom != null && assignedRoom.AllowSignIn)
+                        if (assignedRoom != null && assignedRoom.AllowSignIn && assignedRoom.Capacity > signedAndCheckedIn)
                         {
                             eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
                             eventParticipant.AssignedRoomId = assignedRoom.RoomId;
