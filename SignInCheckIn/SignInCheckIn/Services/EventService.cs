@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
@@ -13,13 +14,16 @@ namespace SignInCheckIn.Services
     {
         private readonly IEventRepository _eventRepository;
         private readonly IRoomRepository _roomRepository;
+        private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
 
-        public EventService(IEventRepository eventRepository, IConfigRepository configRepository, IRoomRepository roomRepository)
+        public EventService(IEventRepository eventRepository, IConfigRepository configRepository, IRoomRepository roomRepository,
+            IApplicationConfiguration applicationConfiguration)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
+            _applicationConfiguration = applicationConfiguration;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -92,13 +96,13 @@ namespace SignInCheckIn.Services
             var parentEvent = events.First(r => r.ParentEventId == null);
 
             // 1. See if there's an existing AC subevent
-            if (!events.Any(r => r.ParentEventId == eventId && r.EventTypeId == 20)) // switch to config value
+            if (!events.Any(r => r.ParentEventId == eventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId))
             {
                 // 2. If not, create it
                 MpEventDto mpEventDto = new MpEventDto();
                 mpEventDto.EventTitle = $"Adventure Club for Event {parentEvent.EventId}";
                 mpEventDto.ParentEventId = parentEvent.EventId;
-                mpEventDto.EventTypeId = 20;
+                mpEventDto.EventTypeId = _applicationConfiguration.AdventureClubEventTypeId;
                 mpEventDto.CongregationId = parentEvent.CongregationId;
                 mpEventDto.ProgramId = parentEvent.ProgramId;
                 mpEventDto.PrimaryContact = parentEvent.PrimaryContact;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Castle.Components.DictionaryAdapter;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -88,6 +89,25 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Verify(
                 mocked =>
                     mocked.PostStoredProc("api_crds_ResetEcheckEvent", It.Is<Dictionary<string, object>>(d => (int) d["@EventId"] == eventId)));
+        }
+
+        [Test]
+        public void ItShouldGetEventAndSubevents()
+        {
+            // Arrange
+            var token = "123abc";
+            var eventId = 1234567;
+
+            List<MpEventDto> mpEventDtos = new List<MpEventDto>();
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventDto>(It.IsAny<string>(), It.IsAny<List<string>>())).Returns(mpEventDtos);
+
+            // Act
+            _fixture.GetEventAndSubevents(token, eventId);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
         }
     }
 }
