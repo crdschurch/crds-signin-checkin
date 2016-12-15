@@ -83,5 +83,36 @@ namespace SignInCheckIn.Services
             _eventRepository.ResetEventSetup(authenticationToken, eventId);
             return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(eventId, targetEvent.LocationId));
         }
+
+        // this is only getting a parent and the ac event - this will need to be changed as part of the
+        // upcoming refactor story - US6056
+        public List<EventDto> GetEventMaps(string token, int eventId)
+        {
+            var events = _eventRepository.GetEventAndSubevents(token, eventId);
+            var parentEvent = events.First(r => r.ParentEventId == null);
+
+            // 1. See if there's an existing AC subevent
+            if (!events.Any(r => r.ParentEventId == eventId && r.EventTypeId == 20)) // switch to config value
+            {
+                // 2. If not, create it
+                MpEventDto mpEventDto = new MpEventDto();
+                mpEventDto.EventTitle = $"Adventure Club for Event {parentEvent.EventId}";
+                mpEventDto.ParentEventId = parentEvent.EventId;
+                mpEventDto.EventTypeId = 20;
+                mpEventDto.CongregationId = parentEvent.CongregationId;
+                mpEventDto.ProgramId = parentEvent.ProgramId;
+                mpEventDto.PrimaryContact = parentEvent.PrimaryContact;
+                mpEventDto.MinutesForSetup = parentEvent.MinutesForSetup;
+                mpEventDto.MinutesForCleanup = parentEvent.MinutesForCleanup;
+                mpEventDto.EventStartDate = parentEvent.EventStartDate;
+                mpEventDto.EventEndDate = parentEvent.EventEndDate;
+                mpEventDto.Cancelled = parentEvent.Cancelled;
+
+                var subEvent = _eventRepository.CreateSubEvent(token, mpEventDto);
+                events.Add(subEvent);
+            }
+
+            return Mapper.Map<List<MpEventDto>, List<EventDto>>(events);
+        }
     }
 }

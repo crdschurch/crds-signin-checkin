@@ -380,5 +380,38 @@ namespace SignInCheckIn.Services
             // pull back the newly created rooms
             return GetAvailableRooms(roomId, eventId);
         }
+
+        public EventRoomDto CreateOrUpdateAdventureClubRoom(string authenticationToken, EventRoomDto eventRoom)
+        {
+            var parentEvent = _eventRepository.GetEventById(eventRoom.EventId);
+
+            // probably needs to have the parent event id passed down?
+            var subEvents = _eventRepository.GetEventAndSubevents(authenticationToken, eventRoom.EventId);
+
+            // 20 = "Adventure Club"
+            // if there are no AC events for that event, create one
+            if (subEvents.All(r => r.EventTypeId != 20)) // switch to config value
+            {
+                MpEventDto mpEventDto = new MpEventDto();
+                mpEventDto.EventTitle = $"Adventure Club for Event {eventRoom.EventId}";
+                mpEventDto.ParentEventId = eventRoom.EventId;
+                mpEventDto.CongregationId = parentEvent.CongregationId;
+                mpEventDto.ProgramId = parentEvent.ProgramId;
+                mpEventDto.PrimaryContact = parentEvent.PrimaryContact;
+                mpEventDto.MinutesForSetup = parentEvent.MinutesForSetup;
+                mpEventDto.MinutesForCleanup = parentEvent.MinutesForCleanup;
+                mpEventDto.EventStartDate = parentEvent.EventStartDate;
+                mpEventDto.EventEndDate = parentEvent.EventEndDate;
+                mpEventDto.Cancelled = parentEvent.Cancelled;
+                
+                _eventRepository.CreateSubEvent(authenticationToken, new MpEventDto());
+
+                // assign applicable fields to the event room
+            }
+
+            var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
+
+            return Mapper.Map<EventRoomDto>(response);
+        }
     }
 }
