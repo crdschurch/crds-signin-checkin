@@ -96,6 +96,7 @@
     <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
     <Compile Include="Models\DTO\MpGroupParticipantDto.cs" />
     <Compile Include="Models\DTO\MpHouseholdDto.cs" />
+    <Compile Include="Models\DTO\MpHouseholdParticipantsDto.cs" />
     <Compile Include="Models\DTO\MpNewParticipantDto.cs" />
     <Compile Include="Models\DTO\MpParticipantDto.cs" />
     <Compile Include="Models\DTO\MpContactDto.cs" />

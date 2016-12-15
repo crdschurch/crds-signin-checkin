@@ -54,27 +54,20 @@ namespace SignInCheckIn.Services
             _groupLookupRepository = groupLookupRepository;
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto exitingEventDto)
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto)
         {
-            var eventDto = new EventDto();
-            if (exitingEventDto != null)
-            {
-                eventDto = exitingEventDto;
-            } else
-            {
-                eventDto = _eventService.GetCurrentEventForSite(siteId);
-            }
+            var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
 
-            var householdId = _childSigninRepository.GetHouseholdIdByPhoneNumber(phoneNumber);
-            if (householdId == null)
+            var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
+
+            if (!household.HasHousehold)
             {
                 throw new ApplicationException($"Could not locate household for phone number {phoneNumber}");
             }
 
-            var mpChildren = _childSigninRepository.GetChildrenByHouseholdId(householdId, Mapper.Map<MpEventDto>(eventDto));
-            var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
+            var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(household.Participants);
 
-            var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId.Value));
+            var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(household.HouseholdId.Value));
 
             var participantEventMapDto = new ParticipantEventMapDto
             {

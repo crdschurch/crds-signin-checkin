@@ -99,7 +99,104 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
-        public void TestGetChildrenByPhoneNumberWithHouseholdPhone()
+        public void TestGetChildrenByPhoneNumberHouseholdPhoneNotFound()
+        {
+            const string phoneNumber = "513-867-5309";
+            const bool includeOtherHousehold = false;
+            var parms = new Dictionary<string, object>
+            {
+                {"Phone_Number", phoneNumber},
+                {"Include_Other_Household", includeOtherHousehold}
+            };
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("token");
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("token")).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms))
+                .Returns(new List<List<MpParticipantDto>>());
+
+            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold);
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
+            Assert.IsNotNull(response);
+            Assert.IsFalse(response.HasHousehold);
+            Assert.IsFalse(response.HasParticipants);
+        }
+
+        [Test]
+        public void TestGetChildrenByPhoneNumberNoParticipants()
+        {
+            const string phoneNumber = "513-867-5309";
+            const bool includeOtherHousehold = false;
+            var parms = new Dictionary<string, object>
+            {
+                {"Phone_Number", phoneNumber},
+                {"Include_Other_Household", includeOtherHousehold}
+            };
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("token");
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("token")).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms))
+                .Returns(new List<List<MpParticipantDto>>
+                {
+                    new List<MpParticipantDto>
+                    {
+                        new MpParticipantDto
+                        {
+                            HouseholdId = 123
+                        }
+                    },
+                    new List<MpParticipantDto>()
+                });
+
+            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold);
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.HasHousehold);
+            Assert.AreEqual(123, response.HouseholdId);
+            Assert.IsFalse(response.HasParticipants);
+        }
+
+        [Test]
+        public void TestGetChildrenByPhoneNumber()
+        {
+            const string phoneNumber = "513-867-5309";
+            const bool includeOtherHousehold = false;
+            var parms = new Dictionary<string, object>
+            {
+                {"Phone_Number", phoneNumber},
+                {"Include_Other_Household", includeOtherHousehold}
+            };
+
+            var repoResponse = new List<List<MpParticipantDto>>
+            {
+                new List<MpParticipantDto>
+                {
+                    new MpParticipantDto
+                    {
+                        HouseholdId = 123
+                    }
+                },
+                new List<MpParticipantDto>
+                {
+                    new MpParticipantDto()
+                }
+            };
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("token");
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("token")).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms)).Returns(repoResponse);
+
+            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold);
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.HasHousehold);
+            Assert.AreEqual(123, response.HouseholdId);
+            Assert.IsTrue(response.HasParticipants);
+            Assert.AreSame(repoResponse[1], response.Participants);
+        }
+
+        [Test]
+        [Obsolete("GetChildrenByHouseholdId is Obsolete")]
+        public void TestGetChildrenByHouseholdIdWithHouseholdPhone()
         {
             var phoneNumber = "812-812-8877";
             int? primaryHouseholdId = 123;
@@ -246,7 +343,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
-        public void TestGetChildrenByPhoneNumberWithHousholdPhoneNotAllInGroup()
+        [Obsolete("GetChildrenByHouseholdId is Obsolete")]
+        public void TestGetChildrenByHouseholdIdWithHousholdPhoneNotAllInGroup()
         {
             var phoneNumber = "812-812-8877";
             int? primaryHouseholdId = 123;
@@ -372,7 +470,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
         
         [Test]
-        public void TestGetChildrenByPhoneNumberWithNoPhone()
+        [Obsolete("GetChildrenByHouseholdId is Obsolete")]
+        public void TestGetChildrenByHouseholdIdWithNoPhone()
         {
             int? householdId = 1234567;
 
