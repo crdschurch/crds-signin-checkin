@@ -62,25 +62,29 @@ namespace SignInCheckIn.Tests.Services
             int? primaryHouseholdId = 123;
 
             var eventDto = new EventDto();
- 
-            var mpParticipantDto = new List<MpParticipantDto>
+
+            var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto
             {
-                new MpParticipantDto
+                HouseholdId = primaryHouseholdId.GetValueOrDefault(),
+                Participants = new List<MpParticipantDto>
                 {
-                    ParticipantId = 12,
-                    ContactId = 1443,
-                    HouseholdId = primaryHouseholdId.GetValueOrDefault(),
-                    HouseholdPositionId = 2,
-                    FirstName = "First1",
-                    LastName = "Last1",
-                    DateOfBirth = new DateTime()
+                    new MpParticipantDto
+                    {
+                        ParticipantId = 12,
+                        ContactId = 1443,
+                        HouseholdId = primaryHouseholdId.GetValueOrDefault(),
+                        HouseholdPositionId = 2,
+                        FirstName = "First1",
+                        LastName = "Last1",
+                        DateOfBirth = new DateTime(),
+                        PrimaryHousehold = true
+                    }
                 }
             };
-
+ 
             var contactDtos = new List<MpContactDto>();
-    
-            _childSigninRepository.Setup(mocked => mocked.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(primaryHouseholdId.Value);
-            _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>(), It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
+
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
@@ -88,24 +92,26 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(mpParticipantDto[0].ParticipantId, result.Participants[0].ParticipantId);
-            Assert.AreEqual(mpParticipantDto[0].ContactId, result.Participants[0].ContactId);
+            Assert.AreEqual(mpHouseholdAndParticipants.Participants[0].ParticipantId, result.Participants[0].ParticipantId);
+            Assert.AreEqual(mpHouseholdAndParticipants.Participants[0].ContactId, result.Participants[0].ContactId);
         }
 
         [Test]
-        public void ShouldNotGetChildrenByPhoneNumber()
+        public void GetChildrenByPhoneNumberShouldReturnNoParticipants()
         {
             const int siteId = 1;
             const string phoneNumber = "812-812-8877";
-            int? householdId = 1234567;
+            int? primaryHouseholdId = 123;
 
-            var mpParticipantDto = new List<MpParticipantDto>();
+            var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto
+            {
+                HouseholdId = primaryHouseholdId.GetValueOrDefault(),
+            };
             var eventDto = new EventDto();
             var contactDtos = new List<MpContactDto>();
 
-            _childSigninRepository.Setup(m => m.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(householdId);
-            _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
-            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(primaryHouseholdId.Value)).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
             _childSigninRepository.VerifyAll();
@@ -115,7 +121,26 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(false, result.Participants.Any());
         }
 
-         
+        public void GetChildrenByPhoneNumberShouldThrowExceptionIfHouseholdNotFound()
+        {
+            const int siteId = 1;
+            const string phoneNumber = "812-812-8877";
+
+            var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto();
+
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
+            try
+            {
+                _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
+                Assert.Fail("Expected exception was not thrown");
+            }
+            catch (ApplicationException e)
+            {
+                _childSigninRepository.VerifyAll();
+                Assert.AreEqual($"Could not locate household for phone number {phoneNumber}", e.Message);
+            }
+        }
+
         [Test]
         public void ShouldSignInParticipants()
         {
