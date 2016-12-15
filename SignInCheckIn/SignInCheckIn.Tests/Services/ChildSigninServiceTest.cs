@@ -201,6 +201,82 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
+        public void ShouldNotSignInParticipantsDueToCapacity()
+        {
+            // Arrange
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    ParticipantId = 111,
+                    Selected = true,
+                    GroupId = 432
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventId = 321
+            };
+
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 432,
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        AllowSignIn = true,
+                        Capacity = 11,
+                        CheckedIn = 9,
+                        EventId = 3,
+                        EventRoomId = null,
+                        Hidden = true,
+                        RoomId = 4,
+                        RoomName = "name",
+                        RoomNumber = "number",
+                        SignedIn = 2,
+                        Volunteers = 6
+                    }
+                }
+            };
+
+            var mpEventParticipantDtos = new List<MpEventParticipantDto>();
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = participantDtos,
+                Contacts = contactDtos,
+                CurrentEvent = eventDto
+            };
+
+            _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
+            _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
+            _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+
+            // Act
+            var response = _fixture.SigninParticipants(participantEventMapDto);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsNull(response.Participants[0].AssignedRoomId);
+        }
+
+        [Test]
         public void ShouldPrintLabelsForAllParticipants()
         {
             // Arrange
