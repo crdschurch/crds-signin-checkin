@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Crossroads.Utilities.Services.Interfaces;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -16,6 +17,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IEventRepository> _eventRepository;
         private Mock<IConfigRepository> _configRepository;
         private Mock<IRoomRepository> _roomRepository;
+        private Mock<IApplicationConfiguration> _applicationConfiguation;
 
         private EventService _fixture;
 
@@ -27,6 +29,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository = new Mock<IEventRepository>();
             _configRepository = new Mock<IConfigRepository>();
             _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
+            _applicationConfiguation = new Mock<IApplicationConfiguration>(MockBehavior.Strict);
 
             var mpConfigDtoEarly = new MpConfigDto
             {
@@ -47,7 +50,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
-            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object);
+            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object);
         }
 
         [Test]
@@ -223,5 +226,74 @@ namespace SignInCheckIn.Tests.Services
             response.Count.Should().Be(eventRooms.Count);
         }
 
+        [Test]
+        public void ItShouldCreateSubevent()
+        {
+            // Arrange
+            var token = "123abc";
+            var eventId = 1234567;
+
+            List<MpEventDto> events = new List<MpEventDto>();
+
+            MpEventDto parentEvent = new MpEventDto
+            {
+                EventId = 1234567
+            };
+
+            events.Add(parentEvent);
+
+            MpEventDto childEvent = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 234567
+            };
+
+            _eventRepository.Setup(m => m.GetEventAndSubevents(token, eventId)).Returns(events);
+            _eventRepository.Setup(m => m.CreateSubEvent(token, It.IsAny<MpEventDto>())).Returns(childEvent);
+            _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            // Act
+            var result = _fixture.GetEventMaps(token, eventId);
+
+            // Assert
+            _eventRepository.VerifyAll();
+            Assert.AreEqual(result.Count, 2);
+        }
+
+        [Test]
+        public void ItShouldGetSubevent()
+        {
+            // Arrange
+            var token = "123abc";
+            var eventId = 1234567;
+
+            List<MpEventDto> events = new List<MpEventDto>();
+
+            MpEventDto parentEvent = new MpEventDto
+            {
+                EventId = 1234567
+            };
+
+            events.Add(parentEvent);
+
+            MpEventDto childEvent = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                EventTypeId = 20
+            };
+
+            events.Add(childEvent);
+
+            _eventRepository.Setup(m => m.GetEventAndSubevents(token, eventId)).Returns(events);
+            _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            // Act
+            var result = _fixture.GetEventMaps(token, eventId);
+
+            // Assert
+            _eventRepository.VerifyAll();
+            Assert.AreEqual(result.Count, 2);
+        }
     }
 }

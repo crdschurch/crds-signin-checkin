@@ -50,7 +50,7 @@ namespace SignInCheckIn.Services
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
             // Get the EventRoom, or the Room if no EventRoom
-            var response = GetEventRoom(eventId, roomId);
+            var response = GetEventRoom(authenticationToken, eventId, roomId);
 
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
@@ -85,9 +85,13 @@ namespace SignInCheckIn.Services
             return GetGradesAndCurrentSelection(grades, new List<MpEventGroupDto>(), 0).ToList();
         }
 
-        private EventRoomDto GetEventRoom(int eventId, int roomId)
+        private EventRoomDto GetEventRoom(string token, int eventId, int roomId)
         {
-            var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            // get sub event ids for subevents
+            var eventIds = _eventRepository.GetEventAndSubevents(token, eventId).Where(r => r.ParentEventId != null).Select(r => r.EventId).ToList();
+            eventIds.Add(eventId); // include the parent id
+
+            var eventRoom = _roomRepository.GetEventRoomForEventMaps(eventIds, roomId);
             if (eventRoom == null)
             {
                 var room = _roomRepository.GetRoom(roomId);
@@ -104,7 +108,16 @@ namespace SignInCheckIn.Services
                     RoomNumber = room.RoomNumber
                 };
             }
-            return Mapper.Map<EventRoomDto>(eventRoom);
+
+            var returnRoomDto = Mapper.Map<EventRoomDto>(eventRoom);
+
+            // check to see if the event is a service event or ac event
+            var mpEventDto = _eventRepository.GetEventById(eventId);
+
+            // if the room's event id is not equal to the parent event, then it is an adventure club room
+            returnRoomDto.AdventureClub = (eventRoom.EventId != eventId) ? true : false;
+
+            return returnRoomDto;
         }
 
         private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, int eventId, int roomId)
@@ -379,6 +392,39 @@ namespace SignInCheckIn.Services
 
             // pull back the newly created rooms
             return GetAvailableRooms(roomId, eventId);
+        }
+
+        public EventRoomDto CreateOrUpdateAdventureClubRoom(string authenticationToken, EventRoomDto eventRoom)
+        {
+            var parentEvent = _eventRepository.GetEventById(eventRoom.EventId);
+
+            // probably needs to have the parent event id passed down?
+            var subEvents = _eventRepository.GetEventAndSubevents(authenticationToken, eventRoom.EventId);
+
+            // 20 = "Adventure Club"
+            // if there are no AC events for that event, create one
+            if (subEvents.All(r => r.EventTypeId != 20)) // switch to config value
+            {
+                MpEventDto mpEventDto = new MpEventDto();
+                mpEventDto.EventTitle = $"Adventure Club for Event {eventRoom.EventId}";
+                mpEventDto.ParentEventId = eventRoom.EventId;
+                mpEventDto.CongregationId = parentEvent.CongregationId;
+                mpEventDto.ProgramId = parentEvent.ProgramId;
+                mpEventDto.PrimaryContact = parentEvent.PrimaryContact;
+                mpEventDto.MinutesForSetup = parentEvent.MinutesForSetup;
+                mpEventDto.MinutesForCleanup = parentEvent.MinutesForCleanup;
+                mpEventDto.EventStartDate = parentEvent.EventStartDate;
+                mpEventDto.EventEndDate = parentEvent.EventEndDate;
+                mpEventDto.Cancelled = parentEvent.Cancelled;
+                
+                _eventRepository.CreateSubEvent(authenticationToken, new MpEventDto());
+
+                // assign applicable fields to the event room
+            }
+
+            var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
+
+            return Mapper.Map<EventRoomDto>(response);
         }
     }
 }

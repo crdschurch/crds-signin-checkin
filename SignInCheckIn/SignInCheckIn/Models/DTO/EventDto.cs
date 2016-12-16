@@ -5,6 +5,8 @@ namespace SignInCheckIn.Models.DTO
     public class EventDto
     {
         public int EventId { get; set; }
+        public int? ParentEventId { get; set; }
+        public int EventTypeId { get; set; }
         public string EventTitle { get; set; }
         public DateTime EventStartDate { get; set; }
         public DateTime EventEndDate { get; set; }
