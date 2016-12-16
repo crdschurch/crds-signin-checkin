@@ -32,7 +32,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_Room_ID_Table.[Capacity]",
                 "Event_Room_ID_Table.[Label]",
                 "Event_Room_ID_Table.[Allow_Checkin]",
-                "Event_Room_ID_Table.[Volunteers]"
+                "Event_Room_ID_Table.[Volunteers]",
+                "[dbo].crds_getEventParticipantStatusCount(Event_ID_Table.[Event_ID], Event_Room_ID_Table_Room_ID_Table.[Room_ID], 3) AS Signed_In",
+                "[dbo].crds_getEventParticipantStatusCount(Event_ID_Table.[Event_ID], Event_Room_ID_Table_Room_ID_Table.[Room_ID], 4) AS Checked_In"
             };
 
             _fixture = new EventRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
