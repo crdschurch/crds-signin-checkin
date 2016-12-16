@@ -109,7 +109,7 @@ namespace SignInCheckIn.Services
             return response;
         }
 
-        private List<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto)
+        private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto)
         {
             // Get Event and make sure it occures at a valid time
             var eventDto = GetEvent(participantEventMapDto);
@@ -138,7 +138,7 @@ namespace SignInCheckIn.Services
                 }
                 else
                 {
-                    ;
+                    SetParticipantsRoomAssignment(eventParticipant, mpEventParticipant, eventGroups);
                 }
             }
 
@@ -182,7 +182,7 @@ namespace SignInCheckIn.Services
             return mpEventParticipantDtoList;
         }
 
-        private void SetParticipantsRoomAssignment(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, List<MpEventGroupDto> eventGroups)
+        private static void SetParticipantsRoomAssignment(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, List<MpEventGroupDto> eventGroups)
         {
 
             var assignedRoomId = mpEventParticipant.RoomId;
