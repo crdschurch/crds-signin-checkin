@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { AdminService } from '../../admin.service';
-import { Range, Group, Room } from '../../../shared/models';
+import { Range, Group, Room, Event } from '../../../shared/models';
 import * as _ from 'lodash';
 
 @Component({
@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 })
 export class RoomGroupComponent {
   @Input() group: Group;
-  @Input() eventId: string;
+  @Input() eventToUpdate: Event;
   @Input() roomId: string;
   @Input() room: Room;
 
@@ -25,7 +25,7 @@ export class RoomGroupComponent {
           range.Selected = newState;
       }
     }
-    this.adminService.updateRoomGroups(this.eventId, this.roomId, this.room);
+    this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room);
   }
 
   toggleRange(range: Range, group: Group) {
@@ -41,7 +41,7 @@ export class RoomGroupComponent {
         group.Selected = true;
       }
     }
-    this.adminService.updateRoomGroups(this.eventId, this.roomId, this.room);
+    this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room);
   }
 
 }

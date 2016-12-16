@@ -14,9 +14,13 @@ import * as _ from 'lodash';
 export class RoomGroupListComponent implements OnInit {
   groups: Group[];
   eventId: string;
+  // this is the event we should sent to backend when updating groups
+  // as this will either be the adventure club event or the service event (non AC)
+  eventToUpdate: Event;
   roomId: string;
   private room: Room;
   private event: Event;
+  private eventsMap: Event[];
   private isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
@@ -33,9 +37,23 @@ export class RoomGroupListComponent implements OnInit {
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
 
+    this.apiService.getEventMaps(this.eventId).subscribe(
+      events => {
+        this.eventsMap = events;
+        console.log(this);
+      },
+      error => console.error(error)
+    );
+
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
+        this.isAdventureClub = this.room.AdventureClub;
+        if (this.isAdventureClub) {
+          this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': 20})[0];
+        } else {
+          this.eventToUpdate = _.filter(this.eventsMap, {'ParentEventId': null})[0];
+        }
       },
       error => console.error(error)
     );
@@ -101,12 +119,17 @@ export class RoomGroupListComponent implements OnInit {
       e.target.checked = this.isAdventureClub;
       this.rootService.announceEvent('echeckAdventureClubToggleWarning');
     } else {
-      // if turning on, call PUT /event/123/adventureclub
-      // else if turning off, DELETE /event/123/adventureclub
+      if (e.target.checked) {
+        this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': 20})[0];
+      } else {
+        this.eventToUpdate = _.filter(this.eventsMap, {'ParentEventId': null})[0];
+      }
+      console.log(this.eventToUpdate)
     }
   }
 
   ngOnInit() {
+    this.getData();
     this.getData();
     this.openTabIfAlternateRoomsHash();
   }
