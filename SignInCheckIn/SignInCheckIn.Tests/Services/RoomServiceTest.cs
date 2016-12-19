@@ -162,7 +162,7 @@ namespace SignInCheckIn.Tests.Services
 
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
-            _eventRepository.Setup(m => m.GetEventAndSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
 
             MpEventDto mpEventDto = new MpEventDto
             {
@@ -281,7 +281,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEventAndSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
 
             _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
             _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
@@ -327,7 +327,7 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            _eventRepository.Setup(m => m.GetEventAndSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
 
             MpEventDto mpEventDto = new MpEventDto
             {
@@ -408,7 +408,7 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            _eventRepository.Setup(m => m.GetEventAndSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(new List<MpEventDto>());
 
             MpEventDto mpEventDto = new MpEventDto
             {
