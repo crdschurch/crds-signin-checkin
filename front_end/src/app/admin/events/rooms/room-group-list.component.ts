@@ -40,7 +40,6 @@ export class RoomGroupListComponent implements OnInit {
     this.apiService.getEventMaps(this.eventId).subscribe(
       events => {
         this.eventsMap = events;
-        console.log(this);
       },
       error => console.error(error)
     );
@@ -48,12 +47,7 @@ export class RoomGroupListComponent implements OnInit {
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
-        this.isAdventureClub = this.room.AdventureClub;
-        if (this.isAdventureClub) {
-          this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': 20})[0];
-        } else {
-          this.eventToUpdate = _.filter(this.eventsMap, {'ParentEventId': null})[0];
-        }
+        this.setCurrentEvent(room.AdventureClub);
       },
       error => console.error(error)
     );
@@ -67,6 +61,16 @@ export class RoomGroupListComponent implements OnInit {
       error => console.error(error)
     );
 
+  }
+
+  // get the adventure club event if AdventureClub is true for room, else return service event
+  setCurrentEvent(isAdventureClub: boolean) {
+    this.isAdventureClub = isAdventureClub;
+    if (this.isAdventureClub) {
+      this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': 20})[0];
+    } else {
+      this.eventToUpdate = _.filter(this.eventsMap, {'ParentEventId': null})[0];
+    }
   }
 
   public isUpdating(): boolean {
@@ -119,17 +123,11 @@ export class RoomGroupListComponent implements OnInit {
       e.target.checked = this.isAdventureClub;
       this.rootService.announceEvent('echeckAdventureClubToggleWarning');
     } else {
-      if (e.target.checked) {
-        this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': 20})[0];
-      } else {
-        this.eventToUpdate = _.filter(this.eventsMap, {'ParentEventId': null})[0];
-      }
-      console.log(this.eventToUpdate)
+      this.setCurrentEvent(e.target.checked);
     }
   }
 
   ngOnInit() {
-    this.getData();
     this.getData();
     this.openTabIfAlternateRoomsHash();
   }
