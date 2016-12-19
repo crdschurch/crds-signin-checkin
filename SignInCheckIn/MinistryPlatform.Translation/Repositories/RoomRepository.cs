@@ -152,6 +152,19 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
         }
 
+        // look for an event room when we do not know if the event room is on a parent or child event
+        public MpEventRoomDto GetEventRoomForEventMaps(List<int> eventIds, int roomId)
+        {
+            var queryString = eventIds.Aggregate("(", (current, id) => current + (id + ","));
+
+            queryString = queryString.TrimEnd(',');
+            queryString += ")";
+
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID IN {queryString} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
+        }
+
         public MpRoomDto GetRoom(int roomId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -184,18 +197,33 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds, int? fromEventRoomId)
         {
-            var queryString = "(";
-
-            foreach (var id in eventRoomIds)
-            {
-                queryString += id + ",";
-            }
+            var queryString = eventRoomIds.Aggregate("(", (current, id) => current + (id + ","));
 
             queryString = queryString.TrimEnd(',');
             queryString += ")";
 
             var apiUserToken = _apiUserRepository.GetToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString} AND From_Event_Room_ID = {fromEventRoomId}", _bumpingRuleColumns);
+        }
+
+        public List<MpBumpingRoomsDto> GetBumpingRoomsForEventRoom(int eventId, int fromEventRoomId)
+        {
+            var bumpingRoomsColumns = new List<string>
+            {
+                "To_Event_Room_ID",
+                "To_Event_Room_ID_Table.Room_ID",
+                "Priority_Order",
+                "To_Event_Room_ID_Table.Capacity",
+                "To_Event_Room_ID_Table.Allow_Checkin",
+                "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 3) AS Signed_In",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 4) AS Checked_In"
+            };
+
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                    Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
+                    OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
         }
     }
 }
