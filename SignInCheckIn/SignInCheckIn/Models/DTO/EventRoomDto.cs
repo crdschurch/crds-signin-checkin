@@ -31,5 +31,8 @@ namespace SignInCheckIn.Models.DTO
         public int? BumpingRuleId { get; set; }
 
         public int? BumpingRulePriority { get; set; }
+
+        // replace with subevent type during refactor
+        public bool AdventureClub { get; set; }
     }
 }

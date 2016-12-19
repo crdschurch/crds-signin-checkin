@@ -23,6 +23,7 @@ namespace Crossroads.Utilities.Services
         public int KidsClubRegistrationSourceId { get; }
         public int AttendeeParticipantType { get; }
         public int GroupRoleMemberId { get; }
+        public int AdventureClubEventTypeId { get; }
 
         public int SignedInParticipationStatusId { get; }
         public int CheckedInParticipationStatusId { get; }
@@ -280,6 +281,7 @@ namespace Crossroads.Utilities.Services
             KidsClubRegistrationSourceId = configurationWrapper.GetConfigIntValue("KidsClubRegistrationSourceId");
             AttendeeParticipantType = configurationWrapper.GetConfigIntValue("AttendeeParticipantType");
             GroupRoleMemberId = configurationWrapper.GetConfigIntValue("GroupRoleMemberId");
+            AdventureClubEventTypeId = configurationWrapper.GetConfigIntValue("AdventureClubEventTypeId");
 
             SignedInParticipationStatusId = configurationWrapper.GetConfigIntValue("SignedInParticipationStatusId");
             CheckedInParticipationStatusId = configurationWrapper.GetConfigIntValue("CheckedInParticipationStatusId");

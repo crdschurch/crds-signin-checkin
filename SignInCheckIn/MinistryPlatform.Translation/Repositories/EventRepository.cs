@@ -39,15 +39,20 @@ namespace MinistryPlatform.Translation.Repositories
             _eventColumns = new List<string>
             {
                 "Event_ID",
+                "Parent_Event_ID",
                 "Event_Title",
+                "Program_ID",
+                "Primary_Contact",
                 "Event_Start_Date",
                 "Event_End_Date",
                 "[Early_Check-in_Period]",
                 "[Late_Check-in_Period]",
                 "Event_Type_ID_Table.Event_Type",
+                "Events.Event_Type_ID",
                 "Congregation_ID_Table.Congregation_Name",
                 "Events.Congregation_ID",
-                "Congregation_ID_Table.Location_ID"
+                "Congregation_ID_Table.Location_ID",
+                "[Allow_Check-in]"
             };
         }
 
@@ -69,6 +74,11 @@ namespace MinistryPlatform.Translation.Repositories
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Get<MpEventDto>(eventId, _eventColumns);
+        }
+
+        public MpEventDto CreateSubEvent(string token, MpEventDto mpEventDto)
+        {
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventDto, _eventColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEvent(int eventId)
@@ -106,6 +116,12 @@ namespace MinistryPlatform.Translation.Repositories
         {
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
                 .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"@DestinationEventId", destinationEventId}, {"@SourceEventId", sourceEventId}});
+        }
+
+        public List<MpEventDto> GetEventAndCheckinSubevents(string token, int eventId)
+        {
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1", _eventColumns);
         }
     }
 }

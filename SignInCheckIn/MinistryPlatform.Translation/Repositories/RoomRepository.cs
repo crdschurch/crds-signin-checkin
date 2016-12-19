@@ -152,6 +152,19 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
         }
 
+        // look for an event room when we do not know if the event room is on a parent or child event
+        public MpEventRoomDto GetEventRoomForEventMaps(List<int> eventIds, int roomId)
+        {
+            var queryString = eventIds.Aggregate("(", (current, id) => current + (id + ","));
+
+            queryString = queryString.TrimEnd(',');
+            queryString += ")";
+
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID IN {queryString} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
+        }
+
         public MpRoomDto GetRoom(int roomId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -184,12 +197,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds, int? fromEventRoomId)
         {
-            var queryString = "(";
-
-            foreach (var id in eventRoomIds)
-            {
-                queryString += id + ",";
-            }
+            var queryString = eventRoomIds.Aggregate("(", (current, id) => current + (id + ","));
 
             queryString = queryString.TrimEnd(',');
             queryString += ")";

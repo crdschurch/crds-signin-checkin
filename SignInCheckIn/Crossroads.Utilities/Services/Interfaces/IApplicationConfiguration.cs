@@ -27,6 +27,7 @@ namespace Crossroads.Utilities.Services.Interfaces
         int KidsClubRegistrationSourceId { get; }
         int AttendeeParticipantType { get; }
         int GroupRoleMemberId { get; }
+        int AdventureClubEventTypeId { get; }
 
         int SignedInParticipationStatusId { get; }
         int CheckedInParticipationStatusId { get; }
