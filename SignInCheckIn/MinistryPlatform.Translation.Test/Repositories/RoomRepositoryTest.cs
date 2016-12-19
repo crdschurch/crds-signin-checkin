@@ -188,6 +188,58 @@ namespace MinistryPlatform.Translation.Test.Repositories
             Assert.AreSame(room, result);
         }
 
+        [Test]
+        public void TestGetBumpingRooms()
+        {
+            const string token = "token 123";
+            const int eventId = 1837;
+            const int fromEventRoomId = 84672817;
+
+            var bumpingRoomsColumns = new List<string>
+            {
+                "To_Event_Room_ID",
+                "To_Event_Room_ID_Table.Room_ID",
+                "Priority_Order",
+                "To_Event_Room_ID_Table.Capacity",
+                "To_Event_Room_ID_Table.Allow_Checkin",
+                "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 3) AS Signed_In",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 4) AS Checked_In"
+            };
+
+            var mpBumpingRooms = new List<MpBumpingRoomsDto>
+            {
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 3827,
+                    PriorityOrder = 1,
+                    AllowSignIn = true,
+                    Capacity = 10,
+                    RoomName = "Test Room",
+                    SignedIn = 9,
+                    CheckedIn = 1
+                }
+            };
+
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns)).Returns(mpBumpingRooms);
+
+            var result = _fixture.GetBumpingRoomsForEventRoom(eventId, fromEventRoomId);
+            _ministryPlatformRestRepository.VerifyAll();
+            _apiUserRepository.VerifyAll();
+
+            Assert.AreEqual(mpBumpingRooms[0].EventRoomId, result[0].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[0].RoomId, result[0].RoomId);
+            Assert.AreEqual(mpBumpingRooms[0].PriorityOrder, result[0].PriorityOrder);
+            Assert.AreEqual(mpBumpingRooms[0].AllowSignIn, result[0].AllowSignIn);
+            Assert.AreEqual(mpBumpingRooms[0].Capacity, result[0].Capacity);
+            Assert.AreEqual(mpBumpingRooms[0].RoomName, result[0].RoomName);
+            Assert.AreEqual(mpBumpingRooms[0].SignedIn, result[0].SignedIn);
+            Assert.AreEqual(mpBumpingRooms[0].CheckedIn, result[0].CheckedIn);
+        }
 
     }
 }
