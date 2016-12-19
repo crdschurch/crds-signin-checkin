@@ -67,7 +67,7 @@ export class RoomGroupListComponent implements OnInit {
   setCurrentEvent(isAdventureClub: boolean) {
     this.isAdventureClub = isAdventureClub;
     if (this.isAdventureClub) {
-      this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': 20})[0];
+      this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': Event.TYPE.ADVENTURE_CLUB})[0];
     } else {
       this.eventToUpdate = _.filter(this.eventsMap, {'ParentEventId': null})[0];
     }

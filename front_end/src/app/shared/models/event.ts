@@ -1,4 +1,7 @@
 export class Event {
+  static TYPE = {
+    ADVENTURE_CLUB: 20
+  };
   EventId: number;
   EventTitle: string;
   EventStartDate: string;
@@ -7,10 +10,6 @@ export class Event {
   IsCurrentEvent: boolean;
   EventSiteId: number;
   ParentEventId: number;
-
-  private TYPE = {
-    ADVENTURE_CLUB: 20
-  };
 
   static fromJson(json: any): Event {
     let e = new Event();
@@ -34,7 +33,7 @@ export class Event {
   }
 
   public isAdventureClub() {
-    return this.EventTypeId === this.TYPE.ADVENTURE_CLUB;
+    return this.EventTypeId === Event.TYPE.ADVENTURE_CLUB;
   }
 
   constructor() {

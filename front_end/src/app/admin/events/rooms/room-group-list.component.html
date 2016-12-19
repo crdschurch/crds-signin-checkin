@@ -33,7 +33,6 @@
         <div class="row">
           <strong class="col-sm-4 col-md-2 push-half-top">Set as Adventure Club</strong>
           <span class="col-sm-8 col-md-10 adventure-club-toggle">
-            <!-- <input class='tgl tgl-light' id='isAdventureClub' type='checkbox' [checked]="isAdventureClub" (change)="onAcChange()"> -->
             <input class='tgl tgl-light' id='isAdventureClub' type='checkbox' [(ngModel)]="isAdventureClub" (change)="toggleAdventureClub($event)">
             <label class='tgl-btn' for='isAdventureClub'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
           </span>

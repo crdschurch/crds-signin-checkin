@@ -59,14 +59,12 @@ describe('RoomGroupListComponent', () => {
   describe('#toggleAdventureClub', () => {
     const clickEvent = {target: { checked: true } };
     it('should toggle eventToUpdate if no groups active', () => {
-      // spyOn(fixture, 'isAdventureClub').and.returnValue(false);
       fixture.isAdventureClub = false;
       spyOn(fixture, 'hasActiveRooms').and.returnValue(false);
       fixture.toggleAdventureClub(clickEvent);
       expect(fixture.isAdventureClub).toBeTruthy();
     });
     it('should return error and not allow if groups active ', () => {
-      // spyOn(fixture, 'isAdventureClub').and.returnValue(false);
       fixture.isAdventureClub = false;
       spyOn(fixture, 'hasActiveRooms').and.returnValue(true);
       fixture.toggleAdventureClub(clickEvent);
