@@ -1,5 +1,5 @@
 <td><a routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}">Add</a></td>
-<td>{{room.RoomName}}</td>
+<td>{{room.RoomName}} <a class="tag tag-info" href="#" tooltipPlacement="top" tooltip="Adventure Club">AC</a></td>
 <td>
   <span *ngIf="hasCapacity()">
     <span *ngIf="checkedInEqualsCapacity()">
