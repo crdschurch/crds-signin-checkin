@@ -28,6 +28,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IParticipantRepository> _participantRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IGroupLookupRepository> _groupLookupRepository;
+        private Mock<IRoomRepository> _roomRepository;
 
         private ChildSigninService _fixture;
 
@@ -47,11 +48,12 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _groupLookupRepository = new Mock<IGroupLookupRepository>();
+            _roomRepository = new Mock<IRoomRepository>();
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
-                _applicationConfiguration.Object, _groupLookupRepository.Object);
+                _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object);
         }
 
         [Test]

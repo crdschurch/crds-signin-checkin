@@ -28,6 +28,7 @@ namespace SignInCheckIn.Services
         private readonly IParticipantRepository _participantRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IGroupLookupRepository _groupLookupRepository;
+        private readonly IRoomRepository _roomRepository;
 
         public ChildSigninService(IChildSigninRepository childSigninRepository,
                                   IEventRepository eventRepository,
@@ -39,7 +40,8 @@ namespace SignInCheckIn.Services
                                   IKioskRepository kioskRepository,
                                   IParticipantRepository participantRepository,
                                   IApplicationConfiguration applicationConfiguration,
-                                  IGroupLookupRepository groupLookupRepository)
+                                  IGroupLookupRepository groupLookupRepository,
+                                  IRoomRepository roomRepository)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -52,6 +54,7 @@ namespace SignInCheckIn.Services
             _participantRepository = participantRepository;
             _applicationConfiguration = applicationConfiguration;
             _groupLookupRepository = groupLookupRepository;
+            _roomRepository = roomRepository;
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto)
@@ -175,7 +178,7 @@ namespace SignInCheckIn.Services
             return mpEventParticipantDtoList;
         }
 
-        private static void SetParticipantsRoomAssignment(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, List<MpEventGroupDto> eventGroups)
+        private void SetParticipantsRoomAssignment(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, IEnumerable<MpEventGroupDto> eventGroups)
         {
 
             var assignedRoomId = mpEventParticipant.RoomId;
@@ -185,11 +188,34 @@ namespace SignInCheckIn.Services
             {
                 signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
             }
-            // TODO Temporarily checking if the room is closed - should be handled in bumping rules eventually
-            if (assignedRoom == null || !assignedRoom.AllowSignIn || (!(assignedRoom.Capacity > signedAndCheckedIn))) return;
+
+            if (assignedRoom == null || !assignedRoom.AllowSignIn || (!(assignedRoom.Capacity > signedAndCheckedIn))) {
+                ProcessBumpingRules(eventParticipant, mpEventParticipant, assignedRoom);
+                return;
+            }
+
             eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
             eventParticipant.AssignedRoomId = assignedRoom.RoomId;
             eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+        }
+
+        private void ProcessBumpingRules(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, MpEventRoomDto expectedRoomDto)
+        {
+            if (expectedRoomDto.EventRoomId == null) return;
+            var bumpingRooms = _roomRepository.GetBumpingRoomsForEventRoom(mpEventParticipant.EventId, expectedRoomDto.EventRoomId ?? 0);
+
+            // go through the bumping rooms in priority order and get the first one that is open and has capacity
+            foreach(var bumpingRoom in bumpingRooms)
+            {
+                // check if open and has capacity
+                var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
+                if (!bumpingRoom.AllowSignIn && bumpingRoom.Capacity <= signedAndCheckedIn) continue;
+
+                eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
+                eventParticipant.AssignedRoomId = bumpingRoom.RoomId;
+                eventParticipant.AssignedRoomName = bumpingRoom.RoomName;
+                return;
+            }
         }
 
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
