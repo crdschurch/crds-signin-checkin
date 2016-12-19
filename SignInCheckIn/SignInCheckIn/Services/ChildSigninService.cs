@@ -351,5 +351,27 @@ namespace SignInCheckIn.Services
 
             var newGroupParticipants = _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
+
+        private int? GetNextAdventureClubEvent(EventDto eventDto)
+        {
+            // get current and future events - not sure how to shrink this down...
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, eventDto.EventSiteId).OrderBy(r => r.EventStartDate);
+            var eventIds = dailyEvents.Select(r => r.EventId).ToList();
+
+            var subEvents = _eventRepository.GetSubeventsForEvents(eventIds, 20); // set to config value once the create ac room branch is in
+
+            foreach (var parentEvent in dailyEvents)
+            {
+                // look to see if the next event in sequence has a child event of AC - if so, return that event id
+                //if (subEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == 20))
+                //{
+                //  return r.EventId
+                //  break;
+                //}
+            }
+
+            // null return value means there's no AC event for that day
+            return 0;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -106,6 +107,22 @@ namespace MinistryPlatform.Translation.Repositories
         {
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
                 .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"@DestinationEventId", destinationEventId}, {"@SourceEventId", sourceEventId}});
+        }
+
+        public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            var queryString = eventIds.Aggregate("(", (current, id) => current + (id + ","));
+
+            queryString = queryString.TrimEnd(',');
+            queryString += ")";
+
+            // search on the event type if it's not a null param
+            var typeQueryString = " AND Events.[Event_Type_ID] = " + eventTypeId;
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpEventDto>($"Events.[Parent_Event_ID] = {queryString} AND Events.[Allow_Check-in] = 1 {typeQueryString}", _eventColumns);
         }
     }
 }
