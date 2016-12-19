@@ -213,7 +213,9 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var apiUserToken = _apiUserRepository.GetToken();
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                    Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
+                    OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
         }
     }
 }

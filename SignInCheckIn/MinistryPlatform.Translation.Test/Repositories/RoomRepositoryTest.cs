@@ -211,12 +211,23 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 new MpBumpingRoomsDto
                 {
+                    EventRoomId = 5134,
+                    RoomId = 161641,
+                    PriorityOrder = 2,
+                    AllowSignIn = true,
+                    Capacity = 32,
+                    RoomName = "Test Room 1",
+                    SignedIn = 93,
+                    CheckedIn = 12
+                },
+                new MpBumpingRoomsDto
+                {
                     EventRoomId = 1248,
                     RoomId = 3827,
                     PriorityOrder = 1,
                     AllowSignIn = true,
                     Capacity = 10,
-                    RoomName = "Test Room",
+                    RoomName = "Test Room 2",
                     SignedIn = 9,
                     CheckedIn = 1
                 }
@@ -231,14 +242,15 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.VerifyAll();
             _apiUserRepository.VerifyAll();
 
-            Assert.AreEqual(mpBumpingRooms[0].EventRoomId, result[0].EventRoomId);
-            Assert.AreEqual(mpBumpingRooms[0].RoomId, result[0].RoomId);
-            Assert.AreEqual(mpBumpingRooms[0].PriorityOrder, result[0].PriorityOrder);
-            Assert.AreEqual(mpBumpingRooms[0].AllowSignIn, result[0].AllowSignIn);
-            Assert.AreEqual(mpBumpingRooms[0].Capacity, result[0].Capacity);
-            Assert.AreEqual(mpBumpingRooms[0].RoomName, result[0].RoomName);
-            Assert.AreEqual(mpBumpingRooms[0].SignedIn, result[0].SignedIn);
-            Assert.AreEqual(mpBumpingRooms[0].CheckedIn, result[0].CheckedIn);
+            Assert.AreEqual(mpBumpingRooms.Count, result.Count);
+            Assert.AreEqual(mpBumpingRooms[1].EventRoomId, result[0].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[1].RoomId, result[0].RoomId);
+            Assert.AreEqual(mpBumpingRooms[1].PriorityOrder, result[0].PriorityOrder);
+            Assert.AreEqual(mpBumpingRooms[1].AllowSignIn, result[0].AllowSignIn);
+            Assert.AreEqual(mpBumpingRooms[1].Capacity, result[0].Capacity);
+            Assert.AreEqual(mpBumpingRooms[1].RoomName, result[0].RoomName);
+            Assert.AreEqual(mpBumpingRooms[1].SignedIn, result[0].SignedIn);
+            Assert.AreEqual(mpBumpingRooms[1].CheckedIn, result[0].CheckedIn);
         }
 
     }
