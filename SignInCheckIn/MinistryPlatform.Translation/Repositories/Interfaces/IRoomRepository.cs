@@ -24,5 +24,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds, int? fromEventRoomId);
 
         MpEventRoomDto GetEventRoomForEventMaps(List<int> eventIds, int roomId);
+
+        List<MpBumpingRoomsDto> GetBumpingRoomsForEventRoom(int eventId, int fromEventRoomId);
     }
 }

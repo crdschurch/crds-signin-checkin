@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
+        private const string ChildSigninSearchStoredProcName = "api_crds_Child_Signin_Search";
+
         public ChildSigninRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository,
             IApplicationConfiguration applicationConfiguration)
@@ -21,6 +24,34 @@ namespace MinistryPlatform.Translation.Repositories
             _applicationConfiguration = applicationConfiguration;
         }
 
+        public MpHouseholdParticipantsDto GetChildrenByPhoneNumber(string phoneNumber, bool includeOtherHousehold = true)
+        {
+            var parms = new Dictionary<string, object>
+            {
+                {"Phone_Number", phoneNumber},
+                {"Include_Other_Household", includeOtherHousehold}
+            };
+
+            var spResults =
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
+            var result = new MpHouseholdParticipantsDto();
+
+            // This check indicates that no household was found
+            if (spResults == null || !spResults.Any() || spResults.Count < 2)
+            {
+                return result;
+            }
+
+            // The first result is the household ID for the given phone number
+            result.HouseholdId = spResults[0] != null && spResults[0].Any() ? spResults[0].First().HouseholdId : (int?)null;
+
+            // The second result is the list of kids
+            result.Participants = spResults[1];
+
+            return result;
+        }
+
+        [Obsolete("This should not be used, and should eventually be removed.  It has been replaced by GetChildrenByPhoneNumber.")]
         public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, MpEventDto eventDto)
         {
             if (householdId == null) return new List<MpParticipantDto>();
@@ -31,6 +62,7 @@ namespace MinistryPlatform.Translation.Repositories
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
+        [Obsolete("This should not be used, and should eventually be removed.  It was only needed when calling GetChildrenByHouseholdId, which is Obsolete.")]
         public int? GetHouseholdIdByPhoneNumber(string phoneNumber)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -61,6 +93,7 @@ namespace MinistryPlatform.Translation.Repositories
             return household.First().HouseholdId;
         }
 
+        [Obsolete("This should not be used, and should eventually be removed.  It is only needed when by GetChildrenByHouseholdId, which is Obsolete.")]
         private List<MpParticipantDto> GetChildParticipantsByPrimaryHousehold(int? householdId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -83,6 +116,7 @@ namespace MinistryPlatform.Translation.Repositories
                         Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList);
         }
 
+        [Obsolete("This should not be used, and should eventually be removed.  It is only needed when by GetChildrenByHouseholdId, which is Obsolete.")]
         private void GetChildParticipantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -110,6 +144,7 @@ namespace MinistryPlatform.Translation.Repositories
             }
         }
 
+        [Obsolete("This should not be used, and should eventually be removed.  It is only needed when by GetChildrenByHouseholdId, which is Obsolete.")]
         private List<MpEventGroupDto> GetEventGroups(int eventId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -126,6 +161,7 @@ namespace MinistryPlatform.Translation.Repositories
             
         }
 
+        [Obsolete("This should not be used, and should eventually be removed.  It is only needed when by GetChildrenByHouseholdId, which is Obsolete.")]
         private List<MpParticipantDto> GetOnlyKidsClubChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -158,6 +194,7 @@ namespace MinistryPlatform.Translation.Repositories
             return children;
         }
 
+        [Obsolete("This should not be used, and should eventually be removed.  It is only needed when by GetChildrenByHouseholdId, which is Obsolete.")]
         private class MpParticipantDtoComparer : IEqualityComparer<MpParticipantDto>
         {
             // Consider them equal if participant id and contact id are the same
