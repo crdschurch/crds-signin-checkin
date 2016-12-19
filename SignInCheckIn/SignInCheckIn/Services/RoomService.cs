@@ -50,7 +50,7 @@ namespace SignInCheckIn.Services
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
             // Get the EventRoom, or the Room if no EventRoom
-            var response = GetEventRoom(authenticationToken, eventId, roomId);
+            var selectedEventRoom = GetEventRoom(authenticationToken, eventId, roomId);
 
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
@@ -62,7 +62,7 @@ namespace SignInCheckIn.Services
             birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
             // Get current event groups with a room reservation for this room
-            var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventId, roomId);
+            var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, selectedEventRoom.EventId, roomId);
 
             var agesAndGrades = new List<AgeGradeDto>();
 
@@ -74,9 +74,9 @@ namespace SignInCheckIn.Services
             // Add grade ranges (including selected groups) to the response
             agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
 
-            response.AssignedGroups = agesAndGrades;
+            selectedEventRoom.AssignedGroups = agesAndGrades;
 
-            return response;
+            return selectedEventRoom;
         }
 
         public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)
@@ -87,11 +87,36 @@ namespace SignInCheckIn.Services
 
         private EventRoomDto GetEventRoom(string token, int eventId, int roomId)
         {
-            // get sub event ids for subevents
-            var eventIds = _eventRepository.GetEventAndSubevents(token, eventId).Where(r => r.ParentEventId != null).Select(r => r.EventId).ToList();
-            eventIds.Add(eventId); // include the parent id
+            var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
 
-            var eventRoom = _roomRepository.GetEventRoomForEventMaps(eventIds, roomId);
+            if (events.Count == 0)
+            {
+                throw new Exception("Event not found for event id: " + eventId + " in GetEventRoom in RoomService");
+            }
+
+            // set to the parent id by default
+            var selectedEvent = events.First(r => r.ParentEventId == null);
+
+            // this will need to be updated once we're looking at subevents other than AC events,
+            // as part of the refactor
+            foreach (var eventItem in events)
+            {
+                var eventGroups = GetEventGroupsWithRoomReservationForEvent(token, eventItem.EventId, roomId);
+
+                // if there are any event groups on the event, that is the "active"
+                // event or subevent for that room
+                if (eventGroups.Count > 0)
+                {
+                    selectedEvent = eventItem;
+                    break;
+                }
+            }
+
+            //var eventRoom = _roomRepository.GetEventRoomForEventMaps(eventIds, roomId); <-- remove this
+
+
+            var eventRoom = _roomRepository.GetEventRoom(selectedEvent.EventId, roomId);
+
             if (eventRoom == null)
             {
                 var room = _roomRepository.GetRoom(roomId);
@@ -102,7 +127,7 @@ namespace SignInCheckIn.Services
 
                 eventRoom = new MpEventRoomDto
                 {
-                    EventId = eventId,
+                    EventId = selectedEvent.EventId,
                     RoomId = room.RoomId,
                     RoomName = room.RoomName,
                     RoomNumber = room.RoomNumber
@@ -111,11 +136,8 @@ namespace SignInCheckIn.Services
 
             var returnRoomDto = Mapper.Map<EventRoomDto>(eventRoom);
 
-            // check to see if the event is a service event or ac event
-            var mpEventDto = _eventRepository.GetEventById(eventId);
-
-            // if the room's event id is not equal to the parent event, then it is an adventure club room
-            returnRoomDto.AdventureClub = (eventRoom.EventId != eventId) ? true : false;
+            // during the refactor, update this to actually set the event or subevent type on the room
+            returnRoomDto.AdventureClub = (selectedEvent.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
 
             return returnRoomDto;
         }
@@ -399,7 +421,7 @@ namespace SignInCheckIn.Services
             var parentEvent = _eventRepository.GetEventById(eventRoom.EventId);
 
             // probably needs to have the parent event id passed down?
-            var subEvents = _eventRepository.GetEventAndSubevents(authenticationToken, eventRoom.EventId);
+            var subEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventRoom.EventId);
 
             // 20 = "Adventure Club"
             // if there are no AC events for that event, create one

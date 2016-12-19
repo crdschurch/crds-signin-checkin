@@ -116,10 +116,10 @@ namespace MinistryPlatform.Translation.Repositories
                 .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"@DestinationEventId", destinationEventId}, {"@SourceEventId", sourceEventId}});
         }
 
-        public List<MpEventDto> GetEventAndSubevents(string token, int eventId)
+        public List<MpEventDto> GetEventAndCheckinSubevents(string token, int eventId)
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token)
-                .Search<MpEventDto>($"Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}", _eventColumns);
+                .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1", _eventColumns);
         }
     }
 }

@@ -92,7 +92,7 @@ namespace SignInCheckIn.Services
         // upcoming refactor story - US6056
         public List<EventDto> GetEventMaps(string token, int eventId)
         {
-            var events = _eventRepository.GetEventAndSubevents(token, eventId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
             var parentEvent = events.First(r => r.ParentEventId == null);
 
             // 1. See if there's an existing AC subevent
