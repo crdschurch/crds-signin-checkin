@@ -1,5 +1,5 @@
 import { RoomGroupListComponent } from './room-group-list.component';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { Location } from '@angular/common';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
@@ -7,7 +7,7 @@ import { Room } from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
 import { Observable } from 'rxjs';
 
-fdescribe('RoomGroupListComponent', () => {
+describe('RoomGroupListComponent', () => {
   let fixture: RoomGroupListComponent;
   let apiService: ApiService;
   let headerService: HeaderService;
@@ -21,10 +21,11 @@ fdescribe('RoomGroupListComponent', () => {
     route = new ActivatedRoute();
     route.snapshot = new ActivatedRouteSnapshot();
     route.snapshot.params = { eventId: serviceEventId };
-    route.snapshot.queryParams = { tab: '' }
+    route.snapshot.queryParams = { tab: '' };
     apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEventMaps', 'getEvent']);
-    adminService = jasmine.createSpyObj<ApiService>('adminService', ['getRoomGroups']);
-    headerService = jasmine.createSpyObj<ApiService>('headerService', ['announceEvent']);
+    adminService = jasmine.createSpyObj<AdminService>('adminService', ['getRoomGroups']);
+    headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
+    rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
 
     fixture = new RoomGroupListComponent(apiService, adminService, rootService, route, headerService, location);
   });
@@ -53,5 +54,26 @@ fdescribe('RoomGroupListComponent', () => {
       expect(apiService.getEventMaps).toHaveBeenCalledWith(serviceEvent.EventId);
       expect(fixture.eventToUpdate).toEqual(serviceEvent);
     });
+  });
+
+  describe('#toggleAdventureClub', () => {
+    const clickEvent = {target: { checked: true } };
+    it('should toggle eventToUpdate if no groups active', () => {
+      // spyOn(fixture, 'isAdventureClub').and.returnValue(false);
+      fixture.isAdventureClub = false;
+      spyOn(fixture, 'hasActiveRooms').and.returnValue(false);
+      fixture.toggleAdventureClub(clickEvent);
+      expect(fixture.isAdventureClub).toBeTruthy();
+    });
+    it('should return error and not allow if groups active ', () => {
+      // spyOn(fixture, 'isAdventureClub').and.returnValue(false);
+      fixture.isAdventureClub = false;
+      spyOn(fixture, 'hasActiveRooms').and.returnValue(true);
+      fixture.toggleAdventureClub(clickEvent);
+      expect(rootService.announceEvent).toHaveBeenCalledWith('echeckAdventureClubToggleWarning');
+      // this should be falsy but since the event updates it immediately we are setting it back to it's inverse
+      expect(fixture.isAdventureClub).toBeTruthy();
+    });
+
   });
 });
