@@ -197,5 +197,25 @@ namespace MinistryPlatform.Translation.Repositories
             var apiUserToken = _apiUserRepository.GetToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString} AND From_Event_Room_ID = {fromEventRoomId}", _bumpingRuleColumns);
         }
+
+        public List<MpBumpingRoomsDto> GetBumpingRoomsForEventRoom(int eventId, int fromEventRoomId)
+        {
+            var bumpingRoomsColumns = new List<string>
+            {
+                "To_Event_Room_ID",
+                "To_Event_Room_ID_Table.Room_ID",
+                "Priority_Order",
+                "To_Event_Room_ID_Table.Capacity",
+                "To_Event_Room_ID_Table.Allow_Checkin",
+                "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 3) AS Signed_In",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 4) AS Checked_In"
+            };
+
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                    Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
+                    OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
+        }
     }
 }
