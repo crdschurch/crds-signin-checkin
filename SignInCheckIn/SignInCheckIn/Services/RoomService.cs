@@ -50,7 +50,7 @@ namespace SignInCheckIn.Services
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
             // Get the EventRoom, or the Room if no EventRoom
-            var response = GetEventRoom(authenticationToken, eventId, roomId);
+            var selectedEventRoom = GetEventRoom(authenticationToken, eventId, roomId);
 
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
@@ -62,7 +62,7 @@ namespace SignInCheckIn.Services
             birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
             // Get current event groups with a room reservation for this room
-            var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventId, roomId);
+            var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, selectedEventRoom.EventId, roomId);
 
             var agesAndGrades = new List<AgeGradeDto>();
 
@@ -74,9 +74,9 @@ namespace SignInCheckIn.Services
             // Add grade ranges (including selected groups) to the response
             agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
 
-            response.AssignedGroups = agesAndGrades;
+            selectedEventRoom.AssignedGroups = agesAndGrades;
 
-            return response;
+            return selectedEventRoom;
         }
 
         public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)
@@ -101,7 +101,7 @@ namespace SignInCheckIn.Services
             // as part of the refactor
             foreach (var eventItem in events)
             {
-                var eventGroups = GetEventGroupsWithRoomReservationForEvent(token, eventId, roomId);
+                var eventGroups = GetEventGroupsWithRoomReservationForEvent(token, eventItem.EventId, roomId);
 
                 // if there are any event groups on the event, that is the "active"
                 // event or subevent for that room

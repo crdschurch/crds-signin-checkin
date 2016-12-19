@@ -119,7 +119,7 @@ namespace MinistryPlatform.Translation.Repositories
         public List<MpEventDto> GetEventAndCheckinSubevents(string token, int eventId)
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token)
-                .Search<MpEventDto>($"Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId} AND [Allow_Check-in] = 1", _eventColumns);
+                .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1", _eventColumns);
         }
     }
 }
