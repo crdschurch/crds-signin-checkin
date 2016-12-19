@@ -72,4 +72,23 @@ describe('ApiService', () => {
     });
   });
 
+  describe('#getEventMaps', () => {
+    const responseData = eventsData;
+    beforeEach(() => {
+      httpClientServiceStub = {
+        get() {
+          responseOptions = new ResponseOptions({ body: responseData });
+          return Observable.of(new Response(responseOptions));
+        }
+      };
+      fixture = new ApiService(httpClientServiceStub, setupServiceStub);
+    });
+    it('should successfully get event maps', () => {
+      let responseObject = responseData;
+      fixture.getEvents('453').subscribe((res: Response) => {
+        expect(res).toEqual(responseObject);
+      });
+    });
+  });
+
 });
