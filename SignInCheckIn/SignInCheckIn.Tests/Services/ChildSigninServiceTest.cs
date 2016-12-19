@@ -268,8 +268,8 @@ namespace SignInCheckIn.Tests.Services
                         AllowSignIn = true,
                         Capacity = 11,
                         CheckedIn = 9,
-                        EventId = 3,
-                        EventRoomId = null,
+                        EventId = 321,
+                        EventRoomId = 153234,
                         Hidden = true,
                         RoomId = 4,
                         RoomName = "name",
@@ -293,6 +293,7 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(new List<MpBumpingRoomsDto>());
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
 
             // Act
