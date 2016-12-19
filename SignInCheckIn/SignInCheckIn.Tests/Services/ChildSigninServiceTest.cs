@@ -226,6 +226,138 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsNull(response.Participants[0].SignInErrorMessage);
             StringAssert.Contains("not in a Kids Club Group", response.Participants[1].SignInErrorMessage);
         }
+        
+        [Test]
+        public void ShouldSignInParticipantsViaBumpingRules()
+        {
+            // Arrange
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    ParticipantId = 111,
+                    Selected = true,
+                    GroupId = 432
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventId = 321
+            };
+
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 432,
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        AllowSignIn = true,
+                        Capacity = 11,
+                        CheckedIn = 9,
+                        EventId = 321,
+                        EventRoomId = 153234,
+                        Hidden = true,
+                        RoomId = 4,
+                        RoomName = "name",
+                        RoomNumber = "number",
+                        SignedIn = 2,
+                        Volunteers = 6
+                    }
+                }
+            };
+
+            var mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    GroupId = 432,
+                    RoomId = 3827
+                }
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = participantDtos,
+                Contacts = contactDtos,
+                CurrentEvent = eventDto
+            };
+
+            var mpBumpingRooms = new List<MpBumpingRoomsDto>
+            {
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 5134,
+                    RoomId = 161641,
+                    PriorityOrder = 2,
+                    AllowSignIn = true,
+                    Capacity = 32,
+                    RoomName = "Test Room 1",
+                    SignedIn = 93,
+                    CheckedIn = 12
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 3877727,
+                    PriorityOrder = 1,
+                    AllowSignIn = false,
+                    Capacity = 10,
+                    RoomName = "Test Room 2",
+                    SignedIn = 9,
+                    CheckedIn = 0
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 511,
+                    PriorityOrder = 4,
+                    AllowSignIn = false,
+                    Capacity = 10,
+                    RoomName = "Test Room 2",
+                    SignedIn = 9,
+                    CheckedIn = 0
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 3827,
+                    PriorityOrder = 3,
+                    AllowSignIn = true,
+                    Capacity = 10,
+                    RoomName = "Test Room 2",
+                    SignedIn = 9,
+                    CheckedIn = 0
+                }
+            };
+
+            _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
+            _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
+            _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(mpBumpingRooms);
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+
+            // Act
+            var response = _fixture.SigninParticipants(participantEventMapDto);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual(response.Participants[0].AssignedRoomId, 3827);
+        }
 
         [Test]
         public void ShouldNotSignInParticipantsDueToCapacity()

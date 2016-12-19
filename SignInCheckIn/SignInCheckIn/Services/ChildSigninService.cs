@@ -209,7 +209,7 @@ namespace SignInCheckIn.Services
             {
                 // check if open and has capacity
                 var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
-                if (!bumpingRoom.AllowSignIn && bumpingRoom.Capacity <= signedAndCheckedIn) continue;
+                if (!bumpingRoom.AllowSignIn || bumpingRoom.Capacity <= signedAndCheckedIn) continue;
 
                 eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
                 eventParticipant.AssignedRoomId = bumpingRoom.RoomId;
