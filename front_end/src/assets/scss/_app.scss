@@ -185,3 +185,16 @@ datepicker {
 .pointer {
   cursor: pointer;
 }
+
+.manage-rooms-table {
+  @include media-breakpoint-down(md) {
+    display: block;
+    width: 100%;
+    min-height: 0%;
+    overflow-x: auto;
+
+    td, th {
+      padding: $table-sm-cell-padding;
+    }
+  }
+}

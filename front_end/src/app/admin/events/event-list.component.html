@@ -3,7 +3,7 @@
 <div class="wrapper events">
   <div class="container-fluid admin-content py-1">
     <div class="row">
-      <div class="col-sm-12 m-b-2">
+      <div class="col-sm-12 mb-2">
         <h3>Events</h3>
         <h4>{{currentWeekFilter.start | amDateFormat :'dddd, MMMM Do'}} - {{currentWeekFilter.end | amDateFormat :'dddd, MMMM Do'}}</h4>
       </div>
@@ -37,7 +37,7 @@
         </table>
       </div>
       <div class="col-md-3 col-sm-4 col-xs-12">
-        <section class="sidebar-section m-b-2">
+        <section class="sidebar-section mb-2">
           <select class="form-control">
             <option *ngFor="let weekFilter of weekFilters">
               {{weekFilter.start | amDateFormat :'M/D/YYYY'}} - {{weekFilter.end | amDateFormat :'M/D/YYYY'}}
@@ -83,7 +83,7 @@
             </label>
           </div>
         </section>
-        <section class="sidebar-section m-b-1">
+        <section class="sidebar-section mb-1">
           <label><strong>Event Filter</strong></label>
           <div class="form-check">
             <label class="form-check-label">
