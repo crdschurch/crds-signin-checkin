@@ -84,9 +84,10 @@ describe('ApiService', () => {
       fixture = new ApiService(httpClientServiceStub, setupServiceStub);
     });
     it('should successfully get event maps', () => {
-      let responseObject = responseData;
-      fixture.getEvents('453').subscribe((res: Response) => {
-        expect(res).toEqual(responseObject);
+      fixture.getEventMaps('453').subscribe((res) => {
+        expect(res.length).toEqual(2);
+        expect(res[0].EventId).toEqual(4525323);
+        expect(res[1].EventId).toEqual(4525342);
       });
     });
   });
