@@ -88,14 +88,21 @@ export class AvailableChildrenComponent implements OnInit {
    return this._isServingTwoHours;
  }
 
+ set servingOneHour(b) {
+   this._isServingTwoHours = false;
+   this._isServingOneHour = !this._isServingOneHour;
+ }
+
+ set servingTwoHours(b) {
+   this._isServingOneHour = false;
+   this._isServingTwoHours = !this._isServingTwoHours;
+ }
+
  toggleServingHours(hours) {
-   console.log(hours)
    if (hours === 1) {
-     this._isServingTwoHours = false;
-     this._isServingOneHour = !this._isServingOneHour;
+     this.servingOneHour = true;
    } else if (hours === 2) {
-     this._isServingOneHour = false;
-     this._isServingTwoHours = !this._isServingTwoHours;
+     this.servingTwoHours = true;
    }
  }
 
