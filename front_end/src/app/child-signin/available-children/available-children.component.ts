@@ -8,12 +8,13 @@ import { EventParticipants, Child } from '../../shared/models';
 @Component({
   selector: 'available-children',
   templateUrl: 'available-children.component.html',
-  styleUrls: [ '../scss/_cards.scss', '../scss/_buttons.scss' ]
+  styleUrls: [ '../scss/_cards.scss', '../scss/_buttons.scss', 'available-children.component.scss' ]
 })
 
 export class AvailableChildrenComponent implements OnInit {
   private eventParticipants: EventParticipants;
-  private isServing: boolean = false;
+  private _isServingOneHour: boolean = false;
+  private _isServingTwoHours: boolean = false;
   private isReady: boolean = false;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
@@ -60,11 +61,34 @@ export class AvailableChildrenComponent implements OnInit {
    );
  }
 
+ // openShowServiceSelectModal() {
+ //   this.showServiceSelectModal();
+ // }
+
  public childrenAvailable(): Child[] {
    return this.eventParticipants.Participants;
  }
 
- public showServiceSelectModal(): void {
-   this.serviceSelectModal.show();
-  }
+ get isServing() {
+   return this._isServingOneHour || this._isServingTwoHours;
+ }
+
+ get isServingOneHour() {
+   return this._isServingOneHour;
+ }
+
+ get isServingTwoHours() {
+   return this._isServingTwoHours;
+ }
+
+ toggleServingHours(hours) {
+   if (hours === 1) {
+     this._isServingTwoHours = false;
+     this._isServingOneHour = !this._isServingOneHour;
+   } else if (hours === 2) {
+     this._isServingOneHour = false;
+     this._isServingTwoHours = !this._isServingTwoHours;
+   }
+ }
+
 }
