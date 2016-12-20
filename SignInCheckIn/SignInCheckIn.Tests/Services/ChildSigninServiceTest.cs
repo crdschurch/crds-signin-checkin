@@ -224,7 +224,6 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             Assert.IsNotNull(response);
             Assert.IsNull(response.Participants[0].SignInErrorMessage);
-            StringAssert.Contains("not in a Kids Club Group", response.Participants[1].SignInErrorMessage);
         }
         
         [Test]
