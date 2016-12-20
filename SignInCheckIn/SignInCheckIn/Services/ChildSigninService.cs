@@ -92,7 +92,7 @@ namespace SignInCheckIn.Services
                 CurrentEvent = participantEventMapDto.CurrentEvent,
                 Participants =
                     _childSigninRepository.CreateEventParticipants(
-                        mpEventParticipantDtoList.Where(p => participantEventMapDto.Participants.Find(q => q.Selected && q.ParticipantId == p.ParticipantId && q.AssignedRoomId.HasValue) != null).ToList())
+                        mpEventParticipantDtoList.Where(p => participantEventMapDto.Participants.Find(q => q.Selected && q.ParticipantId == p.ParticipantId) != null && p.HasRoomAssignment).ToList())
                         .Select(Mapper.Map<ParticipantDto>).ToList(),
                 Contacts = participantEventMapDto.Contacts
             };
@@ -120,8 +120,6 @@ namespace SignInCheckIn.Services
             {
                 if (!eventParticipant.Selected) continue;
                 var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
-                eventParticipant.AssignedRoomId = null;
-                eventParticipant.AssignedRoomName = null;
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
@@ -180,23 +178,21 @@ namespace SignInCheckIn.Services
 
         private void SetParticipantsRoomAssignment(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, IEnumerable<MpEventGroupDto> eventGroups)
         {
-
             var assignedRoomId = mpEventParticipant.RoomId;
-            var assignedRoom = assignedRoomId != null ? eventGroups.First(eg => eg.RoomReservation.RoomId == assignedRoomId.Value).RoomReservation : null;
-            var signedAndCheckedIn = 0;
-            if (assignedRoom != null)
-            {
-                signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
-            }
+            if (assignedRoomId == null) return;
 
-            if (assignedRoom == null || !assignedRoom.AllowSignIn || (!(assignedRoom.Capacity > signedAndCheckedIn))) {
+            var assignedRoom = eventGroups.First(eg => eg.RoomReservation.RoomId == assignedRoomId.Value).RoomReservation;
+            var signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
+
+            if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn) {
                 ProcessBumpingRules(eventParticipant, mpEventParticipant, assignedRoom);
                 return;
             }
 
-            eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
+            assignedRoom.SignedIn = (assignedRoom.SignedIn ?? 0) + 1;
             eventParticipant.AssignedRoomId = assignedRoom.RoomId;
-            eventParticipant.AssignedRoomName = assignedRoom.RoomName;
+            mpEventParticipant.RoomId = assignedRoom.RoomId;
+            mpEventParticipant.RoomName = assignedRoom.RoomName;
         }
 
         private void ProcessBumpingRules(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, MpEventRoomDto expectedRoomDto)
@@ -211,9 +207,9 @@ namespace SignInCheckIn.Services
                 var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
                 if (!bumpingRoom.AllowSignIn || bumpingRoom.Capacity <= signedAndCheckedIn) continue;
 
-                eventParticipant.EventParticipantId = mpEventParticipant.EventParticipantId;
                 eventParticipant.AssignedRoomId = bumpingRoom.RoomId;
-                eventParticipant.AssignedRoomName = bumpingRoom.RoomName;
+                mpEventParticipant.RoomId = bumpingRoom.RoomId;
+                mpEventParticipant.RoomName = bumpingRoom.RoomName;
                 return;
             }
         }
