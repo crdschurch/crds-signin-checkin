@@ -4,6 +4,7 @@ export class EventParticipants {
   Contacts: Array<Contact>;
   CurrentEvent: Event;
   Participants: Array<Child>;
+  ServicesAttended: number;
 
   static fromJson(json: any): EventParticipants {
     if (!json) {
