@@ -184,7 +184,6 @@ namespace SignInCheckIn.Services
             var assignedRoom = eventGroups.First(eg => eg.RoomReservation.RoomId == assignedRoomId.Value).RoomReservation;
             var signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
 
-            // set room id to null if 
             mpEventParticipant.RoomId = null; 
 
             if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn) {
