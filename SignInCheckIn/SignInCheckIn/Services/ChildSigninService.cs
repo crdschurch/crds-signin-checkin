@@ -88,8 +88,8 @@ namespace SignInCheckIn.Services
 
             var mpEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto).ToList();
 
-            // call code to sign into AC here
-            if (participantEventMapDto.ServicesAttended == 2)
+            // call code to sign into AC here, if they are attending 2 services and there are 2 events
+            if (participantEventMapDto.ServicesAttended == 2 && eventIdsToSignIn.Count == 2)
             {
                 // get the ac event
                 var mpAcEventDto = _eventRepository.GetEventById(eventIdsToSignIn[1]);
@@ -405,6 +405,12 @@ namespace SignInCheckIn.Services
         {
             // get current and future events - not sure how to shrink this down...
             var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, eventDto.EventSiteId).OrderBy(r => r.EventStartDate);
+
+            if (!dailyEvents.Any())
+            {
+                return null;
+            }
+
             var eventIds = dailyEvents.Select(r => r.EventId).ToList();
 
             var subEvents = _eventRepository.GetSubeventsForEvents(eventIds, _applicationConfiguration.AdventureClubEventTypeId);
