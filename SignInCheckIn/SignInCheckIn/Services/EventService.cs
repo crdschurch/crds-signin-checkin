@@ -104,6 +104,7 @@ namespace SignInCheckIn.Services
                 mpEventDto.ParentEventId = parentEvent.EventId;
                 mpEventDto.EventTypeId = _applicationConfiguration.AdventureClubEventTypeId;
                 mpEventDto.CongregationId = parentEvent.CongregationId;
+                mpEventDto.LocationId = parentEvent.LocationId;
                 mpEventDto.ProgramId = parentEvent.ProgramId;
                 mpEventDto.PrimaryContact = parentEvent.PrimaryContact;
                 mpEventDto.MinutesForSetup = parentEvent.MinutesForSetup;
