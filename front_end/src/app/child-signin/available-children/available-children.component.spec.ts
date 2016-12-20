@@ -9,13 +9,13 @@ describe('AvailableChildrenComponent', () => {
       fixture.servingOneHour = true;
     });
     it('should activate a step and deactivate the other', () => {
-      fixture.toggleServingHours(2);
+      fixture.toggleServingHours(null, 2);
       expect(fixture.isServingOneHour).toBeFalsy();
       expect(fixture.isServingTwoHours).toBeTruthy();
       expect(fixture.numberEventsAttending).toEqual(2);
     });
     it('should allow you to toggle off an option', () => {
-      fixture.toggleServingHours(1);
+      fixture.toggleServingHours(null, 1);
       expect(fixture.isServingOneHour).toBeFalsy();
       expect(fixture.isServingTwoHours).toBeFalsy();
       expect(fixture.numberEventsAttending).toEqual(0);

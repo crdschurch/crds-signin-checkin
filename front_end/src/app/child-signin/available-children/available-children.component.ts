@@ -93,16 +93,42 @@ export class AvailableChildrenComponent implements OnInit {
    this._isServingOneHour = !this._isServingOneHour;
  }
 
+ set notServing(b) {
+   this._isServingOneHour = false;
+   this._isServingTwoHours = false;
+ }
+
  set servingTwoHours(b) {
    this._isServingOneHour = false;
    this._isServingTwoHours = !this._isServingTwoHours;
  }
 
- toggleServingHours(hours) {
+ toggleServingHours(modal, hours) {
    if (hours === 1) {
      this.servingOneHour = true;
    } else if (hours === 2) {
      this.servingTwoHours = true;
+   }
+   if (modal) {
+     modal.hide();
+   }
+ }
+
+ public showChildModal(): void {
+   this.serviceSelectModal.show();
+ }
+
+ toggleClick(modal) {
+   // if on, turn off
+   if (this.isServing) {
+     this.notServing = true;
+     return true;
+   // else if off, open modal to turn on
+   } else {
+     if (modal) {
+       modal.show();
+     }
+     return false;
    }
  }
 
