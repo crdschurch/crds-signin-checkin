@@ -46,7 +46,8 @@ export class AvailableChildrenComponent implements OnInit {
    }
 
    this.isReady = false;
-   this.childSigninService.signInChildren(this.eventParticipants).subscribe(
+
+   this.childSigninService.signInChildren(this.eventParticipants, this.numberEventsAttending).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;
        if (response && response.Participants && response.Participants.length > 0) {
@@ -61,27 +62,34 @@ export class AvailableChildrenComponent implements OnInit {
    );
  }
 
- // openShowServiceSelectModal() {
- //   this.showServiceSelectModal();
- // }
-
  public childrenAvailable(): Child[] {
    return this.eventParticipants.Participants;
  }
 
- get isServing() {
+ get numberEventsAttending(): number {
+   if (this.isServingOneHour) {
+     return 1;
+   } else if (this.isServingTwoHours) {
+     return 2;
+   } else {
+     return 0;
+   }
+ }
+
+ get isServing(): boolean {
    return this._isServingOneHour || this._isServingTwoHours;
  }
 
- get isServingOneHour() {
+ get isServingOneHour(): boolean {
    return this._isServingOneHour;
  }
 
- get isServingTwoHours() {
+ get isServingTwoHours(): boolean {
    return this._isServingTwoHours;
  }
 
  toggleServingHours(hours) {
+   console.log(hours)
    if (hours === 1) {
      this._isServingTwoHours = false;
      this._isServingOneHour = !this._isServingOneHour;

@@ -13,6 +13,7 @@ export class EventParticipants {
 
     let eventParticipants = new EventParticipants();
     eventParticipants.CurrentEvent = Event.fromJson(json.CurrentEvent);
+    eventParticipants.ServicesAttended = json.ServicesAttended;
     eventParticipants.Participants = [];
     for (let p of json.Participants) {
       eventParticipants.Participants.push(Child.fromJson(p));
