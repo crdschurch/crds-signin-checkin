@@ -112,7 +112,7 @@ namespace SignInCheckIn.Services
                 mpEventDto.EventStartDate = parentEvent.EventStartDate;
                 mpEventDto.EventEndDate = parentEvent.EventEndDate;
                 mpEventDto.Cancelled = parentEvent.Cancelled;
-
+                mpEventDto.AllowCheckIn = parentEvent.AllowCheckIn;
                 var subEvent = _eventRepository.CreateSubEvent(token, mpEventDto);
                 events.Add(subEvent);
             }
