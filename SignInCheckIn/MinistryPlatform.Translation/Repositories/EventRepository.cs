@@ -137,7 +137,7 @@ namespace MinistryPlatform.Translation.Repositories
             queryString += ")";
 
             // search on the event type if it's not a null param
-            var typeQueryString = " AND Events.[Event_Type_ID] = " + eventTypeId;
+            var typeQueryString = (eventTypeId != null) ? " AND Events.[Event_Type_ID] = " + eventTypeId : "";
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>($"Events.[Parent_Event_ID] IN {queryString} AND Events.[Allow_Check-in] = 1 {typeQueryString}", _eventColumns);

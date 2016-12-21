@@ -56,7 +56,7 @@ namespace MinistryPlatform.Translation.Models.DTO
         public int MinutesForCleanup { get; set; }
 
         [JsonProperty(PropertyName = "Cancelled")]
-        public int Cancelled { get; set; }
+        public bool Cancelled { get; set; }
 
         [JsonProperty(PropertyName = "[Allow_Check-in]")]
         public bool AllowCheckIn { get; set; }

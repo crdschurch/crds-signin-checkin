@@ -438,8 +438,7 @@ namespace SignInCheckIn.Services
                 mpEventDto.EventStartDate = parentEvent.EventStartDate;
                 mpEventDto.EventEndDate = parentEvent.EventEndDate;
                 mpEventDto.Cancelled = parentEvent.Cancelled;
-                //mpEventDto.
-                
+  
                 _eventRepository.CreateSubEvent(authenticationToken, new MpEventDto());
 
                 // assign applicable fields to the event room
