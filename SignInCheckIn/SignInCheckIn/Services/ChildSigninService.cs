@@ -419,8 +419,7 @@ namespace SignInCheckIn.Services
                 groupParticipantDtos.Add(groupParticipantDto);
             }
 
-            // consider removing this line - it looks like cruft - JPC
-            var newGroupParticipants = _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
+            _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
 
         private MpEventDto GetNextAdventureClubEvent(EventDto eventDto)
@@ -440,7 +439,7 @@ namespace SignInCheckIn.Services
             foreach (var parentEvent in dailyEvents)
             {
                 // look to see if the next event in sequence has a child event of AC - if so, return that AC event id
-                if (subEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == 20))
+                if (subEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId))
                 {
                     return subEvents.First(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
                 }
