@@ -1,0 +1,5 @@
+.modal {
+  a.btn-primary.active:not([href]):not([tabindex]) {
+    color: white!important;
+  }
+}

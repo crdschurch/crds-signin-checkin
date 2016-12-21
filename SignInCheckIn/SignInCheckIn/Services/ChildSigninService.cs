@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Configuration;
-using System.Web.DynamicData;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
-using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
@@ -84,9 +81,37 @@ namespace SignInCheckIn.Services
 
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
-            var mpEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto);
+            List<int> eventIdsToSignIn = CheckAcEventStatus(participantEventMapDto);
 
-            // populate the room info on the dto
+            var mpEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto).ToList();
+            mpEventParticipantDtoList.ForEach(r => r.EventId = eventIdsToSignIn[0]);
+
+            // need to create this at the function level to use later in the function
+            ParticipantEventMapDto acParticipantEventMapDto = new ParticipantEventMapDto
+            {
+                Contacts = participantEventMapDto.Contacts,
+                Participants = participantEventMapDto.Participants,
+                ServicesAttended = participantEventMapDto.ServicesAttended
+            };
+
+            // call code to sign into AC here, if they are attending 2 services and there are 2 events
+            if (participantEventMapDto.ServicesAttended == 2 && eventIdsToSignIn.Count == 2)
+            {
+                // get the ac event
+                var mpAcEventDto = _eventRepository.GetEventById(eventIdsToSignIn[1]);
+                acParticipantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(mpAcEventDto);
+
+                var subEventParticipants = SetParticipantsAssignedRoom(acParticipantEventMapDto).ToList();
+                subEventParticipants.ForEach(r => r.EventId = eventIdsToSignIn[1]);
+                mpEventParticipantDtoList.AddRange(subEventParticipants);
+            }
+
+            // null out the room assignment for both participant records if they can't sign in to one or the other,
+            // so that they get a rock
+            SyncInvalidSignins(mpEventParticipantDtoList, participantEventMapDto);
+
+            // create participants if they're assigned to a room -- we still need to handle the case where there is an 
+            // error and they can't be signed into both events
             var response = new ParticipantEventMapDto
             {
                 CurrentEvent = participantEventMapDto.CurrentEvent,
@@ -97,14 +122,30 @@ namespace SignInCheckIn.Services
                 Contacts = participantEventMapDto.Contacts
             };
 
+            // set the data fields on the printed participant dto
+            if (eventIdsToSignIn.Count == 2)
+            {
+                foreach (var item in response.Participants.Where(r => r.EventId == eventIdsToSignIn[1]))
+                {
+                    foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventIdsToSignIn[0]))
+                    {
+                        subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
+                        subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
+                    }
+                }
+
+                response.Participants.RemoveAll(r => r.EventId == eventIdsToSignIn[1]);
+            }
+
             // TODO Add back those participants that didn't get a room assigned - should be handled in bumping rules eventually
-            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => p.Selected && !p.AssignedRoomId.HasValue));
+            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
 
             response.Participants.ForEach(p => p.Selected = true);
 
             return response;
         }
 
+        // need to be able to assign to two rooms - which is what signing into AC is
         private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto)
         {
             // Get Event and make sure it occures at a valid time
@@ -156,8 +197,10 @@ namespace SignInCheckIn.Services
             var mpEventParticipantDtoList = (
                 // Get selected participants
                 from participant in participantEventMapDto.Participants.Where(r => r.Selected)
-                    // Get the event group id that they belong to
+
+                // Get the event group id that they belong to
                 let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
+
                 // Create the Event Participant
                 select new MpEventParticipantDto
                 {
@@ -373,7 +416,118 @@ namespace SignInCheckIn.Services
                 groupParticipantDtos.Add(groupParticipantDto);
             }
 
-            var newGroupParticipants = _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
+            _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
+        }
+
+        private MpEventDto GetNextAdventureClubEvent(EventDto eventDto)
+        {
+            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+
+            // get current and future events - not sure how to shrink this down...
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, eventDto.EventSiteId, true).OrderBy(r => r.EventStartDate);
+
+            if (!dailyEvents.Any())
+            {
+                return null;
+            }
+
+            var eventIds = dailyEvents.Select(r => r.EventId).ToList();
+
+            var subEvents = _eventRepository.GetSubeventsForEvents(eventIds, _applicationConfiguration.AdventureClubEventTypeId);
+
+            foreach (var parentEvent in dailyEvents)
+            {
+                // look to see if the next event in sequence has a child event of AC - if so, return that AC event id
+                if (subEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId))
+                {
+                    return subEvents.First(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
+                }
+            }
+
+            // null return event means there's no remaining AC event for that day
+            return null;
+        }
+
+        // this gets called if the children are potentially signed into a current AC event - NTK if there is another regular event left in the day
+        // to sign them into, otherwise they do not get signed into AC
+        private MpEventDto GetNextServiceEvent(int currentAcEventSiteId, int eventId)
+        {
+            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, currentAcEventSiteId).OrderBy(r => r.EventStartDate);
+
+            if (dailyEvents.Any(r => r.ParentEventId == null && r.EventId != eventId))
+            {
+                // pull the next service event off the list where the service event id doesn't equal the current event's id
+                return dailyEvents.First(r => r.EventId != eventId);
+            }
+
+            return null;
+        }
+
+        // simply return a list of two event ids to check into -- note that the first id is always a 
+        // service event id
+        private List<int> CheckAcEventStatus(ParticipantEventMapDto participantEventMapDto)
+        {
+            List<int> returnEventIds = new List<int>();
+
+            if (participantEventMapDto.ServicesAttended == 2)
+            {
+                var nextAcEvent = GetNextAdventureClubEvent(participantEventMapDto.CurrentEvent);
+
+                if (nextAcEvent != null)
+                {
+                    // case # 1 - the current AC event's parent event is the current service event - check to 
+                    // see if there is another service event that day
+                    var nextServiceEvent = GetNextServiceEvent(nextAcEvent.CongregationId, participantEventMapDto.CurrentEvent.EventId);
+
+                    // sign them into a regular service
+                    if (nextServiceEvent == null || nextServiceEvent.EventId == participantEventMapDto.CurrentEvent.EventId)
+                    {
+                        returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
+                        return returnEventIds;
+                    }
+
+                    // if the event being signed into is an ac event and there is a later ac event,
+                    // sign them into the current service and the later ac event
+                    if (nextServiceEvent.EventId == participantEventMapDto.CurrentEvent.EventId)
+                    {
+                        returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
+                        returnEventIds.Add(nextAcEvent.EventId);
+                        return returnEventIds;
+                    }
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse -- JPC
+                    if (nextServiceEvent != null && nextAcEvent.ParentEventId == participantEventMapDto.CurrentEvent.EventId)
+                    {
+                        returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
+                        returnEventIds.Add(nextAcEvent.EventId);
+                        return returnEventIds;
+                    }
+                }
+            }
+
+            // just return the regular service event if there is no AC event
+            returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
+            return returnEventIds;
+        }
+
+        private void SyncInvalidSignins(List<MpEventParticipantDto> mpEventParticipantDtoList, ParticipantEventMapDto participantEventMapDto)
+        {
+            // null out the room assignment for both participant records if they can't sign in to one or the other,
+            // so that they get a rock
+            foreach (var participantItem in mpEventParticipantDtoList.Where(participantItem => mpEventParticipantDtoList.Any(r => r.HasRoomAssignment == false && r.ParticipantId == participantItem.ParticipantId)))
+            {
+                foreach (var subItem in mpEventParticipantDtoList.Where(r => r.ParticipantId == participantItem.ParticipantId))
+                {
+                    subItem.RoomId = null;
+                }
+
+                foreach (var subItem in participantEventMapDto.Participants.Where(r => r.ParticipantId == participantItem.ParticipantId))
+                {
+                    subItem.AssignedRoomId = null;
+                }
+            }
         }
     }
 }
