@@ -87,24 +87,31 @@ namespace SignInCheckIn.Services
             List<int> eventIdsToSignIn = CheckAcEventStatus(participantEventMapDto);
 
             var mpEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto).ToList();
+            mpEventParticipantDtoList.ForEach(r => r.EventId = eventIdsToSignIn[0]);
 
-            //// call code to sign into AC here, if they are attending 2 services and there are 2 events
-            //if (participantEventMapDto.ServicesAttended == 2 && eventIdsToSignIn.Count == 2)
-            //{
-            //    // get the ac event
-            //    var mpAcEventDto = _eventRepository.GetEventById(eventIdsToSignIn[1]);
+            // need to create this at the function level to use later in the function
+            ParticipantEventMapDto acParticipantEventMapDto = new ParticipantEventMapDto
+            {
+                Contacts = participantEventMapDto.Contacts,
+                Participants = participantEventMapDto.Participants,
+                ServicesAttended = participantEventMapDto.ServicesAttended
+            };
 
-            //    // create a deep copy of the map and use this for the AC event sign in
-            //    ParticipantEventMapDto acParticipantEventMapDto = new ParticipantEventMapDto
-            //    {
-            //        CurrentEvent = Mapper.Map<EventDto>(mpAcEventDto),
-            //        Contacts = participantEventMapDto.Contacts,
-            //        Participants = participantEventMapDto.Participants,
-            //        ServicesAttended = 2
-            //    };
+            // call code to sign into AC here, if they are attending 2 services and there are 2 events
+            if (participantEventMapDto.ServicesAttended == 2 && eventIdsToSignIn.Count == 2)
+            {
+                // get the ac event
+                var mpAcEventDto = _eventRepository.GetEventById(eventIdsToSignIn[1]);
+                acParticipantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(mpAcEventDto);
 
-            //    mpEventParticipantDtoList.AddRange(SetParticipantsAssignedRoom(acParticipantEventMapDto));
-            //}
+                var subEventParticipants = SetParticipantsAssignedRoom(acParticipantEventMapDto).ToList();
+                subEventParticipants.ForEach(r => r.EventId = eventIdsToSignIn[1]);
+                mpEventParticipantDtoList.AddRange(subEventParticipants);
+            }
+
+            // null out the room assignment for both participant records if they can't sign in to one or the other,
+            // so that they get a rock
+            SyncInvalidSignins(mpEventParticipantDtoList, participantEventMapDto);
 
             // create participants if they're assigned to a room -- we still need to handle the case where there is an 
             // error and they can't be signed into both events
@@ -117,6 +124,21 @@ namespace SignInCheckIn.Services
                         .Select(Mapper.Map<ParticipantDto>).ToList(),
                 Contacts = participantEventMapDto.Contacts
             };
+
+            // set the data fields on the printed participant dto
+            if (eventIdsToSignIn.Count == 2)
+            {
+                foreach (var item in response.Participants.Where(r => r.EventId == eventIdsToSignIn[1]))
+                {
+                    foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventIdsToSignIn[0]))
+                    {
+                        subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
+                        subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
+                    }
+                }
+
+                response.Participants.RemoveAll(r => r.EventId == eventIdsToSignIn[1]);
+            }
 
             // TODO Add back those participants that didn't get a room assigned - should be handled in bumping rules eventually
             response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
@@ -178,8 +200,10 @@ namespace SignInCheckIn.Services
             var mpEventParticipantDtoList = (
                 // Get selected participants
                 from participant in participantEventMapDto.Participants.Where(r => r.Selected)
-                    // Get the event group id that they belong to
+
+                // Get the event group id that they belong to
                 let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
+
                 // Create the Event Participant
                 select new MpEventParticipantDto
                 {
@@ -205,6 +229,8 @@ namespace SignInCheckIn.Services
 
             var assignedRoom = eventGroups.First(eg => eg.RoomReservation.RoomId == assignedRoomId.Value).RoomReservation;
             var signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
+
+            mpEventParticipant.RoomId = null; 
 
             if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn) {
                 ProcessBumpingRules(eventParticipant, mpEventParticipant, assignedRoom);
@@ -484,6 +510,24 @@ namespace SignInCheckIn.Services
             // just return the regular service event if there is no AC event
             returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
             return returnEventIds;
+        }
+
+        private void SyncInvalidSignins(List<MpEventParticipantDto> mpEventParticipantDtoList, ParticipantEventMapDto participantEventMapDto)
+        {
+            // null out the room assignment for both participant records if they can't sign in to one or the other,
+            // so that they get a rock
+            foreach (var participantItem in mpEventParticipantDtoList.Where(participantItem => mpEventParticipantDtoList.Any(r => r.HasRoomAssignment == false && r.ParticipantId == participantItem.ParticipantId)))
+            {
+                foreach (var subItem in mpEventParticipantDtoList.Where(r => r.ParticipantId == participantItem.ParticipantId))
+                {
+                    subItem.RoomId = null;
+                }
+
+                foreach (var subItem in participantEventMapDto.Participants.Where(r => r.ParticipantId == participantItem.ParticipantId))
+                {
+                    subItem.AssignedRoomId = null;
+                }
+            }
         }
     }
 }
