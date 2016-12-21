@@ -67,10 +67,10 @@ describe('NewFamilyRegistrationComponent', () => {
     expect(fixture.needGradeLevel(child)).toBeTruthy();
   });
 
-  it('should return false when child < 5 years old', () => {
+  it('should return false when child < 4 years old', () => {
     fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
     let child = new NewChild();
-    child.DateOfBirth = moment().subtract(5, 'years').add(1, 'day').toDate();
+    child.DateOfBirth = moment().subtract(4, 'years').add(1, 'day').toDate();
     expect(fixture.needGradeLevel(child)).toBeFalsy();
   });
 });
