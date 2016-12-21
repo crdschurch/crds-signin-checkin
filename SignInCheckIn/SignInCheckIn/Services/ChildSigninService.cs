@@ -424,7 +424,7 @@ namespace SignInCheckIn.Services
             var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
 
             // get current and future events - not sure how to shrink this down...
-            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, eventDto.EventSiteId).OrderBy(r => r.EventStartDate);
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, eventDto.EventSiteId, true).OrderBy(r => r.EventStartDate);
 
             if (!dailyEvents.Any())
             {
