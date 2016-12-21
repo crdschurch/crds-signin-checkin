@@ -82,7 +82,7 @@ describe('ChildSigninService', () => {
         }});
       });
 
-      let result = fixture.signInChildren(input);
+      let result = fixture.signInChildren(input, 0);
       expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/children`, input);
       expect(result).toBeDefined();
       expect(result).toEqual(jasmine.any(Observable));
