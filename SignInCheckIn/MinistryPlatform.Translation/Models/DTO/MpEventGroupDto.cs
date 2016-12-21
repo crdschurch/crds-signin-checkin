@@ -48,6 +48,20 @@ namespace MinistryPlatform.Translation.Models.DTO
             set { RoomReservation.RoomId = value ?? 0; }
         }
 
+        [JsonProperty("Signed_In", NullValueHandling = NullValueHandling.Ignore)]
+        public int? SignedIn
+        {
+            get { return RoomReservation.SignedIn == 0 ? (int?)null : RoomReservation.SignedIn; }
+            set { RoomReservation.SignedIn = value ?? 0; }
+        }
+
+        [JsonProperty("Checked_In", NullValueHandling = NullValueHandling.Ignore)]
+        public int? CheckedIn
+        {
+            get { return RoomReservation.CheckedIn == 0 ? (int?)null : RoomReservation.CheckedIn; }
+            set { RoomReservation.CheckedIn = value ?? 0; }
+        }
+
         public bool HasRoomReservation()
         {
             return RoomReservation != null && RoomReservation.RoomId > 0;

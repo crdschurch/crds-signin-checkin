@@ -159,5 +159,21 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpGet]
+        [ResponseType(typeof(EventRoomDto))]
+        [Route("events/{eventId:int}/eventmaps")]
+        public IHttpActionResult GetEventsAndSubEvents([FromUri] int eventId)
+        {
+            try
+            {
+                return Authorized(token => Ok(_eventService.GetEventMaps(token, eventId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting event maps for event {eventId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }

@@ -28,6 +28,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IParticipantRepository> _participantRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IGroupLookupRepository> _groupLookupRepository;
+        private Mock<IRoomRepository> _roomRepository;
 
         private ChildSigninService _fixture;
 
@@ -47,11 +48,12 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _groupLookupRepository = new Mock<IGroupLookupRepository>();
+            _roomRepository = new Mock<IRoomRepository>();
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
-                _applicationConfiguration.Object, _groupLookupRepository.Object);
+                _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object);
         }
 
         [Test]
@@ -62,25 +64,29 @@ namespace SignInCheckIn.Tests.Services
             int? primaryHouseholdId = 123;
 
             var eventDto = new EventDto();
- 
-            var mpParticipantDto = new List<MpParticipantDto>
+
+            var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto
             {
-                new MpParticipantDto
+                HouseholdId = primaryHouseholdId.GetValueOrDefault(),
+                Participants = new List<MpParticipantDto>
                 {
-                    ParticipantId = 12,
-                    ContactId = 1443,
-                    HouseholdId = primaryHouseholdId.GetValueOrDefault(),
-                    HouseholdPositionId = 2,
-                    FirstName = "First1",
-                    LastName = "Last1",
-                    DateOfBirth = new DateTime()
+                    new MpParticipantDto
+                    {
+                        ParticipantId = 12,
+                        ContactId = 1443,
+                        HouseholdId = primaryHouseholdId.GetValueOrDefault(),
+                        HouseholdPositionId = 2,
+                        FirstName = "First1",
+                        LastName = "Last1",
+                        DateOfBirth = new DateTime(),
+                        PrimaryHousehold = true
+                    }
                 }
             };
-
+ 
             var contactDtos = new List<MpContactDto>();
-    
-            _childSigninRepository.Setup(mocked => mocked.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(primaryHouseholdId.Value);
-            _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(It.IsAny<int?>(), It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
+
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
@@ -88,24 +94,26 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(mpParticipantDto[0].ParticipantId, result.Participants[0].ParticipantId);
-            Assert.AreEqual(mpParticipantDto[0].ContactId, result.Participants[0].ContactId);
+            Assert.AreEqual(mpHouseholdAndParticipants.Participants[0].ParticipantId, result.Participants[0].ParticipantId);
+            Assert.AreEqual(mpHouseholdAndParticipants.Participants[0].ContactId, result.Participants[0].ContactId);
         }
 
         [Test]
-        public void ShouldNotGetChildrenByPhoneNumber()
+        public void GetChildrenByPhoneNumberShouldReturnNoParticipants()
         {
             const int siteId = 1;
             const string phoneNumber = "812-812-8877";
-            int? householdId = 1234567;
+            int? primaryHouseholdId = 123;
 
-            var mpParticipantDto = new List<MpParticipantDto>();
+            var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto
+            {
+                HouseholdId = primaryHouseholdId.GetValueOrDefault(),
+            };
             var eventDto = new EventDto();
             var contactDtos = new List<MpContactDto>();
 
-            _childSigninRepository.Setup(m => m.GetHouseholdIdByPhoneNumber(phoneNumber)).Returns(householdId);
-            _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, It.IsAny<MpEventDto>())).Returns(mpParticipantDto);
-            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(primaryHouseholdId.Value)).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
             _childSigninRepository.VerifyAll();
@@ -115,7 +123,26 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(false, result.Participants.Any());
         }
 
-         
+        public void GetChildrenByPhoneNumberShouldThrowExceptionIfHouseholdNotFound()
+        {
+            const int siteId = 1;
+            const string phoneNumber = "812-812-8877";
+
+            var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto();
+
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
+            try
+            {
+                _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
+                Assert.Fail("Expected exception was not thrown");
+            }
+            catch (ApplicationException e)
+            {
+                _childSigninRepository.VerifyAll();
+                Assert.AreEqual($"Could not locate household for phone number {phoneNumber}", e.Message);
+            }
+        }
+
         [Test]
         public void ShouldSignInParticipants()
         {
@@ -197,7 +224,215 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             Assert.IsNotNull(response);
             Assert.IsNull(response.Participants[0].SignInErrorMessage);
-            StringAssert.Contains("not in a Kids Club Group", response.Participants[1].SignInErrorMessage);
+        }
+        
+        [Test]
+        public void ShouldSignInParticipantsViaBumpingRules()
+        {
+            // Arrange
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    ParticipantId = 111,
+                    Selected = true,
+                    GroupId = 432
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventId = 321
+            };
+
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 432,
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        AllowSignIn = true,
+                        Capacity = 11,
+                        CheckedIn = 9,
+                        EventId = 321,
+                        EventRoomId = 153234,
+                        Hidden = true,
+                        RoomId = 4,
+                        RoomName = "name",
+                        RoomNumber = "number",
+                        SignedIn = 2,
+                        Volunteers = 6
+                    }
+                }
+            };
+
+            var mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    GroupId = 432,
+                    RoomId = 3827
+                }
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = participantDtos,
+                Contacts = contactDtos,
+                CurrentEvent = eventDto
+            };
+
+            var mpBumpingRooms = new List<MpBumpingRoomsDto>
+            {
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 5134,
+                    RoomId = 161641,
+                    PriorityOrder = 2,
+                    AllowSignIn = true,
+                    Capacity = 32,
+                    RoomName = "Test Room 1",
+                    SignedIn = 93,
+                    CheckedIn = 12
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 3877727,
+                    PriorityOrder = 1,
+                    AllowSignIn = false,
+                    Capacity = 10,
+                    RoomName = "Test Room 2",
+                    SignedIn = 9,
+                    CheckedIn = 0
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 511,
+                    PriorityOrder = 4,
+                    AllowSignIn = false,
+                    Capacity = 10,
+                    RoomName = "Test Room 2",
+                    SignedIn = 9,
+                    CheckedIn = 0
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 3827,
+                    PriorityOrder = 3,
+                    AllowSignIn = true,
+                    Capacity = 10,
+                    RoomName = "Test Room 2",
+                    SignedIn = 9,
+                    CheckedIn = 0
+                }
+            };
+
+            _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
+            _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
+            _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(mpBumpingRooms);
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+
+            // Act
+            var response = _fixture.SigninParticipants(participantEventMapDto);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual(response.Participants[0].AssignedRoomId, 3827);
+        }
+
+        [Test]
+        public void ShouldNotSignInParticipantsDueToCapacity()
+        {
+            // Arrange
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    ParticipantId = 111,
+                    Selected = true,
+                    GroupId = 432
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventId = 321
+            };
+
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 432,
+                    RoomReservation = new MpEventRoomDto
+                    {
+                        AllowSignIn = true,
+                        Capacity = 11,
+                        CheckedIn = 9,
+                        EventId = 321,
+                        EventRoomId = 153234,
+                        Hidden = true,
+                        RoomId = 4,
+                        RoomName = "name",
+                        RoomNumber = "number",
+                        SignedIn = 2,
+                        Volunteers = 6
+                    }
+                }
+            };
+
+            var mpEventParticipantDtos = new List<MpEventParticipantDto>();
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = participantDtos,
+                Contacts = contactDtos,
+                CurrentEvent = eventDto
+            };
+
+            _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
+            _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
+            _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(new List<MpBumpingRoomsDto>());
+            _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+
+            // Act
+            var response = _fixture.SigninParticipants(participantEventMapDto);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsNull(response.Participants[0].AssignedRoomId);
         }
 
         [Test]
