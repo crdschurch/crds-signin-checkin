@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Configuration;
-using System.Web.DynamicData;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
-using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
@@ -424,8 +421,10 @@ namespace SignInCheckIn.Services
 
         private MpEventDto GetNextAdventureClubEvent(EventDto eventDto)
         {
+            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
             // get current and future events - not sure how to shrink this down...
-            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, eventDto.EventSiteId).OrderBy(r => r.EventStartDate);
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, eventDto.EventSiteId).OrderBy(r => r.EventStartDate);
 
             if (!dailyEvents.Any())
             {
@@ -453,7 +452,9 @@ namespace SignInCheckIn.Services
         // to sign them into, otherwise they do not get signed into AC
         private MpEventDto GetNextServiceEvent(int currentAcEventSiteId, int eventId)
         {
-            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, currentAcEventSiteId).OrderBy(r => r.EventStartDate);
+            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, currentAcEventSiteId).OrderBy(r => r.EventStartDate);
 
             if (dailyEvents.Any(r => r.ParentEventId == null && r.EventId != eventId))
             {

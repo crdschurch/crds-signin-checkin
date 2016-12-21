@@ -68,7 +68,6 @@ namespace MinistryPlatform.Translation.Repositories
                 .Search<MpEventDto>($"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Parent_Event_ID] IS NULL AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}", _eventColumns);
         }
 
-
         public MpEventDto GetEventById(int eventId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -142,6 +141,5 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>($"Events.[Parent_Event_ID] IN {queryString} AND Events.[Allow_Check-in] = 1 {typeQueryString}", _eventColumns);
         }
-
     }
 }
