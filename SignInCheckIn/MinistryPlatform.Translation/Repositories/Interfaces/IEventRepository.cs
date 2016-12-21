@@ -8,12 +8,13 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site);
         MpEventDto GetEventById(int eventId);
-
+        MpEventDto CreateSubEvent(string token, MpEventDto mpEventDto);
         List<MpEventGroupDto> GetEventGroupsForEvent(int eventId);
         List<MpEventGroupDto> GetEventGroupsForEventRoom(int eventId, int roomId);
         void DeleteEventGroups(string authenticationToken, IEnumerable<int> eventGroupIds);
         List<MpEventGroupDto> CreateEventGroups(string authenticationToken, List<MpEventGroupDto> eventGroups);
         void ResetEventSetup(string authenticationToken, int eventId);
         void ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId);
+        List<MpEventDto> GetEventAndCheckinSubevents(string token, int eventId);
     }
 }
