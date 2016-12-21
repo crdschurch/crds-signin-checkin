@@ -6,7 +6,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
     public interface IEventRepository
     {
-        List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site, bool? includeSubevents);
+        List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site, bool? includeSubevents = false);
         MpEventDto GetEventById(int eventId);
         MpEventDto CreateSubEvent(string token, MpEventDto mpEventDto);
         List<MpEventGroupDto> GetEventGroupsForEvent(int eventId);
