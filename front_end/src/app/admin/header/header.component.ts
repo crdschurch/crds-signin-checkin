@@ -12,6 +12,14 @@ import { UserService } from '../../shared/services';
 export class HeaderComponent {
   event: Event;
 
+  public isCollapsed:boolean = true;
+
+  public collapsed(event:any):void {
+  }
+
+  public expanded(event:any):void {
+  }
+
   constructor(private headerService: HeaderService,
               private userService: UserService,
               private router: Router) {

@@ -72,7 +72,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   needGradeLevel(child: NewChild): boolean {
-    return moment(child.DateOfBirth).isBefore(moment().startOf('day').subtract(5, 'y'));
+    return moment(child.DateOfBirth).isBefore(moment().startOf('day').subtract(4, 'y'));
   }
 
   updateChildYearGradeGroup(child: NewChild, groupId: number) {

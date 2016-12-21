@@ -1,12 +1,12 @@
 /* Add some padding below the collapsed component */
 div.crds-datepicker-container {
   padding-bottom: 9px;
-  display: inline-block;
+  display: block;
 }
 
 /* Make the actual datepicker open on top of other elements */
 div.crds-datepicker-container > div.calendar {
-  z-index: 1;
+  z-index: 3;
   position: absolute;
 }
 
