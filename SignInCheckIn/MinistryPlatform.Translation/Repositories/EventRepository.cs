@@ -78,7 +78,7 @@ namespace MinistryPlatform.Translation.Repositories
             if (includeSubevents != true)
             {
                 // do not include subevents
-                queryString = $"{queryString} AND[Parent_Event_ID] IS NULL";
+                queryString = $"{queryString} AND [Parent_Event_ID] IS NULL";
             }
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>(queryString, _eventColumns);
