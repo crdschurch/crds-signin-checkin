@@ -59,6 +59,6 @@ namespace MinistryPlatform.Translation.Models.DTO
         public int Cancelled { get; set; }
 
         [JsonProperty(PropertyName = "[Allow_Check-in]")]
-        public int AllowCheckIn { get; set; }
+        public bool AllowCheckIn { get; set; }
     }
 }

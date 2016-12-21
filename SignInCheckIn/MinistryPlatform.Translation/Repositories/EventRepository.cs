@@ -121,7 +121,6 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventDto> GetEventAndCheckinSubevents(string authenticationToken, int eventId)
         {
-            // JPC - check to see why this was null
             var token = authenticationToken ?? _apiUserRepository.GetToken();
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token)
