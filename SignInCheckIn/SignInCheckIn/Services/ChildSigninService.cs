@@ -421,7 +421,7 @@ namespace SignInCheckIn.Services
 
         private MpEventDto GetNextAdventureClubEvent(EventDto eventDto)
         {
-            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
 
             // get current and future events - not sure how to shrink this down...
             var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, eventDto.EventSiteId).OrderBy(r => r.EventStartDate);
@@ -452,7 +452,7 @@ namespace SignInCheckIn.Services
         // to sign them into, otherwise they do not get signed into AC
         private MpEventDto GetNextServiceEvent(int currentAcEventSiteId, int eventId)
         {
-            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
 
             var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, currentAcEventSiteId).OrderBy(r => r.EventStartDate);
 
