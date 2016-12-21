@@ -87,7 +87,7 @@ export class RoomGroupListComponent implements OnInit {
 
   hasActiveRooms(): boolean {
     for (let group of this.room.AssignedGroups) {
-        if (_.some(group.Ranges, { 'Selected': true})) {
+        if (group.Selected || _.some(group.Ranges, { 'Selected': true})) {
           return true;
         }
     }
