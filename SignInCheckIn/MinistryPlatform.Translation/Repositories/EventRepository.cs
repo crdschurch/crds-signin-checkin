@@ -57,15 +57,31 @@ namespace MinistryPlatform.Translation.Repositories
             };
         }
 
-        public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site)
+        /// <summary>
+        /// The end date parameter is automatically cast to the end of the day for that date
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="site"></param>
+        /// <param name="includeSubevents"></param>
+        /// <returns></returns>
+        public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site, bool? includeSubevents = false)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
             var startTimeString = startDate.ToString();
             // make sure end time is end of day
-            var endTimeString = endDate.AddHours(23).AddMinutes(59).AddSeconds(59).ToString();
+            var endTimeString = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59).ToString();
+
+            var queryString =
+                $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}";
+            if (includeSubevents != true)
+            {
+                // do not include subevents
+                queryString = $"{queryString} AND[Parent_Event_ID] IS NULL";
+            }
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpEventDto>($"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Parent_Event_ID] IS NULL AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}", _eventColumns);
+                .Search<MpEventDto>(queryString, _eventColumns);
         }
 
         public MpEventDto GetEventById(int eventId)
