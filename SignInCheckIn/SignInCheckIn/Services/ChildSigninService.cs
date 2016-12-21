@@ -88,23 +88,23 @@ namespace SignInCheckIn.Services
 
             var mpEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto).ToList();
 
-            // call code to sign into AC here, if they are attending 2 services and there are 2 events
-            if (participantEventMapDto.ServicesAttended == 2 && eventIdsToSignIn.Count == 2)
-            {
-                // get the ac event
-                var mpAcEventDto = _eventRepository.GetEventById(eventIdsToSignIn[1]);
+            //// call code to sign into AC here, if they are attending 2 services and there are 2 events
+            //if (participantEventMapDto.ServicesAttended == 2 && eventIdsToSignIn.Count == 2)
+            //{
+            //    // get the ac event
+            //    var mpAcEventDto = _eventRepository.GetEventById(eventIdsToSignIn[1]);
 
-                // create a deep copy of the map and use this for the AC event sign in
-                ParticipantEventMapDto acParticipantEventMapDto = new ParticipantEventMapDto
-                {
-                    CurrentEvent = Mapper.Map<EventDto>(mpAcEventDto),
-                    Contacts = participantEventMapDto.Contacts,
-                    Participants = participantEventMapDto.Participants,
-                    ServicesAttended = 2
-                };
+            //    // create a deep copy of the map and use this for the AC event sign in
+            //    ParticipantEventMapDto acParticipantEventMapDto = new ParticipantEventMapDto
+            //    {
+            //        CurrentEvent = Mapper.Map<EventDto>(mpAcEventDto),
+            //        Contacts = participantEventMapDto.Contacts,
+            //        Participants = participantEventMapDto.Participants,
+            //        ServicesAttended = 2
+            //    };
 
-                mpEventParticipantDtoList.AddRange(SetParticipantsAssignedRoom(acParticipantEventMapDto));
-            }
+            //    mpEventParticipantDtoList.AddRange(SetParticipantsAssignedRoom(acParticipantEventMapDto));
+            //}
 
             // create participants if they're assigned to a room -- we still need to handle the case where there is an 
             // error and they can't be signed into both events
@@ -119,7 +119,7 @@ namespace SignInCheckIn.Services
             };
 
             // TODO Add back those participants that didn't get a room assigned - should be handled in bumping rules eventually
-            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => p.Selected && !p.AssignedRoomId.HasValue));
+            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
 
             response.Participants.ForEach(p => p.Selected = true);
 
