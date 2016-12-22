@@ -122,18 +122,78 @@ namespace SignInCheckIn.Services
                 Contacts = participantEventMapDto.Contacts
             };
 
-            // set the data fields on the printed participant dto
-            if (eventIdsToSignIn.Count == 2)
+            // set the data fields on the printed participant dto, and set call numbers on the child event participant records
+            foreach (var mpEpDtoItem in mpEventParticipantDtoList)
             {
-                foreach (var item in response.Participants.Where(r => r.EventId == eventIdsToSignIn[1]))
+                // set mp event participant dto call number
+                var callNumber = $"0000{mpEpDtoItem.EventParticipantId}";
+                mpEpDtoItem.CallNumber = callNumber.Substring(callNumber.Length - 4);
+
+                if (eventIdsToSignIn.Count == 2)
                 {
-                    foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventIdsToSignIn[0]))
+                    // set on the child mp event participant item
+                    foreach (var subEventEpItem in mpEventParticipantDtoList.Where(r => r.EventId == eventIdsToSignIn[1] && r.ParticipantId == mpEpDtoItem.ParticipantId))
                     {
-                        subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
-                        subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
+                        subEventEpItem.CallNumber = mpEpDtoItem.CallNumber;
                     }
                 }
 
+                // set call number on the participant dto
+                foreach (var participantDto in response.Participants.Where(r => r.ParticipantId == mpEpDtoItem.ParticipantId && r.EventId == eventIdsToSignIn[0]))
+                {
+                    participantDto.CallNumber = mpEpDtoItem.CallNumber;
+                }
+
+                if (eventIdsToSignIn.Count == 2)
+                {
+                    // set on the child participant dto
+                    foreach (var participantDto in response.Participants.Where(r => r.ParticipantId == mpEpDtoItem.ParticipantId && r.EventId == eventIdsToSignIn[1]))
+                    {
+                        participantDto.CallNumber = mpEpDtoItem.CallNumber;
+                    }
+                }
+            }
+
+
+            //List<ParticipantDto> subEventParticipantDtos = response.Participants.Where(r => r.EventId == eventIdsToSignIn[1]).ToList();
+
+            //foreach (var item in subEventParticipantDtos)
+            //{
+            //    foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventIdsToSignIn[0]))
+            //    {
+            //        subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
+            //        subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
+
+            //        // set call numbers
+            //        var callNumber = $"0000{subItem.EventParticipantId}";
+            //        subItem.CallNumber = callNumber.Substring(callNumber.Length - 4);
+            //        item.CallNumber = subItem.CallNumber;
+            //    }
+            //}
+
+            //// persist call number - 
+            //// look only at event participants with a valid room assignment - meaning there will be both
+            //// a parent and child event participant
+            //foreach (var epItem in mpEventParticipantDtoList.Where(r => r.HasRoomAssignment == true))
+            //{
+            //    // this is a top level item - need to set the call number on both itself and the child event item
+            //    if (epItem.EventId == eventIdsToSignIn[0])
+            //    {
+            //        var callNumber = $"0000{epItem.EventParticipantId}";
+            //        epItem.CallNumber = callNumber.Substring(callNumber.Length - 4);
+
+            //        // set on the child event item
+            //        foreach (var subEventEpItem in mpEventParticipantDtoList.Where(r => r.EventId == eventIdsToSignIn[1] && r.ParticipantId == epItem.ParticipantId))
+            //        {
+            //            subEventEpItem.CallNumber = epItem.CallNumber;
+            //        }
+            //    }
+            //}
+
+            _participantRepository.UpdateEventParticipants(mpEventParticipantDtoList);
+
+            if (eventIdsToSignIn.Count > 1)
+            {
                 response.Participants.RemoveAll(r => r.EventId == eventIdsToSignIn[1]);
             }
 

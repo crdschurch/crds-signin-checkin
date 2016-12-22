@@ -25,15 +25,7 @@ namespace SignInCheckIn.Models.DTO
         [JsonIgnore]
         public int EventId { get; set; }
 
-        public string CallNumber
-        {
-            // TODO Faking out a call number for now (last 4 of EventParticipantId), eventually need to store a real call number on Event Participant
-            get
-            {
-                var c = $"0000{EventParticipantId}";
-                return c.Substring(c.Length - 4);
-            }
-        }
+        public string CallNumber { get; set; }
 
         public string SignInErrorMessage { get; set; }
 
