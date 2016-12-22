@@ -4,7 +4,8 @@ import { Location } from '@angular/common';
 import { HeaderService } from '../../header/header.service';
 import { Group, Room, Event } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
-import { ApiService } from '../../../shared/services';
+import { ApiService, RootService } from '../../../shared/services';
+import * as _ from 'lodash';
 
 @Component({
   templateUrl: 'room-group-list.component.html',
@@ -13,15 +14,20 @@ import { ApiService } from '../../../shared/services';
 export class RoomGroupListComponent implements OnInit {
   groups: Group[];
   eventId: string;
+  // this is the event we should sent to backend when updating groups
+  // as this will either be the adventure club event or the service event (non AC)
+  eventToUpdate: Event;
   roomId: string;
   private room: Room;
   private event: Event;
-  private isAdventureClub: boolean = false;
+  private eventsMap: Event[];
+  isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
+               private rootService: RootService,
                private route: ActivatedRoute,
                private headerService: HeaderService,
                private location: Location) {
@@ -31,9 +37,17 @@ export class RoomGroupListComponent implements OnInit {
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
 
+    this.apiService.getEventMaps(this.eventId).subscribe(
+      events => {
+        this.eventsMap = events;
+      },
+      error => console.error(error)
+    );
+
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
+        this.setCurrentEvent(room.AdventureClub);
       },
       error => console.error(error)
     );
@@ -49,6 +63,16 @@ export class RoomGroupListComponent implements OnInit {
 
   }
 
+  // get the adventure club event if AdventureClub is true for room, else return service event
+  setCurrentEvent(isAdventureClub: boolean) {
+    this.isAdventureClub = isAdventureClub;
+    if (this.isAdventureClub) {
+      this.eventToUpdate = _.filter(this.eventsMap, {'EventTypeId': Event.TYPE.ADVENTURE_CLUB})[0];
+    } else {
+      this.eventToUpdate = _.filter(this.eventsMap, {'ParentEventId': null})[0];
+    }
+  }
+
   public isUpdating(): boolean {
     return this.updating;
   }
@@ -59,6 +83,15 @@ export class RoomGroupListComponent implements OnInit {
 
   getEvent(): Event {
     return this.isReady() ? this.event : new Event();
+  }
+
+  hasActiveRooms(): boolean {
+    for (let group of this.room.AssignedGroups) {
+        if (group.Selected || _.some(group.Ranges, { 'Selected': true})) {
+          return true;
+        }
+    }
+    return false;
   }
 
   getGroups(): Group[] {
@@ -80,6 +113,17 @@ export class RoomGroupListComponent implements OnInit {
   openTabIfAlternateRoomsHash() {
     if (this.route.snapshot.queryParams['tab'] === 'alternate-rooms') {
       this.alternateRoomsSelected = true;
+    }
+  }
+
+  toggleAdventureClub(e) {
+    // if has rooms, dont change toggle, show alert
+    if (this.hasActiveRooms()) {
+      this.isAdventureClub = !this.isAdventureClub;
+      e.target.checked = this.isAdventureClub;
+      this.rootService.announceEvent('echeckAdventureClubToggleWarning');
+    } else {
+      this.setCurrentEvent(e.target.checked);
     }
   }
 

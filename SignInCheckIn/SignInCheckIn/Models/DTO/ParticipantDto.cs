@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
+using Newtonsoft.Json;
 
 namespace SignInCheckIn.Models.DTO
 {
@@ -20,6 +21,9 @@ namespace SignInCheckIn.Models.DTO
         public string AssignedRoomName { get; set; }
         public int? AssignedSecondaryRoomId { get; set; } // adventure club field
         public string AssignedSecondaryRoomName { get; set; } // adventure club field
+
+        [JsonIgnore]
+        public int EventId { get; set; }
 
         public string CallNumber
         {

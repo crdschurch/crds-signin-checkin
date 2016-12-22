@@ -4,13 +4,14 @@
   <div class="container-fluid admin-content py-1">
     <div class="row">
       <div class="col-sm-7">
-        <h1>Manage Rooms</h1>
+        <h3>Manage Rooms</h3>
       </div>
       <div class="offset-sm-1 col-sm-4 text-sm-right pb-1">
         <div class="row">
           <div class="col-xs-11">
             <!-- TODO -->
-            <strong>{{getOpenRooms()}}</strong> of <strong>{{getTotalRooms()}}</strong> rooms open
+
+            <span class="pr-2"><a href="#">Hide Unused Rooms</a></span> <strong>{{getOpenRooms()}}</strong> of <strong>{{getTotalRooms()}}</strong> rooms open
           </div>
           <!-- Single button -->
           <div class="col-xs-1 pl-0 gear-dropdown" dropdown [(isOpen)]="dropdownStatus.isOpen">
@@ -24,8 +25,8 @@
               </span>
             </button>
             <ul dropdownMenu role="menu" aria-labelledby="single-button" class="dropdown-menu-right">
-              <li role="menuitem"><a class="dropdown-item" (click)="goToImport()">Import Event Settings</a></li>
-              <li role="menuitem"><a class="dropdown-item" (click)="goToReset()">Reset Event Settings</a></li>
+              <li role="menuitem"><a class="dropdown-item pointer" (click)="goToImport()">Import Event Settings</a></li>
+              <li role="menuitem"><a class="dropdown-item pointer" (click)="goToReset()">Reset Event Settings</a></li>
               <!-- TODO: Can add separator like this -->
               <!-- li class="divider dropdown-divider"></li -->
               <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
@@ -35,7 +36,7 @@
     </div>
     <div class="col-xs-12">
       <preloader *ngIf="!isReady()"></preloader>
-      <table class="table table-striped" *ngIf="isReady()">
+      <table class="table table-striped manage-rooms-table" *ngIf="isReady()">
         <thead>
           <tr>
             <th>Age Ranges</th>

@@ -15,6 +15,7 @@ export class Room {
   AssignedGroups: Group[];
   BumpingRuleId: number;
   BumpingRulePriority: number;
+  AdventureClub: boolean;
 
   static fromJsons(jsons: any): Room[] {
     let rooms: Room[] = [];
@@ -41,7 +42,7 @@ export class Room {
     room.SignedIn = json.SignedIn;
     room.CheckedIn = json.CheckedIn;
     room.Label = json.Label;
-    room.Label = json.Label;
+    room.AdventureClub = json.AdventureClub;
     room.BumpingRuleId = json.BumpingRuleId;
     room.BumpingRulePriority = json.BumpingRulePriority;
     room.AssignedGroups = json.AssignedGroups !== undefined && json.AssignedGroups !== null && json.AssignedGroups.length !== 0

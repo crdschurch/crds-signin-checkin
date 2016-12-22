@@ -170,6 +170,36 @@ a.btn-primary.active:not([href]):not([tabindex]) {
   line-height: 1;
 }
 
-.right-call-number {
+.line-height-2 {
   line-height: 2;
+}
+
+datepicker {
+  .btn-info {
+    .text-muted {
+      color: #fff !important;
+    }
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.manage-rooms-table {
+  @include media-breakpoint-down(md) {
+    display: block;
+    width: 100%;
+    min-height: 0%;
+    overflow-x: auto;
+
+    td, th {
+      padding: $table-sm-cell-padding;
+    }
+  }
+
+  .tag.tag-info {
+    margin-left: 5px;
+    vertical-align: text-top;
+  }
 }

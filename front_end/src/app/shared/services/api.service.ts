@@ -12,6 +12,13 @@ export class ApiService {
   constructor(private http: HttpClientService, private setupService: SetupService) {
   }
 
+  getEventMaps(eventId: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/eventmaps`;
+    return this.http.get(url)
+                    .map(res => Event.fromJsons(res.json()))
+                    .catch(this.handleError);
+  }
+
   getEvent(eventId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}`;
     return this.http.get(url)
