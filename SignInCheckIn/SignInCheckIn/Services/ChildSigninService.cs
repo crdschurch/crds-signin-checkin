@@ -421,30 +421,19 @@ namespace SignInCheckIn.Services
 
         private MpEventDto GetNextAdventureClubEvent(EventDto eventDto)
         {
-            var currentDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, eventDto.EventSiteId, true).OrderBy(r => r.EventStartDate);
 
-            // get current and future events - not sure how to shrink this down...
-            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, currentDay, eventDto.EventSiteId, true).OrderBy(r => r.EventStartDate);
-
-            if (!dailyEvents.Any())
+            // check to see if there an eligible AC event
+            foreach (var parentEvent in dailyEvents.Where(r => r.ParentEventId == null))
             {
-                return null;
-            }
-
-            var eventIds = dailyEvents.Select(r => r.EventId).ToList();
-
-            var subEvents = _eventRepository.GetSubeventsForEvents(eventIds, _applicationConfiguration.AdventureClubEventTypeId);
-
-            foreach (var parentEvent in dailyEvents)
-            {
-                // look to see if the next event in sequence has a child event of AC - if so, return that AC event id
-                if (subEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId))
+                // look to see if the next event in sequence has a child event of AC - if so, return that AC event
+                if (dailyEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId && r.Cancelled == false))
                 {
-                    return subEvents.First(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
+                    return dailyEvents.First(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
                 }
             }
 
-            // null return event means there's no remaining AC event for that day
+            // null return event means there's no remaining AC for that day
             return null;
         }
 
@@ -467,19 +456,36 @@ namespace SignInCheckIn.Services
 
         // simply return a list of two event ids to check into -- note that the first id is always a 
         // service event id
-        private List<int> CheckAcEventStatus(ParticipantEventMapDto participantEventMapDto)
+        public List<int> CheckAcEventStatus(ParticipantEventMapDto participantEventMapDto)
         {
             List<int> returnEventIds = new List<int>();
 
+            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, participantEventMapDto.CurrentEvent.EventSiteId, true).OrderBy(r => r.EventStartDate);
+
+            int? acEventId = null;
+
             if (participantEventMapDto.ServicesAttended == 2)
             {
-                var nextAcEvent = GetNextAdventureClubEvent(participantEventMapDto.CurrentEvent);
+                MpEventDto mpAcEventDto = null;
 
-                if (nextAcEvent != null)
+                //var nextAcEvent = GetNextAdventureClubEvent(participantEventMapDto.CurrentEvent);
+                // check to see if there an eligible AC event
+                foreach (var parentEvent in dailyEvents.Where(r => r.ParentEventId == null))
+                {
+                    // look to see if the next event in sequence has a child event of AC - if so, return that AC event
+                    if (dailyEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId && r.Cancelled == false))
+                    {
+                        //return dailyEvents.First(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
+                        mpAcEventDto = dailyEvents.First(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
+                    }
+                }
+
+                // if there is a current or future AC event, determine if should be signed into for the current service or a future service
+                if (mpAcEventDto != null)
                 {
                     // case # 1 - the current AC event's parent event is the current service event - check to 
                     // see if there is another service event that day
-                    var nextServiceEvent = GetNextServiceEvent(nextAcEvent.CongregationId, participantEventMapDto.CurrentEvent.EventId);
+                    var nextServiceEvent = dailyEvents.First(r => r.EventId != participantEventMapDto.CurrentEvent.EventId && r.ParentEventId == null);
 
                     // sign them into a regular service
                     if (nextServiceEvent == null || nextServiceEvent.EventId == participantEventMapDto.CurrentEvent.EventId)
@@ -488,20 +494,22 @@ namespace SignInCheckIn.Services
                         return returnEventIds;
                     }
 
+
+
                     // if the event being signed into is an ac event and there is a later ac event,
                     // sign them into the current service and the later ac event
                     if (nextServiceEvent.EventId == participantEventMapDto.CurrentEvent.EventId)
                     {
                         returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
-                        returnEventIds.Add(nextAcEvent.EventId);
+                        returnEventIds.Add(mpAcEventDto.EventId);
                         return returnEventIds;
                     }
 
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse -- JPC
-                    if (nextServiceEvent != null && nextAcEvent.ParentEventId == participantEventMapDto.CurrentEvent.EventId)
+                    if (nextServiceEvent != null && mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId)
                     {
                         returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
-                        returnEventIds.Add(nextAcEvent.EventId);
+                        returnEventIds.Add(mpAcEventDto.EventId);
                         return returnEventIds;
                     }
                 }

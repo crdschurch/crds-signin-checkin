@@ -737,6 +737,88 @@ namespace SignInCheckIn.Tests.Services
             _contactRepository.VerifyAll();
             _participantRepository.VerifyAll();
             Assert.IsNotNull(result);
-        } 
+        }
+
+        [Test]
+        public void CheckAcEventDuringCurrentService()
+        {
+            // Arrange
+            DateTime eventSearchStartDate = new DateTime(2016, 12, 1, 8, 0, 0);
+            DateTime eventSearchEndDate = new DateTime(2016, 12, 1, 23, 59, 59);
+
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+            DateTime futureMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto currentMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpServiceEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                currentMpAdventureClubEventDto,
+                futureMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(eventSearchStartDate, eventSearchEndDate, 8, true)).Returns(eventDtosBySite);
+
+            EventDto signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.CheckAcEventStatus(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0], futureMpServiceEventDto);
+            Assert.AreEqual(result[1], currentMpServiceEventDto);
+
+        }
+
+        [Test]
+        public void CheckAcEventAfterCurrentService()
+        {
+
+        }
+
+        [Test]
+        public void CheckAcEventNoAcEvent()
+        {
+
+        }
     }
 }
