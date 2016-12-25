@@ -174,7 +174,8 @@ namespace SignInCheckIn.Tests.Services
             var eventDto = new EventDto
             {
                 EventTitle = "test event",
-                EventId = 321
+                EventId = 321,
+                EventSiteId = 8
             };
 
             var mpEventGroupDtos = new List<MpEventGroupDto>
@@ -211,7 +212,7 @@ namespace SignInCheckIn.Tests.Services
 
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
-                EventId = 1234567,
+                EventId = 321,
                 ParentEventId = null,
                 CongregationId = 8,
                 EventTypeId = 123,
@@ -366,7 +367,7 @@ namespace SignInCheckIn.Tests.Services
 
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
-                EventId = 1234567,
+                EventId = 321,
                 ParentEventId = null,
                 CongregationId = 8,
                 EventTypeId = 123,
@@ -462,7 +463,7 @@ namespace SignInCheckIn.Tests.Services
 
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
-                EventId = 1234567,
+                EventId = 321,
                 ParentEventId = null,
                 CongregationId = 8,
                 EventTypeId = 123,
@@ -855,13 +856,13 @@ namespace SignInCheckIn.Tests.Services
             };
 
             // Act
-            var result = _fixture.CheckAcEventStatus(participantEventMapDto);
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
 
             // Assert
 
             // we expect the child to be signed into the current ac event and future service event
-            Assert.AreEqual(result[0], futureMpServiceEventDto.EventId);
-            Assert.AreEqual(result[1], currentMpAdventureClubEventDto.EventId);
+            Assert.AreEqual(result[0].EventId, futureMpServiceEventDto.EventId);
+            Assert.AreEqual(result[1].EventId, currentMpAdventureClubEventDto.EventId);
         }
 
         [Test]
@@ -923,13 +924,13 @@ namespace SignInCheckIn.Tests.Services
             };
 
             // Act
-            var result = _fixture.CheckAcEventStatus(participantEventMapDto);
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
 
             // Assert
 
             // we expect the child to be signed into the current ac event and future service event
-            Assert.AreEqual(result[0], futureMpServiceEventDto.EventId);
-            Assert.AreEqual(result[1], futureMpAdventureClubEventDto.EventId);
+            Assert.AreEqual(result[0].EventId, futureMpServiceEventDto.EventId);
+            Assert.AreEqual(result[1].EventId, futureMpAdventureClubEventDto.EventId);
         }
 
         [Test]
@@ -990,12 +991,12 @@ namespace SignInCheckIn.Tests.Services
             };
 
             // Act
-            var result = _fixture.CheckAcEventStatus(participantEventMapDto);
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
 
             // Assert
 
             // we expect the child to be signed into the current ac event and future service event
-            Assert.AreEqual(result[0], currentMpServiceEventDto.EventId);
+            Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
             Assert.AreEqual(result.Count, 1);
         }
 
@@ -1047,12 +1048,12 @@ namespace SignInCheckIn.Tests.Services
             };
 
             // Act
-            var result = _fixture.CheckAcEventStatus(participantEventMapDto);
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
 
             // Assert
 
             // we expect the child to be signed into the current ac event and future service event
-            Assert.AreEqual(result[0], currentMpServiceEventDto.EventId);
+            Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
             Assert.AreEqual(result.Count, 1);
         }
     }

@@ -81,10 +81,10 @@ namespace SignInCheckIn.Services
 
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
-            List<int> eventIdsToSignIn = CheckAcEventStatus(participantEventMapDto);
+            List<MpEventDto> eventsForSignin = GetEventsForSignin(participantEventMapDto);
 
             var mpEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto).ToList();
-            mpEventParticipantDtoList.ForEach(r => r.EventId = eventIdsToSignIn[0]);
+            mpEventParticipantDtoList.ForEach(r => r.EventId = eventsForSignin[0].EventId);
 
             // need to create this at the function level to use later in the function
             ParticipantEventMapDto acParticipantEventMapDto = new ParticipantEventMapDto
@@ -95,14 +95,12 @@ namespace SignInCheckIn.Services
             };
 
             // call code to sign into AC here, if they are attending 2 services and there are 2 events
-            if (participantEventMapDto.ServicesAttended == 2 && eventIdsToSignIn.Count == 2)
+            if (participantEventMapDto.ServicesAttended == 2 && eventsForSignin.Count == 2)
             {
-                // get the ac event
-                var mpAcEventDto = _eventRepository.GetEventById(eventIdsToSignIn[1]);
-                acParticipantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(mpAcEventDto);
+                acParticipantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[1]);
 
                 var subEventParticipants = SetParticipantsAssignedRoom(acParticipantEventMapDto).ToList();
-                subEventParticipants.ForEach(r => r.EventId = eventIdsToSignIn[1]);
+                subEventParticipants.ForEach(r => r.EventId = eventsForSignin[1].EventId);
                 mpEventParticipantDtoList.AddRange(subEventParticipants);
             }
 
@@ -123,18 +121,18 @@ namespace SignInCheckIn.Services
             };
 
             // set the data fields on the printed participant dto
-            if (eventIdsToSignIn.Count == 2)
+            if (eventsForSignin.Count == 2)
             {
-                foreach (var item in response.Participants.Where(r => r.EventId == eventIdsToSignIn[1]))
+                foreach (var item in response.Participants.Where(r => r.EventId == eventsForSignin[1].EventId))
                 {
-                    foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventIdsToSignIn[0]))
+                    foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventsForSignin[0].EventId))
                     {
                         subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
                         subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
                     }
                 }
 
-                response.Participants.RemoveAll(r => r.EventId == eventIdsToSignIn[1]);
+                response.Participants.RemoveAll(r => r.EventId == eventsForSignin[1].EventId);
             }
 
             // TODO Add back those participants that didn't get a room assigned - should be handled in bumping rules eventually
@@ -421,13 +419,13 @@ namespace SignInCheckIn.Services
 
         // simply return a list of two event ids to check into -- note that the first id is always a 
         // service event id
-        public List<int> CheckAcEventStatus(ParticipantEventMapDto participantEventMapDto)
+        public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)
         {
-            List<int> returnEventIds = new List<int>();
+            List<MpEventDto> returnEvents = new List<MpEventDto>();
 
             var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, participantEventMapDto.CurrentEvent.EventSiteId, true).OrderBy(r => r.EventStartDate);
 
-            int? acEventId = null;
+            //MpEventDto acEvent = null;
 
             if (participantEventMapDto.ServicesAttended == 2)
             {
@@ -465,17 +463,17 @@ namespace SignInCheckIn.Services
                     // Case #2 - no following service events, sign them into the current service event
                     if (nextServiceEvent == null)
                     {
-                        returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
-                        return returnEventIds;
+                        returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+                        return returnEvents;
                     }
 
                     // Case #3 - no AC event for current event, but later AC, sign them into the current
                     // event and later AC
                     if (mpAcEventDto.ParentEventId != participantEventMapDto.CurrentEvent.EventId)
                     {
-                        returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
-                        returnEventIds.Add(mpAcEventDto.EventId); // OOPS???
-                        return returnEventIds;
+                        returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+                        returnEvents.Add(mpAcEventDto); 
+                        return returnEvents;
                     }
 
                     // Case #4 - AC for current event and later event exists with no AC, sign them 
@@ -483,9 +481,9 @@ namespace SignInCheckIn.Services
                     if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId &&
                         nextServiceEvent != null)
                     {
-                        returnEventIds.Add(nextServiceEvent.EventId);
-                        returnEventIds.Add(mpAcEventDto.EventId);
-                        return returnEventIds;
+                        returnEvents.Add(nextServiceEvent);
+                        returnEvents.Add(mpAcEventDto);
+                        return returnEvents;
                     }
 
                     // Case #5 - there are AC events for both the current and later service event. For now, pending
@@ -493,16 +491,16 @@ namespace SignInCheckIn.Services
                     if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId &&
                         nextServiceEvent != null)
                     {
-                        returnEventIds.Add(nextServiceEvent.EventId);
-                        returnEventIds.Add(mpAcEventDto.EventId);
-                        return returnEventIds;
+                        returnEvents.Add(nextServiceEvent);
+                        returnEvents.Add(mpAcEventDto);
+                        return returnEvents;
                     }                  
                 }                 
             }
 
             // if there are no AC events for the day, they are signed into the current service
-            returnEventIds.Add(participantEventMapDto.CurrentEvent.EventId);
-            return returnEventIds;
+            returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+            return returnEvents;
         }
 
         private void SyncInvalidSignins(List<MpEventParticipantDto> mpEventParticipantDtoList, ParticipantEventMapDto participantEventMapDto)
