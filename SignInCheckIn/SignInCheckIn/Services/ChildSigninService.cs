@@ -421,84 +421,44 @@ namespace SignInCheckIn.Services
         // service event id
         public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)
         {
-            List<MpEventDto> returnEvents = new List<MpEventDto>();
-
+            var returnEvents = new List<MpEventDto>();
             var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, participantEventMapDto.CurrentEvent.EventSiteId, true).OrderBy(r => r.EventStartDate);
 
-            //MpEventDto acEvent = null;
+            // Get the first AC event that day
+            var mpAcEventDto = dailyEvents.FirstOrDefault(r => r.ParentEventId != null && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId && r.Cancelled == false);
 
-            if (participantEventMapDto.ServicesAttended == 2)
+            if (participantEventMapDto.ServicesAttended == 2 && mpAcEventDto != null)
             {
-                MpEventDto mpAcEventDto = null;
-
-                //var nextAcEvent = GetNextAdventureClubEvent(participantEventMapDto.CurrentEvent);
-                // check to see if there an eligible AC event
-                foreach (var parentEvent in dailyEvents.Where(r => r.ParentEventId == null))
+                // Case #1 - no AC event for current event, but later AC, sign them into the current
+                // event and later AC
+                if (mpAcEventDto.ParentEventId != participantEventMapDto.CurrentEvent.EventId)
                 {
-                    // look to see if the next event in sequence has a child event of AC - if so, return that AC event
-                    if (dailyEvents.Any(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId && r.Cancelled == false))
-                    {
-                        //return dailyEvents.First(r => r.ParentEventId == parentEvent.EventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
-
-                        // get the next available ac event, regardless of parent id
-                        mpAcEventDto = dailyEvents.First(r => r.ParentEventId != null && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId
-                            && r.Cancelled == false);
-                    }
+                    returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+                    returnEvents.Add(mpAcEventDto); 
+                    return returnEvents;
                 }
 
-                // if there is a current or future AC event, determine if should be signed into for the current service or a future service
-                if (mpAcEventDto != null)
+                // check to see if there is another service event that day
+                var nextServiceEvent = dailyEvents.FirstOrDefault(r => r.EventId != participantEventMapDto.CurrentEvent.EventId && r.ParentEventId == null);
+
+                // Case #2 - no following service events, sign them into the current service event
+                if (nextServiceEvent == null)
                 {
-                    // JPC - there is a question out to KC stakeholders right now about which AC they should be signed into with
-                    // Case #5 - I'm setting them to sign into AC first for now
+                    returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+                    return returnEvents;
+                }
 
-                    // check to see if there is another service event that day
-                    MpEventDto nextServiceEvent = null;
-
-                    if (dailyEvents.Any(r => r.EventId != participantEventMapDto.CurrentEvent.EventId && r.ParentEventId == null))
-                    {
-                        nextServiceEvent = dailyEvents.First(r => r.EventId != participantEventMapDto.CurrentEvent.EventId && r.ParentEventId == null);
-                    }
-
-                    // Case #2 - no following service events, sign them into the current service event
-                    if (nextServiceEvent == null)
-                    {
-                        returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
-                        return returnEvents;
-                    }
-
-                    // Case #3 - no AC event for current event, but later AC, sign them into the current
-                    // event and later AC
-                    if (mpAcEventDto.ParentEventId != participantEventMapDto.CurrentEvent.EventId)
-                    {
-                        returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
-                        returnEvents.Add(mpAcEventDto); 
-                        return returnEvents;
-                    }
-
-                    // Case #4 - AC for current event and later event exists with no AC, sign them 
-                    // into the current AC event and later service event
-                    if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId &&
-                        nextServiceEvent != null)
-                    {
-                        returnEvents.Add(nextServiceEvent);
-                        returnEvents.Add(mpAcEventDto);
-                        return returnEvents;
-                    }
-
-                    // Case #5 - there are AC events for both the current and later service event. For now, pending
-                    // stakeholder input, this is the same as Case #4
-                    if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId &&
-                        nextServiceEvent != null)
-                    {
-                        returnEvents.Add(nextServiceEvent);
-                        returnEvents.Add(mpAcEventDto);
-                        return returnEvents;
-                    }                  
+                // Case #3 - AC for current event and later event exists with no AC, sign them 
+                // into the current AC event and later service event
+                if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId)
+                {
+                    returnEvents.Add(nextServiceEvent);
+                    returnEvents.Add(mpAcEventDto);
+                    return returnEvents;
                 }                 
             }
 
-            // if there are no AC events for the day, they are signed into the current service
+            // if there are no AC events for the day or they select to serve 1 hour, they are signed into the current service
             returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
             return returnEvents;
         }
