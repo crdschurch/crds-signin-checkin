@@ -174,7 +174,8 @@ namespace SignInCheckIn.Tests.Services
             var eventDto = new EventDto
             {
                 EventTitle = "test event",
-                EventId = 321
+                EventId = 321,
+                EventSiteId = 8
             };
 
             var mpEventGroupDtos = new List<MpEventGroupDto>
@@ -206,6 +207,25 @@ namespace SignInCheckIn.Tests.Services
                     RoomId = 4
                 }
             };
+
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 321,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
 
             var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
@@ -343,6 +363,25 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 321,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
@@ -419,6 +458,25 @@ namespace SignInCheckIn.Tests.Services
                 Contacts = contactDtos,
                 CurrentEvent = eventDto
             };
+
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 321,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
 
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
@@ -737,6 +795,266 @@ namespace SignInCheckIn.Tests.Services
             _contactRepository.VerifyAll();
             _participantRepository.VerifyAll();
             Assert.IsNotNull(result);
-        } 
+        }
+
+        [Test]
+        public void CheckAcEventDuringCurrentService()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+            DateTime futureMpEventDtoStartTime = new DateTime(2016, 12, 1, 11, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto currentMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpServiceEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                currentMpAdventureClubEventDto,
+                futureMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            EventDto signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, futureMpServiceEventDto.EventId);
+            Assert.AreEqual(result[1].EventId, currentMpAdventureClubEventDto.EventId);
+        }
+
+        [Test]
+        public void CheckAcEventAfterCurrentService()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+            DateTime futureMpEventDtoStartTime = new DateTime(2016, 12, 1, 11, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpServiceEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                futureMpAdventureClubEventDto,
+                futureMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            EventDto signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, futureMpServiceEventDto.EventId);
+            Assert.AreEqual(result[1].EventId, futureMpAdventureClubEventDto.EventId);
+        }
+
+        [Test]
+        public void CheckAcEventNoAcEvent()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+            DateTime futureMpEventDtoStartTime = new DateTime(2016, 12, 1, 11, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpServiceEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            // current service event, future service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                futureMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            EventDto signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
+            Assert.AreEqual(result.Count, 1);
+        }
+
+        [Test]
+        public void CheckAcEventCurrentService()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+            
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto currentMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            // current service event, future service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                currentMpAdventureClubEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            EventDto signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
+            Assert.AreEqual(result.Count, 1);
+        }
     }
 }
