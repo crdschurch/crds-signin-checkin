@@ -84,25 +84,26 @@ namespace SignInCheckIn.Services
             var mpAllEventPartipantDtoList = new List<MpEventParticipantDto>();
             var eventsForSignin = GetEventsForSignin(participantEventMapDto);
 
-            // need to create this at the function level to use later in the function
-            var acParticipantEventMapDto = new ParticipantEventMapDto
-            {
-                Contacts = participantEventMapDto.Contacts,
-                Participants = participantEventMapDto.Participants,
-                ServicesAttended = participantEventMapDto.ServicesAttended
-            };
-
-            var currentEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto).ToList();
-            currentEventParticipantDtoList.ForEach(r => r.EventId = eventsForSignin[0].EventId);
+            // reset the current event in the case they are doing AC here
+            participantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[0]);
+            var currentEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto, true).ToList();
             mpAllEventPartipantDtoList.AddRange(currentEventParticipantDtoList);
 
             // call code to sign into second event
             if (participantEventMapDto.ServicesAttended == 2 && eventsForSignin.Count == 2)
             {
-                acParticipantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[1]);
+                // create a copy of the participants and then set the second event to the desired event
+                // this is so we can add the same participants to the next event
+                var secondParticipantEventMapDto = new ParticipantEventMapDto
+                {
+                    Contacts = participantEventMapDto.Contacts,
+                    Participants = participantEventMapDto.Participants,
+                    ServicesAttended = participantEventMapDto.ServicesAttended,
+                    CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[1])
+                };
 
-                var secondEventParticipants = SetParticipantsAssignedRoom(acParticipantEventMapDto).ToList();
-                secondEventParticipants.ForEach(r => r.EventId = eventsForSignin[1].EventId);
+                // set the assigned room for thiss event
+                var secondEventParticipants = SetParticipantsAssignedRoom(secondParticipantEventMapDto, false).ToList();
                 mpAllEventPartipantDtoList.AddRange(secondEventParticipants);
             }
 
@@ -146,11 +147,10 @@ namespace SignInCheckIn.Services
         }
 
         // need to be able to assign to two rooms - which is what signing into AC is
-        private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto)
+        private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
         {
-            // TODO: this should only check validity of time if it is the current event as second event would never be valid
             // Get Event and make sure it occures at a valid time
-            var eventDto = GetEvent(participantEventMapDto);
+            var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
 
             // Get groups that are configured for the event
             var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
@@ -181,11 +181,11 @@ namespace SignInCheckIn.Services
             return mpEventParticipantDtoList;
         }
 
-        private EventDto GetEvent(ParticipantEventMapDto participantEventMapDto)
+        private EventDto GetEvent(int eventId,  bool checkEventTime)
         {
             // Get Event and make sure it occures at a valid time
-            var eventDto = _eventService.GetEvent(participantEventMapDto.CurrentEvent.EventId);
-            if (_eventService.CheckEventTimeValidity(eventDto) == false)
+            var eventDto = _eventService.GetEvent(eventId);
+            if (checkEventTime && _eventService.CheckEventTimeValidity(eventDto) == false)
             {
                 throw new Exception("Sign-In Not Available For Event " + eventDto.EventId);
             }
