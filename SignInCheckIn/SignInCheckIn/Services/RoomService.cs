@@ -42,24 +42,30 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom)
         {
+            UpdateSubEventRoom(authenticationToken, eventRoom);
+            return UpdateMainEventRoom(authenticationToken, eventRoom);
+        }
+
+        private EventRoomDto UpdateMainEventRoom(string authenticationToken, EventRoomDto eventRoom)
+        {
+            var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
+            return Mapper.Map<EventRoomDto>(response);
+        }
+
+        private void UpdateSubEventRoom(string authenticationToken, EventRoomDto eventRoom)
+        {
             // look to see if there is an AC event for this event and room
             var acEvent = _eventRepository.GetSubeventsForEvents(new List<int> { eventRoom.EventId }, _applicationConfiguration.AdventureClubEventTypeId).FirstOrDefault();
 
             // if there is an ac event see if it has the room
-            if (acEvent != null)
-            {
-                // if it has the room update the room
-                var tmpEventRoom = _roomRepository.GetEventRoom(acEvent.EventId, eventRoom.RoomId);
-                if (tmpEventRoom != null)
-                {
-                    eventRoom.EventId = tmpEventRoom.EventId;
-                    eventRoom.EventRoomId = tmpEventRoom.EventRoomId;
-                }
-            }
-
-            var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
-
-            return Mapper.Map<EventRoomDto>(response);
+            if (acEvent == null) return;
+            // if it has the room update the room
+            var acEventRoom = _roomRepository.GetEventRoom(acEvent.EventId, eventRoom.RoomId);
+            if (acEventRoom == null) return;
+            acEventRoom.Capacity = eventRoom.Capacity;
+            acEventRoom.Volunteers = eventRoom.Volunteers;
+            acEventRoom.AllowSignIn = eventRoom.AllowSignIn;
+            _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(acEventRoom));
         }
 
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
