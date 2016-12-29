@@ -111,7 +111,7 @@ namespace SignInCheckIn.Services
                 mpEventDto.MinutesForCleanup = parentEvent.MinutesForCleanup;
                 mpEventDto.EventStartDate = parentEvent.EventStartDate;
                 mpEventDto.EventEndDate = parentEvent.EventEndDate;
-                mpEventDto.Cancelled = parentEvent.Cancelled;
+                mpEventDto.Cancelled = true;
                 mpEventDto.AllowCheckIn = parentEvent.AllowCheckIn;
                 var subEvent = _eventRepository.CreateSubEvent(token, mpEventDto);
                 events.Add(subEvent);
