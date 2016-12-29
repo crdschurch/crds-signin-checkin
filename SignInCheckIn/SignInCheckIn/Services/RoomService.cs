@@ -211,12 +211,21 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom)
         {
+            var eventDto = _eventRepository.GetEventById(eventId);
+            eventRoom.AdventureClub = eventDto.ParentEventId.HasValue && eventDto.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId;
+
             // Start by deleting all current event groups for this room reservation (if any)
             DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventId, roomId);
 
-            // Check to see if anything is selected on input - if not, nothing else to do
+            // Check to see if anything is selected on input if not and this was a AC event then cancel
             if (!eventRoom.AssignedGroups.Exists(g => g.Selected || g.HasSelectedRanges))
             {
+                // Cancel the AC event as there is no longer a room associated with it
+                if (!eventRoom.AdventureClub) return eventRoom;
+
+                eventDto.Cancelled = true;
+                _eventRepository.UpdateSubEvent(authenticationToken, eventDto);
+                eventRoom.AdventureClub = false;
                 return eventRoom;
             }
 
@@ -263,6 +272,11 @@ namespace SignInCheckIn.Services
             CreateEventGroups(authenticationToken,
                               eventRoom,
                               eventRoom.AssignedGroups.FindAll(g => (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.GradesAttributeTypeId), false);
+
+            // If an AC event room make sure the AC event is not cancelled
+            if (!eventRoom.AdventureClub) return eventRoom;
+            eventDto.Cancelled = false;
+            _eventRepository.UpdateSubEvent(authenticationToken, eventDto);
 
             return eventRoom;
         }
