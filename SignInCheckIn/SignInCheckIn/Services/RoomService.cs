@@ -224,7 +224,7 @@ namespace SignInCheckIn.Services
                 if (!eventRoom.AdventureClub) return eventRoom;
 
                 eventDto.Cancelled = true;
-                _eventRepository.UpdateSubEvent(authenticationToken, eventDto);
+                _eventRepository.UpdateEvent(authenticationToken, eventDto);
                 eventRoom.AdventureClub = false;
                 return eventRoom;
             }
@@ -276,7 +276,7 @@ namespace SignInCheckIn.Services
             // If an AC event room make sure the AC event is not cancelled
             if (!eventRoom.AdventureClub) return eventRoom;
             eventDto.Cancelled = false;
-            _eventRepository.UpdateSubEvent(authenticationToken, eventDto);
+            _eventRepository.UpdateEvent(authenticationToken, eventDto);
 
             return eventRoom;
         }

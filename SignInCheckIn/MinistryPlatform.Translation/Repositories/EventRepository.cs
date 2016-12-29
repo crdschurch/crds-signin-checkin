@@ -97,7 +97,7 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventDto, _eventColumns);
         }
 
-        public MpEventDto UpdateSubEvent(string token, MpEventDto mpEventDto)
+        public MpEventDto UpdateEvent(string token, MpEventDto mpEventDto)
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(mpEventDto, _eventColumns);
         }
