@@ -148,6 +148,72 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
+        public void TestCreateOrUpdateEventRoomAndSubEventRoom()
+        {
+            var eventRoom = new EventRoomDto
+            {
+                AllowSignIn = true,
+                Capacity = 1,
+                CheckedIn = 2,
+                EventId = 3,
+                EventRoomId = 999,
+                RoomId = 4,
+                RoomName = "name",
+                RoomNumber = "number",
+                SignedIn = 5,
+                Volunteers = 6
+            };
+
+            var acEventRoom = new MpEventRoomDto
+            {
+                AllowSignIn = true,
+                Capacity = 1,
+                CheckedIn = 2,
+                EventId = 32312,
+                EventRoomId = 93299,
+                RoomId = 4,
+                RoomName = "name",
+                RoomNumber = "number",
+                SignedIn = 5,
+                Volunteers = 6
+            };
+
+            var newMpEventRoom = new MpEventRoomDto
+            {
+                AllowSignIn = false,
+                Capacity = 11,
+                CheckedIn = 22,
+                EventId = 33,
+                EventRoomId = 9999,
+                RoomId = 44,
+                RoomName = "namename",
+                RoomNumber = "numbernumber",
+                SignedIn = 55,
+                Volunteers = 66
+            };
+
+            var acEvents = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    EventId = 32312,
+                    ParentEventId = 3
+                }
+            };
+
+            var newEventRoom = Mapper.Map<EventRoomDto>(newMpEventRoom);
+
+            _eventRepository.Setup(mocked => mocked.GetSubeventsForEvents(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(acEvents);
+            _roomRepository.Setup(mocked => mocked.GetEventRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(acEventRoom);
+            _roomRepository.Setup(mocked => mocked.CreateOrUpdateEventRoom("token", It.IsAny<MpEventRoomDto>())).Returns(newMpEventRoom);
+            var result = _fixture.CreateOrUpdateEventRoom("token", eventRoom);
+            _roomRepository.VerifyAll();
+
+            Assert.IsNotNull(result);
+            result.ShouldBeEquivalentTo(newEventRoom);
+        }
+
+        [Test]
         public void TestGetEventRoomAgesAndGradesNoEventGroups()
         {
             const string token = "token 123";
