@@ -55,7 +55,8 @@ namespace SignInCheckIn.Services
         private void UpdateSubEventRoom(string authenticationToken, EventRoomDto eventRoom)
         {
             // look to see if there is an AC event for this event and room
-            var acEvent = _eventRepository.GetSubeventsForEvents(new List<int> { eventRoom.EventId }, _applicationConfiguration.AdventureClubEventTypeId).FirstOrDefault();
+            var acEvents = _eventRepository.GetSubeventsForEvents(new List<int> { eventRoom.EventId }, _applicationConfiguration.AdventureClubEventTypeId);
+            var acEvent = acEvents != null && acEvents.Any() ? acEvents.FirstOrDefault() : null;
 
             // if there is an ac event see if it has the room
             if (acEvent == null) return;
