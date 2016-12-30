@@ -31,8 +31,8 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         T Update<T>(T objectToUpdate, List<string> selectColumns);
         T Update<T>(T objectToUpdate, string selectColumns = null);
-        List<T> Update<T>(List<T> objectToUpdate, List<string> selectColumns);
-        List<T> Update<T>(List<T> objectToUpdate, string selectColumns = null);
+        List<T> Update<T>(List<T> objectsToUpdate, List<string> selectColumns);
+        List<T> Update<T>(List<T> objectsToUpdate, string selectColumns = null);
 
 
         /// <summary>
