@@ -133,10 +133,11 @@ namespace SignInCheckIn.Services
                         subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
                         subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
                         subItem.CallNumber = item.CallNumber;
-
-                        // TODO: Add call to update the partipant records
                     }
                 }
+
+                var mpParticipantDtos = response.Participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
+                _participantRepository.UpdateEventParticipants(mpParticipantDtos);
 
                 response.Participants.RemoveAll(r => r.EventId == eventsForSignin[1].EventId);
             }
