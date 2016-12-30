@@ -109,7 +109,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<T> Update<T>(List<T> objectsToUpdate, string selectColumns = null)
         {
-            return ExecutePutOrPost(objectsToUpdate, Method.POST, selectColumns);
+            return ExecutePutOrPost(objectsToUpdate, Method.PUT, selectColumns);
         }
 
         private T ExecutePutOrPost<T>(T record, Method method, string selectColumns)
