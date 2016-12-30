@@ -130,7 +130,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Call_Number"
             };
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<List<MpEventParticipantDto>>(mpEventParticipantDtos, columnList);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<MpEventParticipantDto>(mpEventParticipantDtos, columnList);
         }
     }
 }
