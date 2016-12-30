@@ -237,6 +237,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -388,6 +389,7 @@ namespace SignInCheckIn.Tests.Services
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
             _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(mpBumpingRooms);
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -484,6 +486,7 @@ namespace SignInCheckIn.Tests.Services
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
             _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(new List<MpBumpingRoomsDto>());
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -525,7 +528,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 111,
-                    Selected = true
+                    Selected = true,
+                    CallNumber = "1234"
                 }
             };
 
@@ -595,7 +599,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 111,
-                    Selected = false
+                    Selected = false,
+                    CallNumber = "1234"
                 }
             };
 

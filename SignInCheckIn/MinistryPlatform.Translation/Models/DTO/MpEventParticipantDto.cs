@@ -76,5 +76,8 @@ namespace MinistryPlatform.Translation.Models.DTO
         public bool HasKidsClubGroup => GroupId.HasValue;
 
         public bool HasRoomAssignment => RoomId.HasValue;
+
+        [JsonProperty("Call_Number")]
+        public string CallNumber { get; set; }
     }
 }
