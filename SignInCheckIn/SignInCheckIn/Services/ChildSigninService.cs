@@ -130,7 +130,11 @@ namespace SignInCheckIn.Services
                 {
                     foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventsForSignin[0].EventId))
                     {
-                        participantDto.CallNumber = mpEpDtoItem.CallNumber;
+                        subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
+                        subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
+                        subItem.CallNumber = item.CallNumber;
+
+                        // TODO: Add call to update the partipant records
                     }
                 }
 
