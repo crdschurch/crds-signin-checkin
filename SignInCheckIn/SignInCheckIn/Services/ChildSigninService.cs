@@ -142,10 +142,6 @@ namespace SignInCheckIn.Services
             {
                 SetParticipantsPrintInformationForMultiEvents(participants, eventsForSignin);
             }
-
-            // Update the MP Database with this information
-            var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
-            _participantRepository.UpdateEventParticipants(mpParticipantDtos);
         }
 
         private void SetParticipantsPrintInformationForOneEvent(List<ParticipantDto> participants)
@@ -154,6 +150,10 @@ namespace SignInCheckIn.Services
             {
                 SetCallNumber(participant, participant.EventParticipantId);
             }
+
+            // Update the MP Database with this information
+            var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
+            _participantRepository.UpdateEventParticipants(mpParticipantDtos);
         }
 
         private void SetParticipantsPrintInformationForMultiEvents(List<ParticipantDto> participants, IReadOnlyList<MpEventDto> eventsForSignin)
@@ -171,6 +171,10 @@ namespace SignInCheckIn.Services
                     participantTwo.CallNumber = participant.CallNumber;
                 }
             }
+
+            // Update the MP Database with this information
+            var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
+            _participantRepository.UpdateEventParticipants(mpParticipantDtos);
 
             participants.RemoveAll(r => r.EventId == eventsForSignin[1].EventId);
         }
