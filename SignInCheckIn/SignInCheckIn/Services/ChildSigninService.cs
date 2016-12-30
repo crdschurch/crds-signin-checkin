@@ -123,33 +123,64 @@ namespace SignInCheckIn.Services
                 Contacts = participantEventMapDto.Contacts
             };
 
-            // set the data fields on the printed participant dto
-            if (eventsForSignin.Count == 2)
-            {
-                foreach (var item in response.Participants.Where(r => r.EventId == eventsForSignin[1].EventId))
-                {
-                    foreach (var subItem in response.Participants.Where(r => r.ParticipantId == item.ParticipantId && r.EventId == eventsForSignin[0].EventId))
-                    {
-                        subItem.AssignedSecondaryRoomId = item.AssignedRoomId;
-                        subItem.AssignedSecondaryRoomName = item.AssignedRoomName;
-                        subItem.CallNumber = item.CallNumber;
-                    }
-                }
-
-                var mpParticipantDtos = response.Participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
-                _participantRepository.UpdateEventParticipants(mpParticipantDtos);
-
-                response.Participants.RemoveAll(r => r.EventId == eventsForSignin[1].EventId);
-            }
-
-            // TODO Add back those participants that didn't get a room assigned - should be handled in bumping rules eventually
-            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
-
+            SetParticipantsPrintInformation(response.Participants, eventsForSignin);
+ 
+            // Add back those participants that didn't get a room assigned
+             response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
             response.Participants.ForEach(p => p.Selected = true);
 
             return response;
         }
 
+        private void SetParticipantsPrintInformation(List<ParticipantDto> participants, IReadOnlyList<MpEventDto> eventsForSignin)
+        {
+            if (eventsForSignin.Count == 1)
+            {
+                SetParticipantsPrintInformationForOneEvent(participants);
+            }
+            else
+            {
+                SetParticipantsPrintInformationForMultiEvents(participants, eventsForSignin);
+            }
+
+            // Update the MP Database with this information
+            var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
+            _participantRepository.UpdateEventParticipants(mpParticipantDtos);
+        }
+
+        private void SetParticipantsPrintInformationForOneEvent(List<ParticipantDto> participants)
+        {
+            foreach (var participant in participants)
+            {
+                SetCallNumber(participant, participant.EventParticipantId);
+            }
+        }
+
+        private void SetParticipantsPrintInformationForMultiEvents(List<ParticipantDto> participants, IReadOnlyList<MpEventDto> eventsForSignin)
+        {
+            foreach (var participant in participants.Where(r => r.EventId == eventsForSignin[1].EventId))
+            {
+                SetCallNumber(participant, participant.EventParticipantId);
+
+                // If they are sigining into multiple events set there participant information
+                if (eventsForSignin.Count != 2) continue;
+                foreach (var participantTwo in participants.Where(p2 => p2.ParticipantId == participant.ParticipantId && p2.EventId == eventsForSignin[0].EventId))
+                {
+                    participantTwo.AssignedSecondaryRoomId = participant.AssignedRoomId;
+                    participantTwo.AssignedSecondaryRoomName = participant.AssignedRoomName;
+                    participantTwo.CallNumber = participant.CallNumber;
+                }
+            }
+
+            participants.RemoveAll(r => r.EventId == eventsForSignin[1].EventId);
+        }
+
+        private void SetCallNumber(ParticipantDto participant, int eventParticipantId)
+        {
+            var callNumber = $"0000{eventParticipantId}";
+            participant.CallNumber = callNumber.Substring(callNumber.Length - 4);
+        }
+        
         // need to be able to assign to two rooms - which is what signing into AC is
         private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
         {
