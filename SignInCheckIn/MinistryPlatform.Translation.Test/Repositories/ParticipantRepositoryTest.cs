@@ -30,6 +30,103 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
+        public void ItShouldGetChildParticipantsForEvent()
+        {
+            var token = "123abc";
+
+            var eventIds = new List<int>
+            {
+                1231
+            };
+
+            var columns = new List<string>
+            {
+                "Event_ID_Table.Event_ID",
+                "Event_Participant_ID",
+                "Participation_Status_ID_Table.Participation_Status_ID",
+                "Participant_ID_Table_Contact_ID_Table.First_Name",
+                "Participant_ID_Table_Contact_ID_Table.Last_Name",
+                "Event_Participants.Call_Number",
+                "Room_ID_Table.Room_ID",
+                "Room_ID_Table.Room_Name",
+                "dp_Created.Date_Time as Time_In",
+                "Checkin_Household_ID_Table.Household_ID"
+            };
+
+            var children = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 1231,
+                    ParticipantId = 1,
+                    ParticipantStatusId = 1,
+                    FirstName = "FirstName1",
+                    LastName = "LastName1",
+                    CallNumber = "1123",
+                    RoomId = 1,
+                    RoomName = "Room1",
+                    TimeIn = DateTime.Now,
+                    HouseholdId = 1
+                },
+                new MpEventParticipantDto
+                {
+                    EventId = 1231,
+                    ParticipantId = 2,
+                    ParticipantStatusId = 1,
+                    FirstName = "FirstName2",
+                    LastName = "LastName2",
+                    CallNumber = "1124",
+                    RoomId = 1,
+                    RoomName = "Room1",
+                    TimeIn = DateTime.Now,
+                    HouseholdId = 2
+                }
+            };
+
+            var household1 = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    HouseholdId = 1,
+                    FirstName = "FirstName3",
+                    LastName = "LastName3"
+                },
+                new MpContactDto
+                {
+                    HouseholdId = 1,
+                    FirstName = "FirstName4",
+                    LastName = "LastName4"
+                }
+            };
+
+            var household2 = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    HouseholdId = 2,
+                    FirstName = "FirstName5",
+                    LastName = "LastName5"
+                }
+            };
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}", columns)).Returns(children);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(1)).Returns(household1);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(2)).Returns(household2);
+
+            var result = _fixture.GetChildParticipantsByEvent(token, eventIds);
+            _ministryPlatformRestRepository.VerifyAll();
+
+            Assert.AreEqual(result[0].ParticipantId, children[0].ParticipantId);
+            Assert.AreEqual(result[1].ParticipantId, children[1].ParticipantId);
+            Assert.AreEqual(result[0].HeadsOfHousehold.Count, household1.Count);
+            Assert.AreEqual(result[0].HeadsOfHousehold[0].FirstName, household1[0].FirstName);
+            Assert.AreEqual(result[0].HeadsOfHousehold[1].FirstName, household1[1].FirstName);
+            Assert.AreEqual(result[1].HeadsOfHousehold.Count, household2.Count);
+            Assert.AreEqual(result[1].HeadsOfHousehold[0].FirstName, household2[0].FirstName);
+        }
+
+        [Test]
         public void ItShouldCreateNewParticipants()
         {
             // Arrange

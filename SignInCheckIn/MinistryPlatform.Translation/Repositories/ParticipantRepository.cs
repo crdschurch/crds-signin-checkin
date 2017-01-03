@@ -22,10 +22,8 @@ namespace MinistryPlatform.Translation.Repositories
         }
 
         // this gets data we won't have with older participants
-        public List<MpEventParticipantDto> GetChildParticipantsByEvent(List<int> eventIds)
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, List<int> eventIds)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
-
             var columnList = new List<string>
             {
                 "Event_ID_Table.Event_ID",
@@ -40,7 +38,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Checkin_Household_ID_Table.Household_ID"
             };
 
-            var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+            var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
                 Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}", columnList);
 
             foreach (var child in childPartipantsForEvent)
