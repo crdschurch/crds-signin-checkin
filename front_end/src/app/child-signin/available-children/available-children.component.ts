@@ -59,7 +59,6 @@ export class AvailableChildrenComponent implements OnInit {
    }
 
    this.isReady = false;
-   debugger
    this.childSigninService.signInChildren(this.eventParticipants, this.numberEventsAttending).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;
