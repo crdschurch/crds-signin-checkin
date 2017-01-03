@@ -22,26 +22,17 @@ namespace MinistryPlatform.Translation.Repositories
         }
 
         // this gets data we won't have with older participants
-        public List<MpEventParticipantDto> GetChildParticipantsByEvent(int eventId)
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(List<int> eventIds)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
             var columnList = new List<string>
             {
                 "Event_ID_Table.Event_ID",
-                "Room_ID_Table.Room_ID",
-                "Event_Participants.Event_Participant_ID",
-                "Participant_ID_Table.Participant_ID",
-                "Participant_ID_Table_Contact_ID_Table.Contact_ID",
+                "Event_Participant_ID",
+                "Participation_Status_ID_Table.Participation_Status_ID",
                 "Participant_ID_Table_Contact_ID_Table.First_Name",
                 "Participant_ID_Table_Contact_ID_Table.Last_Name",
-                "Participation_Status_ID_Table.Participation_Status_ID"
-            };
-
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId}", columnList);
-        }
-
                 "Event_Participants.Call_Number",
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",

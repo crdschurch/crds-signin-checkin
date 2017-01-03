@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 
@@ -79,5 +80,10 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Call_Number")]
         public string CallNumber { get; set; }
+
+        [JsonProperty("Household_ID")]
+        public int HouseholdId { get; set; }
+
+        public List<MpContactDto> HeadsOfHousehold { get; set; }
     }
 }
