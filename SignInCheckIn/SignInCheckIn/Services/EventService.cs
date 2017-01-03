@@ -15,15 +15,17 @@ namespace SignInCheckIn.Services
         private readonly IEventRepository _eventRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IParticipantRepository _participantRepository;
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
 
         public EventService(IEventRepository eventRepository, IConfigRepository configRepository, IRoomRepository roomRepository,
-            IApplicationConfiguration applicationConfiguration)
+            IApplicationConfiguration applicationConfiguration, IParticipantRepository participantRepository)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _applicationConfiguration = applicationConfiguration;
+            _participantRepository = participantRepository;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);

@@ -18,6 +18,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IConfigRepository> _configRepository;
         private Mock<IRoomRepository> _roomRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguation;
+        private Mock<IParticipantRepository> _participantRepository;
 
         private EventService _fixture;
 
@@ -30,6 +31,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository = new Mock<IConfigRepository>();
             _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
             _applicationConfiguation = new Mock<IApplicationConfiguration>(MockBehavior.Strict);
+            _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
 
             var mpConfigDtoEarly = new MpConfigDto
             {
@@ -50,7 +52,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
-            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object);
+            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object, _participantRepository.Object);
         }
 
         [Test]
