@@ -145,17 +145,23 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  updateChildYearGradeGroup(guest: Guest, groupId: number) {
-   guest.YearGrade = groupId;
+   this.newGuestChild.YearGrade = groupId;
  }
 
  openNewGuestModal(modal) {
    this.newGuestChild = new Guest();
+   this.newGuestChild.GuestSignin = true;
    this.newGuestChild.DateOfBirth = moment().startOf('day').toDate();
    modal.show();
  }
 
- needGradeLevel(guest: Guest): boolean {
-   return moment(guest.DateOfBirth).isBefore(moment().startOf('day').subtract(4, 'y'));
+ saveNewGuestModal(modal) {
+   console.log(this.newGuestChild);
+   modal.hide();
+ }
+
+ needGradeLevel(): boolean {
+   return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(4, 'y'));
  }
 
 }
