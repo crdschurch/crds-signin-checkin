@@ -12,11 +12,13 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
+        private readonly IContactRepository _contactRepository;
 
-        public ParticipantRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository)
+        public ParticipantRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IContactRepository contactRepository)
         {
             _apiUserRepository = apiUserRepository;
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
+            _contactRepository = contactRepository;
         }
 
         // this gets data we won't have with older participants
@@ -40,37 +42,22 @@ namespace MinistryPlatform.Translation.Repositories
                         SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId}", columnList);
         }
 
-        public List<MpContactDto> GetHeadsOfHouseholdByHouseholdId(int householdId)
-        {
-            var apiUserToken = _apiUserRepository.GetToken();
-
-            var contactColumnList = new List<string>
-            {
-                "Contact_ID",
-                "Contacts.Household_ID",
-                "Contacts.Household_Position_ID",
-                "Household_ID_Table.Home_Phone",
-                "Mobile_Phone",
-                "Nickname",
-                "Last_Name"
+                "Event_Participants.Call_Number",
+                "Room_ID_Table.Room_ID",
+                "Room_ID_Table.Room_Name",
+                "dp_Created.Date_Time as Time_In",
+                "Checkin_Household_ID_Table.Household_ID"
             };
 
-            var contacts = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpContactDto>($"Contacts.Household_ID={householdId} AND Contacts.Household_Position_ID IN (1, 7)", contactColumnList);
+            var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}", columnList);
 
-            return contacts;
-        }
-
-        public List<MpNewParticipantDto> CreateParticipantsWithContacts(string token, List<MpNewParticipantDto> mpNewParticipantDtos)
-        {
-            List<string> participantColumns = new List<string>
+            foreach (var child in childPartipantsForEvent)
             {
-                "Participants.Participant_ID",
-                "Participants.Participant_Type_ID",
-                "Participants.Participant_Start_Date"
-            };
+                child.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(child.HouseholdId);
+            }
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDtos, participantColumns);
+            return childPartipantsForEvent;
         }
 
         public MpNewParticipantDto CreateParticipantWithContact(string token, MpNewParticipantDto mpNewParticipantDto)

@@ -17,14 +17,16 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
+        private Mock<IContactRepository> _contactRepository;
 
         [SetUp]
         public void SetUp()
         {
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _ministryPlatformRestRepository = new Mock<IMinistryPlatformRestRepository>();
+            _contactRepository = new Mock<IContactRepository>();
 
-            _fixture = new ParticipantRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
+            _fixture = new ParticipantRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _contactRepository.Object);
         }
 
         [Test]
@@ -40,27 +42,19 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Participants.Participant_Start_Date"
             };
 
-            List<MpNewParticipantDto> mpNewParticipantDtos = new List<MpNewParticipantDto>
+            var mpNewParticipantDto = new MpNewParticipantDto
             {
-                new MpNewParticipantDto
-                {
-                    FirstName = "TestFirst1",
-                    LastName = "TestLast1"
-                },
-                new MpNewParticipantDto
-                {
-                    FirstName = "TestFirst2",
-                    LastName = "TestLast2"
-                } 
+                FirstName = "TestFirst1",
+                LastName = "TestLast1"
             };
 
-            List<MpNewParticipantDto> returnDtos = new List<MpNewParticipantDto>();
+            var returnDto = new MpNewParticipantDto();
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDtos, participantColumns)).Returns(returnDtos);
+            _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
             // Act
-            _fixture.CreateParticipantsWithContacts(token, mpNewParticipantDtos);
+            _fixture.CreateParticipantWithContact(token, mpNewParticipantDto);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
