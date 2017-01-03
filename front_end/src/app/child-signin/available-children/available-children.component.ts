@@ -19,6 +19,7 @@ export class AvailableChildrenComponent implements OnInit {
   private _isServingTwoHours: boolean = false;
   private isReady: boolean = false;
   private maxDate: Date = moment().toDate();
+  private guests: Guest[] = [];
   private newGuestChild: Guest;
   private gradeGroups: Array<Group> = [];
 
@@ -58,7 +59,7 @@ export class AvailableChildrenComponent implements OnInit {
    }
 
    this.isReady = false;
-
+   debugger
    this.childSigninService.signInChildren(this.eventParticipants, this.numberEventsAttending).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;
@@ -74,8 +75,16 @@ export class AvailableChildrenComponent implements OnInit {
    );
  }
 
- public childrenAvailable(): Child[] {
-   if (this.eventParticipants) { return this.eventParticipants.Participants; };
+ public childrenAvailable(): any[] {
+  //  let allChildren: any = [];
+  //  if (this.eventParticipants && this.eventParticipants.Participants.length) {
+  //    allChildren = allChildren.concat(this.eventParticipants.Participants);
+  //  }
+  //  if (this.guests && this.guests.length) {
+  //    allChildren = allChildren.concat(this.guests);
+  //  };
+  //  return allChildren;
+  if (this.eventParticipants) { return this.eventParticipants.Participants; };
  }
 
  get numberEventsAttending(): number {
@@ -151,12 +160,13 @@ export class AvailableChildrenComponent implements OnInit {
  openNewGuestModal(modal) {
    this.newGuestChild = new Guest();
    this.newGuestChild.GuestSignin = true;
+   this.newGuestChild.Selected = true;
    this.newGuestChild.DateOfBirth = moment().startOf('day').toDate();
    modal.show();
  }
 
  saveNewGuestModal(modal) {
-   console.log(this.newGuestChild);
+   this.eventParticipants.Participants.push(this.newGuestChild);
    modal.hide();
  }
 
