@@ -47,7 +47,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.family.event = event;
         this.headerService.announceEvent(event);
-        this.adminService.getGradeGroups().subscribe((groups) => {
+        this.apiService.getGradeGroups().subscribe((groups) => {
             this.gradeGroups = groups;
           },
           error => console.error(error)

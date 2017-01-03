@@ -5,7 +5,7 @@ let fixture: AvailableChildrenComponent;
 describe('AvailableChildrenComponent', () => {
   describe('#toggleServingHours', () => {
     beforeEach(() => {
-      fixture = new AvailableChildrenComponent(null, null, null, null);
+      fixture = new AvailableChildrenComponent(null, null, null, null, null);
       fixture.servingOneHour = true;
     });
     it('should activate a step and deactivate the other', () => {

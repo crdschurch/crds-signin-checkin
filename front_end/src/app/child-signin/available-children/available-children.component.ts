@@ -2,8 +2,8 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
-import { RootService } from '../../shared/services';
-import { EventParticipants, Child, Guest } from '../../shared/models';
+import { ApiService, RootService } from '../../shared/services';
+import { EventParticipants, Child, Guest, Group } from '../../shared/models';
 
 import * as moment from 'moment';
 
@@ -20,6 +20,7 @@ export class AvailableChildrenComponent implements OnInit {
   private isReady: boolean = false;
   private maxDate: Date = moment().toDate();
   private newGuestChild: Guest;
+  private gradeGroups: Array<Group> = [];
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
@@ -27,6 +28,7 @@ export class AvailableChildrenComponent implements OnInit {
  constructor( private childSigninService: ChildSigninService,
               private route: ActivatedRoute,
               private router: Router,
+              private apiService: ApiService,
               private rootService: RootService) { }
 
  ngOnInit() {
@@ -40,6 +42,11 @@ export class AvailableChildrenComponent implements OnInit {
           this.isReady = true;
           this.rootService.announceEvent('generalError');
         }
+      );
+      this.apiService.getGradeGroups().subscribe((groups) => {
+          this.gradeGroups = groups;
+        },
+        error => console.error(error)
       );
     });
  }
@@ -68,7 +75,7 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  public childrenAvailable(): Child[] {
-   if (this.eventParticipants) { return this.eventParticipants.Participants };
+   if (this.eventParticipants) { return this.eventParticipants.Participants; };
  }
 
  get numberEventsAttending(): number {

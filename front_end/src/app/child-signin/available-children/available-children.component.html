@@ -114,7 +114,7 @@
                       <crds-datepicker name="guestChildBirthDate" autoClose="true" [(date)]="newGuestChild.DateOfBirth" [maxDate]="maxDate"></crds-datepicker>
                     </div>
                   </div>
-                  <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(newGuestChild)">
+                  <div class="col-xs-12 col-sm-6">
                     <div class="form-group required">
                       <label for="childGrade" class="control-label">Year / Grade</label>
                       <select class="form-control" (change)="updateChildYearGradeGroup(newGuestChild, $event.target.value)">
