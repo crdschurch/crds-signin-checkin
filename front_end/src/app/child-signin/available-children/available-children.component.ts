@@ -3,7 +3,9 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
 import { RootService } from '../../shared/services';
-import { EventParticipants, Child } from '../../shared/models';
+import { EventParticipants, Child, Guest } from '../../shared/models';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'available-children',
@@ -16,8 +18,11 @@ export class AvailableChildrenComponent implements OnInit {
   private _isServingOneHour: boolean = false;
   private _isServingTwoHours: boolean = false;
   private isReady: boolean = false;
+  private maxDate: Date = moment().toDate();
+  private newGuestChild: Guest;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
+ @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
 
  constructor( private childSigninService: ChildSigninService,
               private route: ActivatedRoute,
@@ -63,7 +68,7 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  public childrenAvailable(): Child[] {
-   return this.eventParticipants.Participants;
+   if (this.eventParticipants) { return this.eventParticipants.Participants };
  }
 
  get numberEventsAttending(): number {
@@ -117,7 +122,7 @@ export class AvailableChildrenComponent implements OnInit {
  public showChildModal(): void {
    this.serviceSelectModal.show();
  }
-
+ 
  toggleClick(modal) {
    // if on, turn off
    if (this.isServing) {
@@ -130,6 +135,20 @@ export class AvailableChildrenComponent implements OnInit {
      }
      return false;
    }
+ }
+
+ updateChildYearGradeGroup(guest: Guest, groupId: number) {
+   guest.YearGrade = groupId;
+ }
+
+ openNewGuestModal(modal) {
+   this.newGuestChild = new Guest();
+   this.newGuestChild.DateOfBirth = moment().startOf('day').toDate();
+   modal.show();
+ }
+
+ needGradeLevel(guest: Guest): boolean {
+   return moment(guest.DateOfBirth).isBefore(moment().startOf('day').subtract(4, 'y'));
  }
 
 }

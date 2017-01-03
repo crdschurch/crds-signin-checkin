@@ -7,11 +7,11 @@
       <div class="eqWrap">
         <div class="card text-xs-center">
           <!-- <a routerLink="/child-signin/guest"> -->
-          <a (click)="addGuestModal.show()">
-          <div class="card-block">
-            <span class="round-plus">+</span>
-            <h4 class="card-title text-uppercase">Add A Guest</h4>
-          </div>
+          <a (click)="openNewGuestModal(addGuestModal)">
+            <div class="card-block">
+              <span class="round-plus">+</span>
+              <h4 class="card-title text-uppercase">Add A Guest</h4>
+            </div>
           </a>
         </div>
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
@@ -75,21 +75,62 @@
 </div>
 
 <div bsModal #addGuestModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addGuestModal" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg" *ngIf="newGuestChild">
     <div class="modal-content">
       <button type="button" class="close mr-1 mt-1" (click)="addGuestModal.hide()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
       <div class="modal-body py-3">
-        <h3>
-          We love guests!
-        </h3>
-        <h5 class="text-muted">
-          Please sign in your children and then bring your guest(s) over to the New Family desk
-        </h5>
+        <div class="add-child-guest">
+          <div class="container-fluid pt-1">
+            <div class="row mt-2">
+              <div class="col-xs-12">
+                <div class="row text-xs-left">
+                  <div class="col-xs-12">
+                    <h3 class="text-muted">Add Guest</h3>
+                  </div>
+                </div>
+                <div class="row text-xs-left">
+                  <div class="col-xs-12">
+                    <p class="text-muted">Have a new family member? Add them at the New Family Check In Desk</p>
+                  </div>
+                </div>
+                <div class="row m-b-1">
+                  <div class="col-sm-6">
+                    <fieldset class="form-group">
+                      <input type="text" class="form-control form-control-lg" id="formGroupExampleInput" placeholder="First Name">
+                    </fieldset>    </div>
+                  <div class="col-sm-6">
+                    <fieldset class="form-group">
+                      <input type="text" class="form-control form-control-lg" id="formGroupExampleInput2" placeholder="Last Name">
+                    </fieldset>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-6">
+                    <div class="form-group required">
+                      <label for="guestChildBirthDate" class="control-label">Birth Date</label>
+                      <br/>
+                      <crds-datepicker name="guestChildBirthDate" autoClose="true" [(date)]="newGuestChild.DateOfBirth" [maxDate]="maxDate"></crds-datepicker>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(newGuestChild)">
+                    <div class="form-group required">
+                      <label for="childGrade" class="control-label">Year / Grade</label>
+                      <select class="form-control" (change)="updateChildYearGradeGroup(newGuestChild, $event.target.value)">
+                        <option>Has not started Kindergarten yet</option>
+                        <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}">{{ grade.Name }}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="modal-footer text-xs-center">
-        <button type="button" class="btn btn-primary btn-lg" (click)="addGuestModal.hide()">OK</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-lg" (click)="addGuestModal.hide()">Add</button>
       </div>
     </div>
   </div>

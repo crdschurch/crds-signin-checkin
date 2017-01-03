@@ -20,10 +20,10 @@ const childSigninRoutes: Routes = [
         path: 'available-children/:phoneNumber',
         children: [...availableChildrenRoutes]
       },
-      {
-        path: 'guest',
-        component: GuestComponent
-      },
+      // {
+      //   path: 'guest',
+      //   component: GuestComponent
+      // },
       {
         path: 'assignment',
         component: AssignmentComponent
