@@ -131,7 +131,7 @@ namespace SignInCheckIn.Services
             foreach (var tmpChild in result)
             {
                 var child = Mapper.Map<MpEventParticipantDto, ParticipantDto>(tmpChild);
-                child.HeadOfHousehold = tmpChild.HeadsOfHousehold.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
+                child.HeadsOfHousehold = tmpChild.HeadsOfHousehold.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
                 children.Add(child);
             }
 

@@ -61,6 +61,6 @@ namespace SignInCheckIn.Models.DTO
 
         public int? GroupId { get; set; }
 
-        public List<ContactDto> HeadOfHousehold;
+        public List<ContactDto> HeadsOfHousehold;
     }
 }
