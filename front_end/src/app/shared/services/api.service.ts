@@ -5,7 +5,7 @@ import { RequestOptions, URLSearchParams } from '@angular/http';
 import * as moment from 'moment';
 import '../../rxjs-operators';
 import { HttpClientService, SetupService } from '.';
-import { Event } from '../models';
+import { Event, Group } from '../models';
 
 @Injectable()
 export class ApiService {
@@ -36,6 +36,13 @@ export class ApiService {
     });
     return this.http.get(url, options)
                     .map(res => res.json())
+                    .catch(this.handleError);
+  }
+
+  getGradeGroups() {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
+    return this.http.get(url)
+                    .map(res => { return (<Group[]>res.json()).map(r => Group.fromJson(r)); })
                     .catch(this.handleError);
   }
 

@@ -58,5 +58,9 @@ namespace SignInCheckIn.Models.DTO
         public bool NotSignedIn => Selected && AssignedRoomId == null && string.IsNullOrWhiteSpace(SignInErrorMessage);
 
         public int? GroupId { get; set; }
+
+        public bool GuestSignin { get; set; }
+
+        public int? GradeGroupId { get; set; }
     }
 }
