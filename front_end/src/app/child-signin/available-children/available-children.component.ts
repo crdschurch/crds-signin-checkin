@@ -179,11 +179,16 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  saveNewGuest(modal) {
-   if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
-     return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
-   } else {
-     this._eventParticipants.Participants.push(this.newGuestChild);
-     return modal.hide();
+   try {
+     this.newGuestChild.FirstName.trim();
+     this.newGuestChild.LastName.trim();
+   } finally {
+     if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
+       return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
+     } else {
+       this._eventParticipants.Participants.push(this.newGuestChild);
+       return modal.hide();
+     }
    }
  }
 
