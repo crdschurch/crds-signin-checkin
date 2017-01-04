@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
@@ -81,13 +82,19 @@ namespace SignInCheckIn.Services
 
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
-            var mpAllEventPartipantDtoList = new List<MpEventParticipantDto>();
+            var mpAllEventParticipantDtoList = new List<MpEventParticipantDto>();
             var eventsForSignin = GetEventsForSignin(participantEventMapDto);
+
+            // create participant records for guests, and assign to a group
+            if (participantEventMapDto.Participants.Any(r => r.GuestSignin == true))
+            {
+                ProcessGuestSignins(participantEventMapDto);
+            }
 
             // reset the current event in the case they are doing AC here
             participantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[0]);
             var currentEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto, true).ToList();
-            mpAllEventPartipantDtoList.AddRange(currentEventParticipantDtoList);
+            mpAllEventParticipantDtoList.AddRange(currentEventParticipantDtoList);
 
             // call code to sign into second event
             if (participantEventMapDto.ServicesAttended == 2 && eventsForSignin.Count == 2)
@@ -104,7 +111,7 @@ namespace SignInCheckIn.Services
 
                 // set the assigned room for thiss event
                 var secondEventParticipants = SetParticipantsAssignedRoom(secondParticipantEventMapDto, false).ToList();
-                mpAllEventPartipantDtoList.AddRange(secondEventParticipants);
+                mpAllEventParticipantDtoList.AddRange(secondEventParticipants);
             }
 
             // null out the room assignment for both participant records if they can't sign in to one or the other,
@@ -118,7 +125,7 @@ namespace SignInCheckIn.Services
                 CurrentEvent = participantEventMapDto.CurrentEvent,
                 Participants =
                     _childSigninRepository.CreateEventParticipants(
-                        mpAllEventPartipantDtoList.Where(p => participantEventMapDto.Participants.Find(q => q.Selected && q.ParticipantId == p.ParticipantId) != null && p.HasRoomAssignment).ToList())
+                        mpAllEventParticipantDtoList.Where(p => participantEventMapDto.Participants.Find(q => q.Selected && q.ParticipantId == p.ParticipantId) != null && p.HasRoomAssignment).ToList())
                         .Select(Mapper.Map<ParticipantDto>).ToList(),
                 Contacts = participantEventMapDto.Contacts
             };
@@ -409,34 +416,44 @@ namespace SignInCheckIn.Services
 
             foreach (var childContactDto in newFamilyDto.ChildContactDtos)
             {
-                MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
-                {
-                    ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
-                    ParticipantStartDate = DateTime.Now,
-                    Contact = new MpContactDto
-                    {
-                        FirstName = childContactDto.FirstName,
-                        Nickname = childContactDto.FirstName,
-                        LastName = childContactDto.LastName,
-                        DisplayName = childContactDto.FirstName + " " + childContactDto.LastName,
-                        HouseholdId = mpHouseholdDto.HouseholdId,
-                        HouseholdPositionId = _applicationConfiguration.MinorChildId,
-                        Company = false,
-                        DateOfBirth = childContactDto.DateOfBirth
-                    }
-                };
+                //MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
+                //{
+                //    ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
+                //    ParticipantStartDate = DateTime.Now,
+                //    Contact = new MpContactDto
+                //    {
+                //        FirstName = childContactDto.FirstName,
+                //        Nickname = childContactDto.FirstName,
+                //        LastName = childContactDto.LastName,
+                //        DisplayName = childContactDto.FirstName + " " + childContactDto.LastName,
+                //        HouseholdId = mpHouseholdDto.HouseholdId,
+                //        HouseholdPositionId = _applicationConfiguration.MinorChildId,
+                //        Company = false,
+                //        DateOfBirth = childContactDto.DateOfBirth
+                //    }
+                //};
 
-                var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
-                newParticipant.Contact = childNewParticipantDto.Contact;
-                newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
+                //var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
+                //newParticipant.Contact = childNewParticipantDto.Contact;
+                //newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
+
+                var newParticipant = CreateNewParticipantWithContact(childContactDto.FirstName,
+                                                childContactDto.LastName,
+                                                childContactDto.DateOfBirth,
+                                                null,
+                                                _applicationConfiguration.GuestHouseholdId,
+                                                _applicationConfiguration.MinorChildId
+                    );
+
                 mpNewChildParticipantDtos.Add(newParticipant);
+
             }
 
             return mpNewChildParticipantDtos;
         }
 
         // this really can just return void, but we need to get the grade group id on the mp new participant dto
-        public void CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
+        public List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
         {
             // Step 4 - create the group participants
             List<MpGroupParticipantDto> groupParticipantDtos = new List<MpGroupParticipantDto>();
@@ -456,7 +473,7 @@ namespace SignInCheckIn.Services
                 groupParticipantDtos.Add(groupParticipantDto);
             }
 
-            _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
+            return _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
 
         // simply return a list of two event ids to check into -- note that the first id is always a 
@@ -520,6 +537,56 @@ namespace SignInCheckIn.Services
                 {
                     subItem.AssignedRoomId = null;
                 }
+            }
+        }
+
+        public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId)
+        {
+            MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
+            {
+                ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
+                ParticipantStartDate = DateTime.Now,
+                Contact = new MpContactDto
+                {
+                    FirstName = firstName,
+                    Nickname = firstName,
+                    LastName = lastName,
+                    DisplayName = firstName + " " + lastName,
+                    HouseholdId = householdId,
+                    HouseholdPositionId = householdPositionId,
+                    Company = false,
+                    DateOfBirth = dateOfBirth
+                }
+            };
+
+            var newParticipant = _participantRepository.CreateParticipantWithContact(null, childNewParticipantDto);
+            newParticipant.Contact = childNewParticipantDto.Contact;
+            newParticipant.GradeGroupAttributeId = gradeGroupId;
+
+            return newParticipant;
+        }
+
+        public void ProcessGuestSignins(ParticipantEventMapDto participantEventMapDto)
+        {
+            foreach (var guestParticipant in participantEventMapDto.Participants.Where(r => r.GuestSignin == true))
+            {
+                List<MpNewParticipantDto> newGuestParticipantDtos = new List<MpNewParticipantDto>();
+
+                var newGuestParticipantDto = CreateNewParticipantWithContact(guestParticipant.FirstName,
+                                                guestParticipant.LastName,
+                                                guestParticipant.DateOfBirth,
+                                                guestParticipant.GradeGroupId,
+                                                _applicationConfiguration.GuestHouseholdId,
+                                                _applicationConfiguration.MinorChildId
+                    );
+
+                newGuestParticipantDtos.Add(newGuestParticipantDto);
+
+                // need to add the group id back onto the participant
+                var x = CreateGroupParticipants(null, newGuestParticipantDtos);
+                guestParticipant.GroupId = x[0].GroupId;
+                guestParticipant.ParticipantId = x[0].ParticipantId;
             }
         }
     }
