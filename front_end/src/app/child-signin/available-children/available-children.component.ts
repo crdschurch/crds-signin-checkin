@@ -14,13 +14,13 @@ import * as moment from 'moment';
 })
 
 export class AvailableChildrenComponent implements OnInit {
-  private eventParticipants: EventParticipants;
+  private _eventParticipants: EventParticipants = new EventParticipants();
   private _isServingOneHour: boolean = false;
   private _isServingTwoHours: boolean = false;
   private isReady: boolean = false;
   // tslint:disable:no-unused-variable
   private maxDate: Date = moment().toDate();
-  private newGuestChild: Guest;
+  private _newGuestChild: Guest;
   private gradeGroups: Array<Group> = [];
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
@@ -35,31 +35,37 @@ export class AvailableChildrenComponent implements OnInit {
  ngOnInit() {
    this.route.params.forEach((params: Params) => {
       let phoneNumber = params['phoneNumber'];
-      this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe(
-        (result) => {
-          this.isReady = true;
-          this.eventParticipants = result;
-        }, (err) => {
-          this.isReady = true;
-          this.rootService.announceEvent('generalError');
-        }
-      );
-      this.apiService.getGradeGroups().subscribe((groups) => {
-          this.gradeGroups = groups;
-        },
-        error => console.error(error)
-      );
+      this.getChildren(phoneNumber);
+      this.populateGradeGroups();
     });
  }
 
- signIn() {
-   if (!this.eventParticipants.hasSelectedParticipants()) {
-     this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
-     return;
-   }
+ getChildren(phoneNumber) {
+   this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe(
+       (result) => {
+         this.isReady = true;
+         this._eventParticipants = result;
+       }, (err) => {
+         this.isReady = true;
+         this.rootService.announceEvent('generalError');
+       }
+     );
+ }
 
+ populateGradeGroups() {
+   this.apiService.getGradeGroups().subscribe((groups) => {
+       this.gradeGroups = groups;
+     },
+     error => console.error(error)
+   );
+ }
+
+ signIn() {
+   if (!this._eventParticipants.hasSelectedParticipants()) {
+     return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
+   }
    this.isReady = false;
-   this.childSigninService.signInChildren(this.eventParticipants, this.numberEventsAttending).subscribe(
+   this.childSigninService.signInChildren(this._eventParticipants, this.numberEventsAttending).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;
        if (response && response.Participants && response.Participants.length > 0) {
@@ -75,7 +81,7 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  public childrenAvailable(): any[] {
-  if (this.eventParticipants) { return this.eventParticipants.Participants; };
+  if (this._eventParticipants) { return this._eventParticipants.Participants; };
  }
 
  get numberEventsAttending(): number {
@@ -115,6 +121,22 @@ export class AvailableChildrenComponent implements OnInit {
    this._isServingTwoHours = !this._isServingTwoHours;
  }
 
+ get newGuestChild() {
+   return this._newGuestChild;
+ }
+
+ set newGuestChild(guestChild) {
+   this._newGuestChild = guestChild;
+ }
+
+ get eventParticipants() {
+   return this._eventParticipants;
+ }
+
+ set eventParticipants(eventParticipants) {
+   this._eventParticipants = eventParticipants;
+ }
+
  toggleServingHours(modal, hours) {
    if (hours === 1) {
      this.servingOneHour = true;
@@ -145,22 +167,22 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  updateChildYearGradeGroup(guest: Guest, groupId: number) {
-   this.newGuestChild.YearGrade = groupId;
+   this._newGuestChild.YearGrade = groupId;
  }
 
  openNewGuestModal(modal) {
-   this.newGuestChild = new Guest();
-   this.newGuestChild.GuestSignin = true;
-   this.newGuestChild.Selected = true;
-   this.newGuestChild.DateOfBirth = moment().startOf('day').toDate();
+   this._newGuestChild = new Guest();
+   this._newGuestChild.GuestSignin = true;
+   this._newGuestChild.Selected = true;
+   this._newGuestChild.DateOfBirth = moment().startOf('day').toDate();
    modal.show();
  }
 
- saveNewGuestModal(modal) {
+ saveNewGuest(modal) {
    if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
      return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
    } else {
-     this.eventParticipants.Participants.push(this.newGuestChild);
+     this._eventParticipants.Participants.push(this.newGuestChild);
      return modal.hide();
    }
  }

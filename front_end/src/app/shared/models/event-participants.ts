@@ -3,7 +3,7 @@ import { Child, Contact, Event } from '.';
 export class EventParticipants {
   Contacts: Array<Contact>;
   CurrentEvent: Event;
-  Participants: Array<Child>;
+  Participants: Array<Child> = [];
   HouseholdId: number;
   HouseholdPhoneNumber: string;
   ServicesAttended: number;
