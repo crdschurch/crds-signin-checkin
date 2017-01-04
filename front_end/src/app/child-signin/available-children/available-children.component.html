@@ -109,16 +109,16 @@
                 </div>
                 <div class="row">
                   <div class="col-xs-12 col-sm-6">
-                    <div class="form-group required">
+                    <div class="form-group required text-xs-left">
                       <label for="guestChildBirthDate" class="control-label">Birth Date</label>
                       <br/>
-                      <crds-datepicker name="guestChildBirthDate" autoClose="true" [(date)]="newGuestChild.DateOfBirth" [maxDate]="maxDate"></crds-datepicker>
+                      <crds-datepicker name="guestChildBirthDate" autoClose="true" [(date)]="newGuestChild.DateOfBirth" [maxDate]="maxDate" class="input-lg"></crds-datepicker>
                     </div>
                   </div>
                   <div class="col-xs-12 col-sm-6">
-                    <div class="form-group required" *ngIf="needGradeLevel()">
+                    <div class="form-group required text-xs-left" *ngIf="needGradeLevel()">
                       <label for="childGrade" class="control-label">Year / Grade</label>
-                      <select class="form-control" (change)="updateChildYearGradeGroup(newGuestChild, $event.target.value)">
+                      <select class="form-control form-control-lg" (change)="updateChildYearGradeGroup(newGuestChild, $event.target.value)">
                         <option>Has not started Kindergarten yet</option>
                         <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}">{{ grade.Name }}</option>
                       </select>

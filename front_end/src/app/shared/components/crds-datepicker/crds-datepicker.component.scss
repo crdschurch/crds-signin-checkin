@@ -27,6 +27,22 @@ div.crds-datepicker-container > div.calendar > datepicker > datepicker-inner > d
   }
 }
 
+crds-datepicker.input-lg {
+  .crds-datepicker-container {
+    .input-group {
+      .form-control {
+        font-size: 20px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      button {
+        padding-top: 15px;
+        padding-bottom: 15px;
+      }
+    }
+  }
+}
+
 div.crds-datepicker-container > div.calendar {
   .pull-right {
     float: right;

@@ -3,7 +3,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
 import { ApiService, RootService } from '../../shared/services';
-import { EventParticipants, Child, Guest, Group } from '../../shared/models';
+import { EventParticipants, Guest, Group } from '../../shared/models';
 
 import * as moment from 'moment';
 
@@ -18,8 +18,8 @@ export class AvailableChildrenComponent implements OnInit {
   private _isServingOneHour: boolean = false;
   private _isServingTwoHours: boolean = false;
   private isReady: boolean = false;
+  // tslint:disable:no-unused-variable
   private maxDate: Date = moment().toDate();
-  private guests: Guest[] = [];
   private newGuestChild: Guest;
   private gradeGroups: Array<Group> = [];
 
@@ -75,14 +75,6 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  public childrenAvailable(): any[] {
-  //  let allChildren: any = [];
-  //  if (this.eventParticipants && this.eventParticipants.Participants.length) {
-  //    allChildren = allChildren.concat(this.eventParticipants.Participants);
-  //  }
-  //  if (this.guests && this.guests.length) {
-  //    allChildren = allChildren.concat(this.guests);
-  //  };
-  //  return allChildren;
   if (this.eventParticipants) { return this.eventParticipants.Participants; };
  }
 
@@ -165,8 +157,12 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  saveNewGuestModal(modal) {
-   this.eventParticipants.Participants.push(this.newGuestChild);
-   modal.hide();
+   if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
+     return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
+   } else {
+     this.eventParticipants.Participants.push(this.newGuestChild);
+     return modal.hide();
+   }
  }
 
  needGradeLevel(): boolean {
