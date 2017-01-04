@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
+using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json;
 
 namespace SignInCheckIn.Models.DTO
@@ -58,5 +60,7 @@ namespace SignInCheckIn.Models.DTO
         public bool NotSignedIn => Selected && AssignedRoomId == null && string.IsNullOrWhiteSpace(SignInErrorMessage);
 
         public int? GroupId { get; set; }
+
+        public List<ContactDto> HeadOfHousehold;
     }
 }
