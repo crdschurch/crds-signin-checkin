@@ -70,7 +70,9 @@ namespace SignInCheckIn.App_Start
                 .ForMember(dest => dest.GroupRoleId, opts => opts.MapFrom(src => src.GroupRoleId))
                 .ForMember(dest => dest.ResponseId, opts => opts.MapFrom(src => src.ResponseId))
                 .ForMember(dest => dest.OpportunityId, opts => opts.MapFrom(src => src.OpportunityId))
-                .ForMember(dest => dest.RegistrantMessageSent, opts => opts.MapFrom(src => src.RegistrantMessageSent));
+                .ForMember(dest => dest.RegistrantMessageSent, opts => opts.MapFrom(src => src.RegistrantMessageSent))
+                .ForMember(dest => dest.CheckinHouseholdId, opts => opts.MapFrom(src => src.CheckinHouseholdId))
+                .ForMember(dest => dest.CheckinPhone, opts => opts.MapFrom(src => src.CheckinPhone));
             config.CreateMap<MpRoomDto, RoomDto>().ReverseMap();
             config.CreateMap<MpContactDto, ContactDto>().ReverseMap();
         }

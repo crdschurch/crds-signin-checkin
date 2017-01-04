@@ -131,7 +131,9 @@ namespace MinistryPlatform.Translation.Repositories
                 "Response_ID",
                 "Opportunity_ID",
                 "Registrant_Message_Sent",
-                "Call_Number"
+                "Call_Number",
+                "Checkin_Phone",
+                "Checkin_Household_ID"
             };
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<MpEventParticipantDto>(mpEventParticipantDtos, columnList);

@@ -62,5 +62,9 @@ namespace SignInCheckIn.Models.DTO
         public bool GuestSignin { get; set; }
 
         public int? GradeGroupId { get; set; }
+
+        public string CheckinPhone { get; set; }
+
+        public int? CheckinHouseholdId { get; set; }
     }
 }

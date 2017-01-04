@@ -77,6 +77,9 @@ namespace SignInCheckIn.Services
                 CurrentEvent = eventDto
             };
 
+            participantEventMapDto.HouseholdPhoneNumber = phoneNumber;
+            participantEventMapDto.HouseholdId = household.HouseholdId.GetValueOrDefault();
+
             return participantEventMapDto;
         }
 
@@ -129,6 +132,12 @@ namespace SignInCheckIn.Services
                         .Select(Mapper.Map<ParticipantDto>).ToList(),
                 Contacts = participantEventMapDto.Contacts
             };
+
+            // set checkin household data on the participants
+            response.Participants.ForEach(r => {
+                r.CheckinHouseholdId = participantEventMapDto.HouseholdId;
+                r.CheckinPhone = participantEventMapDto.HouseholdPhoneNumber;
+            });
 
             SetParticipantsPrintInformation(response.Participants, eventsForSignin);
  
@@ -569,10 +578,10 @@ namespace SignInCheckIn.Services
 
         public void ProcessGuestSignins(ParticipantEventMapDto participantEventMapDto)
         {
+            List<MpNewParticipantDto> newGuestParticipantDtos = new List<MpNewParticipantDto>();
+
             foreach (var guestParticipant in participantEventMapDto.Participants.Where(r => r.GuestSignin == true))
             {
-                List<MpNewParticipantDto> newGuestParticipantDtos = new List<MpNewParticipantDto>();
-
                 var newGuestParticipantDto = CreateNewParticipantWithContact(guestParticipant.FirstName,
                                                 guestParticipant.LastName,
                                                 guestParticipant.DateOfBirth,
@@ -581,12 +590,17 @@ namespace SignInCheckIn.Services
                                                 _applicationConfiguration.MinorChildId
                     );
 
-                newGuestParticipantDtos.Add(newGuestParticipantDto);
+                guestParticipant.ParticipantId = newGuestParticipantDto.ParticipantId;
 
-                // need to add the group id back onto the participant
-                var x = CreateGroupParticipants(null, newGuestParticipantDtos);
-                guestParticipant.GroupId = x[0].GroupId;
-                guestParticipant.ParticipantId = x[0].ParticipantId;
+                newGuestParticipantDtos.Add(newGuestParticipantDto);
+            }
+
+            var newGroupParticipants = CreateGroupParticipants(null, newGuestParticipantDtos);
+
+            // get the group id and assign it to the participant dto for signin
+            foreach (var guest in participantEventMapDto.Participants.Where(r => r.GuestSignin == true))
+            {
+                guest.GroupId = newGroupParticipants.First(r => r.ParticipantId == guest.ParticipantId).GroupId;
             }
         }
     }
