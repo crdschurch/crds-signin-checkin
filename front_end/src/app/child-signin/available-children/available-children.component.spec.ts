@@ -18,7 +18,7 @@ let router: Router;
 let rootService: RootService;
 let childSigninService: ChildSigninService;
 
-fdescribe('AvailableChildrenComponent', () => {
+describe('AvailableChildrenComponent', () => {
   beforeEach(() => {
     apiService = jasmine.createSpyObj<ApiService>('apiService', ['getGradeGroups']);
     childSigninService = jasmine.createSpyObj<ChildSigninService>('childSigninService', ['getChildrenByPhoneNumber']);
@@ -67,7 +67,6 @@ fdescribe('AvailableChildrenComponent', () => {
     beforeEach(() => {
       spyOn(fakeModal, 'show').and.callFake(() => {});
       spyOn(fakeModal, 'hide').and.callFake(() => {});
-      fixture.ngOnInit();
     });
     it('creates new guest if valid form', () => {
       let validGuest: Guest = new Guest();
