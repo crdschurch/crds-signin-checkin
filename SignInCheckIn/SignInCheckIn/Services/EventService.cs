@@ -121,5 +121,21 @@ namespace SignInCheckIn.Services
 
             return Mapper.Map<List<MpEventDto>, List<EventDto>>(events);
         }
+
+        public List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId)
+        {
+            var eventIds = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
+            var result = _participantRepository.GetChildParticipantsByEvent(token, eventIds.Select(e => e.EventId).ToList());
+            var children = new List<ParticipantDto>();
+
+            foreach (var tmpChild in result)
+            {
+                var child = Mapper.Map<MpEventParticipantDto, ParticipantDto>(tmpChild);
+                child.HeadOfHousehold = tmpChild.HeadsOfHousehold.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
+                children.Add(child);
+            }
+
+            return children;
+        }
     }
 }
