@@ -428,8 +428,8 @@ namespace SignInCheckIn.Services
                 var newParticipant = CreateNewParticipantWithContact(childContactDto.FirstName,
                                                 childContactDto.LastName,
                                                 childContactDto.DateOfBirth,
-                                                null,
-                                                _applicationConfiguration.GuestHouseholdId,
+                                                childContactDto.YearGrade,
+                                                mpHouseholdDto.HouseholdId,
                                                 _applicationConfiguration.MinorChildId
                     );
 
