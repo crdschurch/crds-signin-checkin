@@ -42,7 +42,11 @@ export class Child {
     c.SignInErrorMessage = json.SignInErrorMessage;
     c.GroupId = json.GroupId;
     c.TimeIn = json.TimeIn;
-    c.HeadsOfHousehold = (<Contact[]>json.HeadsOfHousehold).map(r => Contact.fromJson(r));
+
+    if (json.HeadsOfHousehold !== null && json.HeadsOfHousehold !== undefined) {
+      c.HeadsOfHousehold = (<Contact[]>json.HeadsOfHousehold).map(r => Contact.fromJson(r));
+    }
+
     return c;
   }
 
