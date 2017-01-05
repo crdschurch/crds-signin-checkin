@@ -601,6 +601,7 @@ namespace SignInCheckIn.Services
             foreach (var guest in participantEventMapDto.Participants.Where(r => r.GuestSignin == true))
             {
                 guest.GroupId = newGroupParticipants.First(r => r.ParticipantId == guest.ParticipantId).GroupId;
+                guest.Selected = true;
             }
         }
     }
