@@ -1,4 +1,5 @@
 import { Constants } from '../constants';
+import { Contact } from '.';
 
 export class Child {
   EventParticipantId: number;
@@ -18,6 +19,8 @@ export class Child {
   CallNumber: string;
   SignInErrorMessage: string;
   GroupId: number;
+  TimeIn: Date;
+  HeadsOfHousehold: Array<Contact> = [];
 
   static fromJson(json: any): Child {
     let c = new Child();
@@ -38,6 +41,8 @@ export class Child {
     c.CallNumber = json.CallNumber;
     c.SignInErrorMessage = json.SignInErrorMessage;
     c.GroupId = json.GroupId;
+    c.TimeIn = json.TimeIn;
+    c.HeadsOfHousehold = (<Contact[]>json.HedOfHouseholds).map(r => Contact.fromJson(r));
     return c;
   }
 
