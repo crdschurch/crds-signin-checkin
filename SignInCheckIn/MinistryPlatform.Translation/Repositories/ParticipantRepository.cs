@@ -35,11 +35,11 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
                 "dp_Created.Date_Time as Time_In",
-                "Checkin_Household_ID_Table.Household_ID"
+                "Event_Participants.Checkin_Household_ID as Household_ID"
             };
 
             var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}", columnList);
+                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)})", columnList);
 
             foreach (var child in childPartipantsForEvent)
             {
