@@ -240,7 +240,10 @@ namespace MinistryPlatform.Translation.Repositories
                 "Group_Role_ID",
                 "Response_ID",
                 "Opportunity_ID",
-                "Registrant_Message_Sent"
+                "Registrant_Message_Sent",
+                "Call_Number",
+                "Checkin_Phone",
+                "Checkin_Household_ID"
             };
 
             var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);

@@ -33,6 +33,8 @@ namespace Crossroads.Utilities.Services.Interfaces
         int CheckedInParticipationStatusId { get; }
         string MachineConfigDetails { get; }
 
+        int GuestHouseholdId { get; set; }
+
         // groups for new families
         int KcJan0To1 { get; }
         int KcJan1To2 { get; }

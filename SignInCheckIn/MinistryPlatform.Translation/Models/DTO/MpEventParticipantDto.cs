@@ -79,5 +79,11 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Call_Number")]
         public string CallNumber { get; set; }
+
+        [JsonProperty("Checkin_Phone")]
+        public string CheckinPhone { get; set; }
+
+        [JsonProperty("Checkin_Household_ID")]
+        public int? CheckinHouseholdId { get; set; }
     }
 }
