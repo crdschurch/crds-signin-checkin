@@ -38,7 +38,7 @@ export class ManageChildrenComponent implements OnInit {
     return this.ready;
   }
 
-  public parentAndPhoneNumbers(child: Child) {
+  public parentAndPhoneNumbers(child: Child): string {
     let parents = '';
 
     child.HeadsOfHousehold.forEach(hoh => {
@@ -48,5 +48,7 @@ export class ManageChildrenComponent implements OnInit {
         parents = `${parents}, ${hoh.Nickname} (${hoh.MobilePhone})`;
       }
     });
+
+    return parents;
   }
 }
