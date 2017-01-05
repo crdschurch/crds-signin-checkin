@@ -1,3 +1,5 @@
+@import '../../../../assets/scss/_variables.scss';
+
 /* Add some padding below the collapsed component */
 div.crds-datepicker-container {
   padding-bottom: 9px;
@@ -8,6 +10,10 @@ div.crds-datepicker-container {
 div.crds-datepicker-container > div.calendar {
   z-index: 3;
   position: absolute;
+
+  .glyphicon.glyphicon-chevron-left:after {
+    content: "<";
+  }
 }
 
 /* TODO: Trying to get the selected date button to be the 'primary' button color.  Not Working! */
@@ -18,5 +24,78 @@ div.crds-datepicker-container > div.calendar > datepicker > datepicker-inner > d
   :hover & {
     background-color: #5b7588;
     border-color: #577082;
+  }
+}
+
+crds-datepicker.input-lg {
+  .crds-datepicker-container {
+    .input-group {
+      .form-control {
+        font-size: 20px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      button {
+        padding-top: 15px;
+        padding-bottom: 15px;
+      }
+    }
+  }
+}
+
+div.crds-datepicker-container > div.calendar {
+  .pull-right {
+    float: right;
+  }
+
+  .glyphicon.glyphicon-chevron-left:after {
+    content: "<";
+  }
+
+  .glyphicon.glyphicon-chevron-right:after {
+    content: ">";
+  }
+
+  .btn-default {
+    color: $btn-secondary-color;
+    background-color: $btn-secondary-bg;
+    border-color: $btn-secondary-border;
+    border-radius: 0.15rem;
+
+    &:hover {
+      color: $btn-secondary-color;
+      background-color: #e6e6e6;
+      border-color: #adadad;
+    }
+
+    &.btn-info {
+      &:hover {
+        color: #fff;
+        background-color: #005a89;
+        border-color: #003f61;
+      }
+    }
+
+    &.btn-link {
+      .text-success {
+        color: $btn-secondary-color !important;
+      }
+    }
+
+    .text-success {
+      color: white !important;
+    }
+  }
+
+  .btn-info {
+    color: #fff;
+    background-color: $brand-primary;
+    border-color: $brand-primary;
+
+    &:hover {
+      color: #fff;
+      background-color: #005a89;
+      border-color: #003f61;
+    }
   }
 }

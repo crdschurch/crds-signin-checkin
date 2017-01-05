@@ -49,8 +49,10 @@ namespace MinistryPlatform.Translation.Repositories
             return childPartipantsForEvent;
         }
 
-        public MpNewParticipantDto CreateParticipantWithContact(string token, MpNewParticipantDto mpNewParticipantDto)
+        public MpNewParticipantDto CreateParticipantWithContact(string authenticationToken, MpNewParticipantDto mpNewParticipantDto)
         {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+
             List<string> participantColumns = new List<string>
             {
                 "Participants.Participant_ID",
@@ -61,8 +63,10 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
         }
 
-        public List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpGroupParticipantDto> mpGroupParticipantDtos)
+        public List<MpGroupParticipantDto> CreateGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> mpGroupParticipantDtos)
         {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+
             List<string> groupParticipantColumns = new List<string>
             {
                 "Group_Participant_ID",
@@ -103,7 +107,9 @@ namespace MinistryPlatform.Translation.Repositories
                 "Response_ID",
                 "Opportunity_ID",
                 "Registrant_Message_Sent",
-                "Call_Number"
+                "Call_Number",
+                "Checkin_Phone",
+                "Checkin_Household_ID"
             };
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<MpEventParticipantDto>(mpEventParticipantDtos, columnList);

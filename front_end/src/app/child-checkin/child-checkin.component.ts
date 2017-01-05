@@ -94,4 +94,3 @@ export class ChildCheckinComponent implements OnInit {
     this.childDetailModal.show();
   }
 }
-

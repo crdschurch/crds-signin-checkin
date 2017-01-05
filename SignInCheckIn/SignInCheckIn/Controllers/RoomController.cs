@@ -64,19 +64,16 @@ namespace SignInCheckIn.Controllers
         [Route("grade-groups")]
         public IHttpActionResult GetGradeGroups()
         {
-            return Authorized(token =>
+            try
             {
-                try
-                {
-                    var roomList = _roomService.GetGradeAttributes(token);
-                    return Ok(roomList);
-                }
-                catch (Exception e)
-                {
-                    var apiError = new ApiErrorDto("Get Rooms By Location ", e);
-                    throw new HttpResponseException(apiError.HttpResponseMessage);
-                }
-            });
+                var roomList = _roomService.GetGradeAttributes(null);
+                return Ok(roomList);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Get Rooms By Location ", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
         }
     }
 }

@@ -85,5 +85,11 @@ namespace MinistryPlatform.Translation.Models.DTO
         public int HouseholdId { get; set; }
 
         public List<MpContactDto> HeadsOfHousehold { get; set; }
+
+        [JsonProperty("Checkin_Phone")]
+        public string CheckinPhone { get; set; }
+
+        [JsonProperty("Checkin_Household_ID")]
+        public int? CheckinHouseholdId { get; set; }
     }
 }

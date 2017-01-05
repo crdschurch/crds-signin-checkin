@@ -61,5 +61,13 @@ namespace SignInCheckIn.Models.DTO
         public int? GroupId { get; set; }
 
         public List<ContactDto> HeadsOfHousehold;
+
+        public bool GuestSignin { get; set; }
+
+        public int? YearGrade { get; set; }
+
+        public string CheckinPhone { get; set; }
+
+        public int? CheckinHouseholdId { get; set; }
     }
 }

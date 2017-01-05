@@ -791,7 +791,7 @@ namespace SignInCheckIn.Tests.Services
             MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(token, It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
 
             // Act
             var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
@@ -1060,6 +1060,138 @@ namespace SignInCheckIn.Tests.Services
             // we expect the child to be signed into the current ac event and future service event
             Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
             Assert.AreEqual(result.Count, 1);
+        }
+
+        [Test]
+        public void ShouldProcessGuestSignIns()
+        {
+            // Arrange
+            const int groupId = 1000000;
+            const int participantId = 5544555;
+
+            ParticipantDto guestParticipantDto = new ParticipantDto
+            {
+                FirstName = "TestFirst",
+                LastName = "TestLast",
+                DateOfBirth = new DateTime(2008, 10, 10),
+                YearGrade = 0,
+                GuestSignin = true
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    guestParticipantDto
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.GuestHouseholdId).Returns(5771805);
+
+            MpNewParticipantDto mpNewParticipantDto = new MpNewParticipantDto
+            {
+                ParticipantId = participantId
+            };
+
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
+
+            MpGroupParticipantDto mpGroupParticipantDto = new MpGroupParticipantDto
+            {
+                GroupId = groupId,
+                ParticipantId = participantId
+            };
+
+            List<MpGroupParticipantDto> mpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                mpGroupParticipantDto
+            };
+
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<string>(), It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
+
+            // Act
+            _fixture.ProcessGuestSignins(participantEventMapDto);
+
+            // Assert - Testing to make sure that these fields are being set correctly on the guest participant
+            Assert.AreEqual(participantEventMapDto.Participants[0].GroupId, groupId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].ParticipantId, participantId);
+        }
+
+        [Test]
+        public void ShouldProcessMixOfGuestSignIns()
+        {
+            // Arrange
+            const int groupId = 1000000;
+            const int participantId = 5544555;
+
+            const int nonGuestGroupId = 2000000;
+            const int nonGuestParticipantId = 3322333;
+
+            ParticipantDto guestParticipantDto = new ParticipantDto
+            {
+                FirstName = "TestFirst",
+                LastName = "TestLast",
+                DateOfBirth = new DateTime(2008, 10, 10),
+                YearGrade = 0,
+                GuestSignin = true
+            };
+
+            ParticipantDto nonGuestParticipantDto = new ParticipantDto
+            {
+                FirstName = "NonguestFirst",
+                LastName = "NonguestLast",
+                DateOfBirth = new DateTime(2009, 10, 10),
+                GroupId = nonGuestGroupId,
+                ParticipantId = nonGuestParticipantId,
+                GuestSignin = false
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    guestParticipantDto,
+                    nonGuestParticipantDto
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.GuestHouseholdId).Returns(5771805);
+
+            MpNewParticipantDto mpNewParticipantDto = new MpNewParticipantDto
+            {
+                ParticipantId = participantId
+            };
+
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
+
+            MpGroupParticipantDto mpGroupParticipantDto = new MpGroupParticipantDto
+            {
+                GroupId = groupId,
+                ParticipantId = participantId
+            };
+
+            List<MpGroupParticipantDto> mpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                mpGroupParticipantDto
+            };
+
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<string>(), It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
+
+            // Act
+            _fixture.ProcessGuestSignins(participantEventMapDto);
+
+            // Assert
+
+            //Testing to make sure that these fields are being set correctly on the guest participant
+            Assert.AreEqual(participantEventMapDto.Participants[0].GroupId, groupId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].ParticipantId, participantId);
+
+            // Testing to make sure that the fields were not set against on the non-guest participant
+            Assert.AreEqual(participantEventMapDto.Participants[1].GroupId, nonGuestGroupId);
+            Assert.AreEqual(participantEventMapDto.Participants[1].ParticipantId, nonGuestParticipantId);
         }
     }
 }

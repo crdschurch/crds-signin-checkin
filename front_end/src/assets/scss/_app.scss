@@ -148,10 +148,6 @@ a.btn-primary:not([href]):not([tabindex]) {
     color: white !important;
 }
 
-.add-child-guest {
-  color: #fff;
-}
-
 .btn-primary:active,
 .btn-primary.active {
   background: lighten($brand-blue, 30%);
