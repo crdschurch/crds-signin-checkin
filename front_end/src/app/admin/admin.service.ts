@@ -75,7 +75,7 @@ export class AdminService {
   }
 
   getChildrenForEvent(eventId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/children`
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/children`;
     return this.http.get(url)
                     .map(res => { return (<Child[]>res.json()).map(r => Child.fromJson(r)); })
                     .catch(this.handleError);
