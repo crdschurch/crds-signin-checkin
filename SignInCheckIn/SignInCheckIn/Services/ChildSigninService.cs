@@ -585,7 +585,7 @@ namespace SignInCheckIn.Services
                 var newGuestParticipantDto = CreateNewParticipantWithContact(guestParticipant.FirstName,
                                                 guestParticipant.LastName,
                                                 guestParticipant.DateOfBirth,
-                                                guestParticipant.GradeGroupId,
+                                                guestParticipant.YearGrade,
                                                 _applicationConfiguration.GuestHouseholdId,
                                                 _applicationConfiguration.MinorChildId
                     );

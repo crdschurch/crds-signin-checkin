@@ -1074,7 +1074,7 @@ namespace SignInCheckIn.Tests.Services
                 FirstName = "TestFirst",
                 LastName = "TestLast",
                 DateOfBirth = new DateTime(2008, 10, 10),
-                GradeGroupId = 0,
+                YearGrade = 0,
                 GuestSignin = true
             };
 
@@ -1133,7 +1133,7 @@ namespace SignInCheckIn.Tests.Services
                 FirstName = "TestFirst",
                 LastName = "TestLast",
                 DateOfBirth = new DateTime(2008, 10, 10),
-                GradeGroupId = 0,
+                YearGrade = 0,
                 GuestSignin = true
             };
 
