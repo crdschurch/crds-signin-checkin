@@ -425,27 +425,6 @@ namespace SignInCheckIn.Services
 
             foreach (var childContactDto in newFamilyDto.ChildContactDtos)
             {
-                //MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
-                //{
-                //    ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
-                //    ParticipantStartDate = DateTime.Now,
-                //    Contact = new MpContactDto
-                //    {
-                //        FirstName = childContactDto.FirstName,
-                //        Nickname = childContactDto.FirstName,
-                //        LastName = childContactDto.LastName,
-                //        DisplayName = childContactDto.FirstName + " " + childContactDto.LastName,
-                //        HouseholdId = mpHouseholdDto.HouseholdId,
-                //        HouseholdPositionId = _applicationConfiguration.MinorChildId,
-                //        Company = false,
-                //        DateOfBirth = childContactDto.DateOfBirth
-                //    }
-                //};
-
-                //var newParticipant = _participantRepository.CreateParticipantWithContact(token, childNewParticipantDto);
-                //newParticipant.Contact = childNewParticipantDto.Contact;
-                //newParticipant.GradeGroupAttributeId = childContactDto.YearGrade;
-
                 var newParticipant = CreateNewParticipantWithContact(childContactDto.FirstName,
                                                 childContactDto.LastName,
                                                 childContactDto.DateOfBirth,
