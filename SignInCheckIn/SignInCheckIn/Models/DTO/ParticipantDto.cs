@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
+using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json;
 
 namespace SignInCheckIn.Models.DTO
@@ -21,9 +23,8 @@ namespace SignInCheckIn.Models.DTO
         public string AssignedRoomName { get; set; }
         public int? AssignedSecondaryRoomId { get; set; } // adventure club field
         public string AssignedSecondaryRoomName { get; set; } // adventure club field
-
-        [JsonIgnore]
         public DateTime? TimeIn { get; set; } = null;
+
         [JsonIgnore]
         public DateTime? TimeConfirmed { get; set; } = null;
         [JsonIgnore]
@@ -58,6 +59,8 @@ namespace SignInCheckIn.Models.DTO
         public bool NotSignedIn => Selected && AssignedRoomId == null && string.IsNullOrWhiteSpace(SignInErrorMessage);
 
         public int? GroupId { get; set; }
+
+        public List<ContactDto> HeadsOfHousehold;
 
         public bool GuestSignin { get; set; }
 

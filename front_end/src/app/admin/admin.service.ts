@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { Room, NewFamily } from '../shared/models';
+import { Room, NewFamily, Child } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -65,6 +65,13 @@ export class AdminService {
   createNewFamily(family: NewFamily) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`;
     return this.http.post(url, family).map(res => { return res; }).catch(this.handleError);
+  }
+
+  getChildrenForEvent(eventId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/children`;
+    return this.http.get(url)
+                    .map(res => { return (<Child[]>res.json()).map(r => Child.fromJson(r)); })
+                    .catch(this.handleError);
   }
 
   private updateRoomGroupsInternal(room: Room) {
