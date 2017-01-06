@@ -128,7 +128,7 @@ namespace SignInCheckIn.Services
             // so that they get a rock
             SyncInvalidSignins(currentEventParticipantDtoList, participantEventMapDto);
 
-            // create participants if they're assigned to a room -- we still need to handle the case where there is an 
+            // create participants if they're assigned to a room -- we still need to handle the case where there is an
             // error and they can't be signed into both events
             var response = new ParticipantEventMapDto
             {
@@ -147,7 +147,7 @@ namespace SignInCheckIn.Services
             });
 
             SetParticipantsPrintInformation(response.Participants, eventsForSignin);
- 
+
             // Add back those participants that didn't get a room assigned
              response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
             response.Participants.ForEach(p => p.Selected = true);
@@ -207,7 +207,7 @@ namespace SignInCheckIn.Services
             var callNumber = $"0000{eventParticipantId}";
             participant.CallNumber = callNumber.Substring(callNumber.Length - 4);
         }
-        
+
         // need to be able to assign to two rooms - which is what signing into AC is
         private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
         {
@@ -227,12 +227,12 @@ namespace SignInCheckIn.Services
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
-                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
+                    eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
                 }
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
-                    eventParticipant.SignInErrorMessage = $"Please go to the Kids Club Info Desk and give them this label.  ERROR: '{@group?.Name}' is not assigned to any rooms for {eventDto.EventTitle} for {eventParticipant.FirstName}";
+                    eventParticipant.SignInErrorMessage = $"There are no '{@group?.Name}' rooms open during the {eventDto.EventTitle} for {eventParticipant.FirstName}";
                 }
                 else
                 {
@@ -290,7 +290,7 @@ namespace SignInCheckIn.Services
             var assignedRoom = eventGroups.First(eg => eg.RoomReservation.RoomId == assignedRoomId.Value).RoomReservation;
             var signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
 
-            mpEventParticipant.RoomId = null; 
+            mpEventParticipant.RoomId = null;
 
             if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn) {
                 ProcessBumpingRules(eventParticipant, mpEventParticipant, assignedRoom);
@@ -381,7 +381,7 @@ namespace SignInCheckIn.Services
         {
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
-            
+
             var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto);
 
             // mark all as Selected so all children will be signed in
@@ -419,7 +419,7 @@ namespace SignInCheckIn.Services
                     LastName = newFamilyDto.ParentContactDto.LastName,
                     DisplayName = newFamilyDto.ParentContactDto.FirstName + " " + newFamilyDto.ParentContactDto.LastName,
                     HouseholdId = mpHouseholdDto.HouseholdId,
-                    HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId, 
+                    HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId,
                     Company = false
                 }
             };
@@ -471,7 +471,7 @@ namespace SignInCheckIn.Services
             return _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
 
-        // simply return a list of two event ids to check into -- note that the first id is always a 
+        // simply return a list of two event ids to check into -- note that the first id is always a
         // service event id
         public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)
         {
@@ -497,7 +497,7 @@ namespace SignInCheckIn.Services
                 if (mpAcEventDto.ParentEventId != participantEventMapDto.CurrentEvent.EventId)
                 {
                     returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
-                    returnEvents.Add(mpAcEventDto); 
+                    returnEvents.Add(mpAcEventDto);
                     return returnEvents;
                 }
 
@@ -511,7 +511,7 @@ namespace SignInCheckIn.Services
                     return returnEvents;
                 }
 
-                // Case #3 - AC for current event and later event exists, sign them 
+                // Case #3 - AC for current event and later event exists, sign them
                 // into the current AC event and later service event
                 if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId)
                 {
