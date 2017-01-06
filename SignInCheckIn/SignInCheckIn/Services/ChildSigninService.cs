@@ -28,6 +28,9 @@ namespace SignInCheckIn.Services
         private readonly IGroupLookupRepository _groupLookupRepository;
         private readonly IRoomRepository _roomRepository;
 
+        private readonly int _defaultEarlyCheckinPeriod;
+        private readonly int _defaultLateCheckinPeriod;
+
         public ChildSigninService(IChildSigninRepository childSigninRepository,
                                   IEventRepository eventRepository,
                                   IGroupRepository groupRepository,
@@ -39,7 +42,8 @@ namespace SignInCheckIn.Services
                                   IParticipantRepository participantRepository,
                                   IApplicationConfiguration applicationConfiguration,
                                   IGroupLookupRepository groupLookupRepository,
-                                  IRoomRepository roomRepository)
+                                  IRoomRepository roomRepository,
+                                  IConfigRepository configRepository)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -53,6 +57,9 @@ namespace SignInCheckIn.Services
             _applicationConfiguration = applicationConfiguration;
             _groupLookupRepository = groupLookupRepository;
             _roomRepository = roomRepository;
+
+            _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
+            _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto)
@@ -469,7 +476,16 @@ namespace SignInCheckIn.Services
         public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)
         {
             var returnEvents = new List<MpEventDto>();
-            var dailyEvents = _eventRepository.GetEvents(DateTime.Now, DateTime.Now, participantEventMapDto.CurrentEvent.EventSiteId, true).OrderBy(r => r.EventStartDate);
+
+            var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
+
+            var dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true)
+                .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate);
+
+            if (!dailyEvents.Any())
+            {
+                throw new Exception("GetEventsForSignin: No daily events for site");
+            }
 
             // Get the first AC event that day
             var mpAcEventDto = dailyEvents.FirstOrDefault(r => r.ParentEventId != null && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId && r.Cancelled == false);
@@ -508,6 +524,13 @@ namespace SignInCheckIn.Services
             // if there are no AC events for the day or they select to serve 1 hour, they are signed into the current service
             returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
             return returnEvents;
+        }
+
+        private bool CheckEventTimeValidity(MpEventDto mpEventDto)
+        {
+            // check to see if the event's start is equal to or later than the time minus the offset period
+            var offsetPeriod = DateTime.Now.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
+            return mpEventDto.EventStartDate >= offsetPeriod;
         }
 
         private void SyncInvalidSignins(List<MpEventParticipantDto> mpEventParticipantDtoList, ParticipantEventMapDto participantEventMapDto)
