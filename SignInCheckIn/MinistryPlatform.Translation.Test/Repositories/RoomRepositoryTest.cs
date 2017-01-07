@@ -192,7 +192,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
-        public void TestGetRoomsForEvent()
+        public void TestRoomUsageTypeKidsClub()
         {
             _applicationConfiguration.Setup(m => m.RoomUsageTypeKidsClub).Returns(6);
         }
