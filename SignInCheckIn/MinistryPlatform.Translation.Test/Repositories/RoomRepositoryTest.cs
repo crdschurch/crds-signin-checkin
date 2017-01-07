@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -12,6 +13,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private RoomRepository _fixture;
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
+        private Mock<IApplicationConfiguration> _applicationConfiguration;
 
         private List<string> _eventRoomColumns;
         private List<string> _roomColumns;
@@ -21,6 +23,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _ministryPlatformRestRepository = new Mock<IMinistryPlatformRestRepository>(MockBehavior.Strict);
+            _applicationConfiguration = new Mock<IApplicationConfiguration>(MockBehavior.Strict);
 
             _eventRoomColumns = new List<string>
             {
@@ -44,7 +47,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Room_Number"
             };
 
-            _fixture = new RoomRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
+            _fixture = new RoomRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
         }
 
         [Test]
@@ -187,6 +190,13 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             Assert.AreSame(room, result);
         }
+
+        [Test]
+        public void TestGetRoomsForEvent()
+        {
+            _applicationConfiguration.Setup(m => m.RoomUsageTypeKidsClub).Returns(6);
+        }
+
 
         [Test]
         public void TestGetBumpingRooms()
