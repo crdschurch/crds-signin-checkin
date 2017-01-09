@@ -15,15 +15,17 @@ namespace SignInCheckIn.Services
         private readonly IEventRepository _eventRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IParticipantRepository _participantRepository;
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
 
         public EventService(IEventRepository eventRepository, IConfigRepository configRepository, IRoomRepository roomRepository,
-            IApplicationConfiguration applicationConfiguration)
+            IApplicationConfiguration applicationConfiguration, IParticipantRepository participantRepository)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _applicationConfiguration = applicationConfiguration;
+            _participantRepository = participantRepository;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -111,13 +113,29 @@ namespace SignInCheckIn.Services
                 mpEventDto.MinutesForCleanup = parentEvent.MinutesForCleanup;
                 mpEventDto.EventStartDate = parentEvent.EventStartDate;
                 mpEventDto.EventEndDate = parentEvent.EventEndDate;
-                mpEventDto.Cancelled = parentEvent.Cancelled;
+                mpEventDto.Cancelled = true;
                 mpEventDto.AllowCheckIn = parentEvent.AllowCheckIn;
                 var subEvent = _eventRepository.CreateSubEvent(token, mpEventDto);
                 events.Add(subEvent);
             }
 
             return Mapper.Map<List<MpEventDto>, List<EventDto>>(events);
+        }
+
+        public List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId)
+        {
+            var eventIds = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
+            var result = _participantRepository.GetChildParticipantsByEvent(token, eventIds.Select(e => e.EventId).ToList());
+            var children = new List<ParticipantDto>();
+
+            foreach (var tmpChild in result)
+            {
+                var child = Mapper.Map<MpEventParticipantDto, ParticipantDto>(tmpChild);
+                child.HeadsOfHousehold = tmpChild.HeadsOfHousehold.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
+                children.Add(child);
+            }
+
+            return children;
         }
     }
 }

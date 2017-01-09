@@ -3,6 +3,7 @@ export class NewChild {
   LastName: string;
   DateOfBirth: Date;
   YearGrade: number;
+  Selected: boolean;
 
   static fromJson(json: any): NewChild {
     let c = new NewChild();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 
@@ -76,5 +77,19 @@ namespace MinistryPlatform.Translation.Models.DTO
         public bool HasKidsClubGroup => GroupId.HasValue;
 
         public bool HasRoomAssignment => RoomId.HasValue;
+
+        [JsonProperty("Call_Number")]
+        public string CallNumber { get; set; }
+
+        [JsonProperty("Household_ID")]
+        public int HouseholdId { get; set; }
+
+        public List<MpContactDto> HeadsOfHousehold { get; set; }
+
+        [JsonProperty("Checkin_Phone")]
+        public string CheckinPhone { get; set; }
+
+        [JsonProperty("Checkin_Household_ID")]
+        public int? CheckinHouseholdId { get; set; }
     }
 }

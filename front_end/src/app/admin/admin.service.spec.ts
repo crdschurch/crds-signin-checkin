@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Room, Group, NewFamily } from '../shared/models';
+import { Room, NewFamily, Child } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -84,29 +84,6 @@ describe('AdminService', () => {
       fixture.importEvent(destinationEventId, sourceEventId).subscribe((r) => {
         expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${destinationEventId}/import/${sourceEventId}`, null, null);
       });
-
-    });
-  });
-
-  describe('#getGradeGroups', () => {
-    it('should return list of rooms imported', () => {
-      let groups: Group[] = [
-        new Group(),
-        new Group()
-      ];
-      groups[0].Id = 12345;
-      groups[1].Id = 67890;
-
-      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
-      (<jasmine.Spy>responseObject.json).and.returnValue(groups);
-
-      let result = fixture.getGradeGroups();
-      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/grade-groups`);
-      expect(result).toBeDefined();
-      expect(result).toEqual(jasmine.any(Observable));
-      result.subscribe((p) => {
-        expect(p[0].Id).toEqual(groups[0].Id);
-      });
     });
   });
 
@@ -121,6 +98,28 @@ describe('AdminService', () => {
         expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`, family);
       });
 
+    });
+  });
+
+  describe('#getChildrenForEvent', () => {
+    it('should return list of children for the event', () => {
+      let children: Child[] = [
+        new Child(),
+        new Child()
+      ];
+      children[0].ContactId = 12345;
+      children[1].ContactId = 67890;
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(children);
+
+      let result = fixture.getChildrenForEvent(231);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/231/children`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((c) => {
+        expect(c[0].ContactId).toEqual(children[0].ContactId);
+      });
     });
   });
 

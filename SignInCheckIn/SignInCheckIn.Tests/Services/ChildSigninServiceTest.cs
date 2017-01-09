@@ -29,6 +29,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IGroupLookupRepository> _groupLookupRepository;
         private Mock<IRoomRepository> _roomRepository;
+        private Mock<IConfigRepository> _configRepository;
 
         private ChildSigninService _fixture;
 
@@ -49,11 +50,32 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _groupLookupRepository = new Mock<IGroupLookupRepository>();
             _roomRepository = new Mock<IRoomRepository>();
+            _configRepository = new Mock<IConfigRepository>();
+
+            var mpConfigDtoEarly = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultEarlyCheckIn",
+                Value = "60"
+            };
+
+            var mpConfigDtoLate = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultLateCheckIn",
+                Value = "60"
+            };
+
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
-                _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object);
+                _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object,
+                _configRepository.Object);
         }
 
         [Test]
@@ -174,7 +196,8 @@ namespace SignInCheckIn.Tests.Services
             var eventDto = new EventDto
             {
                 EventTitle = "test event",
-                EventId = 321
+                EventId = 321,
+                EventSiteId = 8
             };
 
             var mpEventGroupDtos = new List<MpEventGroupDto>
@@ -207,6 +230,23 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 321,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = DateTime.Now
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+
             var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
             participantEventMapDto.Contacts = contactDtos;
@@ -217,6 +257,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -343,12 +384,32 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            //DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 321,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = DateTime.Now
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
             _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(mpBumpingRooms);
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -420,12 +481,32 @@ namespace SignInCheckIn.Tests.Services
                 CurrentEvent = eventDto
             };
 
+            //DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 321,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = DateTime.Now
+            };
+
+            // current service event, current ac event, trailing service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
             _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(new List<MpBumpingRoomsDto>());
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -467,7 +548,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 111,
-                    Selected = true
+                    Selected = true,
+                    CallNumber = "1234"
                 }
             };
 
@@ -537,7 +619,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 111,
-                    Selected = false
+                    Selected = false,
+                    CallNumber = "1234"
                 }
             };
 
@@ -728,7 +811,7 @@ namespace SignInCheckIn.Tests.Services
             MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(token, It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
 
             // Act
             var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
@@ -737,6 +820,398 @@ namespace SignInCheckIn.Tests.Services
             _contactRepository.VerifyAll();
             _participantRepository.VerifyAll();
             Assert.IsNotNull(result);
-        } 
+        }
+
+        [Test]
+        public void CheckAcEventDuringCurrentService()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            var currentMpEventDtoStartTime = DateTime.Now;
+            var futureMpEventDtoStartTime = DateTime.Now.AddHours(2);
+
+            var currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            var currentMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            var futureMpServiceEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            var eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                currentMpAdventureClubEventDto,
+                futureMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            var signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, currentMpAdventureClubEventDto.EventId);
+            Assert.AreEqual(result[1].EventId, futureMpServiceEventDto.EventId);
+        }
+
+        [Test]
+        public void CheckAcEventAfterCurrentService()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            var currentMpEventDtoStartTime = DateTime.Now;
+            var futureMpEventDtoStartTime = DateTime.Now.AddHours(2);
+
+            var currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            var futureMpServiceEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            var futureMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 2345678,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            // current service event, current ac event, trailing service event
+            var eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                futureMpServiceEventDto,
+                futureMpAdventureClubEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            var signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
+            Assert.AreEqual(result[1].EventId, futureMpAdventureClubEventDto.EventId);
+        }
+
+        [Test]
+        public void CheckAcEventNoAcEvent()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            var currentMpEventDtoStartTime = DateTime.Now;
+            var futureMpEventDtoStartTime = DateTime.Now.AddHours(2);
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            MpEventDto futureMpServiceEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = futureMpEventDtoStartTime
+            };
+
+            // current service event, future service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                futureMpServiceEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            EventDto signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
+            Assert.AreEqual(result.Count, 1);
+        }
+
+        [Test]
+        public void CheckAcEventCurrentService()
+        {
+            // Arrange
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            var currentMpEventDtoStartTime = DateTime.Now;
+
+            MpEventDto currentMpServiceEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                ParentEventId = null,
+                CongregationId = 8,
+                EventTypeId = 123,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            MpEventDto currentMpAdventureClubEventDto = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                CongregationId = 8,
+                EventTypeId = 20,
+                EventStartDate = currentMpEventDtoStartTime
+            };
+
+            // current service event, future service event
+            List<MpEventDto> eventDtosBySite = new List<MpEventDto>()
+            {
+                currentMpServiceEventDto,
+                currentMpAdventureClubEventDto
+            };
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), 8, true)).Returns(eventDtosBySite);
+
+            EventDto signingInEventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = 8
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = signingInEventDto,
+                ServicesAttended = 2
+            };
+
+            // Act
+            var result = _fixture.GetEventsForSignin(participantEventMapDto);
+
+            // Assert
+
+            // we expect the child to be signed into the current ac event and future service event
+            Assert.AreEqual(result[0].EventId, currentMpServiceEventDto.EventId);
+            Assert.AreEqual(result.Count, 1);
+        }
+
+        [Test]
+        public void ShouldProcessGuestSignIns()
+        {
+            // Arrange
+            const int groupId = 1000000;
+            const int participantId = 5544555;
+
+            ParticipantDto guestParticipantDto = new ParticipantDto
+            {
+                FirstName = "TestFirst",
+                LastName = "TestLast",
+                DateOfBirth = new DateTime(2008, 10, 10),
+                YearGrade = 0,
+                GuestSignin = true
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    guestParticipantDto
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.GuestHouseholdId).Returns(5771805);
+
+            MpNewParticipantDto mpNewParticipantDto = new MpNewParticipantDto
+            {
+                ParticipantId = participantId
+            };
+
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
+
+            MpGroupParticipantDto mpGroupParticipantDto = new MpGroupParticipantDto
+            {
+                GroupId = groupId,
+                ParticipantId = participantId
+            };
+
+            List<MpGroupParticipantDto> mpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                mpGroupParticipantDto
+            };
+
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<string>(), It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
+
+            // Act
+            _fixture.ProcessGuestSignins(participantEventMapDto);
+
+            // Assert - Testing to make sure that these fields are being set correctly on the guest participant
+            Assert.AreEqual(participantEventMapDto.Participants[0].GroupId, groupId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].ParticipantId, participantId);
+        }
+
+        [Test]
+        public void ShouldProcessMixOfGuestSignIns()
+        {
+            // Arrange
+            const int groupId = 1000000;
+            const int participantId = 5544555;
+
+            const int nonGuestGroupId = 2000000;
+            const int nonGuestParticipantId = 3322333;
+
+            ParticipantDto guestParticipantDto = new ParticipantDto
+            {
+                FirstName = "TestFirst",
+                LastName = "TestLast",
+                DateOfBirth = new DateTime(2008, 10, 10),
+                YearGrade = 0,
+                GuestSignin = true
+            };
+
+            ParticipantDto nonGuestParticipantDto = new ParticipantDto
+            {
+                FirstName = "NonguestFirst",
+                LastName = "NonguestLast",
+                DateOfBirth = new DateTime(2009, 10, 10),
+                GroupId = nonGuestGroupId,
+                ParticipantId = nonGuestParticipantId,
+                GuestSignin = false
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    guestParticipantDto,
+                    nonGuestParticipantDto
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.GuestHouseholdId).Returns(5771805);
+
+            MpNewParticipantDto mpNewParticipantDto = new MpNewParticipantDto
+            {
+                ParticipantId = participantId
+            };
+
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
+
+            MpGroupParticipantDto mpGroupParticipantDto = new MpGroupParticipantDto
+            {
+                GroupId = groupId,
+                ParticipantId = participantId
+            };
+
+            List<MpGroupParticipantDto> mpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                mpGroupParticipantDto
+            };
+
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<string>(), It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
+
+            // Act
+            _fixture.ProcessGuestSignins(participantEventMapDto);
+
+            // Assert
+
+            //Testing to make sure that these fields are being set correctly on the guest participant
+            Assert.AreEqual(participantEventMapDto.Participants[0].GroupId, groupId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].ParticipantId, participantId);
+
+            // Testing to make sure that the fields were not set against on the non-guest participant
+            Assert.AreEqual(participantEventMapDto.Participants[1].GroupId, nonGuestGroupId);
+            Assert.AreEqual(participantEventMapDto.Participants[1].ParticipantId, nonGuestParticipantId);
+        }
     }
 }

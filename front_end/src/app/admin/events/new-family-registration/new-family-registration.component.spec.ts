@@ -9,8 +9,8 @@ const event = {
   'EventId': '92398420398',
 };
 let router;
-let apiService = jasmine.createSpyObj('apiService', ['getEvent']);
-let adminService = jasmine.createSpyObj('adminService', ['getGradeGroups', 'createNewFamily']);
+let apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
+let adminService = jasmine.createSpyObj('adminService', [, 'createNewFamily']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
 let route: ActivatedRoute;
@@ -22,7 +22,7 @@ let fixture;
 describe('NewFamilyRegistrationComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
-    (<jasmine.Spy>(adminService.getGradeGroups)).and.returnValue(Observable.of());
+    (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
     fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
@@ -39,7 +39,7 @@ describe('NewFamilyRegistrationComponent', () => {
     expect(fixture.family.children.length).toEqual(1);
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
     expect(apiService.getEvent).toHaveBeenCalledWith(event.EventId);
-    expect(adminService.getGradeGroups).toHaveBeenCalled();
+    expect(apiService.getGradeGroups).toHaveBeenCalled();
     expect(headerService.announceEvent).toHaveBeenCalledWith(event);
   });
   it('#onSubmit success', () => {

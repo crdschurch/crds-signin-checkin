@@ -97,6 +97,11 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventDto, _eventColumns);
         }
 
+        public MpEventDto UpdateEvent(string token, MpEventDto mpEventDto)
+        {
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(mpEventDto, _eventColumns);
+        }
+
         public List<MpEventGroupDto> GetEventGroupsForEvent(int eventId)
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
@@ -142,7 +147,7 @@ namespace MinistryPlatform.Translation.Repositories
                 .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1", _eventColumns);
         }
 
-	public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
+	    public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 

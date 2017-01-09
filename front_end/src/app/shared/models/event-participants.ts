@@ -3,7 +3,9 @@ import { Child, Contact, Event } from '.';
 export class EventParticipants {
   Contacts: Array<Contact>;
   CurrentEvent: Event;
-  Participants: Array<Child>;
+  Participants: Array<Child> = [];
+  HouseholdId: number;
+  HouseholdPhoneNumber: string;
   ServicesAttended: number;
 
   static fromJson(json: any): EventParticipants {
@@ -14,6 +16,8 @@ export class EventParticipants {
     let eventParticipants = new EventParticipants();
     eventParticipants.CurrentEvent = Event.fromJson(json.CurrentEvent);
     eventParticipants.ServicesAttended = json.ServicesAttended;
+    eventParticipants.HouseholdId = json.HouseholdId;
+    eventParticipants.HouseholdPhoneNumber = json.HouseholdPhoneNumber;
     eventParticipants.Participants = [];
     for (let p of json.Participants) {
       eventParticipants.Participants.push(Child.fromJson(p));

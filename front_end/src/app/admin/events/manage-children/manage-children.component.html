@@ -35,85 +35,27 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr *ngFor="let child of children">
               <td>
-                Andrea
+                {{child.FirstName}}
               </td>
               <td>
-                Smith
+                {{child.LastName}}
               </td>
               <td>
-
+                  <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
               </td>
               <td>
-                1234
+                {{child.CallNumber}}
               </td>
               <td>
-                Nursery A K112
+                {{child.AssignedRoomName}}
               </td>
               <td>
-                4:15pm
+                {{child.TimeIn | amDateFormat:'h:mma'}}
               </td>
               <td>
-                Bob Smith, Dee Dee Smith
-              </td>
-              <td>
-                <a class="btn btn-primary btn-sm" href="#">Reverse</a>
-              </td>
-              <td>
-                <a class="btn btn-primary btn-sm" href="#">Reprint</a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Andrea
-              </td>
-              <td>
-                Smith
-              </td>
-              <td>
-                <span class="tag tag-pill tag-default">Guest</span>
-              </td>
-              <td>
-                1234
-              </td>
-              <td>
-                Nursery A K112
-              </td>
-              <td>
-                4:15pm
-              </td>
-              <td>
-                Bob Smith, Dee Dee Smith
-              </td>
-              <td>
-                <a class="btn btn-primary btn-sm" href="#">Reverse</a>
-              </td>
-              <td>
-                <a class="btn btn-primary btn-sm" href="#">Reprint</a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Andrea
-              </td>
-              <td>
-                Smith
-              </td>
-              <td>
-
-              </td>
-              <td>
-                1234
-              </td>
-              <td>
-                Nursery A K112
-              </td>
-              <td>
-                4:15pm
-              </td>
-              <td>
-                Bob Smith, Dee Dee Smith
+                {{parentAndPhoneNumbers(child)}}
               </td>
               <td>
                 <a class="btn btn-primary btn-sm" href="#">Reverse</a>

@@ -12,5 +12,6 @@ namespace SignInCheckIn.Services.Interfaces
         ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier);
         void CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier);
         List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto);
+        List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto);
     }
 }
