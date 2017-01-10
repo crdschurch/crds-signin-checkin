@@ -73,7 +73,7 @@ export class Child {
       this.ParticipationStatusId = Constants.CheckedInParticipationStatusId;
     }
   }
-  
+
   guest(): boolean {
     return Constants.GuestHouseholdId === this.HouseholdId;
   }
