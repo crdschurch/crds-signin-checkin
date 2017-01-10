@@ -35,7 +35,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
                 "dp_Created.Date_Time as Time_In",
-                "Event_Participants.Checkin_Household_ID as Household_ID"
+                "Event_Participants.Checkin_Household_ID",
+                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
             };
 
             var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
@@ -43,7 +44,10 @@ namespace MinistryPlatform.Translation.Repositories
 
             foreach (var child in childPartipantsForEvent)
             {
-                child.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(child.HouseholdId);
+                if (child.CheckinHouseholdId.HasValue)
+                {
+                    child.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(child.CheckinHouseholdId.Value);
+                }
             }
 
             return childPartipantsForEvent;

@@ -50,7 +50,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
                 "dp_Created.Date_Time as Time_In",
-                "Event_Participants.Checkin_Household_ID as Household_ID"
+                "Event_Participants.Checkin_Household_ID",
+                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
             };
 
             var children = new List<MpEventParticipantDto>
@@ -66,7 +67,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     RoomId = 1,
                     RoomName = "Room1",
                     TimeIn = DateTime.Now,
-                    HouseholdId = 1
+                    CheckinHouseholdId = 1
                 },
                 new MpEventParticipantDto
                 {
@@ -79,7 +80,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     RoomId = 1,
                     RoomName = "Room1",
                     TimeIn = DateTime.Now,
-                    HouseholdId = 2
+                    CheckinHouseholdId = 2
                 }
             };
 
