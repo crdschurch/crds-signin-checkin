@@ -7,12 +7,12 @@ import { OneBasedIndexPipe } from './pipes/one-based-index.pipe';
 import { ApiService, LoginRedirectService } from './services';
 
 import { PreloaderModule } from './preloader';
-import { CrdsDatePickerModule, LoadingButtonModule } from './components';
+import { CrdsDatePickerModule, LoadingButtonModule, NumberPadModule } from './components';
 import { CanActivateIfLoggedInGuard } from './guards';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
   ],
   declarations: [
     PhoneNumberPipe,
@@ -26,7 +26,8 @@ import { CanActivateIfLoggedInGuard } from './guards';
     Ng2BootstrapModule,
     PreloaderModule,
     CrdsDatePickerModule,
-    LoadingButtonModule
+    LoadingButtonModule,
+    NumberPadModule
   ],
   providers:  [
     ApiService,
