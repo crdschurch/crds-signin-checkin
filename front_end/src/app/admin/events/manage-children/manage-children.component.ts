@@ -51,4 +51,9 @@ export class ManageChildrenComponent implements OnInit {
 
     return parents;
   }
+
+  public reverseSignin(child: Child) {
+    this.adminService.reverseSignin(child.EventParticipantId);
+    this.children.splice(this.children.indexOf(child), 1);
+  }
 }

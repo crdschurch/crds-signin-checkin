@@ -74,6 +74,12 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  reverseSignin(eventParticipantId: number)
+  {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/reverse/${eventParticipantId}`;
+    return this.http.put(url, null).catch(this.handleError);
+  }
+
   private updateRoomGroupsInternal(room: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${room.EventId}/rooms/${room.RoomId}/groups`;
     return this.http.put(url, room)
