@@ -96,8 +96,9 @@
         <h5 class="mb-3 text-xs-center">
           Type in the child's call number below.
         </h5>
+        <h1 class="call-number text-xs-center">{{callNumber | dashed: 4}}</h1>
         <div class="row mx-1">
-          <number-pad></number-pad>
+          <number-pad class="mx-auto" (addNumber)="setCallNumber($event)" (deleteNumber)="delete($event)" (clearNumber)="clear($event)"></number-pad>
         </div>
       </div>
     </div>

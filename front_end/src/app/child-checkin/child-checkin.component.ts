@@ -22,6 +22,7 @@ export class ChildCheckinComponent implements OnInit {
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
+  callNumber: string = '';
 
   constructor(private setupService: SetupService, private apiService: ApiService,  private childCheckinService: ChildCheckinService) {
     this.kioskDetails = new MachineConfiguration();
@@ -71,6 +72,20 @@ export class ChildCheckinComponent implements OnInit {
 
   set selectedEvent(event) {
     this.childCheckinService.selectedEvent = event;
+  }
+
+  setCallNumber(num: string) {
+    if (this.callNumber.length < 4) {
+      this.callNumber = `${this.callNumber}${num}`;
+    }
+  }
+
+  delete(e) {
+    this.callNumber = this.callNumber.slice(0, -1);
+  }
+
+  clear(e) {
+    this.callNumber = '';
   }
 
   public getKioskDetails() {
