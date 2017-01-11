@@ -123,4 +123,17 @@ describe('AdminService', () => {
     });
   });
 
+  describe('#reprint', () => {
+    it('should reprint name tag', () => {
+      let participantEventId = 123;
+
+      (<jasmine.Spy>httpClientService.post).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue({});
+
+      fixture.reprint(participantEventId).subscribe((res) => {
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/participant/${participantEventId}/print`, {});
+      });
+    });
+  });
+
 });

@@ -74,6 +74,12 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  reprint(participantEventId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/participant/${participantEventId}/print`;
+    return this.http.post(url, {}).catch(this.handleError);
+
+  }
+
   private updateRoomGroupsInternal(room: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${room.EventId}/rooms/${room.RoomId}/groups`;
     return this.http.put(url, room)
