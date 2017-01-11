@@ -31,6 +31,8 @@ namespace Crossroads.Utilities.Services
 
         public int GuestHouseholdId { get; set; }
 
+        public int RoomUsageTypeKidsClub { get; set; }
+
         public int KcJan0To1 { get; }
         public int KcJan1To2 { get; }
         public int KcJan2To3 { get; }
@@ -290,6 +292,8 @@ namespace Crossroads.Utilities.Services
             MachineConfigDetails = configurationWrapper.GetConfigValue("MachineConfigDetails");
 
             GuestHouseholdId = configurationWrapper.GetConfigIntValue("GuestHouseholdId");
+
+            RoomUsageTypeKidsClub = configurationWrapper.GetConfigIntValue("RoomUsageTypeKidsClub");
 
             // kc groups - January Birth Months
             KcJan0To1 = configurationWrapper.GetConfigIntValue("Jan_0-1");

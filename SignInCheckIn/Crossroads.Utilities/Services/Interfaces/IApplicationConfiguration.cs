@@ -35,6 +35,8 @@ namespace Crossroads.Utilities.Services.Interfaces
 
         int GuestHouseholdId { get; set; }
 
+        int RoomUsageTypeKidsClub { get; set; }
+
         // groups for new families
         int KcJan0To1 { get; }
         int KcJan1To2 { get; }
