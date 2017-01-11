@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-import { ApiService, SetupService } from '../shared/services';
+import { ApiService, SetupService, RootService } from '../shared/services';
+import { Child } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
 import { Event, MachineConfiguration } from '../shared/models';
@@ -23,10 +24,14 @@ export class ChildCheckinComponent implements OnInit {
   todaysEvents: Event[];
   ready: boolean;
   callNumber: string = '';
+  overrideChild: Child = new Child();
 
-  constructor(private setupService: SetupService, private apiService: ApiService,  private childCheckinService: ChildCheckinService) {
-    this.kioskDetails = new MachineConfiguration();
-    this.ready = false;
+  constructor(private setupService: SetupService,
+    private apiService: ApiService,
+    private childCheckinService: ChildCheckinService,
+    private rootService: RootService) {
+      this.kioskDetails = new MachineConfiguration();
+      this.ready = false;
   }
 
   private getData() {
@@ -75,8 +80,18 @@ export class ChildCheckinComponent implements OnInit {
   }
 
   setCallNumber(num: string) {
+    // set call number
     if (this.callNumber.length < 4) {
       this.callNumber = `${this.callNumber}${num}`;
+    }
+    // if full call number, search child
+    if (this.callNumber.length === 4) {
+      this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId, this.callNumber).subscribe((child: Child) => {
+        this.overrideChild = child;
+      }, (error) => {
+        console.error(error);
+        this.rootService.announceEvent('generalError');
+      });
     }
   }
 
@@ -84,7 +99,7 @@ export class ChildCheckinComponent implements OnInit {
     this.callNumber = this.callNumber.slice(0, -1);
   }
 
-  clear(e) {
+  clear() {
     this.callNumber = '';
   }
 
@@ -96,6 +111,21 @@ export class ChildCheckinComponent implements OnInit {
     this.getData();
     this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
     this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
+  }
+
+  private resetShowChildModal() {
+    this.clear();
+    this.overrideChild = new Child();
+  }
+
+  overrideCheckin() {
+    this.childCheckinService.overrideChildIntoRoom(this.overrideChild, this.selectedEvent.EventId, this.kioskDetails.RoomId)
+      .subscribe((child: Child) => {
+        this.hideChildSearchModal();
+      }, (error) => {
+        console.error(error);
+        this.rootService.announceEvent('generalError');
+      });
   }
 
   public showServiceSelectModal() {
@@ -116,5 +146,6 @@ export class ChildCheckinComponent implements OnInit {
 
   public hideChildSearchModal() {
     this.childSearchModal.hide();
+    this.resetShowChildModal();
   }
 }
