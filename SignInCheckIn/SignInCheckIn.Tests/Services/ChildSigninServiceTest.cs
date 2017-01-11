@@ -29,6 +29,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IGroupLookupRepository> _groupLookupRepository;
         private Mock<IRoomRepository> _roomRepository;
+        private Mock<IConfigRepository> _configRepository;
 
         private ChildSigninService _fixture;
 
@@ -49,11 +50,32 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _groupLookupRepository = new Mock<IGroupLookupRepository>();
             _roomRepository = new Mock<IRoomRepository>();
+            _configRepository = new Mock<IConfigRepository>();
+
+            var mpConfigDtoEarly = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultEarlyCheckIn",
+                Value = "60"
+            };
+
+            var mpConfigDtoLate = new MpConfigDto
+            {
+                ApplicationCode = "COMMON",
+                ConfigurationSettingId = 1,
+                KeyName = "DefaultLateCheckIn",
+                Value = "60"
+            };
+
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
+            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
-                _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object);
+                _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object,
+                _configRepository.Object);
         }
 
         [Test]
@@ -208,15 +230,13 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
-
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
                 EventId = 321,
                 ParentEventId = null,
                 CongregationId = 8,
                 EventTypeId = 123,
-                EventStartDate = currentMpEventDtoStartTime
+                EventStartDate = DateTime.Now
             };
 
             // current service event, current ac event, trailing service event
@@ -364,7 +384,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+            //DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
 
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
@@ -372,7 +392,7 @@ namespace SignInCheckIn.Tests.Services
                 ParentEventId = null,
                 CongregationId = 8,
                 EventTypeId = 123,
-                EventStartDate = currentMpEventDtoStartTime
+                EventStartDate = DateTime.Now
             };
 
             // current service event, current ac event, trailing service event
@@ -461,7 +481,7 @@ namespace SignInCheckIn.Tests.Services
                 CurrentEvent = eventDto
             };
 
-            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
+            //DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
 
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
@@ -469,7 +489,7 @@ namespace SignInCheckIn.Tests.Services
                 ParentEventId = null,
                 CongregationId = 8,
                 EventTypeId = 123,
-                EventStartDate = currentMpEventDtoStartTime
+                EventStartDate = DateTime.Now
             };
 
             // current service event, current ac event, trailing service event
@@ -808,8 +828,8 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
-            var currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
-            var futureMpEventDtoStartTime = new DateTime(2016, 12, 1, 11, 0, 0);
+            var currentMpEventDtoStartTime = DateTime.Now;
+            var futureMpEventDtoStartTime = DateTime.Now.AddHours(2);
 
             var currentMpServiceEventDto = new MpEventDto
             {
@@ -876,8 +896,8 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
-            var currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
-            var futureMpEventDtoStartTime = new DateTime(2016, 12, 1, 11, 0, 0);
+            var currentMpEventDtoStartTime = DateTime.Now;
+            var futureMpEventDtoStartTime = DateTime.Now.AddHours(2);
 
             var currentMpServiceEventDto = new MpEventDto
             {
@@ -944,8 +964,8 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
-            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
-            DateTime futureMpEventDtoStartTime = new DateTime(2016, 12, 1, 11, 0, 0);
+            var currentMpEventDtoStartTime = DateTime.Now;
+            var futureMpEventDtoStartTime = DateTime.Now.AddHours(2);
 
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
@@ -1011,8 +1031,8 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
-            DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
-            
+            var currentMpEventDtoStartTime = DateTime.Now;
+
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
                 EventId = 1234567,
@@ -1192,6 +1212,18 @@ namespace SignInCheckIn.Tests.Services
             // Testing to make sure that the fields were not set against on the non-guest participant
             Assert.AreEqual(participantEventMapDto.Participants[1].GroupId, nonGuestGroupId);
             Assert.AreEqual(participantEventMapDto.Participants[1].ParticipantId, nonGuestParticipantId);
+        }
+
+        [Test]
+        public void ShouldReverseSignin_ParticipantNotCheckedIn()
+        {
+            
+        }
+
+        [Test]
+        public void ShouldNotReverseSignin_ParticipantCheckedIn()
+        {
+
         }
     }
 }

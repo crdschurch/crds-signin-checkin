@@ -91,5 +91,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Checkin_Household_ID")]
         public int? CheckinHouseholdId { get; set; }
+
+        [JsonProperty("End_Date")]
+        public DateTime EndDate { get; set; }
     }
 }

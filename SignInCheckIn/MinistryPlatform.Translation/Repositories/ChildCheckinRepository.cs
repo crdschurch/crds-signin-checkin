@@ -32,7 +32,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        SearchTable<MpParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Room_ID_Table.[Room_ID] = {roomId}", columnList);
+                        SearchTable<MpParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Room_ID_Table.[Room_ID] = {roomId} AND Event_Participants.End_Date IS NULL", columnList);
         }
 
         public void CheckinChildrenForCurrentEventAndRoom(int checkinStatusId, int eventParticipantId)
