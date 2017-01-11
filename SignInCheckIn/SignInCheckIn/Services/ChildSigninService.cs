@@ -324,7 +324,34 @@ namespace SignInCheckIn.Services
 
         public ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier, string token)
         {
-            
+            var participantEventMapDto = GetParticipantEventMapDtoByEventParticipant(eventParticipantId, token);
+            return PrintParticipants(participantEventMapDto, kioskIdentifier);
+        }
+
+        private ParticipantEventMapDto GetParticipantEventMapDtoByEventParticipant(int eventParticipantId, string token)
+        {
+            // Get participant from event participant id
+            var participants = new List<ParticipantDto>();
+            var participant = Mapper.Map<ParticipantDto>(_participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId));
+            participant.Selected = true;
+            participants.Add(participant);
+
+            // Get event from participants event id
+            var currentEvent = _eventService.GetEvent(participant.EventId);
+
+            // Get Contact records of Heads of Household
+            var headOfHouseholds = new List<ContactDto>();
+            if (participant.CheckinHouseholdId.HasValue)
+            {
+                headOfHouseholds = _contactRepository.GetHeadsOfHouseholdByHouseholdId(participant.CheckinHouseholdId.Value).Select(Mapper.Map<ContactDto>).ToList();
+            }
+
+            return new ParticipantEventMapDto
+            {
+                Participants = participants,
+                CurrentEvent = currentEvent,
+                Contacts = headOfHouseholds
+            };
         }
 
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
