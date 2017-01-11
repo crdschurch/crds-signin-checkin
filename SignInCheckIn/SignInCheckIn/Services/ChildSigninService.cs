@@ -315,6 +315,11 @@ namespace SignInCheckIn.Services
             }
         }
 
+        public ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier, string token)
+        {
+            
+        }
+
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
         {
             var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
