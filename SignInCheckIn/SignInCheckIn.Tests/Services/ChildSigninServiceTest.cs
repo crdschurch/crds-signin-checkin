@@ -1213,5 +1213,17 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(participantEventMapDto.Participants[1].GroupId, nonGuestGroupId);
             Assert.AreEqual(participantEventMapDto.Participants[1].ParticipantId, nonGuestParticipantId);
         }
+
+        [Test]
+        public void ShouldReverseSignin_ParticipantNotCheckedIn()
+        {
+            
+        }
+
+        [Test]
+        public void ShouldNotReverseSignin_ParticipantCheckedIn()
+        {
+
+        }
     }
 }

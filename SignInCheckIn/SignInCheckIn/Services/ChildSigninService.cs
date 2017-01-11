@@ -606,5 +606,29 @@ namespace SignInCheckIn.Services
                 guest.Selected = true;
             }
         }
+
+        public void ReverseSignin(string token, int eventParticipantId)
+        {
+            // load the event participant, check their status
+            var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId);
+
+            if (mpEventParticipantDto.ParticipantStatusId == _applicationConfiguration.CheckedInParticipationStatusId)
+            {
+                throw new Exception($"Event participant {eventParticipantId} is already checked in to a room and " +
+                                    "cannot be signed out.");
+            }
+            else
+            {
+                mpEventParticipantDto.ParticipantStatusId = _applicationConfiguration.CancelledParticipationStatusId;
+                mpEventParticipantDto.EndDate = DateTime.Now;
+
+                List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+                {
+                    mpEventParticipantDto
+                };
+
+                _participantRepository.UpdateEventParticipants(mpEventParticipantDtos);
+            }
+        }
     }
 }
