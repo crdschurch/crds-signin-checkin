@@ -15,6 +15,7 @@ import { ChildCheckinService } from './child-checkin.service';
 export class ChildCheckinComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
   @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
+  @ViewChild('childSearchModal') public childSearchModal: ModalDirective;
   private kioskDetails: MachineConfiguration;
 
   clock = Observable.interval(10000).map(() => new Date());
@@ -92,5 +93,13 @@ export class ChildCheckinComponent implements OnInit {
 
   public showChildDetailModal() {
     this.childDetailModal.show();
+  }
+
+  public showChildSearchModal() {
+    this.childSearchModal.show();
+  }
+
+  public hideChildSearchModal() {
+    this.childSearchModal.hide();
   }
 }

@@ -33,28 +33,30 @@
 
   <div class="main text-xs-center">
     <router-outlet></router-outlet>
-  </div><!--/main-->
+  </div>
 
   <footer class="footer py-1 sticky-footer">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 text-xs-left">
-          <a (click)="showServiceSelectModal()" class="btn btn-primary btn-block"  [ngClass]="{'disabled': !selectedEvent }">
-            <span [hidden]="ready">...</span>
-            <span [hidden]="!ready">
-              <span [hidden]="!selectedEvent">
-                Viewing: {{selectedEvent?.EventStartDate | amDateFormat :'dddd'}}&nbsp;{{selectedEvent?.EventStartDate | amDateFormat :'h:mma'}}
-              </span>
-              <span [hidden]="selectedEvent">
-                No Events Today
-              </span>
+      <div>
+        <a (click)="showServiceSelectModal()" class="btn btn-primary float-md-left"  [ngClass]="{'disabled': !selectedEvent }">
+          <span [hidden]="ready">...</span>
+          <span [hidden]="!ready">
+            <span [hidden]="!selectedEvent">
+              Viewing: {{selectedEvent?.EventStartDate | amDateFormat :'dddd'}}&nbsp;{{selectedEvent?.EventStartDate | amDateFormat :'h:mma'}}
             </span>
-          </a>
-        </div>
+            <span [hidden]="selectedEvent">
+              No Events Today
+            </span>
+          </span>
+        </a>
+        <a (click)="showChildSearchModal()" class="btn btn-primary float-md-right"  [ngClass]="{'disabled': !selectedEvent }">
+          <span>
+            Child Number Search
+          </span>
+        </a>
       </div>
     </div>
   </footer>
-
 </div>
 
 
@@ -79,7 +81,25 @@
             No events today
           </div>
         </div>
-      </div><!--/modal-body-->
-    </div><!--/modal-content-->
-  </div><!--/modal-dialog-->
-</div><!--/modal-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #childSearchModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="childSearchModal" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <button type="button" class="close mr-1 mt-1" (click)="hideChildSearchModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="modal-body pt-3 pb-3">
+        <h5 class="mb-3 text-xs-center">
+          Type in the child's call number below.
+        </h5>
+        <div class="row mx-1">
+          blahblah
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
