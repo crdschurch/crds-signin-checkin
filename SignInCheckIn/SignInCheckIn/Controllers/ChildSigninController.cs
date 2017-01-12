@@ -147,8 +147,17 @@ namespace SignInCheckIn.Controllers
             {
                 try
                 {
-                    _childSigninService.ReverseSignin(token, eventparticipantid);
-                    return Ok();
+                    var reserveSuccess = _childSigninService.ReverseSignin(token, eventparticipantid);
+
+                    if (reserveSuccess == true)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        //throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                        return Conflict();
+                    }
                 }
                 catch (Exception e)
                 {

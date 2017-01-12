@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Web.Http;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
@@ -607,15 +608,14 @@ namespace SignInCheckIn.Services
             }
         }
 
-        public void ReverseSignin(string token, int eventParticipantId)
+        public bool ReverseSignin(string token, int eventParticipantId)
         {
             // load the event participant, check their status
             var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId);
 
             if (mpEventParticipantDto.ParticipantStatusId == _applicationConfiguration.CheckedInParticipationStatusId)
             {
-                throw new Exception($"Event participant {eventParticipantId} is already checked in to a room and " +
-                                    "cannot be signed out.");
+                return false;
             }
             else
             {
@@ -628,6 +628,8 @@ namespace SignInCheckIn.Services
                 };
 
                 _participantRepository.UpdateEventParticipants(mpEventParticipantDtos);
+
+                return true;
             }
         }
     }
