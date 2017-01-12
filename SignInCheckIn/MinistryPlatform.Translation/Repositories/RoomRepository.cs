@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -9,15 +10,18 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
+        private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly List<string> _eventRoomColumns;
         private readonly List<string> _roomColumnList;
         private readonly List<string> _bumpingRuleColumns; 
 
         public RoomRepository(IApiUserRepository apiUserRepository,
-            IMinistryPlatformRestRepository ministryPlatformRestRepository)
+            IMinistryPlatformRestRepository ministryPlatformRestRepository,
+            IApplicationConfiguration applicationConfiguration)
         {
             _apiUserRepository = apiUserRepository;
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
+            _applicationConfiguration = applicationConfiguration;
 
             _eventRoomColumns = new List<string>
             {
@@ -53,25 +57,26 @@ namespace MinistryPlatform.Translation.Repositories
         public List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
+            var roomUsageTypeKidsClub = _applicationConfiguration.RoomUsageTypeKidsClub;
 
             var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
+                .Search<MpRoomDto>("Room_Usage_Type_ID_Table.[Room_Usage_Type_ID] = " + roomUsageTypeKidsClub + " AND Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
 
             var eventRoomColumnList = new List<string>
             {
                 "Event_Room_ID",
                 "Event_ID",
-                "Room_ID",
+                "Event_Rooms.Room_ID",
                 "Capacity",
                 "Volunteers",
                 "Allow_CheckIn",
-                "[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 3) AS Signed_In",
-                "[dbo].crds_getEventParticipantStatusCount(Event_ID, Room_ID, 4) AS Checked_In"
+                "[dbo].crds_getEventParticipantStatusCount(Event_ID, Event_Rooms.Room_ID, 3) AS Signed_In",
+                "[dbo].crds_getEventParticipantStatusCount(Event_ID, Event_Rooms.Room_ID, 4) AS Checked_In"
             };
 
             var eventRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpEventRoomDto>("Event_ID=" + eventId, eventRoomColumnList);
-
+                .Search<MpEventRoomDto>("Room_ID_Table.[Room_Usage_Type_ID] = " + roomUsageTypeKidsClub + " AND Event_ID =" + eventId, eventRoomColumnList);
+           
             foreach (var room in rooms)
             {
                 // populate the room data on an existing room event, or add a new event room dto for that room in the return call

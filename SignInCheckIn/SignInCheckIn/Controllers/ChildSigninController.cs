@@ -177,8 +177,16 @@ namespace SignInCheckIn.Controllers
             {
                 try
                 {
-                    _childSigninService.ReverseSignin(token, eventparticipantid);
-                    return Ok();
+                    var reverseSuccess = _childSigninService.ReverseSignin(token, eventparticipantid);
+
+                    if (reverseSuccess == true)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return Conflict();
+                    }
                 }
                 catch (Exception e)
                 {
