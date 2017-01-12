@@ -35,6 +35,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty("Time_Out")]
         public DateTime? TimeOut { get; set; } = null;
 
+        [JsonProperty("Date_of_Birth")]
+        public DateTime? DateOfBirth { get; set; } = null;
+
         [JsonProperty("Notes")]
         public int Notes { get; set; }
 
@@ -46,6 +49,9 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Group_ID")]
         public int? GroupId { get; set; }
+
+        [JsonProperty("Group_Name")]
+        public string GroupName { get; set; }
 
         [JsonProperty("Room_ID")]
         public int? RoomId { get; set; }

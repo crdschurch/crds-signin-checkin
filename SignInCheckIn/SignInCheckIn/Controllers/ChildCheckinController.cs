@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
+using SignInCheckIn.ApiVersioning.Attributes;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
@@ -61,5 +62,43 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpGet]
+        [ResponseType(typeof(ParticipantDto))]
+        [Route("checkin/events/{eventid}/child/{callNumber}")]
+        public IHttpActionResult GetEventParticipantByCallNumber(
+             [FromUri(Name = "eventId")] int eventId,
+             [FromUri(Name = "callNumber")] int callNumber)
+        {
+            try
+            {
+                var child = _childCheckinService.GetEventParticipantByCallNumber(eventId, callNumber);
+                return Ok(child);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Get Event Participant by Call Number", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        /*
+        [HttpPut]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("/checkin/events/${eventId}/child/${child.EventParticipantId}/override/${roomId}")]
+        public IHttpActionResult OverrideChildIntoRoom(ParticipantDto participant)
+        {
+            try
+            {
+                var child = _childCheckinService.CheckinChildrenForCurrentEventAndRoom(participant);
+                return Ok(child);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Checking in Children", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+        */
     }
 }

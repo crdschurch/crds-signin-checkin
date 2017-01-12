@@ -7,5 +7,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         List<MpParticipantDto> GetChildrenByEventAndRoom(int eventId, int roomId);
         void CheckinChildrenForCurrentEventAndRoom(int checkinStatusId, int eventParticipantId);
+        MpEventParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber);
     }
 }

@@ -6,5 +6,6 @@ namespace SignInCheckIn.Services.Interfaces
     {
         ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId);
         ParticipantDto CheckinChildrenForCurrentEventAndRoom(ParticipantDto eventParticipant);
+        ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber);
     }
 }

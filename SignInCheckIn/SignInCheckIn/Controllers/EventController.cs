@@ -162,7 +162,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(EventRoomDto))]
-        [Route("events/{eventId:int}/eventmaps")]
+        [Route("events/{eventId:int}/maps")]
         public IHttpActionResult GetEventsAndSubEvents([FromUri] int eventId)
         {
             try
