@@ -23,9 +23,8 @@ namespace SignInCheckIn.Models.DTO
         public string AssignedRoomName { get; set; }
         public int? AssignedSecondaryRoomId { get; set; } // adventure club field
         public string AssignedSecondaryRoomName { get; set; } // adventure club field
+        public string GroupName { get; set; }
         public DateTime? TimeIn { get; set; } = null;
-
-        [JsonIgnore]
         public DateTime? TimeConfirmed { get; set; } = null;
         [JsonIgnore]
         public DateTime? TimeOut { get; set; } = null;
