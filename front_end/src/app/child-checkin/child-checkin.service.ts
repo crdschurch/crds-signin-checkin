@@ -46,29 +46,24 @@ export class ChildCheckinService {
                     .catch(this.handleError);
   }
 
-  getChildByCallNumber(eventId: number, callNumber: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${callNumber}`;
+  getChildByCallNumber(eventId: number, callNumber: string, roomId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${callNumber}/rooms/${roomId}`;
     return this.http.get(url)
                     .map(res => {
-                      console.log('success', res);
                       return Child.fromJson(res.json());
                     }).catch(e => {
-                      console.log('e', e);
                       return Observable.throw(e);
                     });
   }
 
   overrideChildIntoRoom(child: Child, eventId: number, roomId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/override/${roomId}`;
-
-    // TODO remove when backend ready
-    return Observable.of(Child.fromJson({FirstName: 'Bobb', EventParticipantId: 890234}))
-    // return this.http.put(url, {})
-    //                 .map(res => {
-    //                   console.log('success', res);
-    //                 }).catch(e => {
-    //                   console.log('e', e);
-    //                 });
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/rooms/${roomId}/override`;
+    return this.http.put(url, {})
+                    .map(res => {
+                      return Observable.of();
+                    }).catch(e => {
+                      return Observable.throw(e.json().errors[0]);
+                    });
   }
 
   get selectedEvent(): Event {
