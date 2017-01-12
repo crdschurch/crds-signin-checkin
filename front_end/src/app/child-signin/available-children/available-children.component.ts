@@ -193,7 +193,7 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  needGradeLevel(): boolean {
-   return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(4, 'y'));
+   return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
  }
 
 }
