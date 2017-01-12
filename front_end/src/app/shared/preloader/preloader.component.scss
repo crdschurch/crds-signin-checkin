@@ -1,8 +1,16 @@
 $spinnerHeight: 80px;
 
 .preloader-wrapper {
-  &:not(.fullscreen) {
+  &:not(.fullscreen):not(.overlay) {
     margin-top: 100px;
+  }
+  &.overlay {
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,.2);
+    position: absolute;
+    z-index: 3;
+    padding-top: 100px;
   }
   &.fullscreen {
     width: 100%;

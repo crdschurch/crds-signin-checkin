@@ -90,6 +90,7 @@
 <div bsModal #childSearchModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="childSearchModal" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
+      <preloader *ngIf="searchChildProcessing" [overlay]="true"></preloader>
       <button type="button" class="close mr-1 mt-1" (click)="hideChildSearchModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -105,39 +106,44 @@
       </div>
 
       <div class="modal-body p-3 step-2" [hidden]="!overrideChild.EventParticipantId">
-        <h3 class="mb-1 text-xs-left">
-          #8497
+        <h3 class="mb-1 text-xs-left display-4">
+          #{{overrideChild.CallNumber}}
         </h3>
         <div>
-          <h4>John Edmonds</h4>
+          <h3>{{overrideChild.name()}}</h3>
           <ul class="list-unstyled">
+            <li><br></li>
             <li>
               <b>Classroom:</b>
-              <span>Ones &amp; Twos D (K113)</span>
+              <span>{{overrideChild.AssignedRoomName}}</span>
             </li>
+            <li><br></li>
             <li>
               <b>Birthdate:</b>
-              <span>3/1/2013</span>
+              <span>{{overrideChild.DateOfBirth| amDateFormat: 'M-DD-YYYY'}}</span>
             </li>
             <li>
-              <b>Grade:</b>
-              <span>N/A</span>
+              <b>Group:</b>
+              <span>{{overrideChild.GroupName}}</span>
             </li>
+            <li><br></li>
             <li>
               <b>Guardians:</b>
-              <span>Joe &amp; Heather Edmonds (513-435-6666)</span>
+              <span *ngFor="let h of this.overrideChild.HeadsOfHousehold">
+                {{h.Nickname}} {{h.LastName}} ({{h.MobilePhone}})<br>
+              </span>
             </li>
             <li>
               <b>Household Phone:</b>
-              <span>513-435-6666</span>
+              <span>{{overrideChild.CheckinPhone}}</span>
             </li>
             <li>
               <b>Time signed in:</b>
-              <span>3:27 PM</span>
+              <span>{{overrideChild.TimeIn | amDateFormat :'h:mma'}}</span>
             </li>
             <li>
               <b>Time checked in:</b>
-              <span>5:27 PM</span>
+              <span>{{overrideChild.TimeConfirmed | amDateFormat :'h:mma'}}</span>
             </li>
           </ul>
         </div>
