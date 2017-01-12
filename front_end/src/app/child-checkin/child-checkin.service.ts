@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 import { RoomComponent } from './room';
 import { HttpClientService } from '../shared/services';
@@ -12,9 +13,15 @@ export class ChildCheckinService {
   private _roomSetUpFunc: Function;
   private _selectedEvent: Event;
   private url: string = '';
+  private forceChildReloadSource = new Subject<string>();
+  forceChildReload$ = this.forceChildReloadSource.asObservable();
 
   constructor(private http: HttpClientService) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/checkin`;
+  }
+
+  forceChildReload() {
+    this.forceChildReloadSource.next();
   }
 
   getChildrenForRoom(roomId: number, eventId: number = null) {
