@@ -12,11 +12,13 @@ namespace SignInCheckIn.Services
     public class ChildCheckinService : IChildCheckinService
     {
         private readonly IChildCheckinRepository _childCheckinRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IEventService _eventService;
 
-        public ChildCheckinService(IChildCheckinRepository childCheckinRepository, IEventService eventService)
+        public ChildCheckinService(IChildCheckinRepository childCheckinRepository, IContactRepository contactRepository, IEventService eventService)
         {
             _childCheckinRepository = childCheckinRepository;
+            _contactRepository = contactRepository;
             _eventService = eventService;
         }
 
@@ -39,6 +41,14 @@ namespace SignInCheckIn.Services
         {
             _childCheckinRepository.CheckinChildrenForCurrentEventAndRoom(eventParticipant.ParticipationStatusId, eventParticipant.EventParticipantId);
             return eventParticipant;
+        }
+
+        public ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber)
+        {
+            var mpEventParticipant = _childCheckinRepository.GetEventParticipantByCallNumber(eventId, callNumber);
+            mpEventParticipant.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(mpEventParticipant.CheckinHouseholdId.Value);
+            var participant = Mapper.Map<MpEventParticipantDto, ParticipantDto>(mpEventParticipant);
+            return participant;
         }
     }
 }
