@@ -62,7 +62,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_Participants.Call_Number",
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
-                "dp_Created.Date_Time as Time_In",
+                "Time_In",
                 "Event_Participants.Checkin_Household_ID",
                 "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
             };

@@ -1278,5 +1278,84 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(result, false);
             Assert.AreEqual(mpEventParticipantDto.ParticipantStatusId, checkedInParticipantStatusId);
         }
+
+        [Test]
+        public void ShouldReprintEventParticipantTag()
+        {
+            var token = "abcd";
+            var kioskId = "1a11a1a1-a11a-1a1a-11a1-a111a111a11a";
+
+            var participant = new MpEventParticipantDto
+            {
+                EventId = 123,
+                EventParticipantId = 765,
+                FirstName = "Test",
+                LastName = "User",
+                CheckinHouseholdId = 4
+            };
+
+            var contacts = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    HouseholdId = 4,
+                    FirstName = "Dad",
+                    LastName = "Hello"
+                },
+                new MpContactDto
+                {
+                    HouseholdId = 4,
+                    FirstName = "Mom",
+                    LastName = "Hello"
+                }
+            };
+
+            var currentEvent = new EventDto
+            {
+                EventId = 123,
+                EventTitle = "this test"
+            };
+
+            var mpKioskConfigDto = new MpKioskConfigDto
+            {
+                KioskIdentifier = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a"),
+                CongregationId = 1,
+                PrinterMapId = 1111111
+            };
+
+            var mpPrinterMapDto = new MpPrinterMapDto
+            {
+                PrinterMapId = 1111111
+            };
+
+            _participantRepository.Setup(m => m.GetEventParticipantByEventParticipantId(token, 765)).Returns(participant);
+            _eventService.Setup(m => m.GetEvent(123)).Returns(currentEvent);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(4)).Returns(contacts);
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+            _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
+            _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns("");
+            _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1);
+
+
+            var participantEventMapDto = _fixture.PrintParticipant(765, "1a11a1a1-a11a-1a1a-11a1-a111a111a11a", "abcd");
+
+            Assert.AreEqual(participantEventMapDto.Participants.Count, 1);
+            Assert.AreEqual(participantEventMapDto.Participants[0].EventId, participant.EventId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].EventParticipantId, participant.EventParticipantId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].FirstName, participant.FirstName);
+            Assert.AreEqual(participantEventMapDto.Participants[0].LastName, participant.LastName);
+            Assert.AreEqual(participantEventMapDto.Participants[0].CheckinHouseholdId, participant.CheckinHouseholdId);
+
+            Assert.AreEqual(participantEventMapDto.Contacts.Count, 2);
+            Assert.AreEqual(participantEventMapDto.Contacts[0].HouseholdId, contacts[0].HouseholdId);
+            Assert.AreEqual(participantEventMapDto.Contacts[0].FirstName, contacts[0].FirstName);
+            Assert.AreEqual(participantEventMapDto.Contacts[0].LastName, contacts[0].LastName);
+            Assert.AreEqual(participantEventMapDto.Contacts[1].HouseholdId, contacts[1].HouseholdId);
+            Assert.AreEqual(participantEventMapDto.Contacts[1].FirstName, contacts[1].FirstName);
+            Assert.AreEqual(participantEventMapDto.Contacts[1].LastName, contacts[1].LastName);
+
+            Assert.AreEqual(participantEventMapDto.CurrentEvent.EventId, currentEvent.EventId);
+            Assert.AreEqual(participantEventMapDto.CurrentEvent.EventTitle, currentEvent.EventTitle);
+        }
     }
 }
