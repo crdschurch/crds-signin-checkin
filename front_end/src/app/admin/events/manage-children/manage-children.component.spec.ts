@@ -38,7 +38,7 @@ describe('ManageChildrenComponent', () => {
 
   // describe('#ngOnInit', () => {
   //   // TODO: Implement...
-  //(<jasmine.Spy>(adminService.getChildrenForEvent)).and.returnValue(Observable.of(children));
+  // (<jasmine.Spy>(adminService.getChildrenForEvent)).and.returnValue(Observable.of(children));
   // });
 
   describe('#reverseSignin', () => {
