@@ -1,4 +1,5 @@
-﻿using SignInCheckIn.Models.DTO;
+﻿using System;
+using SignInCheckIn.Models.DTO;
 
 namespace SignInCheckIn.Services.Interfaces
 {
@@ -6,6 +7,7 @@ namespace SignInCheckIn.Services.Interfaces
     {
         ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId);
         ParticipantDto CheckinChildrenForCurrentEventAndRoom(ParticipantDto eventParticipant);
-        ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber);
+        ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId);
+        Boolean OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId);
     }
 }

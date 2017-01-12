@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -10,11 +11,13 @@ namespace MinistryPlatform.Translation.Repositories
     {
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildCheckinRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository)
+        public ChildCheckinRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IApplicationConfiguration applicationConfiguration)
         {
             _apiUserRepository = apiUserRepository;
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
+            _applicationConfiguration = applicationConfiguration;
         }
 
         public List<MpParticipantDto> GetChildrenByEventAndRoom(int eventId, int roomId)
@@ -61,20 +64,15 @@ namespace MinistryPlatform.Translation.Repositories
                 "Participation_Status_ID_Table.Participation_Status_ID",
                 "Group_ID_Table.Group_Name"
             };
-            /* TODO
-             Age / Grade group assignment
-             Head of Household first & last name(s)
-             Head of Household phone number(s)
-            */
 
+            var checkedInParticipationStatusId = _applicationConfiguration.CheckedInParticipationStatusId;
             List<MpEventParticipantDto> participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                         SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Event_Participants.[Call_Number] = {callNumber}", columnList);
             if (participants.Any())
             {
                 return participants.First();
             }
-
-            throw new Exception("No Event Participants by call number: " + callNumber);
+            return null;
         }
 
         public void CheckinChildrenForCurrentEventAndRoom(int checkinStatusId, int eventParticipantId)
@@ -85,6 +83,19 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 { "Event_Participant_ID", eventParticipantId },
                 { "Participation_Status_ID", checkinStatusId }
+            };
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).UpdateRecord("Event_Participants", eventParticipantId, updateObject);
+        }
+
+        public void OverrideChildIntoRoom(int eventParticipantId, int roomId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            var updateObject = new Dictionary<string, object>
+            {
+                { "Event_Participant_ID", eventParticipantId },
+                { "Room_ID", roomId }
             };
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).UpdateRecord("Event_Participants", eventParticipantId, updateObject);
