@@ -74,31 +74,41 @@ namespace SignInCheckIn.Services
             // Get the EventRoom, or the Room if no EventRoom
             var selectedEventRoom = GetEventRoom(authenticationToken, eventId, roomId);
 
+            // Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
+
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
             var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
             var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
 
+            // Get All the Event Groups Assigned to this room for this event
+            return GetEventRoomAgeAndGradeGroups(authenticationToken, selectedEventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+        }
+
+        private EventRoomDto GetEventRoomAgeAndGradeGroups(string authenticationToken, EventRoomDto eventRoom, List<MpEventGroupDto> eventGroups, 
+            IEnumerable<MpAttributeDto> ages, IEnumerable<MpAttributeDto> grades, List<MpAttributeDto> birthMonths, List<MpAttributeDto> nurseryMonths)
+        {
             // Frontend wants months like "Jan" and "Feb", not "January" and "February" - trim them down here, but we may want to move this to frontend in the future
             birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
             // Get current event groups with a room reservation for this room
-            var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, selectedEventRoom.EventId, roomId);
+            var eventRoomGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventGroups, eventRoom.RoomId);
 
             var agesAndGrades = new List<AgeGradeDto>();
 
             // Add age ranges (including selected groups) to the response
-            agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventGroups));
+            agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventRoomGroups));
 
             var maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
 
             // Add grade ranges (including selected groups) to the response
-            agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
+            agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventRoomGroups, maxSort));
 
-            selectedEventRoom.AssignedGroups = agesAndGrades;
+            eventRoom.AssignedGroups = agesAndGrades;
 
-            return selectedEventRoom;
+            return eventRoom;
         }
 
         public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)
@@ -121,9 +131,10 @@ namespace SignInCheckIn.Services
 
             // this will need to be updated once we're looking at subevents other than AC events,
             // as part of the refactor
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
             foreach (var eventItem in events)
             {
-                var eventGroups = GetEventGroupsWithRoomReservationForEvent(token, eventItem.EventId, roomId);
+                eventGroups = GetEventGroupsWithRoomReservationForEvent(token, eventGroups, roomId);
 
                 // if there are any event groups on the event, that is the "active"
                 // event or subevent for that room
@@ -164,9 +175,8 @@ namespace SignInCheckIn.Services
             return returnRoomDto;
         }
 
-        private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, int eventId, int roomId)
+        private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, List<MpEventGroupDto> eventGroups, int roomId)
         {
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
             if (eventGroups.Any())
             {
                 eventGroups = eventGroups.FindAll(e => e.HasRoomReservation() && e.RoomReservation.RoomId == roomId);
