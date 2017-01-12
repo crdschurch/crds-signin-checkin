@@ -28,6 +28,7 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Event_ID_Table.Event_ID",
                 "Room_ID_Table.Room_ID",
+                "Event_Participants.Call_Number",
                 "Event_Participants.Event_Participant_ID",
                 "Participant_ID_Table.Participant_ID",
                 "Participant_ID_Table_Contact_ID_Table.Contact_ID",
@@ -65,7 +66,6 @@ namespace MinistryPlatform.Translation.Repositories
                 "Group_ID_Table.Group_Name"
             };
 
-            var checkedInParticipationStatusId = _applicationConfiguration.CheckedInParticipationStatusId;
             List<MpEventParticipantDto> participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                         SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Event_Participants.[Call_Number] = {callNumber}", columnList);
             if (participants.Any())
@@ -95,6 +95,7 @@ namespace MinistryPlatform.Translation.Repositories
             var updateObject = new Dictionary<string, object>
             {
                 { "Event_Participant_ID", eventParticipantId },
+                { "Participation_Status_ID", _applicationConfiguration.CheckedInParticipationStatusId },
                 { "Room_ID", roomId }
             };
 
