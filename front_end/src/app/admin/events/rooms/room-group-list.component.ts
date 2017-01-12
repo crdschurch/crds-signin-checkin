@@ -24,6 +24,7 @@ export class RoomGroupListComponent implements OnInit {
   isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
+  isDirty: boolean = false;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -130,6 +131,11 @@ export class RoomGroupListComponent implements OnInit {
   ngOnInit() {
     this.getData();
     this.openTabIfAlternateRoomsHash();
+  }
+
+  setDirty(theValue) {
+    this.isDirty;
+    debugger;
   }
 
 }
