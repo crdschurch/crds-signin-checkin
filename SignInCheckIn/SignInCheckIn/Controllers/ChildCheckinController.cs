@@ -63,17 +63,27 @@ namespace SignInCheckIn.Controllers
             }
         }
 
+
         [HttpGet]
         [ResponseType(typeof(ParticipantDto))]
-        [Route("checkin/events/{eventid}/child/{callNumber}")]
+        [Route("checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}")]
         public IHttpActionResult GetEventParticipantByCallNumber(
              [FromUri(Name = "eventId")] int eventId,
-             [FromUri(Name = "callNumber")] int callNumber)
+             [FromUri(Name = "callNumber")] int callNumber,
+             [FromUri(Name = "roomId")] int roomId)
         {
             try
             {
-                var child = _childCheckinService.GetEventParticipantByCallNumber(eventId, callNumber);
-                return Ok(child);
+                var child = _childCheckinService.GetEventParticipantByCallNumber(eventId, callNumber, roomId);
+                if (child != null)
+                {
+                    return Ok(child);
+                }
+                else
+                {
+                    return NotFound();
+                }
+                
             }
             catch (Exception e)
             {
@@ -82,16 +92,18 @@ namespace SignInCheckIn.Controllers
             }
         }
 
-        /*
         [HttpPut]
-        [ResponseType(typeof(ParticipantEventMapDto))]
-        [Route("/checkin/events/${eventId}/child/${child.EventParticipantId}/override/${roomId}")]
-        public IHttpActionResult OverrideChildIntoRoom(ParticipantDto participant)
+        [ResponseType(typeof(Boolean))]
+        [Route("checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override")]
+        public IHttpActionResult OverrideChildIntoRoom(
+             [FromUri(Name = "eventId")] int eventId,
+             [FromUri(Name = "eventParticipantId")] int eventParticipantId,
+             [FromUri(Name = "roomId")] int roomId)
         {
             try
             {
-                var child = _childCheckinService.CheckinChildrenForCurrentEventAndRoom(participant);
-                return Ok(child);
+                Boolean b = _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
+                return Ok(b);
             }
             catch (Exception e)
             {
@@ -99,6 +111,5 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
-        */
     }
 }
