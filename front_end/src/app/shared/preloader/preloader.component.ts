@@ -7,11 +7,16 @@ import { Component, Input } from '@angular/core';
 })
 export class PreloaderComponent {
   @Input() fullscreen: boolean = false;
+  @Input() overlay: boolean = false;
 
   constructor() {
   }
 
   public isFullscreen(): boolean {
     return this.fullscreen;
+  }
+
+  public isOverlay(): boolean {
+    return this.overlay;
   }
 }

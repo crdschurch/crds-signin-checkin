@@ -7,6 +7,9 @@ import { Observable } from 'rxjs/Observable';
 import { Event, MachineConfiguration } from '../shared/models';
 import { ChildCheckinService } from './child-checkin.service';
 
+// new content block names
+//  checkinOverrideSuccess checkinOverrideRoomCapacityError checkinOverrideRoomClosedError
+
 @Component({
   selector: 'child-checkin',
   templateUrl: 'child-checkin.component.html',
@@ -23,6 +26,7 @@ export class ChildCheckinComponent implements OnInit {
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
+  searchChildProcessing: boolean;
   callNumber: string = '';
   overrideChild: Child = new Child();
 
@@ -32,6 +36,7 @@ export class ChildCheckinComponent implements OnInit {
     private rootService: RootService) {
       this.kioskDetails = new MachineConfiguration();
       this.ready = false;
+      this.searchChildProcessing = false;
   }
 
   private getData() {
@@ -86,11 +91,21 @@ export class ChildCheckinComponent implements OnInit {
     }
     // if full call number, search child
     if (this.callNumber.length === 4) {
+      this.searchChildProcessing = true;
       this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId, this.callNumber).subscribe((child: Child) => {
         this.overrideChild = child;
+        this.searchChildProcessing = false;
       }, (error) => {
-        console.error(error);
-        this.rootService.announceEvent('generalError');
+        switch (error.status) {
+          case 404:
+            this.rootService.announceEvent('checkinChildNotFound');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+        }
+        this.callNumber = '';
+        this.searchChildProcessing = false;
       });
     }
   }
