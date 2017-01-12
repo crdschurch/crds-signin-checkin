@@ -90,7 +90,7 @@
 <div bsModal #childSearchModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="childSearchModal" aria-hidden="true">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
-      <preloader *ngIf="searchChildProcessing" [overlay]="true"></preloader>
+      <preloader *ngIf="isOverrideProcessing" [overlay]="true"></preloader>
       <button type="button" class="close mr-1 mt-1" (click)="hideChildSearchModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -131,9 +131,9 @@
             <li><br></li>
             <li>
               <b>Guardians:</b>
-              <span *ngFor="let h of this.overrideChild.HeadsOfHousehold">
-                {{h.Nickname}} {{h.LastName}} ({{h.MobilePhone}})<br>
-              </span>
+              <ul>
+                <li *ngFor="let h of this.overrideChild.HeadsOfHousehold">{{h.Nickname}} {{h.LastName}} ({{h.MobilePhone}})<br></li>
+              </ul>
             </li>
             <li>
               <b>Household Phone:</b>

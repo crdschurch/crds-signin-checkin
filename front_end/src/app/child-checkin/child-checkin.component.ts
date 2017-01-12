@@ -7,9 +7,6 @@ import { Observable } from 'rxjs/Observable';
 import { Event, MachineConfiguration } from '../shared/models';
 import { ChildCheckinService } from './child-checkin.service';
 
-// new content block names
-//  checkinOverrideSuccess checkinOverrideRoomCapacityError checkinOverrideRoomClosedError
-
 @Component({
   selector: 'child-checkin',
   templateUrl: 'child-checkin.component.html',
@@ -26,7 +23,7 @@ export class ChildCheckinComponent implements OnInit {
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
-  searchChildProcessing: boolean;
+  isOverrideProcessing: boolean;
   callNumber: string = '';
   overrideChild: Child = new Child();
 
@@ -36,7 +33,7 @@ export class ChildCheckinComponent implements OnInit {
     private rootService: RootService) {
       this.kioskDetails = new MachineConfiguration();
       this.ready = false;
-      this.searchChildProcessing = false;
+      this.isOverrideProcessing = false;
   }
 
   private getData() {
@@ -84,32 +81,6 @@ export class ChildCheckinComponent implements OnInit {
     this.childCheckinService.selectedEvent = event;
   }
 
-  setCallNumber(num: string) {
-    // set call number
-    if (this.callNumber.length < 4) {
-      this.callNumber = `${this.callNumber}${num}`;
-    }
-    // if full call number, search child
-    if (this.callNumber.length === 4) {
-      this.searchChildProcessing = true;
-      this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId, this.callNumber).subscribe((child: Child) => {
-        this.overrideChild = child;
-        this.searchChildProcessing = false;
-      }, (error) => {
-        switch (error.status) {
-          case 404:
-            this.rootService.announceEvent('checkinChildNotFound');
-            break;
-          default:
-            this.rootService.announceEvent('generalError');
-            break;
-        }
-        this.callNumber = '';
-        this.searchChildProcessing = false;
-      });
-    }
-  }
-
   delete(e) {
     this.callNumber = this.callNumber.slice(0, -1);
   }
@@ -133,13 +104,54 @@ export class ChildCheckinComponent implements OnInit {
     this.overrideChild = new Child();
   }
 
+  setCallNumber(num: string) {
+    // set call number
+    if (this.callNumber.length < 4) {
+      this.callNumber = `${this.callNumber}${num}`;
+    }
+    // if full call number, search child
+    if (this.callNumber.length === 4) {
+      this.isOverrideProcessing = true;
+      this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId, this.callNumber, this.kioskDetails.RoomId).subscribe((child: Child) => {
+        this.overrideChild = child;
+        this.isOverrideProcessing = false;
+      }, (error) => {
+        switch (error.status) {
+          case 404:
+            this.rootService.announceEvent('checkinChildNotFound');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+        }
+        this.callNumber = '';
+        this.isOverrideProcessing = false;
+      });
+    }
+  }
+
   overrideCheckin() {
+    this.isOverrideProcessing = true;
     this.childCheckinService.overrideChildIntoRoom(this.overrideChild, this.selectedEvent.EventId, this.kioskDetails.RoomId)
       .subscribe((child: Child) => {
         this.hideChildSearchModal();
-      }, (error) => {
-        console.error(error);
-        this.rootService.announceEvent('generalError');
+        this.rootService.announceEvent('checkinOverrideSuccess');
+        this.isOverrideProcessing = false;
+        // TODO reload children in RoomComponent
+        this.childCheckinService.forceChildReload();
+      }, (errorLabel) => {
+        switch (errorLabel) {
+          case 'capacity':
+            this.rootService.announceEvent('checkinOverrideRoomCapacityError');
+            break;
+          case 'closed':
+            this.rootService.announceEvent('checkinOverrideRoomClosedError');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+        }
+        this.isOverrideProcessing = false;
       });
   }
 
