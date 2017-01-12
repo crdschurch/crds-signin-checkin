@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Web.Http;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
@@ -604,6 +605,31 @@ namespace SignInCheckIn.Services
             {
                 guest.GroupId = newGroupParticipants.First(r => r.ParticipantId == guest.ParticipantId).GroupId;
                 guest.Selected = true;
+            }
+        }
+
+        public bool ReverseSignin(string token, int eventParticipantId)
+        {
+            // load the event participant, check their status
+            var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId);
+
+            if (mpEventParticipantDto.ParticipantStatusId == _applicationConfiguration.CheckedInParticipationStatusId)
+            {
+                return false;
+            }
+            else
+            {
+                mpEventParticipantDto.ParticipantStatusId = _applicationConfiguration.CancelledParticipationStatusId;
+                mpEventParticipantDto.EndDate = DateTime.Now;
+
+                List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+                {
+                    mpEventParticipantDto
+                };
+
+                _participantRepository.UpdateEventParticipants(mpEventParticipantDtos);
+
+                return true;
             }
         }
     }

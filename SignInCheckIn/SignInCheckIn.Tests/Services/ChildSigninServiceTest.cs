@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Web.Http;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -1212,6 +1214,69 @@ namespace SignInCheckIn.Tests.Services
             // Testing to make sure that the fields were not set against on the non-guest participant
             Assert.AreEqual(participantEventMapDto.Participants[1].GroupId, nonGuestGroupId);
             Assert.AreEqual(participantEventMapDto.Participants[1].ParticipantId, nonGuestParticipantId);
+        }
+
+        [Test]
+        public void ShouldReverseSignin_ParticipantNotCheckedIn()
+        {
+            // Arrange
+            string token = "ABC123";
+            int eventParticipantId = 1234567;
+            int attendedParticipantStatusId = 3;
+            int checkedInParticipantStatusId = 4;
+            int cancelledParticipantStatusId = 5;
+
+            MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
+            {
+                EventParticipantId = 1234567,
+                ParticipantStatusId = attendedParticipantStatusId
+            };
+
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(token, eventParticipantId))
+                .Returns(mpEventParticipantDto);
+            _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
+            _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CheckedInParticipationStatusId).Returns(checkedInParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CancelledParticipationStatusId).Returns(cancelledParticipantStatusId);
+
+            // Act
+            _fixture.ReverseSignin(token, eventParticipantId);
+
+            // Assert
+            Assert.AreNotEqual(mpEventParticipantDto.EndDate, null);
+            Assert.AreEqual(mpEventParticipantDto.ParticipantStatusId, cancelledParticipantStatusId);
+            _participantRepository.VerifyAll();
+        }
+
+        [Test]
+        public void ShouldNotReverseSignin_ParticipantCheckedIn()
+        {
+            // Arrange
+            string token = "ABC123";
+            int eventParticipantId = 1234567;
+            int attendedParticipantStatusId = 3;
+            int checkedInParticipantStatusId = 4;
+            int cancelledParticipantStatusId = 5;
+
+            MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
+            {
+                EventParticipantId = 1234567,
+                ParticipantStatusId = checkedInParticipantStatusId
+            };
+
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(token, eventParticipantId))
+                .Returns(mpEventParticipantDto);
+            _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
+            _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CheckedInParticipationStatusId).Returns(checkedInParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CancelledParticipationStatusId).Returns(cancelledParticipantStatusId);
+
+            // Act
+            var result =_fixture.ReverseSignin(token, eventParticipantId);
+
+            // Assert
+            Assert.AreEqual(result, false);
+            Assert.AreEqual(mpEventParticipantDto.ParticipantStatusId, checkedInParticipantStatusId);
         }
     }
 }

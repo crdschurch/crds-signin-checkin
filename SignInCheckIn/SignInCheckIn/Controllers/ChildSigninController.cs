@@ -137,5 +137,33 @@ namespace SignInCheckIn.Controllers
                 }
             });
         }
+
+        [HttpPut]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("signin/reverse/{eventparticipantid}")]
+        public IHttpActionResult ReverseSignin(int eventparticipantid)
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    var reverseSuccess = _childSigninService.ReverseSignin(token, eventparticipantid);
+
+                    if (reverseSuccess == true)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return Conflict();
+                    }
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Error reversing signin for event participant ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
     }
 }
