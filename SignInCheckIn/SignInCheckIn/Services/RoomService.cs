@@ -32,12 +32,31 @@ namespace SignInCheckIn.Services
             _applicationConfiguration = applicationConfiguration;
         }
 
-        public List<EventRoomDto> GetLocationRoomsByEventId(int eventId)
+        public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
         {
             var mpEvent = _eventRepository.GetEventById(eventId);
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
 
-            return Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+            // Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(mpEvent.EventId) ?? new List<MpEventGroupDto>();
+
+            // Load up lookups for age ranges, grades, birth months, and nursery months
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+
+            // Get All Rooms for this Event
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+
+            // Get All the Event Groups Assigned to each room for this event
+            foreach (var eventRoom in eventRooms)
+            {
+                var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+                eventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+            }
+
+            return eventRooms;
         }
 
         public EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom)
