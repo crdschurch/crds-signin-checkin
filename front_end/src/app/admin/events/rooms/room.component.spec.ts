@@ -63,6 +63,12 @@ describe('RoomComponent', () => {
     });
   });
 
+  describe('#ageRangeAndGrades', () => {
+    it('should return an Array with Add', () => {
+      expect(fixture.ageRangeAndGrades()).toEqual(['Add']);
+    });
+  });
+
   describe('updating a room\'s parameters', () => {
     it('should add one volunteer', () => {
       fixture.add('Volunteers');

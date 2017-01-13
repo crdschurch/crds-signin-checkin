@@ -22,12 +22,12 @@ describe('AdminService', () => {
 
   it('should successfully get list of Rooms', () => {
     let eventId = '4525323';
-    let expectedRooms = [ new Room() ];
+    let expectedRooms = [ Room.fromJson({}) ];
     (<jasmine.Spy>httpClientService.get).and.returnValue(response);
     (<jasmine.Spy>responseObject.json).and.returnValue(expectedRooms);
 
-    fixture.getRooms(eventId).subscribe((rooms: Room[]) => {
-      expect(rooms).toBe(expectedRooms);
+    fixture.getRooms(eventId).subscribe((rooms) => {
+      expect(rooms).toEqual(expectedRooms);
       expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms`);
     });
   });

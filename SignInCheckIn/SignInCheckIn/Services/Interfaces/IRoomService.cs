@@ -5,7 +5,7 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IRoomService
     {
-        List<EventRoomDto> GetLocationRoomsByEventId(int eventId);
+        List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId);
         EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom);
         EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId);
         EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom);

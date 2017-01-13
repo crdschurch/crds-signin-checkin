@@ -66,6 +66,14 @@ export class RoomComponent implements OnInit {
     return false;
   }
 
+  ageRangeAndGrades() {
+    if (this.room.AssignedGroups === undefined || this.room.AssignedGroups === null || this.room.AssignedGroups.length === 0) {
+      return ['Add'];
+    }
+
+    return this.room.getSelectionDescription(false);
+  }
+
   ngOnInit() {
 
     this.roomForm = new FormGroup({
