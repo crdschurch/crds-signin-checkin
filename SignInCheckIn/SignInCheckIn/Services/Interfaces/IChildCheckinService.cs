@@ -7,7 +7,7 @@ namespace SignInCheckIn.Services.Interfaces
     {
         ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId);
         ParticipantDto CheckinChildrenForCurrentEventAndRoom(ParticipantDto eventParticipant);
-        ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId);
-        Boolean OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId);
+        ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId, bool? excludeThisRoom = false);
+        bool OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId);
     }
 }
