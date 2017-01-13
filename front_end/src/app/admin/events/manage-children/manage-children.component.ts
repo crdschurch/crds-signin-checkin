@@ -58,7 +58,18 @@ export class ManageChildrenComponent implements OnInit {
 
     this.adminService.reprint(child.EventParticipantId).subscribe((resp) => {
       this.ready = true;
-    });
+      },
+      (error) => {
+        switch (error.status) {
+          case 412:
+            this.rootService.announceEvent('echeckNewFamilyAdminSetupWrong');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+          }
+          this.ready = true;
+      });
   }
 
   public reverseSignin(child: Child) {
