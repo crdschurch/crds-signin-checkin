@@ -34,7 +34,6 @@ export class ChildCheckinComponent implements OnInit {
       this.kioskDetails = new MachineConfiguration();
       this.ready = false;
       this.isOverrideProcessing = false;
-      console.log("O", Observable, Observable.interval)
   }
 
   private getData() {
