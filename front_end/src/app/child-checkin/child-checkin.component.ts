@@ -19,7 +19,7 @@ export class ChildCheckinComponent implements OnInit {
   @ViewChild('childSearchModal') public childSearchModal: ModalDirective;
   private kioskDetails: MachineConfiguration;
 
-  clock = Observable.interval(10000).map(() => new Date());
+  clock = Observable.interval(10000).startWith(0).map(() => new Date());
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
@@ -34,6 +34,7 @@ export class ChildCheckinComponent implements OnInit {
       this.kioskDetails = new MachineConfiguration();
       this.ready = false;
       this.isOverrideProcessing = false;
+      console.log("O", Observable, Observable.interval)
   }
 
   private getData() {
