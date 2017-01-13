@@ -2,7 +2,7 @@
 
 import { TestBed } from '@angular/core/testing';
 import { Observable } from 'rxjs';
-import { Response, ResponseOptions, RequestOptions } from '@angular/http';
+import { RequestOptions } from '@angular/http';
 
 import { EventParticipants } from '../shared/models/event-participants';
 import { Child } from '../shared/models/child';
@@ -111,10 +111,8 @@ describe('ChildCheckinService', () => {
     });
     describe('error scenarios', () => {
       it('should return error string', () => {
-        const errorString = 'capacity';
-        httpClientService.put.and.callFake((url: string, data: Child, opts: RequestOptions) => {
-          let response = new ResponseOptions({ body: '{errors: "errorString"'});
-          return Observable.throw(new Response(response));
+        httpClientService.put.and.callFake(() => {
+          return Observable.throw('err');
         });
         let result = fixture.overrideChildIntoRoom(new Child(), 123, 555);
         result.subscribe((r) => {

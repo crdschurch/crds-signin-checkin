@@ -1,10 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Child } from '../../shared/models/child';
 import { Event } from '../../shared/models/event';
 import { ChildCheckinService } from '../child-checkin.service';
 import { RootService } from '../../shared/services';
 import { SetupService } from '../../shared/services';
-import { Subscription } from 'rxjs/Subscription'
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'room',

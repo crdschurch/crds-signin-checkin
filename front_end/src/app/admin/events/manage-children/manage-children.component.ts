@@ -4,7 +4,6 @@ import { Event, Child } from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
   templateUrl: 'manage-children.component.html',
@@ -58,7 +57,7 @@ export class ManageChildrenComponent implements OnInit {
 
     this.adminService.reprint(child.EventParticipantId).subscribe((resp) => {
       this.ready = true;
-    })
+    });
   }
 
   public reverseSignin(child: Child) {

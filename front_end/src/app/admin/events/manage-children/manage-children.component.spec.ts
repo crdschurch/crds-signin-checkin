@@ -1,7 +1,6 @@
 import { ManageChildrenComponent } from './manage-children.component';
-import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { Event, Child } from '../../../shared/models';
+import { Child } from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';

@@ -57,7 +57,6 @@ describe('ChildCheckinComponent', () => {
        describe('override modal', () => {
          let fixture3;
          let fakeModal = { show: {}, hide: {} };
-         let test;
          beforeEach(() => {
            childCheckinService = jasmine.createSpyObj('ChildCheckinService',
               ['getChildByCallNumber', 'forceChildReload', 'overrideChildIntoRoom']);
