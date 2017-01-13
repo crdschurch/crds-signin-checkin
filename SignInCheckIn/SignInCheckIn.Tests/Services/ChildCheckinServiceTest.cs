@@ -138,5 +138,20 @@ namespace SignInCheckIn.Tests.Services
             _fixture.CheckinChildrenForCurrentEventAndRoom(dto);
             _childCheckinRepository.VerifyAll();
         }
+
+        [Test]
+        public void ShouldGetEventParticipantByCallNumber()
+        {
+            Assert.AreEqual(0, 1);
+        }
+
+        [Test]
+        public void ShouldOverrideChildIntoRoom()
+        {
+            _childCheckinRepository.Setup(m => m.CheckinChildrenForCurrentEventAndRoom(It.IsAny<int>(), It.IsAny<int>()));
+            _fixture.OverrideChildIntoRoom(123, 456, 789);
+            _childCheckinRepository.VerifyAll();
+            Assert.AreEqual(0, 1);
+        }
     }
 }
