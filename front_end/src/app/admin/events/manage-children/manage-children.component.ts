@@ -67,6 +67,7 @@ export class ManageChildrenComponent implements OnInit {
     this.adminService.reverseSignin(child.EventParticipantId).subscribe((resp) => {
       this.children.splice(this.children.indexOf(child), 1);
       this.ready = true;
+      this.rootService.announceEvent('reverseSigninSuccess');
     }, error => (this.handleError(error)));
   }
 
