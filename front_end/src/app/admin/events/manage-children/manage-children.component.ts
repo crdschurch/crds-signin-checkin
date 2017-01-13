@@ -4,6 +4,7 @@ import { Event, Child } from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   templateUrl: 'manage-children.component.html',
@@ -50,5 +51,32 @@ export class ManageChildrenComponent implements OnInit {
     });
 
     return parents;
+  }
+
+  public reprint(child: Child): void {
+    this.ready = false;
+
+    this.adminService.reprint(child.EventParticipantId).subscribe((resp) => {
+      this.ready = true;
+    })
+  }
+
+  public reverseSignin(child: Child) {
+    this.ready = false;
+
+    this.adminService.reverseSignin(child.EventParticipantId).subscribe((resp) => {
+      this.children.splice(this.children.indexOf(child), 1);
+      this.ready = true;
+    }, error => (this.handleError(error)));
+  }
+
+  private handleError (error: any) {
+    if (error.status === 409) {
+      this.rootService.announceEvent('cannotReverseSignin');
+    } else {
+      this.rootService.announceEvent('generalError');
+    }
+
+    this.ready = true;
   }
 }

@@ -99,6 +99,36 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+        
+        [HttpPost]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("signin/participant/{eventParticipantId}/print")]
+        public IHttpActionResult PrintParticipant(int eventParticipantId)
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    string kioskIdentifier;
+
+                    if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                    {
+                        kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    }
+                    else
+                    {
+                        throw new Exception("No kiosk identifier");
+                    }
+
+                    return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier, token));
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Print Participants", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
 
         [HttpPost]
         [ResponseType(typeof(int))]
@@ -133,6 +163,34 @@ namespace SignInCheckIn.Controllers
                 catch (Exception e)
                 {
                     var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
+        [HttpPut]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("signin/reverse/{eventparticipantid}")]
+        public IHttpActionResult ReverseSignin(int eventparticipantid)
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    var reverseSuccess = _childSigninService.ReverseSignin(token, eventparticipantid);
+
+                    if (reverseSuccess == true)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return Conflict();
+                    }
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Error reversing signin for event participant ", e);
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });

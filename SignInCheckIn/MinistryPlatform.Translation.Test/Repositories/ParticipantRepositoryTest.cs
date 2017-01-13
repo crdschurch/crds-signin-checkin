@@ -49,7 +49,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_Participants.Call_Number",
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
-                "dp_Created.Date_Time as Time_In",
+                "Time_In",
                 "Event_Participants.Checkin_Household_ID",
                 "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
             };
@@ -111,7 +111,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             };
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)})", columns)).Returns(children);
+            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL", columns)).Returns(children);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(1)).Returns(household1);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(2)).Returns(household2);
 
