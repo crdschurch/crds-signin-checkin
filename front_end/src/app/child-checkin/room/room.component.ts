@@ -7,7 +7,7 @@ import { SetupService } from '../../shared/services';
 import { Subscription } from 'rxjs/Subscription'
 
 @Component({
-  // selector: 'room',
+  selector: 'room',
   templateUrl: 'room.component.html',
   styleUrls: ['room.component.scss' ]
 })
