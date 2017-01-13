@@ -4,7 +4,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { RoomComponent } from './room';
 import { HttpClientService } from '../shared/services';
-import { Child, Room } from '../shared/models';
+import { Child } from '../shared/models';
 import { Event } from '../shared/models/event';
 
 @Injectable()

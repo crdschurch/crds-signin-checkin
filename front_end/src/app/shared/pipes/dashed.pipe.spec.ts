@@ -1,6 +1,6 @@
 import { DashedPipe } from './dashed.pipe';
 
-fdescribe('DashedPipe', () => {
+describe('DashedPipe', () => {
   let pipe = new DashedPipe();
 
   describe('defaults to length of 6', () => {
