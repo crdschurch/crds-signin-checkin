@@ -19,7 +19,7 @@ export class ChildCheckinComponent implements OnInit {
   @ViewChild('childSearchModal') public childSearchModal: ModalDirective;
   private kioskDetails: MachineConfiguration;
 
-  clock = Observable.interval(10000).map(() => new Date());
+  clock = Observable.interval(10000).startWith(0).map(() => new Date());
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
@@ -137,7 +137,6 @@ export class ChildCheckinComponent implements OnInit {
         this.hideChildSearchModal();
         this.rootService.announceEvent('checkinOverrideSuccess');
         this.isOverrideProcessing = false;
-        // TODO reload children in RoomComponent
         this.childCheckinService.forceChildReload();
       }, (errorLabel) => {
         switch (errorLabel) {

@@ -12,7 +12,7 @@ import { ChildSigninService } from './child-signin.service';
 })
 export class ChildSigninComponent {
 
-  clock = Observable.interval(10000).map(() => new Date());
+  clock = Observable.interval(10000).startWith(0).map(() => new Date());
 
   constructor(private router: Router) {}
 
