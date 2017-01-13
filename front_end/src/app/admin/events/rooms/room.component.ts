@@ -66,12 +66,14 @@ export class RoomComponent implements OnInit {
     return false;
   }
 
-  ageRangeAndGrades() {
-    if (this.room.AssignedGroups === undefined || this.room.AssignedGroups === null || this.room.AssignedGroups.length === 0) {
-      return ['Add'];
+  ageRangeAndGrades(): any {
+    let ageGrades = this.room.getSelectionDescription(false);
+
+    if (ageGrades.length === 0) {
+      ageGrades = ['Add'];
     }
 
-    return this.room.getSelectionDescription(false);
+    return ageGrades;
   }
 
   ngOnInit() {
