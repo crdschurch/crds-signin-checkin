@@ -43,18 +43,12 @@
           </strong>
         </div>
       </div>
-      <div class="col-sm-6 text-sm-right">
+      <div class="col-sm-12 text-sm-right float-xs-right">
         <div class="float-sm-right">
-          <span class="float-xs-right adventure-club-toggle">
-            <input class='tgl tgl-light' id='isAdventureClub' type='checkbox' [(ngModel)]="isAdventureClub" (change)="toggleAdventureClub($event)">
-            <label class='tgl-btn' for='isAdventureClub'><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
-            <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)" >Save</button>
-            <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)" >Cancel</button>
+          <span class="float-xs-right">
+            <button class="btn btn-primary btn-sm" type="button" (click)="saveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Save</button>
+            <button class="btn btn-primary btn-sm" type="button" (click)="cancelSaveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Cancel</button>
           </span>
-          <strong class="float-sm-right adventure-club-toggle-label">
-            Set as Adventure Club
-          </strong>
-          
         </div>
       </div>
     </div>

@@ -52,7 +52,8 @@ export class AdminService {
   updateRoomGroups(eventId: string, roomId: string, body: Room) {
     body.EventId = eventId;
     body.RoomId = roomId;
-    this.roomGroupsUpdateEmitter.emit(body);
+
+    return this.updateRoomGroupsInternal(body);
   }
 
   importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {

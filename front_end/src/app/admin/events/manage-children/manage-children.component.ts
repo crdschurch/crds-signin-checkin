@@ -58,7 +58,7 @@ export class ManageChildrenComponent implements OnInit {
 
     this.adminService.reprint(child.EventParticipantId).subscribe((resp) => {
       this.ready = true;
-    })
+    });
   }
 
   public reverseSignin(child: Child) {

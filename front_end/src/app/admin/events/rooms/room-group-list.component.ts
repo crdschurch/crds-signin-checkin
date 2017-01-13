@@ -49,6 +49,7 @@ export class RoomGroupListComponent implements OnInit {
       room => {
         this.room = room;
         this.setCurrentEvent(room.AdventureClub);
+        this.updating = false;
       },
       error => console.error(error)
     );
@@ -104,7 +105,7 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   isReady(): boolean {
-    return this.event !== undefined && this.room !== undefined;
+    return (!this.updating && (this.event !== undefined && this.room !== undefined));
   }
 
   goBack() {
@@ -133,9 +134,24 @@ export class RoomGroupListComponent implements OnInit {
     this.openTabIfAlternateRoomsHash();
   }
 
-  setDirty(theValue) {
-    this.isDirty;
-    debugger;
+  setDirty() {
+    this.isDirty = true;
   }
 
+  saveRoomGroups() {
+    this.updating = true;
+    this.isDirty = false;
+
+    this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room).subscribe((resp) => {
+      this.updating = false;
+      this.rootService.announceEvent('roomGroupsUpdateSuccess');
+      this.isDirty = false;
+    }, error => (this.rootService.announceEvent('generalError')));
+  }
+
+  cancelSaveRoomGroups() {
+    this.updating = true;
+    this.isDirty = false;
+    this.getData();
+  }
 }
