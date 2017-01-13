@@ -107,19 +107,26 @@ namespace SignInCheckIn.Controllers
         {
             return Authorized(token =>
             {
+                string kioskIdentifier;
+
+                // make sure kiosk is admin type and configured for printing
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    // must be kiosk type admin and have a printer set up
+                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    {
+                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    }
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                }
+
                 try
                 {
-                    string kioskIdentifier;
-
-                    if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
-                    {
-                        kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
-                    }
-                    else
-                    {
-                        throw new Exception("No kiosk identifier");
-                    }
-
                     return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier, token));
                 }
                 catch (Exception e)
