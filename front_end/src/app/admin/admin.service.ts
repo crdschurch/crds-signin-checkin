@@ -20,7 +20,7 @@ export class AdminService {
   getRooms(eventId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms`;
     return this.http.get(url)
-                    .map(res => res.json())
+                    .map(res => (<any[]>res.json()).map(r => Room.fromJson(r)))
                     .catch(this.handleError);
   }
 
