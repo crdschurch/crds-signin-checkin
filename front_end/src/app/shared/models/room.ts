@@ -51,13 +51,18 @@ export class Room {
     return room;
   }
 
-  getSelectionDescription(): string {
+  getSelectionDescription(split = true): any {
     if (this.AssignedGroups === undefined || this.AssignedGroups === null || this.AssignedGroups.length === 0) {
       return '';
     }
 
     let selected = this.AssignedGroups.map((g) => { return g.getSelectionDescription(); }).filter((g) => { return g !== null; } );
-    return selected.join('; ');
+
+    if (split) {
+      return selected.join('; ');
+    }
+
+    return selected;
   }
 
   getRoomNumber() {
