@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -16,6 +17,8 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IChildCheckinRepository> _childCheckinRepository;
         private Mock<IContactRepository> _contactRepository;
         private Mock<IEventService> _eventService;
+        private Mock<IApplicationConfiguration> _applicationConfiguration;
+        private Mock<IRoomRepository> _roomRepository;
 
         private ChildCheckinService _fixture;
 
@@ -27,8 +30,10 @@ namespace SignInCheckIn.Tests.Services
             _childCheckinRepository = new Mock<IChildCheckinRepository>();
             _contactRepository = new Mock<IContactRepository>();
             _eventService = new Mock<IEventService>();
+            _roomRepository = new Mock<IRoomRepository>();
+            _applicationConfiguration = new Mock<IApplicationConfiguration>();
 
-            _fixture = new ChildCheckinService(_childCheckinRepository.Object, _contactRepository.Object, _eventService.Object);
+            _fixture = new ChildCheckinService(_childCheckinRepository.Object, _contactRepository.Object, _roomRepository.Object, _applicationConfiguration.Object, _eventService.Object);
         }
 
         [Test]

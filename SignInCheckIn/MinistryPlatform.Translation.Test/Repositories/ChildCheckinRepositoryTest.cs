@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -12,6 +13,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private ChildCheckinRepository _fixture;
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
+        private Mock<IApplicationConfiguration> _applicationConfiguration;
 
         private List<string> _getEventParticipantColumns;
 
@@ -20,7 +22,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _ministryPlatformRestRepository = new Mock<IMinistryPlatformRestRepository>(MockBehavior.Strict);
-            _fixture = new ChildCheckinRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
+            _applicationConfiguration = new Mock<IApplicationConfiguration>(MockBehavior.Strict);
+            _fixture = new ChildCheckinRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
 
             _getEventParticipantColumns = new List<string>
             {
