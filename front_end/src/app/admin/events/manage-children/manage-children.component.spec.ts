@@ -50,8 +50,6 @@ describe('ManageChildrenComponent', () => {
       let eventParticipantId = children[1].EventParticipantId;
 
       (<jasmine.Spy>(adminService.reverseSignin)).and.returnValue(Observable.of());
-      console.log(fixture);
-      console.log(adminService);
       fixture.reverseSignin(children[1]);
 
       expect(adminService.reverseSignin).toHaveBeenCalledWith(eventParticipantId);

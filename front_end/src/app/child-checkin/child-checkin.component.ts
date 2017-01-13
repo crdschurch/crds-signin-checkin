@@ -134,19 +134,13 @@ export class ChildCheckinComponent implements OnInit {
 
   overrideCheckin() {
     this.isOverrideProcessing = true;
-    console.log("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
-    console.log("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
-    console.log("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
-    console.log("1")
     this.childCheckinService.overrideChildIntoRoom(this.overrideChild, this.selectedEvent.EventId, this.kioskDetails.RoomId)
       .subscribe((child: Child) => {
-        console.log("2")
         this.hideChildSearchModal();
         this.rootService.announceEvent('checkinOverrideSuccess');
         this.isOverrideProcessing = false;
         this.childCheckinService.forceChildReload();
       }, (errorLabel) => {
-        console.log("3", errorLabel)
         switch (errorLabel) {
           case 'capacity':
             this.rootService.announceEvent('checkinOverrideRoomCapacityError');
