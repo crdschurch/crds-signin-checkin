@@ -29,6 +29,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 "Event_ID_Table.Event_ID",
                 "Room_ID_Table.Room_ID",
+                "Event_Participants.Call_Number",
                 "Event_Participants.Event_Participant_ID",
                 "Participant_ID_Table.Participant_ID",
                 "Participant_ID_Table_Contact_ID_Table.Contact_ID",
