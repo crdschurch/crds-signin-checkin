@@ -63,7 +63,6 @@ namespace SignInCheckIn.Controllers
             }
         }
 
-
         [HttpGet]
         [ResponseType(typeof(ParticipantDto))]
         [Route("checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}")]
@@ -74,7 +73,7 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                var child = _childCheckinService.GetEventParticipantByCallNumber(eventId, callNumber, roomId);
+                var child = _childCheckinService.GetEventParticipantByCallNumber(eventId, callNumber, roomId, true);
                 if (child != null)
                 {
                     return Ok(child);
@@ -93,7 +92,6 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPut]
-        [ResponseType(typeof(Boolean))]
         [Route("checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override")]
         public IHttpActionResult OverrideChildIntoRoom(
              [FromUri(Name = "eventId")] int eventId,
@@ -102,8 +100,8 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                Boolean b = _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
-                return Ok(b);
+                _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
+                return Ok();
             }
             catch (Exception e)
             {

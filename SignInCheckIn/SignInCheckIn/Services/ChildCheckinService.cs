@@ -48,11 +48,11 @@ namespace SignInCheckIn.Services
             return eventParticipant;
         }
 
-        public Boolean OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId)
+        public bool OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId)
         {
             MpEventRoomDto eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
-            Boolean isClosed = !eventRoom.AllowSignIn;
-            var isAtCapacity = eventRoom.Capacity <= (eventRoom.CheckedIn + eventRoom.SignedIn);
+            bool isClosed = !eventRoom.AllowSignIn;
+            bool isAtCapacity = eventRoom.Capacity <= (eventRoom.CheckedIn + eventRoom.SignedIn);
             if (isClosed)
             {
                 throw new Exception("closed");
@@ -66,17 +66,17 @@ namespace SignInCheckIn.Services
                 _childCheckinRepository.OverrideChildIntoRoom(eventParticipantId, roomId);
                 return true;
             }
-            return false;
         }
 
-        public ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId)
+        public ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId, bool? excludeThisRoom = false)
         {
             var mpEventParticipant = _childCheckinRepository.GetEventParticipantByCallNumber(eventId, callNumber);
             if (mpEventParticipant == null) return null;
-            // if child is in room and checked in, dont show
-            var checkedInParticipationStatusId = _applicationConfiguration.CheckedInParticipationStatusId;
-            if (mpEventParticipant.RoomId == roomId && mpEventParticipant.ParticipantStatusId == checkedInParticipationStatusId) return null;
-
+            if (excludeThisRoom == true) { 
+                // if child is in room and checked in, dont show
+                var checkedInParticipationStatusId = _applicationConfiguration.CheckedInParticipationStatusId;
+                if (mpEventParticipant.RoomId == roomId && mpEventParticipant.ParticipantStatusId == checkedInParticipationStatusId) return null;
+            }
             mpEventParticipant.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(mpEventParticipant.CheckinHouseholdId.Value);
             var participant = Mapper.Map<MpEventParticipantDto, ParticipantDto>(mpEventParticipant);
             return participant;
