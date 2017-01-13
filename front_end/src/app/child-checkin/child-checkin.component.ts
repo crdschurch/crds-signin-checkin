@@ -112,9 +112,11 @@ export class ChildCheckinComponent implements OnInit {
     // if full call number, search child
     if (this.callNumber.length === 4) {
       this.isOverrideProcessing = true;
-      this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId, this.callNumber, this.kioskDetails.RoomId).subscribe((child: Child) => {
-        this.overrideChild = child;
-        this.isOverrideProcessing = false;
+      this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId,
+        this.callNumber,
+        this.kioskDetails.RoomId).subscribe((child: Child) => {
+          this.overrideChild = child;
+          this.isOverrideProcessing = false;
       }, (error) => {
         switch (error.status) {
           case 404:
@@ -132,13 +134,19 @@ export class ChildCheckinComponent implements OnInit {
 
   overrideCheckin() {
     this.isOverrideProcessing = true;
+    console.log("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
+    console.log("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
+    console.log("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
+    console.log("1")
     this.childCheckinService.overrideChildIntoRoom(this.overrideChild, this.selectedEvent.EventId, this.kioskDetails.RoomId)
       .subscribe((child: Child) => {
+        console.log("2")
         this.hideChildSearchModal();
         this.rootService.announceEvent('checkinOverrideSuccess');
         this.isOverrideProcessing = false;
         this.childCheckinService.forceChildReload();
       }, (errorLabel) => {
+        console.log("3", errorLabel)
         switch (errorLabel) {
           case 'capacity':
             this.rootService.announceEvent('checkinOverrideRoomCapacityError');
