@@ -57,7 +57,6 @@ export class ManageChildrenComponent implements OnInit {
 
     this.adminService.reprint(child.EventParticipantId).subscribe((resp) => {
       this.ready = true;
-
       },
       (error) => {
         switch (error.status) {

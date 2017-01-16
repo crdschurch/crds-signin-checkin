@@ -20,9 +20,6 @@ export class RoomComponent implements OnInit {
   constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, private setupService: SetupService) {
     // subscribe to forceChildReload so that the parent (ChildCheckinComponent)
     // can talk to the child (RoomComponent) and tell it when to reload children
-    // this.subscription = childCheckinService.forceChildReload$.subscribe(
-    //   x => this.setup(this);
-    // });
     this.subscription = childCheckinService.forceChildReload$.subscribe(
       astronaut => {
         this.setup(this);
