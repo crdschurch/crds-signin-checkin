@@ -30,6 +30,10 @@ export class RoomComponent implements OnInit {
     this.roomForm.controls[field].setValue(this.room[field]);
   }
 
+  sync(field) {
+    this.room[field] = this.roomForm.controls[field].value;
+  }
+
   hasCapacity() {
     return this.room.Capacity;
   }

@@ -36,7 +36,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" readonly>
+      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" (change)="sync('Volunteers')" [disabled]="pending">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Volunteers')" [disabled]="pending">+</button>
       </span>
@@ -49,7 +49,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Capacity')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="Capacity" readonly>
+      <input type="number" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="Capacity" (change)="sync('Capacity')" [disabled]="pending">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Capacity')" [disabled]="pending">+</button>
       </span>
