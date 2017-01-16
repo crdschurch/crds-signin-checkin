@@ -66,13 +66,16 @@ namespace MinistryPlatform.Translation.Repositories
                 "Group_ID_Table.Group_Name"
             };
 
-            List<MpEventParticipantDto> participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+            var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                         SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Event_Participants.[Call_Number] = {callNumber}", columnList);
             if (participants.Any())
             {
                 return participants.First();
             }
-            return null;
+            else
+            {
+                 throw new Exception($"No Event Participants with call number: {callNumber} for event {eventId}");
+            }
         }
 
         public void CheckinChildrenForCurrentEventAndRoom(int checkinStatusId, int eventParticipantId)

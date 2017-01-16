@@ -71,7 +71,6 @@ namespace SignInCheckIn.Services
         public ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId, bool? excludeThisRoom = false)
         {
             var mpEventParticipant = _childCheckinRepository.GetEventParticipantByCallNumber(eventId, callNumber);
-            if (mpEventParticipant == null) return null;
             if (excludeThisRoom == true) { 
                 // if child is in room and checked in, dont show
                 var checkedInParticipationStatusId = _applicationConfiguration.CheckedInParticipationStatusId;

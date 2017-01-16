@@ -74,20 +74,11 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var child = _childCheckinService.GetEventParticipantByCallNumber(eventId, callNumber, roomId, true);
-                if (child != null)
-                {
-                    return Ok(child);
-                }
-                else
-                {
-                    return NotFound();
-                }
-                
+                return Ok(child);
             }
             catch (Exception e)
             {
-                var apiError = new ApiErrorDto("Get Event Participant by Call Number", e);
-                throw new HttpResponseException(apiError.HttpResponseMessage);
+                return NotFound();
             }
         }
 
