@@ -150,7 +150,7 @@ namespace SignInCheckIn.Services
             SetParticipantsPrintInformation(response.Participants, eventsForSignin);
 
             // Add back those participants that didn't get a room assigned
-             response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
+            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
             response.Participants.ForEach(p => p.Selected = true);
 
             return response;

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
+using SignInCheckIn.ApiVersioning.Attributes;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
@@ -54,6 +55,44 @@ namespace SignInCheckIn.Controllers
             {
                 var child = _childCheckinService.CheckinChildrenForCurrentEventAndRoom(participant);
                 return Ok(child);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Checking in Children", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(ParticipantDto))]
+        [Route("checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}")]
+        public IHttpActionResult GetEventParticipantByCallNumber(
+             [FromUri(Name = "eventId")] int eventId,
+             [FromUri(Name = "callNumber")] int callNumber,
+             [FromUri(Name = "roomId")] int roomId)
+        {
+            try
+            {
+                var child = _childCheckinService.GetEventParticipantByCallNumber(eventId, callNumber, roomId, true);
+                return Ok(child);
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut]
+        [Route("checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override")]
+        public IHttpActionResult OverrideChildIntoRoom(
+             [FromUri(Name = "eventId")] int eventId,
+             [FromUri(Name = "eventParticipantId")] int eventParticipantId,
+             [FromUri(Name = "roomId")] int roomId)
+        {
+            try
+            {
+                _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
+                return Ok();
             }
             catch (Exception e)
             {
