@@ -50,7 +50,7 @@ namespace SignInCheckIn.Services
 
         public bool OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId)
         {
-            MpEventRoomDto eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
             bool isClosed = !eventRoom.AllowSignIn;
             bool isAtCapacity = eventRoom.Capacity <= (eventRoom.CheckedIn + eventRoom.SignedIn);
             if (isClosed)

@@ -142,16 +142,61 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void ShouldGetEventParticipantByCallNumber()
         {
-            Assert.AreEqual(0, 1);
+            var eventId = 888;
+            var callNumber = 44;
+            var roomId = 321;
+
+            var mpEventParticipantDto = new MpEventParticipantDto
+                {
+                    EventParticipantId = 12,
+                    FirstName = "First1",
+                    LastName = "Last1",
+                    CheckinHouseholdId = 432234,
+                    DateOfBirth = new DateTime()
+                };
+
+            var mpContactDtos = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    FirstName = "George"
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.CheckedInParticipationStatusId).Returns(4);
+            _childCheckinRepository.Setup(m => m.GetEventParticipantByCallNumber(eventId, callNumber)).Returns(mpEventParticipantDto);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(mpEventParticipantDto.CheckinHouseholdId.Value)).Returns(mpContactDtos);
+            var result = _fixture.GetEventParticipantByCallNumber(eventId, callNumber, roomId, true);
+            _childCheckinRepository.VerifyAll();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(mpEventParticipantDto.EventParticipantId, result.EventParticipantId);
+            Assert.AreEqual(mpEventParticipantDto.FirstName, result.FirstName);
         }
 
         [Test]
         public void ShouldOverrideChildIntoRoom()
         {
-            _childCheckinRepository.Setup(m => m.CheckinChildrenForCurrentEventAndRoom(It.IsAny<int>(), It.IsAny<int>()));
-            _fixture.OverrideChildIntoRoom(123, 456, 789);
+            int eventId = 321;
+            int eventParticipantId = 444;
+            int roomId = 111;
+
+            var eventRoom = new MpEventRoomDto
+            {
+                AllowSignIn = true,
+                EventRoomId = 333,
+                EventId = 222,
+                RoomId = 111,
+                CheckedIn = 2,
+                SignedIn = 5,
+                Capacity = 20
+            };
+
+            _roomRepository.Setup(m => m.GetEventRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(eventRoom);
+            _childCheckinRepository.Setup(m => m.OverrideChildIntoRoom(It.IsAny<int>(), It.IsAny<int>()));
+            _fixture.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
             _childCheckinRepository.VerifyAll();
-            Assert.AreEqual(0, 1);
         }
     }
 }
