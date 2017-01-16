@@ -69,16 +69,17 @@ namespace SignInCheckIn.Tests.Services
             _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object);
         }
 
+        [Test]
         public void ShouldGetEventRooms()
         {
+            var token = "abcdefg";
+
             // Arrange
             var mpEventDto = new MpEventDto
             {
                 EventId = 1234567,
                 LocationId = 3
             };
-
-            _eventRepository.Setup(m => m.GetEventById(1234567)).Returns(mpEventDto);
 
             var mpEventRoomDtos = new List<MpEventRoomDto>
             {
@@ -95,10 +96,20 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _eventRepository.Setup(m => m.GetEventById(1234567)).Returns(mpEventDto);
+            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(mpEventDto.EventId)).Returns((List<MpEventGroupDto>)null);
+
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
+                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
+                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
 
             // Act
-            var result = _fixture.GetLocationRoomsByEventId(1234567);
+            var result = _fixture.GetLocationRoomsByEventId(token, 1234567);
 
             // Assert
             Assert.IsNotNull(result);

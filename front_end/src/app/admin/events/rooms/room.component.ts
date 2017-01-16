@@ -66,6 +66,16 @@ export class RoomComponent implements OnInit {
     return false;
   }
 
+  ageRangeAndGrades(): any {
+    let ageGrades = this.room.getSelectionDescription(false);
+
+    if (ageGrades.length === 0) {
+      ageGrades = ['Add'];
+    }
+
+    return ageGrades;
+  }
+
   ngOnInit() {
 
     this.roomForm = new FormGroup({
