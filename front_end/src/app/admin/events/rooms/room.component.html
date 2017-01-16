@@ -1,4 +1,10 @@
-<td><a routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}">Add</a></td>
+<td>
+  <a routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}">
+    <div *ngFor="let ageGrade of ageRangeAndGrades();">
+      {{ ageGrade }}
+    </div>
+  </a>
+</td>
 <td>{{room.RoomName}} <a class="tag tag-info" href="#" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</a></td>
 <td>
   <span *ngIf="hasCapacity()">

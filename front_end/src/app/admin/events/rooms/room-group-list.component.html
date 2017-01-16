@@ -43,6 +43,14 @@
           </strong>
         </div>
       </div>
+      <div class="col-sm-12 text-sm-right float-xs-right">
+        <div class="float-sm-right">
+          <span class="float-xs-right">
+            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="saveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Save</button>
+            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="cancelSaveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Cancel</button>
+          </span>
+        </div>
+      </div>
     </div>
 
     <div class="row my-2">
@@ -62,7 +70,7 @@
                   <th><span class="pr-3">Select All</span><span>Months</span></th>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let g of getGroups() | slice:0:6" class="group" [group]="g" [eventToUpdate]="eventToUpdate" [roomId]="roomId" [room]="room"></tr>
+                  <tr *ngFor="let g of getGroups() | slice:0:6" class="group" [group]="g" [eventToUpdate]="eventToUpdate" [roomId]="roomId" [room]="room" (setDirty)="setDirty($event)"></tr>
                 </tbody>
               </table>
             </div>
@@ -74,7 +82,7 @@
             <div class="col-xs-12">
               <table class="table groups all">
                 <tbody>
-                  <tr *ngFor="let g of getGroups() | slice:6" class="group" [group]="g" [eventToUpdate]="eventToUpdate" [roomId]="roomId" [room]="room"></tr>
+                  <tr *ngFor="let g of getGroups() | slice:6" class="group" [group]="g" [eventToUpdate]="eventToUpdate" [roomId]="roomId" [room]="room" (setDirty)="setDirty($event)"></tr>
                 </tbody>
               </table>
             </div>
