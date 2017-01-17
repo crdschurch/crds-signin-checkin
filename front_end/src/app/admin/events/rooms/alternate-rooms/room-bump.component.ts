@@ -34,12 +34,12 @@ export class RoomBumpComponent {
       }
       i++;
     }
-    this.updateBumpingRooms();
+    this.setAsDirty();
   }
   bump() {
     if (!this.room.BumpingRulePriority) {
       this.room.BumpingRulePriority = this.bumpingRooms.length;
-      this.updateBumpingRooms();
+      this.setAsDirty();
     }
   }
   bumpUp() {
@@ -54,7 +54,7 @@ export class RoomBumpComponent {
       }
       i++;
     }
-    this.updateBumpingRooms();
+    this.setAsDirty();
   }
   bumpDown() {
     let i = 0;
@@ -68,11 +68,10 @@ export class RoomBumpComponent {
       }
       i++;
     }
-    this.updateBumpingRooms();
+    this.setAsDirty();
   }
 
-  private updateBumpingRooms() {
-    // this.adminService.updateBumpingRooms(this.room.EventId, this.route.snapshot.params['roomId'], this.allRooms);
+  private setAsDirty() {
     this.setDirtyChild.emit();
   }
 

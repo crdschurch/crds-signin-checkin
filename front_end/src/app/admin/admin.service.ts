@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
@@ -45,11 +45,11 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  updateRoomGroups(eventId: string, roomId: string, body: Room) {
-    body.EventId = eventId;
-    body.RoomId = roomId;
-
-    return this.updateRoomGroupsInternal(body);
+  updateRoomGroups(eventId: string, roomId: string, room: Room) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
+    return this.http.put(url, room)
+                    .map(res => Room.fromJson(res.json()))
+                    .catch(this.handleError);
   }
 
   importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {
@@ -79,13 +79,6 @@ export class AdminService {
   reverseSignin(eventParticipantId: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/signin/reverse/${eventParticipantId}`;
     return this.http.put(url, null).catch(this.handleError);
-  }
-
-  private updateRoomGroupsInternal(room: Room) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${room.EventId}/rooms/${room.RoomId}/groups`;
-    return this.http.put(url, room)
-                    .map(res => Room.fromJson(res.json()))
-                    .catch(this.handleError);
   }
 
   private handleError (error: any) {
