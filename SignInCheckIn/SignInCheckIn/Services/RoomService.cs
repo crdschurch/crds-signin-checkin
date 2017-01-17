@@ -285,7 +285,9 @@ namespace SignInCheckIn.Services
             {
                 EventId = eventId,
                 RoomId = roomId,
-                AllowSignIn = true
+                AllowSignIn = eventRoom.AllowSignIn,
+                Capacity = eventRoom.Capacity,
+                Volunteers = eventRoom.Volunteers,
             };
 
             // Create the room reservation, if needed
