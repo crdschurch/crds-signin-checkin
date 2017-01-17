@@ -14,5 +14,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpGroupParticipantDto> mpGroupParticipantDtos);
         void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos);
         MpEventParticipantDto GetEventParticipantByEventParticipantId(string token, int eventParticipantId);
+        List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds);
     }
 }

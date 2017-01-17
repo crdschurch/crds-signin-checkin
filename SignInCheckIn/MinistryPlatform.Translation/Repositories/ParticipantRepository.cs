@@ -68,7 +68,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL ", columnList);
+                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL", columnList);
 
             foreach (var child in childPartipantsForEvent)
             {
@@ -154,7 +154,39 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds)
         {
-            return null;
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            var columnList = new List<string>
+            {
+                "Event_Participant_ID",
+                "Event_ID",
+                "Participant_ID_Table_Contact_ID_Table.[First_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table.[Participant_ID]",
+                "Participation_Status_ID",
+                "Time_In",
+                "Time_Confirmed",
+                "Time_Out",
+                "Event_Participants.[Notes]",
+                "Group_Participant_ID",
+                "[Check-in_Station]",
+                "Group_ID",
+                "Room_ID_Table.[Room_ID]",
+                "Room_ID_Table.[Room_Name]",
+                "Call_Parents",
+                "Group_Role_ID",
+                "Response_ID",
+                "Opportunity_ID",
+                "Registrant_Message_Sent",
+                "Call_Number",
+                "Checkin_Phone",
+                "Checkin_Household_ID"
+            };
+
+            var eventParticipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                Search<MpEventParticipantDto>($"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL", columnList);
+
+            return eventParticipantsForEvent;
         } 
     }
 }
