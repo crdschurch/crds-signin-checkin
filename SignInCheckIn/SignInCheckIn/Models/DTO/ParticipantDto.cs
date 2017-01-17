@@ -68,5 +68,7 @@ namespace SignInCheckIn.Models.DTO
         public string CheckinPhone { get; set; }
 
         public int? CheckinHouseholdId { get; set; }
+
+        public bool DuplicateSignIn { get; set; }
     }
 }

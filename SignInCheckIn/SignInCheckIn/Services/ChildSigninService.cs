@@ -96,13 +96,16 @@ namespace SignInCheckIn.Services
             var mpAllEventParticipantDtoList = new List<MpEventParticipantDto>();
             var eventsForSignin = GetEventsForSignin(participantEventMapDto);
 
+            CheckForDuplicateSignIns(eventsForSignin, participantEventMapDto);
+
             // create participant records for guests, and assign to a group
             if (participantEventMapDto.Participants.Any(r => r.GuestSignin == true))
             {
                 ProcessGuestSignins(participantEventMapDto);
             }
 
-            // reset the current event in the case they are doing AC here
+            // reset the current event in the case they are doing AC here - need to handle the AC 
+            // event here - if the AC event is happening at the current service, then no big deal
             participantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[0]);
             var currentEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto, true).ToList();
             mpAllEventParticipantDtoList.AddRange(currentEventParticipantDtoList);
@@ -212,24 +215,37 @@ namespace SignInCheckIn.Services
         // need to be able to assign to two rooms - which is what signing into AC is
         private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
         {
+            // JPC - need to handle already-assigned event participants here
+
             // Get Event and make sure it occures at a valid time
             var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
 
             // Get groups that are configured for the event
             var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
 
-            // Get a list of participants with their groups and expected rooms
+            // Get a list of participants with their groups and expected rooms - maps groups onto participants
             var mpEventParticipantDtoList = SetParticipantsGroupsAndExpectedRooms(eventGroups, participantEventMapDto);
 
             foreach (var eventParticipant in participantEventMapDto.Participants)
             {
-                if (!eventParticipant.Selected) continue;
+                if (!eventParticipant.Selected)
+                {
+                    continue;
+                }
+
+                if (eventParticipant.DuplicateSignIn == true)
+                {
+                    eventParticipant.SignInErrorMessage = $"{eventParticipant.FirstName} is already signed in for this event.";
+                    continue;
+                }
+
                 var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
                     eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
                 }
+  
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
@@ -260,7 +276,7 @@ namespace SignInCheckIn.Services
         {
             var mpEventParticipantDtoList = (
                 // Get selected participants
-                from participant in participantEventMapDto.Participants.Where(r => r.Selected)
+                from participant in participantEventMapDto.Participants.Where(r => r.Selected && r.DuplicateSignIn == false)
 
                 // Get the event group id that they belong to
                 let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
@@ -662,6 +678,24 @@ namespace SignInCheckIn.Services
                 _participantRepository.UpdateEventParticipants(mpEventParticipantDtos);
 
                 return true;
+            }
+        }
+
+        public void CheckForDuplicateSignIns(List<MpEventDto> eventsForSignin, ParticipantEventMapDto participantEventMapDto)
+        {
+            foreach (var eventItem in eventsForSignin)
+            {
+                var signedInParticipants = _participantRepository.GetEventParticipantsByEventAndParticipant(
+                    eventItem.EventId,
+                    participantEventMapDto.Participants.Select(r => r.ParticipantId).ToList());
+
+                foreach (var participant in participantEventMapDto.Participants)
+                {
+                    if (signedInParticipants.Any(r => r.ParticipantId == participant.ParticipantId))
+                    {
+                        participant.DuplicateSignIn = true;
+                    }
+                }
             }
         }
     }
