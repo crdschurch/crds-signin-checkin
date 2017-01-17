@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
@@ -160,14 +161,17 @@ namespace MinistryPlatform.Translation.Repositories
         // look for an event room when we do not know if the event room is on a parent or child event
         public MpEventRoomDto GetEventRoomForEventMaps(List<int> eventIds, int roomId)
         {
-            var queryString = eventIds.Aggregate("(", (current, id) => current + (id + ","));
-
-            queryString = queryString.TrimEnd(',');
-            queryString += ")";
-
             var apiUserToken = _apiUserRepository.GetToken();
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID IN {queryString} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
+            var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                Search<MpEventRoomDto>($"Event_Rooms.Event_ID IN ({string.Join(",", eventIds)}) AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns);
+
+            if (!rooms.Any())
+            {
+                return null;
+            }
+            
+            return rooms.FirstOrDefault();
         }
 
         public MpRoomDto GetRoom(int roomId)
