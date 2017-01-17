@@ -1,7 +1,6 @@
 import { ManageChildrenComponent } from './manage-children.component';
-import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { Event, Child } from '../../../shared/models';
+import { Child } from '../../../shared/models';
 import { HeaderService } from '../../header/header.service';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
@@ -50,8 +49,6 @@ describe('ManageChildrenComponent', () => {
       let eventParticipantId = children[1].EventParticipantId;
 
       (<jasmine.Spy>(adminService.reverseSignin)).and.returnValue(Observable.of());
-      console.log(fixture);
-      console.log(adminService);
       fixture.reverseSignin(children[1]);
 
       expect(adminService.reverseSignin).toHaveBeenCalledWith(eventParticipantId);

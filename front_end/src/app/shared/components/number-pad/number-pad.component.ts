@@ -3,7 +3,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'number-pad',
   templateUrl: 'number-pad.component.html',
-  styleUrls: ['../../scss/_number-pad.scss', ]
+  styleUrls: ['number-pad.scss', ]
 })
 export class NumberPadComponent {
   @Output() addNumber: EventEmitter<any> = new EventEmitter();

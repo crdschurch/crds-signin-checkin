@@ -13,7 +13,7 @@ export class ApiService {
   }
 
   getEventMaps(eventId: string) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/eventmaps`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/maps`;
     return this.http.get(url)
                     .map(res => Event.fromJsons(res.json()))
                     .catch(this.handleError);

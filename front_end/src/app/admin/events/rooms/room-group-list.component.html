@@ -46,8 +46,8 @@
       <div class="col-sm-12 text-sm-right float-xs-right">
         <div class="float-sm-right">
           <span class="float-xs-right">
-            <button class="btn btn-primary btn-sm" type="button" (click)="saveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Save</button>
-            <button class="btn btn-primary btn-sm" type="button" (click)="cancelSaveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Cancel</button>
+            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="saveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Save</button>
+            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="cancelSaveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Cancel</button>
           </span>
         </div>
       </div>

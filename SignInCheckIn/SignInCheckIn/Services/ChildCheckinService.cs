@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
@@ -12,11 +13,17 @@ namespace SignInCheckIn.Services
     public class ChildCheckinService : IChildCheckinService
     {
         private readonly IChildCheckinRepository _childCheckinRepository;
+        private readonly IContactRepository _contactRepository;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IEventService _eventService;
 
-        public ChildCheckinService(IChildCheckinRepository childCheckinRepository, IEventService eventService)
+        public ChildCheckinService(IChildCheckinRepository childCheckinRepository, IContactRepository contactRepository, IRoomRepository roomRepository, IApplicationConfiguration applicationConfiguration, IEventService eventService)
         {
             _childCheckinRepository = childCheckinRepository;
+            _contactRepository = contactRepository;
+            _roomRepository = roomRepository;
+            _applicationConfiguration = applicationConfiguration;
             _eventService = eventService;
         }
 
@@ -39,6 +46,39 @@ namespace SignInCheckIn.Services
         {
             _childCheckinRepository.CheckinChildrenForCurrentEventAndRoom(eventParticipant.ParticipationStatusId, eventParticipant.EventParticipantId);
             return eventParticipant;
+        }
+
+        public bool OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId)
+        {
+            var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            bool isClosed = !eventRoom.AllowSignIn;
+            bool isAtCapacity = eventRoom.Capacity <= (eventRoom.CheckedIn + eventRoom.SignedIn);
+            if (isClosed)
+            {
+                throw new Exception("closed");
+            }
+            else if (isAtCapacity)
+            {
+                throw new Exception("capacity");
+            }
+            else
+            {
+                _childCheckinRepository.OverrideChildIntoRoom(eventParticipantId, roomId);
+                return true;
+            }
+        }
+
+        public ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId, bool? excludeThisRoom = false)
+        {
+            var mpEventParticipant = _childCheckinRepository.GetEventParticipantByCallNumber(eventId, callNumber);
+            if (excludeThisRoom == true) { 
+                // if child is in room and checked in, dont show
+                var checkedInParticipationStatusId = _applicationConfiguration.CheckedInParticipationStatusId;
+                if (mpEventParticipant.RoomId == roomId && mpEventParticipant.ParticipantStatusId == checkedInParticipationStatusId) return null;
+            }
+            mpEventParticipant.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(mpEventParticipant.CheckinHouseholdId.Value);
+            var participant = Mapper.Map<MpEventParticipantDto, ParticipantDto>(mpEventParticipant);
+            return participant;
         }
     }
 }

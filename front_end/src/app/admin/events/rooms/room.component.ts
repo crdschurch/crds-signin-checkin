@@ -30,6 +30,10 @@ export class RoomComponent implements OnInit {
     this.roomForm.controls[field].setValue(this.room[field]);
   }
 
+  sync(field) {
+    this.room[field] = this.roomForm.controls[field].value;
+  }
+
   hasCapacity() {
     return this.room.Capacity;
   }
@@ -64,6 +68,16 @@ export class RoomComponent implements OnInit {
     // set on backend (it is always false currently)
     // return this.room.AdventureClub;
     return false;
+  }
+
+  ageRangeAndGrades(): any {
+    let ageGrades = this.room.getSelectionDescription(false);
+
+    if (ageGrades.length === 0) {
+      ageGrades = ['Add'];
+    }
+
+    return ageGrades;
   }
 
   ngOnInit() {
