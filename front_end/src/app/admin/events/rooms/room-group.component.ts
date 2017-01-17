@@ -14,7 +14,6 @@ export class RoomGroupComponent {
   @Input() roomId: string;
   @Input() room: Room;
 
-  // my stuff
   @Output() setDirty = new EventEmitter<boolean>();
 
   constructor( private adminService: AdminService) {

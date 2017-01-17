@@ -19,6 +19,7 @@ export class RoomGroupListComponent implements OnInit {
   eventToUpdate: Event;
   roomId: string;
   private room: Room;
+  private allAlternateRooms: Room[];
   private event: Event;
   private eventsMap: Event[];
   isAdventureClub: boolean = false;
@@ -61,6 +62,15 @@ export class RoomGroupListComponent implements OnInit {
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
+    );
+
+    this.adminService.getBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId']).subscribe(
+      allRooms => {
+        this.allAlternateRooms = Room.fromJsons(allRooms);
+      },
+      error => {
+        console.error(error);
+      }
     );
 
   }
@@ -129,6 +139,14 @@ export class RoomGroupListComponent implements OnInit {
     }
   }
 
+  alternateRoomsSelect() {
+    this.alternateRoomsSelected = true;
+  }
+
+  roomGroupsSelect() {
+    this.alternateRoomsSelected = false;
+  }
+
   ngOnInit() {
     this.getData();
     this.openTabIfAlternateRoomsHash();
@@ -138,6 +156,19 @@ export class RoomGroupListComponent implements OnInit {
     this.isDirty = true;
   }
 
+  save() {
+    console.log("save", this.alternateRoomsSelected, this);
+    if(this.alternateRoomsSelected) {
+      this.saveAlternateRooms();
+    } else {
+      this.saveRoomGroups();
+    }
+  }
+
+  cancel() {
+    console.log("cancel");
+  }
+
   saveRoomGroups() {
     this.updating = true;
     this.isDirty = false;
@@ -145,6 +176,17 @@ export class RoomGroupListComponent implements OnInit {
     this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room).subscribe((resp) => {
       this.updating = false;
       this.rootService.announceEvent('roomGroupsUpdateSuccess');
+      this.isDirty = false;
+    }, error => (this.rootService.announceEvent('generalError')));
+  }
+
+  saveAlternateRooms() {
+    this.updating = true;
+    this.isDirty = false;
+
+    this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp) => {
+      this.updating = false;
+      this.rootService.announceEvent('alternateRoomsUpdateSuccess');
       this.isDirty = false;
     }, error => (this.rootService.announceEvent('generalError')));
   }

@@ -6,16 +6,9 @@ import { Room, NewFamily, Child } from '../shared/models';
 
 @Injectable()
 export class AdminService {
-  private roomGroupsUpdateEmitter: EventEmitter<Room>;
-  private roomGroupsUpdateObserver: Observable<Room>;
-  private bumpingRoomsUpdateEmitter: EventEmitter<any>;
-  private bumpingRoomsUpdateObserver: Observable<any>;
   site: number;
 
-  constructor(private http: HttpClientService) {
-    //this.configureUpdateRoomGroupsEmitterAndObserver();
-    this.configureUpdateBumpingRoomsEmitterAndObserver();
-  }
+  constructor(private http: HttpClientService) {}
 
   getRooms(eventId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms`;
@@ -32,7 +25,10 @@ export class AdminService {
   }
 
   updateBumpingRooms(eventId: string, roomId: string, rooms: Room[]) {
-    this.bumpingRoomsUpdateEmitter.emit({eventId: eventId, roomId: roomId, rooms: rooms});
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
+    return this.http.post(url, rooms)
+                    .map(res => res.json())
+                    .catch(this.handleError);
   }
 
   updateRoom(eventId: string, roomId: string, body: Room) {
@@ -90,42 +86,6 @@ export class AdminService {
     return this.http.put(url, room)
                     .map(res => Room.fromJson(res.json()))
                     .catch(this.handleError);
-  }
-
-  private updateBumpingRoomsInternal(eventId: string, roomId: string, rooms: Room[]) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/bumping`;
-    return this.http.post(url, rooms)
-                    .map(res => res.json())
-                    .catch(this.handleError);
-  }
-
-  // private configureUpdateRoomGroupsEmitterAndObserver() {
-  //   // Create an emitter to use when sending updates to the room
-  //   this.roomGroupsUpdateEmitter = new EventEmitter<Room>();
-
-  //   // Setup an observer on the emitter, and set it to debounce for 2 seconds.
-  //   // This prevents the frontend from sending a backend update if multiple
-  //   // age ranges or grades are selected quickly.
-  //   this.roomGroupsUpdateObserver =
-  //     this.roomGroupsUpdateEmitter.map(room => room).debounceTime(2000);
-
-  //   // Subscribe to the debounced event - now actually send the update to
-  //   // the backend.
-  //   // TODO - Should handle the response, and notify the user of success or failure
-  //   // TODO - Should have some sort of processing state while the update is running, since it can take several seconds to complete
-  //   this.roomGroupsUpdateObserver.subscribe(room => {
-  //     this.updateRoomGroupsInternal(room);
-  //   });
-  // }
-
-  private configureUpdateBumpingRoomsEmitterAndObserver() {
-    this.bumpingRoomsUpdateEmitter = new EventEmitter<any>();
-    this.bumpingRoomsUpdateObserver =
-      this.bumpingRoomsUpdateEmitter.map(obj => obj).debounceTime(2000);
-    this.bumpingRoomsUpdateObserver.subscribe(obj => {
-      this.updateBumpingRoomsInternal(obj.eventId, obj.roomId, obj.rooms);
-    });
-
   }
 
   private handleError (error: any) {
