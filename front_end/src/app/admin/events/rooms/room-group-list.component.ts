@@ -106,6 +106,13 @@ export class RoomGroupListComponent implements OnInit {
     return false;
   }
 
+  hasBumpingRooms(): boolean {
+    return this.allAlternateRooms
+      .filter(
+        (obj: Room) => { return obj.isBumpingRoom();
+      }).length > 0
+  }
+
   getGroups(): Group[] {
     return this.isReady() ? this.room.AssignedGroups : [];
   }
@@ -129,11 +136,18 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   toggleAdventureClub(e) {
-    // if has rooms, dont change toggle, show alert
-    if (this.hasActiveRooms()) {
+    if (this.isDirty) {
       this.isAdventureClub = !this.isAdventureClub;
       e.target.checked = this.isAdventureClub;
-      this.rootService.announceEvent('echeckAdventureClubToggleWarning');
+      this.rootService.announceEvent('saveBeforeAdventureClubToggle');
+    } else if (this.hasActiveRooms() || this.hasBumpingRooms()) {
+      this.isAdventureClub = !this.isAdventureClub;
+      e.target.checked = this.isAdventureClub;
+      if (this.hasActiveRooms()) {
+        this.rootService.announceEvent('echeckAdventureClubToggleWarning');
+      } else {
+        this.rootService.announceEvent('removeBumpingRoomsBeforeAdventureClubToggle');
+      }
     } else {
       this.setCurrentEvent(e.target.checked);
     }
@@ -157,8 +171,7 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   save() {
-    console.log("save", this.alternateRoomsSelected, this);
-    if(this.alternateRoomsSelected) {
+    if (this.alternateRoomsSelected) {
       this.saveAlternateRooms();
     } else {
       this.saveRoomGroups();
@@ -166,7 +179,9 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   cancel() {
-    console.log("cancel");
+    this.updating = true;
+    this.isDirty = false;
+    this.getData();
   }
 
   saveRoomGroups() {
@@ -191,9 +206,4 @@ export class RoomGroupListComponent implements OnInit {
     }, error => (this.rootService.announceEvent('generalError')));
   }
 
-  cancelSaveRoomGroups() {
-    this.updating = true;
-    this.isDirty = false;
-    this.getData();
-  }
 }

@@ -89,7 +89,8 @@
           </div>
         </tab>
         <tab heading='Alternate Rooms' [active]="alternateRoomsSelected" (select)="alternateRoomsSelect()">
-          <alternate-rooms (setDirty)="setDirty($event)" [allAlternateRooms]="allAlternateRooms"></alternate-rooms>
+          <preloader *ngIf="!isReady()"></preloader>
+          <alternate-rooms (setDirty)="setDirty($event)" [allAlternateRooms]="allAlternateRooms" *ngIf="isReady()"></alternate-rooms>
         </tab>
       </tabset>
     </div>
