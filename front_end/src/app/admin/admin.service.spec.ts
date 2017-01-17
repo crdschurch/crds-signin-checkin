@@ -41,12 +41,12 @@ describe('AdminService', () => {
     room.EventRoomId = eventRoomId;
     room.RoomId = roomId;
 
-    let expectedRoom = new Room();
+    let expectedRoom = Room.fromJson({});
     (<jasmine.Spy>httpClientService.put).and.returnValue(response);
     (<jasmine.Spy>responseObject.json).and.returnValue(expectedRoom);
 
     fixture.updateRoom(eventId, roomId, room).subscribe((updatedRoom: Room) => {
-      expect(updatedRoom).toBe(expectedRoom);
+      expect(updatedRoom).toEqual(expectedRoom);
       expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`, room);
     });
   });

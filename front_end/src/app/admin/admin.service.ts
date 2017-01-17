@@ -38,7 +38,7 @@ export class AdminService {
   updateRoom(eventId: string, roomId: string, body: Room) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.put(url, body)
-                    .map(res => res.json())
+                    .map(res => Room.fromJson(res.json()))
                     .catch(this.handleError);
   }
 
