@@ -96,6 +96,10 @@ namespace SignInCheckIn.Services
             var mpAllEventParticipantDtoList = new List<MpEventParticipantDto>();
             var eventsForSignin = GetEventsForSignin(participantEventMapDto);
 
+            // Check to see here if they're already signed in, so the labels can be correctly identified
+            
+
+
             // create participant records for guests, and assign to a group
             if (participantEventMapDto.Participants.Any(r => r.GuestSignin == true))
             {
@@ -212,13 +216,15 @@ namespace SignInCheckIn.Services
         // need to be able to assign to two rooms - which is what signing into AC is
         private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
         {
+            // JPC - need to handle already-assigned event participants here
+
             // Get Event and make sure it occures at a valid time
             var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
 
             // Get groups that are configured for the event
             var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
 
-            // Get a list of participants with their groups and expected rooms
+            // Get a list of participants with their groups and expected rooms - maps groups onto participants
             var mpEventParticipantDtoList = SetParticipantsGroupsAndExpectedRooms(eventGroups, participantEventMapDto);
 
             foreach (var eventParticipant in participantEventMapDto.Participants)
@@ -664,5 +670,7 @@ namespace SignInCheckIn.Services
                 return true;
             }
         }
+
+        //public bool CheckForDuplicateSignIns()
     }
 }

@@ -68,7 +68,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL", columnList);
+                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL ", columnList);
 
             foreach (var child in childPartipantsForEvent)
             {
@@ -151,5 +151,10 @@ namespace MinistryPlatform.Translation.Repositories
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpEventParticipantDto>(eventParticipantId, _eventParticipantColumns);
         }
+
+        public List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds)
+        {
+            return null;
+        } 
     }
 }
