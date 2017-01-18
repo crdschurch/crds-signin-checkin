@@ -18,5 +18,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         void ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId);
         List<MpEventDto> GetEventAndCheckinSubevents(string token, int eventId);
         List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId);
+        MpEventDto GetSubeventByParentEventId(string token, int serviceEventId, int eventTypeId);
     }
 }

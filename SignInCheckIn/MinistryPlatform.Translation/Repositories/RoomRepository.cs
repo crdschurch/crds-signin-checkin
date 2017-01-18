@@ -191,6 +191,11 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Delete<MpBumpingRuleDto>(ruleIds);
         }
 
+        public void DeleteEventRoom(string authenticationToken, int eventRoomId)
+        {
+            _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Delete<MpEventRoomDto>(eventRoomId);
+        }
+
         public List<MpRoomDto> GetAvailableRoomsBySite(int locationId)
         {
             var apiUserToken = _apiUserRepository.GetToken();

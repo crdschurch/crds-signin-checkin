@@ -19,6 +19,8 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         void DeleteBumpingRules(string authenticationToken, IEnumerable<int> ruleIds);
 
+        void DeleteEventRoom(string authenticationToken, int eventRoomId);
+
         void CreateBumpingRules(string authenticationToken, List<MpBumpingRuleDto> bumpingRules);
 
         List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds, int? fromEventRoomId);
