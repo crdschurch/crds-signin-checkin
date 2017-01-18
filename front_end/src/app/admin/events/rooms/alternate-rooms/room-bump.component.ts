@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Room } from '../../../../shared/models';
 import { AdminService } from '../../../admin.service';
@@ -13,6 +13,7 @@ export class RoomBumpComponent {
   @Input() bumpingRooms: Room[];
   @Input() allRooms: Room[];
   @Input() index: number;
+  @Output() setDirtyChild = new EventEmitter<Room[]>();
 
   constructor( private adminService: AdminService,
                private route: ActivatedRoute) {}
@@ -33,12 +34,12 @@ export class RoomBumpComponent {
       }
       i++;
     }
-    this.updateBumpingRooms();
+    this.setAsDirty();
   }
   bump() {
     if (!this.room.BumpingRulePriority) {
       this.room.BumpingRulePriority = this.bumpingRooms.length;
-      this.updateBumpingRooms();
+      this.setAsDirty();
     }
   }
   bumpUp() {
@@ -53,7 +54,7 @@ export class RoomBumpComponent {
       }
       i++;
     }
-    this.updateBumpingRooms();
+    this.setAsDirty();
   }
   bumpDown() {
     let i = 0;
@@ -67,11 +68,11 @@ export class RoomBumpComponent {
       }
       i++;
     }
-    this.updateBumpingRooms();
+    this.setAsDirty();
   }
 
-  private updateBumpingRooms() {
-    this.adminService.updateBumpingRooms(this.room.EventId, this.route.snapshot.params['roomId'], this.allRooms);
+  setAsDirty() {
+    this.setDirtyChild.emit();
   }
 
 }

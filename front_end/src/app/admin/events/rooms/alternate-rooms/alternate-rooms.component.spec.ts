@@ -16,13 +16,6 @@ describe('AlternateRoomsComponent', () => {
     (<jasmine.Spy>(adminService.getBumpingRooms)).and.returnValue(Observable.of([{}]));
   });
 
-  describe('#ngOnInit', () => {
-    it('should call adminService', () => {
-      fixture.ngOnInit();
-      expect(adminService.getBumpingRooms).toHaveBeenCalledWith(route.snapshot.params['eventId'], route.snapshot.params['roomId']);
-    });
-  });
-
   describe('sorting rooms', () => {
     const roomUnbumped1 = Room.fromJson({ RoomId: 111 });
     const roomUnbumped2 = Room.fromJson({ RoomId: 222 });
@@ -34,18 +27,17 @@ describe('AlternateRoomsComponent', () => {
     beforeEach(() => {
       fixture = new AlternateRoomsComponent(adminService, route);
       (<jasmine.Spy>(adminService.getBumpingRooms)).and.returnValue(Observable.of(allRooms));
+      fixture.allAlternateRooms = allRooms;
     });
 
     describe('#availableRooms()', () => {
       it('get only available rooms', () => {
-        fixture.ngOnInit();
         expect(fixture.availableRooms.length).toEqual(2);
       });
     });
 
     describe('#bumpingRooms()', () => {
       it('get only bumping rooms, sort by priority', () => {
-        fixture.ngOnInit();
         expect(fixture.bumpingRooms.length).toEqual(3);
         expect(fixture.bumpingRooms[0].RoomId).toEqual(roomBumped0.RoomId);
         expect(fixture.bumpingRooms[1].RoomId).toEqual(roomBumped1.RoomId);

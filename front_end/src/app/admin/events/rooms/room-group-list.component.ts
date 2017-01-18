@@ -21,6 +21,7 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   private eventsMap: Event[];
+  allAlternateRooms: Room[];
   isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
@@ -63,6 +64,15 @@ export class RoomGroupListComponent implements OnInit {
       error => console.error(error)
     );
 
+    this.adminService.getBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId']).subscribe(
+      allRooms => {
+        this.allAlternateRooms = Room.fromJsons(allRooms);
+      },
+      error => {
+        console.error(error);
+      }
+    );
+
   }
 
   // get the adventure club event if AdventureClub is true for room, else return service event
@@ -96,6 +106,13 @@ export class RoomGroupListComponent implements OnInit {
     return false;
   }
 
+  hasBumpingRooms(): boolean {
+    return this.allAlternateRooms
+      .filter(
+        (obj: Room) => { return obj.isBumpingRoom();
+      }).length > 0;
+  }
+
   getGroups(): Group[] {
     return this.isReady() ? this.room.AssignedGroups : [];
   }
@@ -119,14 +136,29 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   toggleAdventureClub(e) {
-    // if has rooms, dont change toggle, show alert
-    if (this.hasActiveRooms()) {
+    if (this.isDirty) {
       this.isAdventureClub = !this.isAdventureClub;
       e.target.checked = this.isAdventureClub;
-      this.rootService.announceEvent('echeckAdventureClubToggleWarning');
+      this.rootService.announceEvent('saveBeforeAdventureClubToggle');
+    } else if (this.hasActiveRooms() || this.hasBumpingRooms()) {
+      this.isAdventureClub = !this.isAdventureClub;
+      e.target.checked = this.isAdventureClub;
+      if (this.hasActiveRooms()) {
+        this.rootService.announceEvent('echeckAdventureClubToggleWarning');
+      } else {
+        this.rootService.announceEvent('removeBumpingRoomsBeforeAdventureClubToggle');
+      }
     } else {
       this.setCurrentEvent(e.target.checked);
     }
+  }
+
+  alternateRoomsSelect() {
+    this.alternateRoomsSelected = true;
+  }
+
+  roomGroupsSelect() {
+    this.alternateRoomsSelected = false;
   }
 
   ngOnInit() {
@@ -136,6 +168,20 @@ export class RoomGroupListComponent implements OnInit {
 
   setDirty() {
     this.isDirty = true;
+  }
+
+  save() {
+    if (this.alternateRoomsSelected) {
+      this.saveAlternateRooms();
+    } else {
+      this.saveRoomGroups();
+    }
+  }
+
+  cancel() {
+    this.updating = true;
+    this.isDirty = false;
+    this.getData();
   }
 
   saveRoomGroups() {
@@ -149,9 +195,16 @@ export class RoomGroupListComponent implements OnInit {
     }, error => (this.rootService.announceEvent('generalError')));
   }
 
-  cancelSaveRoomGroups() {
+  saveAlternateRooms() {
     this.updating = true;
     this.isDirty = false;
-    this.getData();
-  }
+
+    this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'],
+      this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp) => {
+        this.updating = false;
+        this.rootService.announceEvent('alternateRoomsUpdateSuccess');
+        this.isDirty = false;
+      }, error => (this.rootService.announceEvent('generalError')));
+    }
+
 }
