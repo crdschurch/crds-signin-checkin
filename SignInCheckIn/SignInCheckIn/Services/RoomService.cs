@@ -261,23 +261,8 @@ namespace SignInCheckIn.Services
             var eventDto = _eventRepository.GetEventById(eventId);
             eventRoom.AdventureClub = eventDto.ParentEventId.HasValue && eventDto.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId;
 
-            // Make sure there is not an existing room reservation on the 'other' event
-            // (i.e. the AC subevent if creating room reseverations for service event, and vice versa)
-            if (eventRoom.AdventureClub)
-            {
-                // is adventure club, so delete any event rooms on the parent service event
-                var oldEventRoom = _roomRepository.GetEventRoom(eventDto.ParentEventId.Value, roomId);
-                DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventDto.ParentEventId.Value, roomId);
-                _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
-            }
-            else
-            {
-                // not adventure club, so delete any event rooms on the adventure club event
-                var adventureClubSubevent = _eventRepository.GetSubeventByParentEventId(authenticationToken, eventId, _applicationConfiguration.AdventureClubEventTypeId);
-                var oldEventRoom = _roomRepository.GetEventRoom(adventureClubSubevent.EventId, roomId);
-                DeleteCurrentEventGroupsForRoomReservation(authenticationToken, adventureClubSubevent.EventId, roomId);
-                _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
-            }
+
+            DeleteRoomReservationForOtherEvent(authenticationToken, eventRoom, eventDto, roomId);
 
             // Start by deleting all current event groups for this room reservation (if any)
             DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventId, roomId);
@@ -417,6 +402,27 @@ namespace SignInCheckIn.Services
             if (currentEventGroups.Any())
             {
                 _eventRepository.DeleteEventGroups(authenticationToken, currentEventGroups.Select(g => g.Id));
+            }
+        }
+
+        private void DeleteRoomReservationForOtherEvent(string authenticationToken, EventRoomDto eventRoom, MpEventDto eventDto, int roomId)
+        { 
+            // Make sure there is not an existing room reservation on the 'other' event
+            // (i.e. the AC subevent if creating room reseverations for service event, and vice versa)
+            if (eventRoom.AdventureClub)
+            {
+                // is adventure club, so delete any event rooms on the parent service event
+                var oldEventRoom = _roomRepository.GetEventRoom(eventDto.ParentEventId.Value, roomId);
+                DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventDto.ParentEventId.Value, roomId);
+                _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
+            }
+            else
+            {
+                // not adventure club, so delete any event rooms on the adventure club event
+                var adventureClubSubevent = _eventRepository.GetSubeventByParentEventId(authenticationToken, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+                var oldEventRoom = _roomRepository.GetEventRoom(adventureClubSubevent.EventId, roomId);
+                DeleteCurrentEventGroupsForRoomReservation(authenticationToken, adventureClubSubevent.EventId, roomId);
+                _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
             }
         }
 
