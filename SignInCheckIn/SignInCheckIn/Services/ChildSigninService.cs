@@ -466,7 +466,7 @@ namespace SignInCheckIn.Services
                     FirstName = newFamilyDto.ParentContactDto.FirstName,
                     Nickname = newFamilyDto.ParentContactDto.FirstName,
                     LastName = newFamilyDto.ParentContactDto.LastName,
-                    DisplayName = newFamilyDto.ParentContactDto.FirstName + " " + newFamilyDto.ParentContactDto.LastName,
+                    DisplayName = newFamilyDto.ParentContactDto.LastName + ", " + newFamilyDto.ParentContactDto.FirstName,
                     HouseholdId = mpHouseholdDto.HouseholdId,
                     HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId,
                     Company = false
@@ -612,7 +612,7 @@ namespace SignInCheckIn.Services
                     FirstName = firstName,
                     Nickname = firstName,
                     LastName = lastName,
-                    DisplayName = firstName + " " + lastName,
+                    DisplayName = lastName + ", " + firstName,
                     HouseholdId = householdId,
                     HouseholdPositionId = householdPositionId,
                     Company = false,
