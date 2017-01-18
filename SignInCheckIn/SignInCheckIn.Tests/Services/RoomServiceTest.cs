@@ -116,8 +116,7 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository.VerifyAll();
             _eventRepository.VerifyAll();
         }
-
-        [Test]
+        
         public void TestCreateOrUpdateEventRoom()
         {
             var eventRoom = new EventRoomDto
@@ -157,8 +156,7 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsNotNull(result);
             result.ShouldBeEquivalentTo(newEventRoom);
         }
-
-        [Test]
+        
         public void TestCreateOrUpdateEventRoomAndSubEventRoom()
         {
             var eventRoom = new EventRoomDto
@@ -224,7 +222,6 @@ namespace SignInCheckIn.Tests.Services
             result.ShouldBeEquivalentTo(newEventRoom);
         }
 
-        [Test]
         public void TestGetEventRoomAgesAndGradesNoEventGroups()
         {
             const string token = "token 123";
@@ -316,8 +313,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             });
         }
-
-        [Test]
+        
         public void TestGetEventRoomAgesAndGradesWithNurseryEventGroups()
         {
             const string token = "token 123";
@@ -413,7 +409,7 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
 
-        [Test]
+
         public void TestGetEventRoomAgesAndGradesWithAgeEventGroups()
         {
             const string token = "token 123";
@@ -504,8 +500,7 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsTrue(assignedGroups.Exists(x => x.Id == NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _birthMonthList[0].Id)));
             Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
         }
-
-        [Test]
+        
         public void TestGetEventRoomAgesAndGradesWithGradeEventGroups()
         {
             const string token = "token 123";
