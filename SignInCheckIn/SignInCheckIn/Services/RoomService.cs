@@ -410,6 +410,22 @@ namespace SignInCheckIn.Services
             var mpEventAvailableRooms = mpEventAllRooms.Where(r => r.RoomId != roomId).ToList();
             var mpCurrentEventRoom = mpEventAllRooms.First(r => r.RoomId == roomId);
 
+            // if there is no existing event room for the selected room, create one to have something to
+            // attach the bumping rooms to
+            if (mpCurrentEventRoom.EventRoomId == null)
+            {
+                MpEventRoomDto eventRoom = new MpEventRoomDto
+                {
+                    EventId = eventId,
+                    RoomId = mpCurrentEventRoom.RoomId,
+                    RoomName = mpCurrentEventRoom.RoomName,
+                    RoomNumber = mpCurrentEventRoom.RoomNumber
+                };
+
+                var currentEventRoomDto = _roomRepository.CreateOrUpdateEventRoom(null, eventRoom);
+                mpCurrentEventRoom.EventRoomId = currentEventRoomDto.EventRoomId;
+            }
+
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
             // make sure to filter null values

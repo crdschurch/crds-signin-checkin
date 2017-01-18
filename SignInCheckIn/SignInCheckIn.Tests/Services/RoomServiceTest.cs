@@ -672,6 +672,92 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
+        public void ShouldGetAvailableRoomsForRoomWithNoEventRoom()
+        {
+            // Arrange
+            var eventId = 1234567;
+
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 1234567,
+                LocationId = 1
+            };
+
+            var mpEventRoomFrom = new MpEventRoomDto
+            {
+                AllowSignIn = true,
+                Capacity = 1,
+                CheckedIn = 2,
+                EventId = 3,
+                RoomId = 1111,
+                RoomName = "name",
+                RoomNumber = "number",
+                SignedIn = 5,
+                Volunteers = 6
+            };
+
+            var mpEventRoom = new MpEventRoomDto
+            {
+                AllowSignIn = true,
+                Capacity = 1,
+                CheckedIn = 2,
+                EventId = 3,
+                EventRoomId = 1111,
+                RoomId = 1112,
+                RoomName = "name",
+                RoomNumber = "number",
+                SignedIn = 5,
+                Volunteers = 6
+            };
+
+            List<MpEventRoomDto> mpEventRoomDtos = new List<MpEventRoomDto>();
+            mpEventRoomDtos.Add(mpEventRoom);
+            mpEventRoomDtos.Add(mpEventRoomFrom);
+
+            var mpBumpingRuleDtos = new List<MpBumpingRuleDto>
+            {
+                new MpBumpingRuleDto
+                {
+                    BumpingRuleId = 2345678,
+                    ToEventRoomId = 1111,
+                    PriorityOrder = 1
+                }
+            };
+
+            var returnedNewEventRoom = new MpEventRoomDto
+            {
+                EventRoomId = 2345678,
+                RoomId = 1111,
+                EventId = 3,
+                RoomName = "name"
+            };
+
+            _eventRepository.Setup(m => m.GetEventById(eventId)).Returns(mpEventDto);
+            _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
+            _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
+            _roomRepository.Setup(m => m.CreateOrUpdateEventRoom(null, It.IsAny<MpEventRoomDto>())).Returns(returnedNewEventRoom);
+
+            List<EventRoomDto> verifiedDtos = new List<EventRoomDto>()
+            {
+                new EventRoomDto
+                {
+                    BumpingRuleId = 2345678,
+                    BumpingRulePriority = 1
+                }
+            };
+
+            // Act
+            var result = _fixture.GetAvailableRooms(1111, 1234567);
+
+            // Assert
+            _eventRepository.VerifyAll();
+            _roomRepository.VerifyAll();
+
+            Assert.AreEqual(verifiedDtos[0].BumpingRuleId, result[0].BumpingRuleId);
+            Assert.AreEqual(verifiedDtos[0].BumpingRulePriority, result[0].BumpingRulePriority);
+        }
+
+        [Test]
         public void ShouldUpdateAvailableRooms()
         {
             // Arrange
