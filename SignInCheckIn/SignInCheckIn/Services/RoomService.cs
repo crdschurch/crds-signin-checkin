@@ -68,7 +68,21 @@ namespace SignInCheckIn.Services
         private EventRoomDto UpdateMainEventRoom(string authenticationToken, EventRoomDto eventRoom)
         {
             var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
-            return Mapper.Map<EventRoomDto>(response);
+            
+            // Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventRoom.EventId) ?? new List<MpEventGroupDto>();
+
+            // Load up lookups for age ranges, grades, birth months, and nursery months
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+
+            var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+
+            var updatedEventRoom = Mapper.Map<EventRoomDto>(response);
+            updatedEventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+            return updatedEventRoom;
         }
 
         private void UpdateSubEventRoom(string authenticationToken, EventRoomDto eventRoom)
@@ -94,7 +108,7 @@ namespace SignInCheckIn.Services
             var selectedEventRoom = GetEventRoom(authenticationToken, eventId, roomId);
 
             // Get All the Event Groups for this Event
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(selectedEventRoom.EventId) ?? new List<MpEventGroupDto>();
 
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
@@ -145,30 +159,11 @@ namespace SignInCheckIn.Services
                 throw new Exception("Event not found for event id: " + eventId + " in GetEventRoom in RoomService");
             }
 
+            var eventRoom = _roomRepository.GetEventRoomForEventMaps(events.Select(e => e.EventId).ToList(), roomId);
+
             // set to the parent id by default
-            var selectedEvent = events.First(r => r.ParentEventId == null);
-
-            // this will need to be updated once we're looking at subevents other than AC events,
-            // as part of the refactor
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
-            foreach (var eventItem in events)
-            {
-                eventGroups = GetEventGroupsWithRoomReservationForEvent(token, eventGroups, roomId);
-
-                // if there are any event groups on the event, that is the "active"
-                // event or subevent for that room
-                if (eventGroups.Count > 0)
-                {
-                    selectedEvent = eventItem;
-                    break;
-                }
-            }
-
-            //var eventRoom = _roomRepository.GetEventRoomForEventMaps(eventIds, roomId); <-- remove this
-
-
-            var eventRoom = _roomRepository.GetEventRoom(selectedEvent.EventId, roomId);
-
+            var selectedEvent = events.FirstOrDefault(e => e.EventId == (eventRoom?.EventId ?? eventId));
+            
             if (eventRoom == null)
             {
                 var room = _roomRepository.GetRoom(roomId);
