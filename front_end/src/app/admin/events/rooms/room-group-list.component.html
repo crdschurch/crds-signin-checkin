@@ -46,8 +46,8 @@
       <div class="col-sm-12 text-sm-right float-xs-right">
         <div class="float-sm-right">
           <span class="float-xs-right">
-            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="saveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Save</button>
-            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="cancelSaveRoomGroups()" [ngClass]="{'disabled': !isDirty }">Cancel</button>
+            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="save()" [ngClass]="{'disabled': !isDirty }">Save</button>
+            <button class="btn btn-primary btn-sm" type="button" [disabled]="!isDirty" (click)="cancel()" [ngClass]="{'disabled': !isDirty }">Cancel</button>
           </span>
         </div>
       </div>
@@ -55,7 +55,7 @@
 
     <div class="row my-2">
       <tabset class="col-xs-12">
-        <tab heading='Age Ranges' [active]="!alternateRoomsSelected">
+        <tab heading='Age Ranges' [active]="!alternateRoomsSelected" (select)="roomGroupsSelect()">
           <preloader *ngIf="!isReady()"></preloader>
           <div class="row mt-1" *ngIf="isReady()">
             <div class="col-xs-12 mb-1">
@@ -88,8 +88,9 @@
             </div>
           </div>
         </tab>
-        <tab heading='Alternate Rooms' [active]="alternateRoomsSelected">
-          <alternate-rooms></alternate-rooms>
+        <tab heading='Alternate Rooms' [active]="alternateRoomsSelected" (select)="alternateRoomsSelect()">
+          <preloader *ngIf="!isReady()"></preloader>
+          <alternate-rooms (setDirty)="setDirty($event)" [allAlternateRooms]="allAlternateRooms" *ngIf="isReady()"></alternate-rooms>
         </tab>
       </tabset>
     </div>

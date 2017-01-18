@@ -39,7 +39,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of availableRooms" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [allRooms]="allRooms"></tr>
+              <tr *ngFor="let room of availableRooms" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" (setDirtyChild)="setDirtyChild($event)"></tr>
             </tbody>
           </table>
         </div>
@@ -64,7 +64,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [allRooms]="allRooms" [index]="i"></tr>
+              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [index]="i" (setDirtyChild)="setDirtyChild($event)"></tr>
             </tbody>
           </table>
         </div>

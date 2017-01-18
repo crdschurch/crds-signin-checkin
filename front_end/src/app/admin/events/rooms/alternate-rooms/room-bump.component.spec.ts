@@ -23,6 +23,7 @@ describe('RoomBumpComponent', () => {
         Room.fromJson({BumpingRulePriority: 0, EventRoomId: 555}),
         Room.fromJson({BumpingRulePriority: 1, EventRoomId: 777})
       ];
+      spyOn(fixture, 'setAsDirty');
     });
 
     describe('#bump', () => {
@@ -30,7 +31,7 @@ describe('RoomBumpComponent', () => {
         fixture.bump();
         expect(fixture.room.BumpingRulePriority).toBeDefined();
         expect(fixture.room.BumpingRulePriority).toEqual(2);
-        expect(adminService.updateBumpingRooms).toHaveBeenCalled();
+        expect(fixture.setAsDirty).toHaveBeenCalled();
       });
     });
   });
@@ -46,13 +47,14 @@ describe('RoomBumpComponent', () => {
         fixture.room,
         Room.fromJson({BumpingRulePriority: 3, EventRoomId: 777})
       ];
+      spyOn(fixture, 'setAsDirty');
     });
 
     describe('#bumpUp', () => {
       it('should move a room up the bumping list and send call to update backend', () => {
         fixture.bumpUp();
         expect(fixture.room.BumpingRulePriority).toEqual(1);
-        expect(adminService.updateBumpingRooms).toHaveBeenCalled();
+        expect(fixture.setAsDirty).toHaveBeenCalled();
       });
     });
 
@@ -60,7 +62,7 @@ describe('RoomBumpComponent', () => {
       it('should move a room down the bumping list and send call to update backend', () => {
         fixture.bumpDown();
         expect(fixture.room.BumpingRulePriority).toEqual(3);
-        expect(adminService.updateBumpingRooms).toHaveBeenCalled();
+        expect(fixture.setAsDirty).toHaveBeenCalled();
       });
     });
 
@@ -68,7 +70,7 @@ describe('RoomBumpComponent', () => {
       it('should move a bumped room to available rooms and send call to update backend', () => {
         fixture.unBump();
         expect(fixture.room.BumpingRulePriority).not.toBeDefined();
-        expect(adminService.updateBumpingRooms).toHaveBeenCalled();
+        expect(fixture.setAsDirty).toHaveBeenCalled();
       });
     });
   });
