@@ -68,7 +68,21 @@ namespace SignInCheckIn.Services
         private EventRoomDto UpdateMainEventRoom(string authenticationToken, EventRoomDto eventRoom)
         {
             var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
-            return Mapper.Map<EventRoomDto>(response);
+            
+            // Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventRoom.EventId) ?? new List<MpEventGroupDto>();
+
+            // Load up lookups for age ranges, grades, birth months, and nursery months
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+
+            var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+
+            var updatedEventRoom = Mapper.Map<EventRoomDto>(response);
+            updatedEventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+            return updatedEventRoom;
         }
 
         private void UpdateSubEventRoom(string authenticationToken, EventRoomDto eventRoom)
