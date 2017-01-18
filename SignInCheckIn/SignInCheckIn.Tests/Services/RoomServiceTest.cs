@@ -694,7 +694,6 @@ namespace SignInCheckIn.Tests.Services
                 Capacity = 1,
                 CheckedIn = 2,
                 EventId = 3,
-                //EventRoomId = 1000,
                 RoomId = 1111,
                 RoomName = "name",
                 RoomNumber = "number",
