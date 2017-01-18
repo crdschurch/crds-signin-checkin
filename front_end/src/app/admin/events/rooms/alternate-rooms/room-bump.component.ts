@@ -71,7 +71,7 @@ export class RoomBumpComponent {
     this.setAsDirty();
   }
 
-  private setAsDirty() {
+  setAsDirty() {
     this.setDirtyChild.emit();
   }
 

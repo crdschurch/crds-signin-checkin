@@ -19,9 +19,9 @@ export class RoomGroupListComponent implements OnInit {
   eventToUpdate: Event;
   roomId: string;
   private room: Room;
-  private allAlternateRooms: Room[];
   private event: Event;
   private eventsMap: Event[];
+  allAlternateRooms: Room[];
   isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
@@ -110,7 +110,7 @@ export class RoomGroupListComponent implements OnInit {
     return this.allAlternateRooms
       .filter(
         (obj: Room) => { return obj.isBumpingRoom();
-      }).length > 0
+      }).length > 0;
   }
 
   getGroups(): Group[] {
@@ -199,11 +199,12 @@ export class RoomGroupListComponent implements OnInit {
     this.updating = true;
     this.isDirty = false;
 
-    this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp) => {
-      this.updating = false;
-      this.rootService.announceEvent('alternateRoomsUpdateSuccess');
-      this.isDirty = false;
-    }, error => (this.rootService.announceEvent('generalError')));
-  }
+    this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'],
+      this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp) => {
+        this.updating = false;
+        this.rootService.announceEvent('alternateRoomsUpdateSuccess');
+        this.isDirty = false;
+      }, error => (this.rootService.announceEvent('generalError')));
+    }
 
 }

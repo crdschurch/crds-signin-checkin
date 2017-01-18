@@ -15,19 +15,22 @@ describe('RoomGroupListComponent', () => {
   let adminService: AdminService;
   let location: Location;
   const serviceEventId = 2893749283;
+  const roomId = 45334;
 
   beforeEach(() => {
     let route: ActivatedRoute;
     route = new ActivatedRoute();
     route.snapshot = new ActivatedRouteSnapshot();
-    route.snapshot.params = { eventId: serviceEventId };
+    route.snapshot.params = { eventId: serviceEventId, roomId: roomId };
     route.snapshot.queryParams = { tab: '' };
     apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEventMaps', 'getEvent']);
-    adminService = jasmine.createSpyObj<AdminService>('adminService', ['getRoomGroups']);
+    adminService = jasmine.createSpyObj<AdminService>('adminService', ['getRoomGroups', 'getBumpingRooms']);
     headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
 
     fixture = new RoomGroupListComponent(apiService, adminService, rootService, route, headerService, location);
+
+    fixture.allAlternateRooms = [new Room(), new Room()];
   });
 
   describe('#ngOnInit', () => {
@@ -49,9 +52,11 @@ describe('RoomGroupListComponent', () => {
       (<jasmine.Spy>apiService.getEventMaps).and.returnValue(Observable.of([serviceEvent, adventureClubSubevent]));
       (<jasmine.Spy>apiService.getEvent).and.returnValue(Observable.of(serviceEvent));
       (<jasmine.Spy>adminService.getRoomGroups).and.returnValue(Observable.of(Room.fromJson(room)));
+      (<jasmine.Spy>adminService.getBumpingRooms).and.returnValue(Observable.of([Room.fromJson(room)]));
 
       fixture.ngOnInit();
       expect(apiService.getEventMaps).toHaveBeenCalledWith(serviceEvent.EventId);
+      expect(adminService.getBumpingRooms).toHaveBeenCalledWith(serviceEvent.EventId, roomId);
       expect(fixture.eventToUpdate).toEqual(serviceEvent);
     });
   });
