@@ -1,4 +1,4 @@
-<div class="card-block">
+<label class="card-block" attr.for='child-signin-{{child.ContactId}}'>
   <h4 class="card-title">
     <span class="tag tag-primary" *ngIf="child.GuestSignin">guest</span>
     <span>{{child.name()}}</span>
@@ -7,4 +7,4 @@
   <span class="tgl-inline-label">Sign In:</span>
   <input class='tgl tgl-light' id='child-signin-{{child.ContactId}}' type='checkbox' [(ngModel)]='child.Selected'>
   <label class='tgl-btn' attr.for='child-signin-{{child.ContactId}}' ><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
-</div>
+</label>
