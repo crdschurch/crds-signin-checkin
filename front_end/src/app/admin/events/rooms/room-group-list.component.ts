@@ -150,6 +150,7 @@ export class RoomGroupListComponent implements OnInit {
       }
     } else {
       this.setCurrentEvent(e.target.checked);
+      this.setDirty();
     }
   }
 
