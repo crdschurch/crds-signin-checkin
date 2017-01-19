@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
@@ -57,6 +56,12 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId)
         {
+            var eventIds = new List<int> {eventId};
+            return GetRoomsForEvent(eventIds, locationId);
+        }
+
+        public List<MpEventRoomDto> GetRoomsForEvent(List<int> eventIds, int locationId)
+        {
             var apiUserToken = _apiUserRepository.GetToken();
             var roomUsageTypeKidsClub = _applicationConfiguration.RoomUsageTypeKidsClub;
 
@@ -75,23 +80,27 @@ namespace MinistryPlatform.Translation.Repositories
                 "[dbo].crds_getEventParticipantStatusCount(Event_ID, Event_Rooms.Room_ID, 4) AS Checked_In"
             };
 
+            var filter = eventIds.Count > 1
+                ? $"Room_ID_Table.[Room_Usage_Type_ID] = {roomUsageTypeKidsClub} AND Event_ID IN ({string.Join(",", eventIds)})"
+                : $"Room_ID_Table.[Room_Usage_Type_ID] = {roomUsageTypeKidsClub} AND Event_ID = {eventIds[0]}";
+
             var eventRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpEventRoomDto>("Room_ID_Table.[Room_Usage_Type_ID] = " + roomUsageTypeKidsClub + " AND Event_ID =" + eventId, eventRoomColumnList);
+                .Search<MpEventRoomDto>(filter, eventRoomColumnList);
            
             foreach (var room in rooms)
             {
                 // populate the room data on an existing room event, or add a new event room dto for that room in the return call
-                MpEventRoomDto tempDto = eventRooms.FirstOrDefault(r => r.RoomId == room.RoomId);
+                var tempDto = eventRooms.FirstOrDefault(r => r.RoomId == room.RoomId);
 
                 if (tempDto == null)
                 {
                     // create a new dto and it to the event rooms list, with default values
-                    MpEventRoomDto newEventRoomDto = new MpEventRoomDto
+                    var newEventRoomDto = new MpEventRoomDto
                     {
                         AllowSignIn = false,
                         Capacity = 0,
                         CheckedIn = 0,
-                        EventId = eventId,
+                        EventId = eventIds[0],
                         EventRoomId = null,
                         RoomId = room.RoomId,
                         RoomName = room.RoomName,

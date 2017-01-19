@@ -80,6 +80,7 @@ namespace SignInCheckIn.Tests.Services
                 EventId = 1234567,
                 LocationId = 3
             };
+            var events = new List<MpEventDto> {mpEventDto};
 
             var mpEventRoomDtos = new List<MpEventRoomDto>
             {
@@ -96,8 +97,10 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEventById(1234567)).Returns(mpEventDto);
-            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(mpEventDto.EventId)).Returns((List<MpEventGroupDto>)null);
+            var eventIds = events.Select(e => e.EventId).ToList();
+
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, 1234567)).Returns(events);
+            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventIds)).Returns((List<MpEventGroupDto>)null);
 
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
@@ -106,7 +109,7 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
+            _roomRepository.Setup(m => m.GetRoomsForEvent(eventIds, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
 
             // Act
             var result = _fixture.GetLocationRoomsByEventId(token, 1234567);
