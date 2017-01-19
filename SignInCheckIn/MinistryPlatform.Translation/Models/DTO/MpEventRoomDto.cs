@@ -6,6 +6,7 @@ namespace MinistryPlatform.Translation.Models.DTO
     [MpRestApiTable(Name = "Event_Rooms")]
     public class MpEventRoomDto
     {
+        [MpRestApiPrimaryKey("Event_Room_ID")]
         [JsonProperty(PropertyName = "Event_Room_ID", NullValueHandling = NullValueHandling.Ignore)]
         public int? EventRoomId { get; set; }
 
