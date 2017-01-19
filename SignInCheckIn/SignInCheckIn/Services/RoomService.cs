@@ -34,10 +34,17 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
         {
-            var mpEvent = _eventRepository.GetEventById(eventId);
+            var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+
+            // Set Parent and Child in right order
+            var eventIds = new List<int>();
+            var parentEvent = mpEvents.FirstOrDefault(e => e.ParentEventId == null);
+            if (parentEvent != null) eventIds.Add(parentEvent.EventId);
+            var acEvent = mpEvents.FirstOrDefault(e => e.ParentEventId != null);
+            if (acEvent != null) eventIds.Add(acEvent.EventId);
 
             // Get All the Event Groups for this Event
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(mpEvent.EventId) ?? new List<MpEventGroupDto>();
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds) ?? new List<MpEventGroupDto>();
 
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
@@ -46,7 +53,7 @@ namespace SignInCheckIn.Services
             var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
 
             // Get All Rooms for this Event
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(eventIds, parentEvent.LocationId);
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
             // Get All the Event Groups Assigned to each room for this event
