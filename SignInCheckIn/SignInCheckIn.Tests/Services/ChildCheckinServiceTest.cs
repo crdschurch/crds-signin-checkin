@@ -40,7 +40,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldGetChildrenForCurrentEventAndRoomNoEventId()
+        public void ShouldGetChildrenForCurrentEventAndRoomNoEventIdNonAc()
         {
             var siteId = 1;
             var roomId = 321;
@@ -56,15 +56,15 @@ namespace SignInCheckIn.Tests.Services
                 LateCheckinPeriod = 30,
             };
 
-            var subEventDto = new MpEventDto
-            {
-                EventId = 2345678,
-                ParentEventId = 1234567
-            };
+            //var subEventDto = new MpEventDto
+            //{
+            //    EventId = 2345678,
+            //    ParentEventId = 1234567
+            //};
 
             List<MpEventDto> subEvents = new List<MpEventDto>
             {
-                subEventDto
+                //subEventDto
             };
 
             var mpParticipantsDto = new List<MpParticipantDto>
@@ -101,7 +101,68 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldGetChildrenForCurrentEventAndRoomEventId()
+        public void ShouldGetChildrenForCurrentEventAndRoomEventIdNonAc()
+        {
+            var siteId = 1;
+            var roomId = 321;
+
+            var eventDto = new EventDto
+            {
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(1),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now,
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30,
+            };
+
+            var mpParticipantsDto = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 12,
+                    ContactId = 1443,
+                    HouseholdPositionId = 2,
+                    FirstName = "First1",
+                    LastName = "Last1",
+                    DateOfBirth = new DateTime()
+                }
+            };
+
+            //var subEventDto = new MpEventDto
+            //{
+            //    EventId = 2345678,
+            //    ParentEventId = 1234567
+            //};
+
+            List<MpEventDto> subEvents = new List<MpEventDto>
+            {
+                //subEventDto
+            };
+
+            var mpEventRoomDto = new MpEventRoomDto
+            {
+                EventId = 1234567,
+                RoomId = roomId
+            };
+
+            _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
+            _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
+            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
+            _childCheckinRepository.VerifyAll();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(mpParticipantsDto[0].ParticipantId, result.Participants[0].ParticipantId);
+            Assert.AreEqual(mpParticipantsDto[0].ContactId, result.Participants[0].ContactId);
+            Assert.AreEqual(result.CurrentEvent.EventId, eventDto.EventId);
+        }
+
+        [Test]
+        public void ShouldGetChildrenForCurrentEventAndRoomEventIdWithAcSubevent()
         {
             var siteId = 1;
             var roomId = 321;
@@ -151,6 +212,128 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
+            _childCheckinRepository.VerifyAll();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(mpParticipantsDto[0].ParticipantId, result.Participants[0].ParticipantId);
+            Assert.AreEqual(mpParticipantsDto[0].ContactId, result.Participants[0].ContactId);
+            Assert.AreEqual(result.CurrentEvent.EventId, eventDto.EventId);
+        }
+
+        [Test]
+        public void ShouldGetChildrenForCurrentEventAndRoomEventIdWithAcSubEvent()
+        {
+            var siteId = 1;
+            var roomId = 321;
+
+            var eventDto = new EventDto
+            {
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(1),
+                EventId = 1234567,
+                EventStartDate = DateTime.Now,
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30,
+            };
+
+            var mpParticipantsDto = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 12,
+                    ContactId = 1443,
+                    HouseholdPositionId = 2,
+                    FirstName = "First1",
+                    LastName = "Last1",
+                    DateOfBirth = new DateTime()
+                }
+            };
+
+            var subEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = 1234567
+            };
+
+            List<MpEventDto> subEvents = new List<MpEventDto>
+            {
+                subEventDto
+            };
+
+            var mpEventRoomDto = new MpEventRoomDto
+            {
+                EventId = 1234567,
+                RoomId = roomId
+            };
+
+            _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
+            _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
+            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
+            _childCheckinRepository.VerifyAll();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(mpParticipantsDto[0].ParticipantId, result.Participants[0].ParticipantId);
+            Assert.AreEqual(mpParticipantsDto[0].ContactId, result.Participants[0].ContactId);
+            Assert.AreEqual(result.CurrentEvent.EventId, eventDto.EventId);
+        }
+
+        [Test]
+        public void ShouldGetChildrenForCurrentEventAndAdventureClubRoomEventIdWithAcSubEvent()
+        {
+            var siteId = 1;
+            var roomId = 321;
+
+            var eventDto = new EventDto
+            {
+                EarlyCheckinPeriod = 30,
+                EventEndDate = DateTime.Now.AddDays(1),
+                EventId = 2345678,
+                EventStartDate = DateTime.Now,
+                EventTitle = "test event",
+                EventType = "type test",
+                LateCheckinPeriod = 30,
+            };
+
+            var mpParticipantsDto = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 12,
+                    ContactId = 1443,
+                    HouseholdPositionId = 2,
+                    FirstName = "First1",
+                    LastName = "Last1",
+                    DateOfBirth = new DateTime()
+                }
+            };
+
+            var subEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = 1234567
+            };
+
+            List<MpEventDto> subEvents = new List<MpEventDto>
+            {
+                subEventDto
+            };
+
+            var mpEventRoomDto = new MpEventRoomDto
+            {
+                EventId = 2345678,
+                RoomId = roomId
+            };
+
+            _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
+            _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
+            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(2345678, roomId)).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
             _childCheckinRepository.VerifyAll();
 
