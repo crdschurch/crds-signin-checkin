@@ -10,6 +10,7 @@ namespace SignInCheckIn.Services.Interfaces
 
         EventDto GetEvent(int eventId);
         EventDto GetCurrentEventForSite(int siteId);
+        //List<EventRoomDto> GetCurrentEventsForSite(int siteId); 
         bool CheckEventTimeValidity(EventDto mpEventDto);
         List<EventRoomDto> ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId);
         List<EventRoomDto> ResetEventSetup(string authenticationToken, int eventId);

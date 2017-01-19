@@ -19,6 +19,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IEventService> _eventService;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IRoomRepository> _roomRepository;
+        private Mock<IEventRepository> _eventRepository;
 
         private ChildCheckinService _fixture;
 
@@ -32,8 +33,10 @@ namespace SignInCheckIn.Tests.Services
             _eventService = new Mock<IEventService>();
             _roomRepository = new Mock<IRoomRepository>();
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
+            _eventRepository = new Mock<IEventRepository>();
 
-            _fixture = new ChildCheckinService(_childCheckinRepository.Object, _contactRepository.Object, _roomRepository.Object, _applicationConfiguration.Object, _eventService.Object);
+            _fixture = new ChildCheckinService(_childCheckinRepository.Object, _contactRepository.Object, _roomRepository.Object, _applicationConfiguration.Object, _eventService.Object,
+                _eventRepository.Object);
         }
 
         [Test]
@@ -53,6 +56,17 @@ namespace SignInCheckIn.Tests.Services
                 LateCheckinPeriod = 30,
             };
 
+            var subEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = 1234567
+            };
+
+            List<MpEventDto> subEvents = new List<MpEventDto>
+            {
+                subEventDto
+            };
+
             var mpParticipantsDto = new List<MpParticipantDto>
             {
                 new MpParticipantDto
@@ -66,7 +80,15 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            var mpEventRoomDto = new MpEventRoomDto
+            {
+                EventId = 1234567,
+                RoomId = roomId
+            }; 
+
             _eventService.Setup(m => m.GetCurrentEventForSite(It.IsAny<int>())).Returns(eventDto);
+            _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
+            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, null);
             _childCheckinRepository.VerifyAll();
@@ -108,7 +130,26 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            var subEventDto = new MpEventDto
+            {
+                EventId = 2345678,
+                ParentEventId = 1234567
+            };
+
+            List<MpEventDto> subEvents = new List<MpEventDto>
+            {
+                subEventDto
+            };
+
+            var mpEventRoomDto = new MpEventRoomDto
+            {
+                EventId = 1234567,
+                RoomId = roomId
+            };
+
             _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
+            _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
+            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
             _childCheckinRepository.VerifyAll();
