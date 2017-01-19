@@ -261,23 +261,11 @@ namespace SignInCheckIn.Services
             var eventDto = _eventRepository.GetEventById(eventId);
             eventRoom.AdventureClub = eventDto.ParentEventId.HasValue && eventDto.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId;
 
-
+            // Delete room reservation for the adventure club subevent if this is the parent event, and vice versa
             DeleteRoomReservationForOtherEvent(authenticationToken, eventRoom, eventDto, roomId);
 
             // Start by deleting all current event groups for this room reservation (if any)
             DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventId, roomId);
-
-            // Check to see if anything is selected on input if not and this was a AC event then cancel
-            if (!eventRoom.AssignedGroups.Exists(g => g.Selected || g.HasSelectedRanges))
-            {
-                // Cancel the AC event as there is no longer a room associated with it
-                if (!eventRoom.AdventureClub) return eventRoom;
-
-                eventDto.Cancelled = true;
-                _eventRepository.UpdateEvent(authenticationToken, eventDto);
-                eventRoom.AdventureClub = false;
-                return eventRoom;
-            }
 
             // Get the existing eventRoom, if any
             var existingEventRoom = _roomRepository.GetEventRoom(eventId, roomId) ?? new MpEventRoomDto
@@ -325,12 +313,38 @@ namespace SignInCheckIn.Services
                               eventRoom,
                               eventRoom.AssignedGroups.FindAll(g => (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.GradesAttributeTypeId), false);
 
-            // If an AC event room make sure the AC event is not cancelled
-            if (!eventRoom.AdventureClub) return eventRoom;
-            eventDto.Cancelled = false;
-            _eventRepository.UpdateEvent(authenticationToken, eventDto);
+            // if we are updating an adventure club event, make sure the cancelled status of the event
+            // is updated accordingly
+            UpdateAdventureClubStatusIfNecessary(eventDto, roomId, authenticationToken);
 
             return eventRoom;
+        }
+
+        private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, int roomId, string token)
+        {
+            // we need to figure out if this event is the adventure club event or the service event
+            // if it is not the AC event, we need to get the AC event
+            if (eventDto.EventTypeId != _applicationConfiguration.AdventureClubEventTypeId)
+            {
+                eventDto = _eventRepository.GetSubeventByParentEventId(token, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+            }
+
+            // search to see if there are existing Event Rooms for the AC subevent
+            var eventRoom = _roomRepository.GetEventRoom(eventDto.EventId);
+            
+            if (eventRoom != null)
+            {
+                // if there are, set cancelled to false
+                eventDto.Cancelled = false;
+                _eventRepository.UpdateEvent(token, eventDto);
+            }
+            else
+            {
+                // if that are not, set cancelled to true
+                // if there are, set cancelled to false
+                eventDto.Cancelled = true;
+                _eventRepository.UpdateEvent(token, eventDto);
+            }
         }
 
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
@@ -414,7 +428,10 @@ namespace SignInCheckIn.Services
                 // is adventure club, so delete any event rooms on the parent service event
                 var oldEventRoom = _roomRepository.GetEventRoom(eventDto.ParentEventId.Value, roomId);
                 DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventDto.ParentEventId.Value, roomId);
-                _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
+                if (oldEventRoom != null)
+                {
+                    _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
+                }
             }
             else
             {
@@ -422,7 +439,10 @@ namespace SignInCheckIn.Services
                 var adventureClubSubevent = _eventRepository.GetSubeventByParentEventId(authenticationToken, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
                 var oldEventRoom = _roomRepository.GetEventRoom(adventureClubSubevent.EventId, roomId);
                 DeleteCurrentEventGroupsForRoomReservation(authenticationToken, adventureClubSubevent.EventId, roomId);
-                _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
+                if (oldEventRoom != null)
+                {
+                    _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
+                }
             }
         }
 
@@ -440,7 +460,7 @@ namespace SignInCheckIn.Services
             // make sure to filter null values
             var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().Where(r => r != null).ToList();
 
-            if (eventRoomIds.Any(r => r != null))
+            if (eventRoomIds.Any(r => r != null) && mpCurrentEventRoom.EventRoomId != null)
             {
                 var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
 

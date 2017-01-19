@@ -151,11 +151,18 @@ namespace MinistryPlatform.Translation.Repositories
             return response;
         }
 
-        public MpEventRoomDto GetEventRoom(int eventId, int roomId)
+        public MpEventRoomDto GetEventRoom(int eventId, int? roomId = null)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns).FirstOrDefault();
+            var query = $"Event_Rooms.Event_ID = {eventId}";
+
+            if (roomId != null)
+            {
+                query = $"{query} AND Event_Rooms.Room_ID = {roomId}";
+            }
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>(query, _eventRoomColumns).FirstOrDefault();
         }
 
         // look for an event room when we do not know if the event room is on a parent or child event
