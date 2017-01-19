@@ -104,8 +104,14 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventGroupDto> GetEventGroupsForEvent(int eventId)
         {
+            var eventIds = new List<int> {eventId};
+            return GetEventGroupsForEvent(eventIds);
+        }
+
+        public List<MpEventGroupDto> GetEventGroupsForEvent(List<int> eventIds)
+        {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
-                .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId}", _eventGroupsColumns);
+                .Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEventRoom(int eventId, int roomId)

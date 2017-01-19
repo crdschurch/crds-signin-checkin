@@ -34,10 +34,17 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
         {
-            var mpEvent = _eventRepository.GetEventById(eventId);
+            var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+
+            // Set Parent and Child in right order
+            var eventIds = new List<int>();
+            var parentEvent = mpEvents.FirstOrDefault(e => e.ParentEventId == null);
+            if (parentEvent != null) eventIds.Add(parentEvent.EventId);
+            var acEvent = mpEvents.FirstOrDefault(e => e.ParentEventId != null);
+            if (acEvent != null) eventIds.Add(acEvent.EventId);
 
             // Get All the Event Groups for this Event
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(mpEvent.EventId) ?? new List<MpEventGroupDto>();
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds) ?? new List<MpEventGroupDto>();
 
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
@@ -46,7 +53,7 @@ namespace SignInCheckIn.Services
             var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
 
             // Get All Rooms for this Event
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(eventIds, parentEvent.LocationId);
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
             // Get All the Event Groups Assigned to each room for this event
@@ -446,14 +453,42 @@ namespace SignInCheckIn.Services
             }
         }
 
-        public List<EventRoomDto> GetAvailableRooms(int roomId, int eventId)
+        public List<EventRoomDto> GetAvailableRooms(string token, int roomId, int eventId)
         {
-            var mpEvent = _eventRepository.GetEventById(eventId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
+
+            if (events.Count == 0)
+            {
+                throw new Exception("Event not found for event id: " + eventId + " in GetEventRoom in RoomService");
+            }
+
+            var mpCurrentEventRoom = _roomRepository.GetEventRoomForEventMaps(events.Select(e => e.EventId).ToList(), roomId);
+            
+            // set to the parent id by default
+            var mpEvent = events.FirstOrDefault(e => e.EventId == (mpCurrentEventRoom?.EventId ?? eventId));
 
             // exclude the origin room from the available rooms
             var mpEventAllRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
             var mpEventAvailableRooms = mpEventAllRooms.Where(r => r.RoomId != roomId).ToList();
-            var mpCurrentEventRoom = mpEventAllRooms.First(r => r.RoomId == roomId);
+
+
+            // if there is no existing event room for the selected room, create one to have something to
+            // attach the bumping rooms to
+            if (mpCurrentEventRoom == null)
+            {
+                mpCurrentEventRoom = mpEventAllRooms.First(r => r.RoomId == roomId);
+
+                var eventRoom = new MpEventRoomDto
+                {
+                    EventId = eventId,
+                    RoomId = mpCurrentEventRoom.RoomId,
+                    RoomName = mpCurrentEventRoom.RoomName,
+                    RoomNumber = mpCurrentEventRoom.RoomNumber
+                };
+
+                var currentEventRoomDto = _roomRepository.CreateOrUpdateEventRoom(null, eventRoom);
+                mpCurrentEventRoom.EventRoomId = currentEventRoomDto.EventRoomId;
+            }
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
@@ -493,7 +528,7 @@ namespace SignInCheckIn.Services
 
             var selectedRooms = eventRoomDtos.Where(r => r.BumpingRulePriority != null).ToList();
 
-            List<MpBumpingRuleDto> mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
+            var mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
 
             foreach (var selectedRoom in selectedRooms)
             {
@@ -506,7 +541,7 @@ namespace SignInCheckIn.Services
                     selectedRoom.EventRoomId = _roomRepository.CreateOrUpdateEventRoom(null, mpEventRoomDto).EventRoomId;
                 }
 
-                MpBumpingRuleDto mpBumpingRuleDto = new MpBumpingRuleDto
+                var mpBumpingRuleDto = new MpBumpingRuleDto
                 {
                     FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
                     ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
@@ -520,7 +555,7 @@ namespace SignInCheckIn.Services
             _roomRepository.CreateBumpingRules(authenticationToken, mpBumpingRuleDtos);
 
             // pull back the newly created rooms
-            return GetAvailableRooms(roomId, eventId);
+            return GetAvailableRooms(authenticationToken, roomId, eventId);
         }
 
         public EventRoomDto CreateOrUpdateAdventureClubRoom(string authenticationToken, EventRoomDto eventRoom)

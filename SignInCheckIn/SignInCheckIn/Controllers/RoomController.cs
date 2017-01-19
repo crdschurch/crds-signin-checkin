@@ -26,16 +26,19 @@ namespace SignInCheckIn.Controllers
             [FromUri(Name = "roomId")] int roomId,
             [FromUri(Name = "eventId")] int eventId)
         {
-            try
+            return Authorized(token =>
             {
-                var roomList = _roomService.GetAvailableRooms(roomId, eventId);
-                return Ok(roomList);
-            }
-            catch (Exception e)
-            {
-                var apiError = new ApiErrorDto("Get Rooms By Location ", e);
-                throw new HttpResponseException(apiError.HttpResponseMessage);
-            }
+                try
+                {
+                    var roomList = _roomService.GetAvailableRooms(token, roomId, eventId);
+                    return Ok(roomList);
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Get Rooms By Location ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
         }
 
         [HttpPost]
@@ -46,7 +49,7 @@ namespace SignInCheckIn.Controllers
         {
             return Authorized(token =>
             {
-                    try
+                try
                 {
                     var roomList = _roomService.UpdateAvailableRooms(token, eventId, roomId, eventRooms);
                     return Ok(roomList);
