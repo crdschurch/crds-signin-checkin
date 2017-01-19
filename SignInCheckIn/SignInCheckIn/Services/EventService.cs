@@ -63,6 +63,23 @@ namespace SignInCheckIn.Services
             return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
         }
 
+        //public List<EventDto> GetCurrentEventsForSite(int siteId)
+        //{
+        //    // look between midnights on the current day
+        //    var eventOffsetStartString = DateTime.Now.ToShortDateString();
+        //    var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
+        //    var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
+
+        //    var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
+
+        //    if (!currentEvents.Any())
+        //    {
+        //        throw new Exception("No current events for site");
+        //    }
+
+        //    return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
+        //}
+
         public bool CheckEventTimeValidity(EventDto eventDto)
         {
             // use the event's checkin period if available, otherwise default to the mp config values
