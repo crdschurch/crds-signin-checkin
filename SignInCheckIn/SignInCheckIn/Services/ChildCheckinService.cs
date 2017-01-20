@@ -84,7 +84,10 @@ namespace SignInCheckIn.Services
             if (excludeThisRoom == true) { 
                 // if child is in room and checked in, dont show
                 var checkedInParticipationStatusId = _applicationConfiguration.CheckedInParticipationStatusId;
-                if (mpEventParticipant.RoomId == roomId && mpEventParticipant.ParticipantStatusId == checkedInParticipationStatusId) return null;
+                if (mpEventParticipant.RoomId == roomId && mpEventParticipant.ParticipantStatusId == checkedInParticipationStatusId)
+                {
+                    throw new Exception("Child is checkin into this room");
+                };
             }
             mpEventParticipant.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(mpEventParticipant.CheckinHouseholdId.Value);
             var participant = Mapper.Map<MpEventParticipantDto, ParticipantDto>(mpEventParticipant);

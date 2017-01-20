@@ -99,7 +99,8 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 { "Event_Participant_ID", eventParticipantId },
                 { "Participation_Status_ID", _applicationConfiguration.CheckedInParticipationStatusId },
-                { "Room_ID", roomId }
+                { "Room_ID", roomId },
+                { "Time_Confirmed",  DateTime.Now},
             };
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).UpdateRecord("Event_Participants", eventParticipantId, updateObject);
