@@ -683,10 +683,16 @@ namespace SignInCheckIn.Services
 
         public void CheckForDuplicateSignIns(List<MpEventDto> eventsForSignin, ParticipantEventMapDto participantEventMapDto)
         {
-            foreach (var eventItem in eventsForSignin)
+            // get the events being signed into, and the ids of the parent events, to avoid an edge case of signing in
+            // as an AC participant, then signing in again as a service event participant
+
+            List<int> eventIds = eventsForSignin.Select(r => r.EventId).ToList();
+            eventIds.AddRange(eventsForSignin.Select(r => r.ParentEventId.GetValueOrDefault()).Distinct().ToList());
+
+            foreach (var eventItemId in eventIds)
             {
                 var signedInParticipants = _participantRepository.GetEventParticipantsByEventAndParticipant(
-                    eventItem.EventId,
+                    eventItemId,
                     participantEventMapDto.Participants.Select(r => r.ParticipantId).ToList());
 
                 foreach (var participant in participantEventMapDto.Participants)
