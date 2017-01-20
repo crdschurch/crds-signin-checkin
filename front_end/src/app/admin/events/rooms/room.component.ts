@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
 import { Room } from '../../../shared/models';
@@ -14,7 +15,11 @@ export class RoomComponent implements OnInit {
   public pending: boolean;
   private roomForm: FormGroup;
 
-  constructor( private adminService: AdminService) {
+  constructor(private route: ActivatedRoute, private adminService: AdminService) {
+  }
+
+  mainEventId() {
+    return this.route.snapshot.params['eventId'];
   }
 
   add(field) {

@@ -12,10 +12,12 @@ let adminServiceStub: any = {
   }
 };
 
+let route: any;
+
 describe('RoomComponent', () => {
 
   beforeEach(() => {
-    fixture = new RoomComponent(adminServiceStub);
+    fixture = new RoomComponent(route, adminServiceStub);
     fixture.room = new Room();
     fixture.room.Volunteers = 10;
     fixture.room.Capacity = 6;

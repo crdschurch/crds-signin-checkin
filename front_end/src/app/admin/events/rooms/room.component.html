@@ -1,5 +1,5 @@
 <td>
-  <a routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}">
+  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
     <div *ngFor="let ageGrade of ageRangeAndGrades();">
       {{ ageGrade }}
     </div>
