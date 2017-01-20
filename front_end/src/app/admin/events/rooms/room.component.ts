@@ -69,10 +69,7 @@ export class RoomComponent implements OnInit {
   }
 
   isAdventureClub() {
-    // TODO: this.room.AdventureClub is currently not being
-    // set on backend (it is always false currently)
-    // return this.room.AdventureClub;
-    return false;
+    return this.room.EventId != this.mainEventId();
   }
 
   ageRangeAndGrades(): any {
