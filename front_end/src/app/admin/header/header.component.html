@@ -1,4 +1,13 @@
-<nav class="navbar navbar-light bg-faded">
+<div *ngIf="(kioskDisplay.length > 0 || loggedInDisplay) && displayHelp" class="alert alert-info" role="alert">
+  <button type="button" class="close" aria-label="Close" (click)="closeHelp()"><span aria-hidden="true">&times;</span></button>
+  <div *ngFor="let display of kioskDisplay">
+    {{display}}
+  </div>
+  <div *ngIf="loggedInDisplay">
+    {{loggedInDisplay}}
+  </div>
+</div>
+<nav class="navbar navbar-light bg-faded" (click)="click()">
   <button class="navbar-toggler hidden-lg-up" type="button" (click)="isCollapsed = !isCollapsed"></button>
   <div class="navbar-toggleable-md" id="navbarResponsive" (collapsed)="collapsed($event)" (expanded)="expanded($event)" [collapse]="isCollapsed">
     <a class="navbar-brand mr-2 hidden-md-down" [routerLink]="['/admin/dashboard']">
