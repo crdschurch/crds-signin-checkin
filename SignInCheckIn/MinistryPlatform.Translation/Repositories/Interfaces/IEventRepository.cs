@@ -17,6 +17,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpEventGroupDto> CreateEventGroups(string authenticationToken, List<MpEventGroupDto> eventGroups);
         void ResetEventSetup(string authenticationToken, int eventId);
         void ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId);
+        MpEventDto GetSubeventByParentEventId(int eventId, int eventTypeId);
         List<MpEventDto> GetEventAndCheckinSubevents(string token, int eventId);
         List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId);
         MpEventDto GetSubeventByParentEventId(string token, int serviceEventId, int eventTypeId);

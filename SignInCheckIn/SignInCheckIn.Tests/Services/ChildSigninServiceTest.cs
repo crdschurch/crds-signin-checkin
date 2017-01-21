@@ -255,6 +255,9 @@ namespace SignInCheckIn.Tests.Services
             participantEventMapDto.Contacts = contactDtos;
             participantEventMapDto.CurrentEvent = eventDto;
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
@@ -407,6 +410,9 @@ namespace SignInCheckIn.Tests.Services
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
@@ -504,6 +510,9 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
 
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
@@ -1395,6 +1404,8 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns((MpEventDto)null);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
@@ -1431,6 +1442,8 @@ namespace SignInCheckIn.Tests.Services
 
             List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>();
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns((MpEventDto)null);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
 
@@ -1449,10 +1462,6 @@ namespace SignInCheckIn.Tests.Services
             {
                 new MpEventDto
                 {
-                    EventId = 1234567
-                },
-                new MpEventDto
-                {
                     ParentEventId = 1234567,
                     EventId = 7654321
                 },
@@ -1460,6 +1469,11 @@ namespace SignInCheckIn.Tests.Services
                 {
                     EventId = 2345678
                 }
+            };
+
+            var parentEvent = new MpEventDto
+            {
+                EventId = 1234567
             };
 
             ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
@@ -1483,9 +1497,11 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[1].EventId, 1)).Returns(parentEvent);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
-            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[2].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(parentEvent.EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
             // Act
@@ -1537,6 +1553,9 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns(eventDtos[0]);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[2].EventId, 1)).Returns((MpEventDto)null);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[2].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
@@ -1587,6 +1606,8 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[1].EventId, 1)).Returns((MpEventDto) null);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(1234567, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(7654321, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
@@ -1641,6 +1662,9 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[2].EventId, 1)).Returns((MpEventDto)null);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns(eventDtos[1]);
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[2].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);

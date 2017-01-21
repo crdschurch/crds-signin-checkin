@@ -683,11 +683,27 @@ namespace SignInCheckIn.Services
 
         public void CheckForDuplicateSignIns(List<MpEventDto> eventsForSignin, ParticipantEventMapDto participantEventMapDto)
         {
-            // get the events being signed into, and the ids of the parent events, to avoid an edge case of signing in
-            // as an AC participant, then signing in again as a service event participant
+            // go through each event and its sub event or parent event and check if its sub event or parent event
+            // has this participant signed in
+            var eventIds = new List<int>();
+            foreach (var signinEvent in eventsForSignin)
+            {
+                eventIds.Add(signinEvent.EventId);
 
-            List<int> eventIds = eventsForSignin.Select(r => r.EventId).ToList();
-            eventIds.AddRange(eventsForSignin.Select(r => r.ParentEventId.GetValueOrDefault()).Distinct().ToList());
+                // if parent event get subevent else get parent event
+                if (signinEvent.ParentEventId == null)
+                {
+                    var subEvent = _eventRepository.GetSubeventByParentEventId(signinEvent.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+                    if (subEvent != null)
+                    {
+                        eventIds.Add(subEvent.EventId);
+                    }
+                }
+                else
+                {
+                    eventIds.Add(signinEvent.ParentEventId.Value);
+                }
+            }
 
             foreach (var eventItemId in eventIds)
             {

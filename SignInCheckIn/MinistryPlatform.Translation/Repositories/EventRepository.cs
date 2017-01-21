@@ -153,6 +153,12 @@ namespace MinistryPlatform.Translation.Repositories
                 .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1", _eventColumns);
         }
 
+        public MpEventDto GetSubeventByParentEventId(int eventId, int eventTypeId)
+        {
+            var token = _apiUserRepository.GetToken();
+            return GetSubeventByParentEventId(token, eventId, eventTypeId);
+        }
+
         public MpEventDto GetSubeventByParentEventId(string token, int serviceEventId, int eventTypeId)
         {
             var events = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
