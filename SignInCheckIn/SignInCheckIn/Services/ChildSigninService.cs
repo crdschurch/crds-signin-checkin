@@ -694,7 +694,10 @@ namespace SignInCheckIn.Services
                 if (signinEvent.ParentEventId == null)
                 {
                     var subEvent = _eventRepository.GetSubeventByParentEventId(signinEvent.EventId, _applicationConfiguration.AdventureClubEventTypeId);
-                    eventIds.Add(subEvent.EventId);
+                    if (subEvent != null)
+                    {
+                        eventIds.Add(subEvent.EventId);
+                    }
                 }
                 else
                 {
