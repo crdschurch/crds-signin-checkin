@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-import { ApiService, SetupService } from '../shared/services';
+import { ApiService, SetupService, RootService } from '../shared/services';
+import { Child } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
 import { Event, MachineConfiguration } from '../shared/models';
@@ -15,16 +16,24 @@ import { ChildCheckinService } from './child-checkin.service';
 export class ChildCheckinComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
   @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
+  @ViewChild('childSearchModal') public childSearchModal: ModalDirective;
   private kioskDetails: MachineConfiguration;
 
-  clock = Observable.interval(10000).map(() => new Date());
+  clock = Observable.interval(10000).startWith(0).map(() => new Date());
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
+  isOverrideProcessing: boolean;
+  callNumber: string = '';
+  overrideChild: Child = new Child();
 
-  constructor(private setupService: SetupService, private apiService: ApiService,  private childCheckinService: ChildCheckinService) {
-    this.kioskDetails = new MachineConfiguration();
-    this.ready = false;
+  constructor(private setupService: SetupService,
+    private apiService: ApiService,
+    private childCheckinService: ChildCheckinService,
+    private rootService: RootService) {
+      this.kioskDetails = new MachineConfiguration();
+      this.ready = false;
+      this.isOverrideProcessing = false;
   }
 
   private getData() {
@@ -72,6 +81,14 @@ export class ChildCheckinComponent implements OnInit {
     this.childCheckinService.selectedEvent = event;
   }
 
+  delete(e) {
+    this.callNumber = this.callNumber.slice(0, -1);
+  }
+
+  clear() {
+    this.callNumber = '';
+  }
+
   public getKioskDetails() {
     return this.kioskDetails;
   }
@@ -80,6 +97,63 @@ export class ChildCheckinComponent implements OnInit {
     this.getData();
     this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
     this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
+  }
+
+  private resetShowChildModal() {
+    this.clear();
+    this.overrideChild = new Child();
+  }
+
+  setCallNumber(num: string) {
+    // set call number
+    if (this.callNumber.length < 4) {
+      this.callNumber = `${this.callNumber}${num}`;
+    }
+    // if full call number, search child
+    if (this.callNumber.length === 4) {
+      this.isOverrideProcessing = true;
+      this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId,
+        this.callNumber,
+        this.kioskDetails.RoomId).subscribe((child: Child) => {
+          this.overrideChild = child;
+          this.isOverrideProcessing = false;
+      }, (error) => {
+        switch (error.status) {
+          case 404:
+            this.rootService.announceEvent('checkinChildNotFound');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+        }
+        this.callNumber = '';
+        this.isOverrideProcessing = false;
+      });
+    }
+  }
+
+  overrideCheckin() {
+    this.isOverrideProcessing = true;
+    this.childCheckinService.overrideChildIntoRoom(this.overrideChild, this.selectedEvent.EventId, this.kioskDetails.RoomId)
+      .subscribe((child: Child) => {
+        this.hideChildSearchModal();
+        this.rootService.announceEvent('checkinOverrideSuccess');
+        this.isOverrideProcessing = false;
+        this.childCheckinService.forceChildReload();
+      }, (errorLabel) => {
+        switch (errorLabel) {
+          case 'capacity':
+            this.rootService.announceEvent('checkinOverrideRoomCapacityError');
+            break;
+          case 'closed':
+            this.rootService.announceEvent('checkinOverrideRoomClosedError');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+        }
+        this.isOverrideProcessing = false;
+      });
   }
 
   public showServiceSelectModal() {
@@ -92,5 +166,14 @@ export class ChildCheckinComponent implements OnInit {
 
   public showChildDetailModal() {
     this.childDetailModal.show();
+  }
+
+  public showChildSearchModal() {
+    this.childSearchModal.show();
+  }
+
+  public hideChildSearchModal() {
+    this.childSearchModal.hide();
+    this.resetShowChildModal();
   }
 }

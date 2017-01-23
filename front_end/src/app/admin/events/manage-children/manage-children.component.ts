@@ -51,4 +51,43 @@ export class ManageChildrenComponent implements OnInit {
 
     return parents;
   }
+
+  public reprint(child: Child): void {
+    this.ready = false;
+
+    this.adminService.reprint(child.EventParticipantId).subscribe((resp) => {
+      this.ready = true;
+      },
+      (error) => {
+        switch (error.status) {
+          case 412:
+            this.rootService.announceEvent('echeckNewFamilyAdminSetupWrong');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+          }
+          this.ready = true;
+      });
+  }
+
+  public reverseSignin(child: Child) {
+    this.ready = false;
+
+    this.adminService.reverseSignin(child.EventParticipantId).subscribe((resp) => {
+      this.children.splice(this.children.indexOf(child), 1);
+      this.ready = true;
+      this.rootService.announceEvent('reverseSigninSuccess');
+    }, error => (this.handleError(error)));
+  }
+
+  private handleError (error: any) {
+    if (error.status === 409) {
+      this.rootService.announceEvent('cannotReverseSignin');
+    } else {
+      this.rootService.announceEvent('generalError');
+    }
+
+    this.ready = true;
+  }
 }

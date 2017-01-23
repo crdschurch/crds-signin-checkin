@@ -1,4 +1,10 @@
-<td><a routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}">Add</a></td>
+<td>
+  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
+    <div *ngFor="let ageGrade of ageRangeAndGrades();">
+      {{ ageGrade }}
+    </div>
+  </a>
+</td>
 <td>{{room.RoomName}} <a class="tag tag-info" href="#" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</a></td>
 <td>
   <span *ngIf="hasCapacity()">
@@ -30,7 +36,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" readonly>
+      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" (change)="sync('Volunteers')" [readonly]="pending">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Volunteers')" [disabled]="pending">+</button>
       </span>
@@ -43,7 +49,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Capacity')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="Capacity" readonly>
+      <input type="number" class="form-control text-xs-center" value="{{room.Capacity}}" formControlName="Capacity" (change)="sync('Capacity')" [readonly]="pending">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Capacity')" [disabled]="pending">+</button>
       </span>
@@ -54,5 +60,5 @@
 <td class="text-xs-right">{{room.CheckedIn}}</td>
 <td class="text-xs-right">{{getRoomRatioString()}}</td>
 <td class="text-xs-right">
-  <a class="btn btn-primary btn-sm" routerLink="/admin/events/{{room.EventId}}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
+  <a class="btn btn-primary btn-sm" routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
 </td>

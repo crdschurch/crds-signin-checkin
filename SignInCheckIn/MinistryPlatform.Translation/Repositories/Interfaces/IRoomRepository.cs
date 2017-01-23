@@ -6,10 +6,11 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     public interface IRoomRepository
     {
         List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId);
+        List<MpEventRoomDto> GetRoomsForEvent(List<int> eventId, int locationId);
 
         MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom);
 
-        MpEventRoomDto GetEventRoom(int eventId, int roomId);
+        MpEventRoomDto GetEventRoom(int eventId, int? roomId = null);
 
         MpRoomDto GetRoom(int roomId);
 
@@ -18,6 +19,8 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpRoomDto> GetAvailableRoomsBySite(int locationId);
 
         void DeleteBumpingRules(string authenticationToken, IEnumerable<int> ruleIds);
+
+        void DeleteEventRoom(string authenticationToken, int eventRoomId);
 
         void CreateBumpingRules(string authenticationToken, List<MpBumpingRuleDto> bumpingRules);
 

@@ -99,6 +99,43 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+        
+        [HttpPost]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("signin/participant/{eventParticipantId}/print")]
+        public IHttpActionResult PrintParticipant(int eventParticipantId)
+        {
+            return Authorized(token =>
+            {
+                string kioskIdentifier;
+
+                // make sure kiosk is admin type and configured for printing
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    // must be kiosk type admin and have a printer set up
+                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    {
+                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    }
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                }
+
+                try
+                {
+                    return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier, token));
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Print Participants", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
 
         [HttpPost]
         [ResponseType(typeof(int))]
@@ -133,6 +170,34 @@ namespace SignInCheckIn.Controllers
                 catch (Exception e)
                 {
                     var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
+        [HttpPut]
+        [ResponseType(typeof(ParticipantEventMapDto))]
+        [Route("signin/reverse/{eventparticipantid}")]
+        public IHttpActionResult ReverseSignin(int eventparticipantid)
+        {
+            return Authorized(token =>
+            {
+                try
+                {
+                    var reverseSuccess = _childSigninService.ReverseSignin(token, eventparticipantid);
+
+                    if (reverseSuccess == true)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return Conflict();
+                    }
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Error reversing signin for event participant ", e);
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });

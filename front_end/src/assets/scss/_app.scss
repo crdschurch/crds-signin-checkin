@@ -182,6 +182,13 @@ datepicker {
   cursor: pointer;
 }
 
+.footer,
+.card {
+  ::selection {
+    background: transparent;
+  }
+}
+
 .manage-rooms-table {
   @include media-breakpoint-down(md) {
     display: block;

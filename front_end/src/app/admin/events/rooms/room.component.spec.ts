@@ -12,10 +12,12 @@ let adminServiceStub: any = {
   }
 };
 
+let route: any;
+
 describe('RoomComponent', () => {
 
   beforeEach(() => {
-    fixture = new RoomComponent(adminServiceStub);
+    fixture = new RoomComponent(route, adminServiceStub);
     fixture.room = new Room();
     fixture.room.Volunteers = 10;
     fixture.room.Capacity = 6;
@@ -60,6 +62,12 @@ describe('RoomComponent', () => {
       fixture.room.CheckedIn = 0;
       fixture.room.SignedIn = 0;
       expect(fixture.getRoomRatioString()).toEqual('0');
+    });
+  });
+
+  describe('#ageRangeAndGrades', () => {
+    it('should return an Array with Add', () => {
+      expect(fixture.ageRangeAndGrades()).toEqual(['Add']);
     });
   });
 

@@ -18,8 +18,11 @@ export class Child {
   AssignedSecondaryRoomName: string;
   CallNumber: string;
   SignInErrorMessage: string;
+  CheckinPhone: string;
   GroupId: number;
+  GroupName: string;
   TimeIn: Date;
+  TimeConfirmed: Date;
   HeadsOfHousehold: Array<Contact> = [];
 
   static fromJson(json: any): Child {
@@ -39,9 +42,12 @@ export class Child {
     c.AssignedSecondaryRoomId = json.AssignedSecondaryRoomId;
     c.AssignedSecondaryRoomName = json.AssignedSecondaryRoomName;
     c.CallNumber = json.CallNumber;
+    c.CheckinPhone = json.CheckinPhone;
     c.SignInErrorMessage = json.SignInErrorMessage;
     c.GroupId = json.GroupId;
+    c.GroupName = json.GroupName;
     c.TimeIn = json.TimeIn;
+    c.TimeConfirmed = json.TimeConfirmed;
 
     if (json.HeadsOfHousehold !== null && json.HeadsOfHousehold !== undefined) {
       c.HeadsOfHousehold = (<Contact[]>json.HeadsOfHousehold).map(r => Contact.fromJson(r));
@@ -73,7 +79,7 @@ export class Child {
       this.ParticipationStatusId = Constants.CheckedInParticipationStatusId;
     }
   }
-  
+
   guest(): boolean {
     return Constants.GuestHouseholdId === this.HouseholdId;
   }

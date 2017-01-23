@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
 import { Room } from '../../../shared/models';
@@ -14,7 +15,11 @@ export class RoomComponent implements OnInit {
   public pending: boolean;
   private roomForm: FormGroup;
 
-  constructor( private adminService: AdminService) {
+  constructor(private route: ActivatedRoute, private adminService: AdminService) {
+  }
+
+  mainEventId() {
+    return this.route.snapshot.params['eventId'];
   }
 
   add(field) {
@@ -28,6 +33,10 @@ export class RoomComponent implements OnInit {
   toggle(field) {
     this.room[field] = !this.room[field];
     this.roomForm.controls[field].setValue(this.room[field]);
+  }
+
+  sync(field) {
+    this.room[field] = this.roomForm.controls[field].value;
   }
 
   hasCapacity() {
@@ -60,10 +69,17 @@ export class RoomComponent implements OnInit {
   }
 
   isAdventureClub() {
-    // TODO: this.room.AdventureClub is currently not being
-    // set on backend (it is always false currently)
-    // return this.room.AdventureClub;
-    return false;
+    return this.room.EventId != this.mainEventId();
+  }
+
+  ageRangeAndGrades(): any {
+    let ageGrades = this.room.getSelectionDescription(false);
+
+    if (ageGrades.length === 0) {
+      ageGrades = ['Add'];
+    }
+
+    return ageGrades;
   }
 
   ngOnInit() {

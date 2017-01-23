@@ -16,13 +16,21 @@ namespace MinistryPlatform.Translation.Repositories
         public int GetGroupId(DateTime birthDate, int? gradeGroupAttributeId)
         {
             var timeDifference = System.DateTime.Now - birthDate;
-
-            var ageYears = DateTime.Now.Year - birthDate.Year;
+            
+            var ageYears = DateTime.Today.Year - birthDate.Year;
+            if (DateTime.Today.Month < birthDate.Month || (DateTime.Today.Month == birthDate.Month && DateTime.Today.Day < birthDate.Day))
+            {
+                ageYears--;
+            }
 
             // 0 to 1 year group
             if (ageYears == 0)
             {
-                var ageMonths = timeDifference.Days / 30;
+                var ageMonths = DateTime.Today.Month - birthDate.Month;
+                if (ageMonths < 0)
+                {
+                    ageMonths += 12;
+                }
 
                 // Jan birth months
                 if (birthDate.Month == 1)

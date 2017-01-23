@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Web.Http;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
@@ -95,13 +96,16 @@ namespace SignInCheckIn.Services
             var mpAllEventParticipantDtoList = new List<MpEventParticipantDto>();
             var eventsForSignin = GetEventsForSignin(participantEventMapDto);
 
+            CheckForDuplicateSignIns(eventsForSignin, participantEventMapDto);
+
             // create participant records for guests, and assign to a group
             if (participantEventMapDto.Participants.Any(r => r.GuestSignin == true))
             {
                 ProcessGuestSignins(participantEventMapDto);
             }
 
-            // reset the current event in the case they are doing AC here
+            // reset the current event in the case they are doing AC here - need to handle the AC 
+            // event here - if the AC event is happening at the current service, then no big deal
             participantEventMapDto.CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[0]);
             var currentEventParticipantDtoList = SetParticipantsAssignedRoom(participantEventMapDto, true).ToList();
             mpAllEventParticipantDtoList.AddRange(currentEventParticipantDtoList);
@@ -149,7 +153,7 @@ namespace SignInCheckIn.Services
             SetParticipantsPrintInformation(response.Participants, eventsForSignin);
 
             // Add back those participants that didn't get a room assigned
-             response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
+            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
             response.Participants.ForEach(p => p.Selected = true);
 
             return response;
@@ -211,24 +215,37 @@ namespace SignInCheckIn.Services
         // need to be able to assign to two rooms - which is what signing into AC is
         private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
         {
+            // JPC - need to handle already-assigned event participants here
+
             // Get Event and make sure it occures at a valid time
             var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
 
             // Get groups that are configured for the event
             var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
 
-            // Get a list of participants with their groups and expected rooms
+            // Get a list of participants with their groups and expected rooms - maps groups onto participants
             var mpEventParticipantDtoList = SetParticipantsGroupsAndExpectedRooms(eventGroups, participantEventMapDto);
 
             foreach (var eventParticipant in participantEventMapDto.Participants)
             {
-                if (!eventParticipant.Selected) continue;
+                if (!eventParticipant.Selected)
+                {
+                    continue;
+                }
+
+                if (eventParticipant.DuplicateSignIn == true)
+                {
+                    eventParticipant.SignInErrorMessage = $"{eventParticipant.FirstName} is already signed in for this event.";
+                    continue;
+                }
+
                 var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
                     eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
                 }
+  
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
@@ -259,7 +276,7 @@ namespace SignInCheckIn.Services
         {
             var mpEventParticipantDtoList = (
                 // Get selected participants
-                from participant in participantEventMapDto.Participants.Where(r => r.Selected)
+                from participant in participantEventMapDto.Participants.Where(r => r.Selected && r.DuplicateSignIn == false)
 
                 // Get the event group id that they belong to
                 let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
@@ -320,6 +337,38 @@ namespace SignInCheckIn.Services
                 mpEventParticipant.RoomName = bumpingRoom.RoomName;
                 return;
             }
+        }
+
+        public ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier, string token)
+        {
+            var participantEventMapDto = GetParticipantEventMapDtoByEventParticipant(eventParticipantId, token);
+            return PrintParticipants(participantEventMapDto, kioskIdentifier);
+        }
+
+        private ParticipantEventMapDto GetParticipantEventMapDtoByEventParticipant(int eventParticipantId, string token)
+        {
+            // Get participant from event participant id
+            var participants = new List<ParticipantDto>();
+            var participant = Mapper.Map<ParticipantDto>(_participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId));
+            participant.Selected = true;
+            participants.Add(participant);
+
+            // Get event from participants event id
+            var currentEvent = _eventService.GetEvent(participant.EventId);
+
+            // Get Contact records of Heads of Household
+            var headOfHouseholds = new List<ContactDto>();
+            if (participant.CheckinHouseholdId.HasValue)
+            {
+                headOfHouseholds = _contactRepository.GetHeadsOfHouseholdByHouseholdId(participant.CheckinHouseholdId.Value).Select(Mapper.Map<ContactDto>).ToList();
+            }
+
+            return new ParticipantEventMapDto
+            {
+                Participants = participants,
+                CurrentEvent = currentEvent,
+                Contacts = headOfHouseholds
+            };
         }
 
         public ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier)
@@ -417,7 +466,7 @@ namespace SignInCheckIn.Services
                     FirstName = newFamilyDto.ParentContactDto.FirstName,
                     Nickname = newFamilyDto.ParentContactDto.FirstName,
                     LastName = newFamilyDto.ParentContactDto.LastName,
-                    DisplayName = newFamilyDto.ParentContactDto.FirstName + " " + newFamilyDto.ParentContactDto.LastName,
+                    DisplayName = newFamilyDto.ParentContactDto.LastName + ", " + newFamilyDto.ParentContactDto.FirstName,
                     HouseholdId = mpHouseholdDto.HouseholdId,
                     HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId,
                     Company = false
@@ -563,7 +612,7 @@ namespace SignInCheckIn.Services
                     FirstName = firstName,
                     Nickname = firstName,
                     LastName = lastName,
-                    DisplayName = firstName + " " + lastName,
+                    DisplayName = lastName + ", " + firstName,
                     HouseholdId = householdId,
                     HouseholdPositionId = householdPositionId,
                     Company = false,
@@ -604,6 +653,71 @@ namespace SignInCheckIn.Services
             {
                 guest.GroupId = newGroupParticipants.First(r => r.ParticipantId == guest.ParticipantId).GroupId;
                 guest.Selected = true;
+            }
+        }
+
+        public bool ReverseSignin(string token, int eventParticipantId)
+        {
+            // load the event participant, check their status
+            var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId);
+
+            if (mpEventParticipantDto.ParticipantStatusId == _applicationConfiguration.CheckedInParticipationStatusId)
+            {
+                return false;
+            }
+            else
+            {
+                mpEventParticipantDto.ParticipantStatusId = _applicationConfiguration.CancelledParticipationStatusId;
+                mpEventParticipantDto.EndDate = DateTime.Now;
+
+                List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+                {
+                    mpEventParticipantDto
+                };
+
+                _participantRepository.UpdateEventParticipants(mpEventParticipantDtos);
+
+                return true;
+            }
+        }
+
+        public void CheckForDuplicateSignIns(List<MpEventDto> eventsForSignin, ParticipantEventMapDto participantEventMapDto)
+        {
+            // go through each event and its sub event or parent event and check if its sub event or parent event
+            // has this participant signed in
+            var eventIds = new List<int>();
+            foreach (var signinEvent in eventsForSignin)
+            {
+                eventIds.Add(signinEvent.EventId);
+
+                // if parent event get subevent else get parent event
+                if (signinEvent.ParentEventId == null)
+                {
+                    var subEvent = _eventRepository.GetSubeventByParentEventId(signinEvent.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+                    if (subEvent != null)
+                    {
+                        eventIds.Add(subEvent.EventId);
+                    }
+                }
+                else
+                {
+                    eventIds.Add(signinEvent.ParentEventId.Value);
+                }
+            }
+
+            foreach (var eventItemId in eventIds)
+            {
+                var signedInParticipants = _participantRepository.GetEventParticipantsByEventAndParticipant(
+                    eventItemId,
+                    participantEventMapDto.Participants.Select(r => r.ParticipantId).ToList());
+
+                foreach (var participant in participantEventMapDto.Participants)
+                {
+                    if (signedInParticipants.Any(r => r.ParticipantId == participant.ParticipantId))
+                    {
+                        participant.DuplicateSignIn = true;
+                    }
+                }
             }
         }
     }

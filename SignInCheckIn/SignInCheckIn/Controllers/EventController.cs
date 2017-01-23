@@ -62,16 +62,19 @@ namespace SignInCheckIn.Controllers
         [Route("events/{eventid}/rooms")]
         public IHttpActionResult GetRoomsByEvent(int eventid)
         {
-            try
+            return Authorized(token =>
             {
-                var roomList = _roomService.GetLocationRoomsByEventId(eventid);
-                return Ok(roomList);
-            }
-            catch (Exception e)
-            {
-                var apiError = new ApiErrorDto("Get Room for Event " + eventid, e);
-                throw new HttpResponseException(apiError.HttpResponseMessage);
-            }
+                try
+                {
+                    var roomList = _roomService.GetLocationRoomsByEventId(token, eventid);
+                    return Ok(roomList);
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Get Room for Event " + eventid, e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
         }
 
         [HttpPut]
@@ -162,7 +165,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(EventRoomDto))]
-        [Route("events/{eventId:int}/eventmaps")]
+        [Route("events/{eventId:int}/maps")]
         public IHttpActionResult GetEventsAndSubEvents([FromUri] int eventId)
         {
             try

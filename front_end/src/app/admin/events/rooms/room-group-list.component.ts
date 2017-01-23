@@ -21,9 +21,11 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   private eventsMap: Event[];
+  allAlternateRooms: Room[];
   isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
   updating: boolean = false;
+  isDirty: boolean = false;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -48,6 +50,7 @@ export class RoomGroupListComponent implements OnInit {
       room => {
         this.room = room;
         this.setCurrentEvent(room.AdventureClub);
+        this.updating = false;
       },
       error => console.error(error)
     );
@@ -59,6 +62,15 @@ export class RoomGroupListComponent implements OnInit {
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
+    );
+
+    this.adminService.getBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId']).subscribe(
+      allRooms => {
+        this.allAlternateRooms = Room.fromJsons(allRooms);
+      },
+      error => {
+        console.error(error);
+      }
     );
 
   }
@@ -94,6 +106,13 @@ export class RoomGroupListComponent implements OnInit {
     return false;
   }
 
+  hasBumpingRooms(): boolean {
+    return this.allAlternateRooms
+      .filter(
+        (obj: Room) => { return obj.isBumpingRoom();
+      }).length > 0;
+  }
+
   getGroups(): Group[] {
     return this.isReady() ? this.room.AssignedGroups : [];
   }
@@ -103,7 +122,7 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   isReady(): boolean {
-    return this.event !== undefined && this.room !== undefined;
+    return (!this.updating && (this.event !== undefined && this.room !== undefined));
   }
 
   goBack() {
@@ -117,19 +136,76 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   toggleAdventureClub(e) {
-    // if has rooms, dont change toggle, show alert
-    if (this.hasActiveRooms()) {
+    if (this.isDirty) {
       this.isAdventureClub = !this.isAdventureClub;
       e.target.checked = this.isAdventureClub;
-      this.rootService.announceEvent('echeckAdventureClubToggleWarning');
+      this.rootService.announceEvent('saveBeforeAdventureClubToggle');
+    } else if (this.hasActiveRooms() || this.hasBumpingRooms()) {
+      this.isAdventureClub = !this.isAdventureClub;
+      e.target.checked = this.isAdventureClub;
+      if (this.hasActiveRooms()) {
+        this.rootService.announceEvent('echeckAdventureClubToggleWarning');
+      } else {
+        this.rootService.announceEvent('removeBumpingRoomsBeforeAdventureClubToggle');
+      }
     } else {
       this.setCurrentEvent(e.target.checked);
+      this.setDirty();
     }
+  }
+
+  alternateRoomsSelect() {
+    this.alternateRoomsSelected = true;
+  }
+
+  roomGroupsSelect() {
+    this.alternateRoomsSelected = false;
   }
 
   ngOnInit() {
     this.getData();
     this.openTabIfAlternateRoomsHash();
   }
+
+  setDirty() {
+    this.isDirty = true;
+  }
+
+  save() {
+    if (this.alternateRoomsSelected) {
+      this.saveAlternateRooms();
+    } else {
+      this.saveRoomGroups();
+    }
+  }
+
+  cancel() {
+    this.updating = true;
+    this.isDirty = false;
+    this.getData();
+  }
+
+  saveRoomGroups() {
+    this.updating = true;
+    this.isDirty = false;
+
+    this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room).subscribe((resp) => {
+      this.updating = false;
+      this.rootService.announceEvent('roomGroupsUpdateSuccess');
+      this.isDirty = false;
+    }, error => (this.rootService.announceEvent('generalError')));
+  }
+
+  saveAlternateRooms() {
+    this.updating = true;
+    this.isDirty = false;
+
+    this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'],
+      this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp) => {
+        this.updating = false;
+        this.rootService.announceEvent('alternateRoomsUpdateSuccess');
+        this.isDirty = false;
+      }, error => (this.rootService.announceEvent('generalError')));
+    }
 
 }

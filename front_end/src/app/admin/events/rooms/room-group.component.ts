@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AdminService } from '../../admin.service';
 import { Range, Group, Room, Event } from '../../../shared/models';
 import * as _ from 'lodash';
@@ -14,6 +14,8 @@ export class RoomGroupComponent {
   @Input() roomId: string;
   @Input() room: Room;
 
+  @Output() setDirty = new EventEmitter<boolean>();
+
   constructor( private adminService: AdminService) {
   }
 
@@ -25,7 +27,8 @@ export class RoomGroupComponent {
           range.Selected = newState;
       }
     }
-    this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room);
+
+    this.setDirty.emit(true);
   }
 
   toggleRange(range: Range, group: Group) {
@@ -41,7 +44,8 @@ export class RoomGroupComponent {
         group.Selected = true;
       }
     }
-    this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room);
+
+    this.setDirty.emit(true);
   }
 
 }

@@ -18,6 +18,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
         private Mock<IContactRepository> _contactRepository;
+        private List<string> _eventParticipantColumns;
 
         [SetUp]
         public void SetUp()
@@ -25,6 +26,33 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _ministryPlatformRestRepository = new Mock<IMinistryPlatformRestRepository>();
             _contactRepository = new Mock<IContactRepository>();
+
+            _eventParticipantColumns = new List<string>
+            {
+                "Event_Participant_ID",
+                "Event_ID",
+                "Participant_ID_Table_Contact_ID_Table.[First_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table.[Participant_ID]",
+                "Participation_Status_ID",
+                "Time_In",
+                "Time_Confirmed",
+                "Time_Out",
+                "Event_Participants.[Notes]",
+                "Group_Participant_ID",
+                "[Check-in_Station]",
+                "Group_ID",
+                "Room_ID_Table.[Room_ID]",
+                "Room_ID_Table.[Room_Name]",
+                "Call_Parents",
+                "Group_Role_ID",
+                "Response_ID",
+                "Opportunity_ID",
+                "Registrant_Message_Sent",
+                "Call_Number",
+                "Checkin_Phone",
+                "Checkin_Household_ID"
+            };
 
             _fixture = new ParticipantRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _contactRepository.Object);
         }
@@ -49,8 +77,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_Participants.Call_Number",
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
-                "dp_Created.Date_Time as Time_In",
-                "Event_Participants.Checkin_Household_ID as Household_ID"
+                "Time_In",
+                "Event_Participants.Checkin_Household_ID",
+                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
             };
 
             var children = new List<MpEventParticipantDto>
@@ -66,7 +95,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     RoomId = 1,
                     RoomName = "Room1",
                     TimeIn = DateTime.Now,
-                    HouseholdId = 1
+                    CheckinHouseholdId = 1
                 },
                 new MpEventParticipantDto
                 {
@@ -79,7 +108,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     RoomId = 1,
                     RoomName = "Room1",
                     TimeIn = DateTime.Now,
-                    HouseholdId = 2
+                    CheckinHouseholdId = 2
                 }
             };
 
@@ -110,7 +139,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             };
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)})", columns)).Returns(children);
+            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL", columns)).Returns(children);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(1)).Returns(household1);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(2)).Returns(household2);
 
@@ -201,6 +230,42 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.VerifyAll();
 
             Assert.AreEqual(returnDto, result);
+        }
+
+        [Test]
+        public void ItShouldGetParticipantsByEventAndParticipantId()
+        {
+            // Arrange
+            var token = "123abc";
+
+            var eventId = 1234567;
+
+            List<int> participantIds = new List<int>
+            {
+                4455544
+            };
+
+            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 1234567,
+                    ParticipantId = 4455544
+                }
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventParticipantDto>(
+                $"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL", _eventParticipantColumns)).Returns(mpEventParticipantDtos);
+
+            // Act
+            var result = _fixture.GetEventParticipantsByEventAndParticipant(eventId, participantIds);
+
+            // Assert
+            Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(result[0].EventId, 1234567);
+            Assert.AreEqual(result[0].ParticipantId, 4455544);
         }
     }
 }

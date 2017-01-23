@@ -104,8 +104,14 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventGroupDto> GetEventGroupsForEvent(int eventId)
         {
+            var eventIds = new List<int> {eventId};
+            return GetEventGroupsForEvent(eventIds);
+        }
+
+        public List<MpEventGroupDto> GetEventGroupsForEvent(List<int> eventIds)
+        {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
-                .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId}", _eventGroupsColumns);
+                .Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEventRoom(int eventId, int roomId)
@@ -147,7 +153,20 @@ namespace MinistryPlatform.Translation.Repositories
                 .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1", _eventColumns);
         }
 
-	    public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
+        public MpEventDto GetSubeventByParentEventId(int eventId, int eventTypeId)
+        {
+            var token = _apiUserRepository.GetToken();
+            return GetSubeventByParentEventId(token, eventId, eventTypeId);
+        }
+
+        public MpEventDto GetSubeventByParentEventId(string token, int serviceEventId, int eventTypeId)
+        {
+            var events = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                 .Search<MpEventDto>($"Events.Parent_Event_ID = {serviceEventId} AND Events.[Event_Type_ID] = {eventTypeId}", _eventColumns);
+            return events.First();
+        }
+
+        public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 

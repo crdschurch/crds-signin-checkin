@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Output, Input, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Room } from '../../../../shared/models';
 import { AdminService } from '../../../admin.service';
@@ -8,40 +8,34 @@ import { AdminService } from '../../../admin.service';
   templateUrl: 'alternate-rooms.component.html',
   styleUrls: ['alternate-rooms.component.scss']
 })
-export class AlternateRoomsComponent implements OnInit {
-  private _allRooms: Room[];
+export class AlternateRoomsComponent {
+  @Input() allAlternateRooms: Room[];
+  @Output() setDirty = new EventEmitter<boolean>();
 
   constructor( private adminService: AdminService,
                private route: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.adminService.getBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId']).subscribe(
-      allRooms => {
-        this.allRooms = Room.fromJsons(allRooms);
-      },
-      error => {
-        console.error(error);
-      }
-    );
+  setDirtyChild() {
+    this.setDirty.emit(true);
   }
 
   get allRooms() {
-    return this._allRooms;
+    return this.allAlternateRooms;
   }
 
   set allRooms(rooms) {
-    this._allRooms = rooms;
+    this.allAlternateRooms = rooms;
   }
 
   get availableRooms(): Room[] {
-    if (this._allRooms) {
-      return this._allRooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
+    if (this.allAlternateRooms) {
+      return this.allAlternateRooms.filter( (obj: Room) => { return !obj.isBumpingRoom(); } );
     };
   }
 
   get bumpingRooms(): Room[] {
-    if (this._allRooms) {
-      return this._allRooms
+    if (this.allAlternateRooms) {
+      return this.allAlternateRooms
         .filter(
           (obj: Room) => { return obj.isBumpingRoom(); })
         .sort(

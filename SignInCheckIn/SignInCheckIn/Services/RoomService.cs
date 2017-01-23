@@ -32,12 +32,38 @@ namespace SignInCheckIn.Services
             _applicationConfiguration = applicationConfiguration;
         }
 
-        public List<EventRoomDto> GetLocationRoomsByEventId(int eventId)
+        public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
         {
-            var mpEvent = _eventRepository.GetEventById(eventId);
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
+            var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
 
-            return Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+            // Set Parent and Child in right order
+            var eventIds = new List<int>();
+            var parentEvent = mpEvents.FirstOrDefault(e => e.ParentEventId == null);
+            if (parentEvent != null) eventIds.Add(parentEvent.EventId);
+            var acEvent = mpEvents.FirstOrDefault(e => e.ParentEventId != null);
+            if (acEvent != null) eventIds.Add(acEvent.EventId);
+
+            // Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds) ?? new List<MpEventGroupDto>();
+
+            // Load up lookups for age ranges, grades, birth months, and nursery months
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+
+            // Get All Rooms for this Event
+            var mpEventRooms = _roomRepository.GetRoomsForEvent(eventIds, parentEvent.LocationId);
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+
+            // Get All the Event Groups Assigned to each room for this event
+            foreach (var eventRoom in eventRooms)
+            {
+                var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+                eventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+            }
+
+            return eventRooms;
         }
 
         public EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom)
@@ -49,7 +75,21 @@ namespace SignInCheckIn.Services
         private EventRoomDto UpdateMainEventRoom(string authenticationToken, EventRoomDto eventRoom)
         {
             var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
-            return Mapper.Map<EventRoomDto>(response);
+            
+            // Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventRoom.EventId) ?? new List<MpEventGroupDto>();
+
+            // Load up lookups for age ranges, grades, birth months, and nursery months
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+
+            var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+
+            var updatedEventRoom = Mapper.Map<EventRoomDto>(response);
+            updatedEventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+            return updatedEventRoom;
         }
 
         private void UpdateSubEventRoom(string authenticationToken, EventRoomDto eventRoom)
@@ -74,31 +114,41 @@ namespace SignInCheckIn.Services
             // Get the EventRoom, or the Room if no EventRoom
             var selectedEventRoom = GetEventRoom(authenticationToken, eventId, roomId);
 
+            // Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(selectedEventRoom.EventId) ?? new List<MpEventGroupDto>();
+
             // Load up lookups for age ranges, grades, birth months, and nursery months
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
             var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
             var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
 
+            // Get All the Event Groups Assigned to this room for this event
+            return GetEventRoomAgeAndGradeGroups(authenticationToken, selectedEventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+        }
+
+        private EventRoomDto GetEventRoomAgeAndGradeGroups(string authenticationToken, EventRoomDto eventRoom, List<MpEventGroupDto> eventGroups, 
+            IEnumerable<MpAttributeDto> ages, IEnumerable<MpAttributeDto> grades, List<MpAttributeDto> birthMonths, List<MpAttributeDto> nurseryMonths)
+        {
             // Frontend wants months like "Jan" and "Feb", not "January" and "February" - trim them down here, but we may want to move this to frontend in the future
             birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
             // Get current event groups with a room reservation for this room
-            var eventGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, selectedEventRoom.EventId, roomId);
+            var eventRoomGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventGroups, eventRoom.RoomId);
 
             var agesAndGrades = new List<AgeGradeDto>();
 
             // Add age ranges (including selected groups) to the response
-            agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventGroups));
+            agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventRoomGroups));
 
             var maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
 
             // Add grade ranges (including selected groups) to the response
-            agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventGroups, maxSort));
+            agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventRoomGroups, maxSort));
 
-            selectedEventRoom.AssignedGroups = agesAndGrades;
+            eventRoom.AssignedGroups = agesAndGrades;
 
-            return selectedEventRoom;
+            return eventRoom;
         }
 
         public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)
@@ -116,29 +166,11 @@ namespace SignInCheckIn.Services
                 throw new Exception("Event not found for event id: " + eventId + " in GetEventRoom in RoomService");
             }
 
+            var eventRoom = _roomRepository.GetEventRoomForEventMaps(events.Select(e => e.EventId).ToList(), roomId);
+
             // set to the parent id by default
-            var selectedEvent = events.First(r => r.ParentEventId == null);
-
-            // this will need to be updated once we're looking at subevents other than AC events,
-            // as part of the refactor
-            foreach (var eventItem in events)
-            {
-                var eventGroups = GetEventGroupsWithRoomReservationForEvent(token, eventItem.EventId, roomId);
-
-                // if there are any event groups on the event, that is the "active"
-                // event or subevent for that room
-                if (eventGroups.Count > 0)
-                {
-                    selectedEvent = eventItem;
-                    break;
-                }
-            }
-
-            //var eventRoom = _roomRepository.GetEventRoomForEventMaps(eventIds, roomId); <-- remove this
-
-
-            var eventRoom = _roomRepository.GetEventRoom(selectedEvent.EventId, roomId);
-
+            var selectedEvent = events.FirstOrDefault(e => e.EventId == (eventRoom?.EventId ?? eventId));
+            
             if (eventRoom == null)
             {
                 var room = _roomRepository.GetRoom(roomId);
@@ -164,9 +196,8 @@ namespace SignInCheckIn.Services
             return returnRoomDto;
         }
 
-        private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, int eventId, int roomId)
+        private List<MpEventGroupDto> GetEventGroupsWithRoomReservationForEvent(string authenticationToken, List<MpEventGroupDto> eventGroups, int roomId)
         {
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
             if (eventGroups.Any())
             {
                 eventGroups = eventGroups.FindAll(e => e.HasRoomReservation() && e.RoomReservation.RoomId == roomId);
@@ -233,30 +264,24 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom)
         {
+            // eventId could be the parent service event or the adventure club subevent
             var eventDto = _eventRepository.GetEventById(eventId);
             eventRoom.AdventureClub = eventDto.ParentEventId.HasValue && eventDto.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId;
 
+            // Delete room reservation for the adventure club subevent if this is the parent event, and vice versa
+            DeleteRoomReservationForOtherEvent(authenticationToken, eventRoom, eventDto, roomId);
+
             // Start by deleting all current event groups for this room reservation (if any)
             DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventId, roomId);
-
-            // Check to see if anything is selected on input if not and this was a AC event then cancel
-            if (!eventRoom.AssignedGroups.Exists(g => g.Selected || g.HasSelectedRanges))
-            {
-                // Cancel the AC event as there is no longer a room associated with it
-                if (!eventRoom.AdventureClub) return eventRoom;
-
-                eventDto.Cancelled = true;
-                _eventRepository.UpdateEvent(authenticationToken, eventDto);
-                eventRoom.AdventureClub = false;
-                return eventRoom;
-            }
 
             // Get the existing eventRoom, if any
             var existingEventRoom = _roomRepository.GetEventRoom(eventId, roomId) ?? new MpEventRoomDto
             {
                 EventId = eventId,
                 RoomId = roomId,
-                AllowSignIn = true
+                AllowSignIn = eventRoom.AllowSignIn,
+                Capacity = eventRoom.Capacity,
+                Volunteers = eventRoom.Volunteers,
             };
 
             // Create the room reservation, if needed
@@ -295,12 +320,38 @@ namespace SignInCheckIn.Services
                               eventRoom,
                               eventRoom.AssignedGroups.FindAll(g => (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.GradesAttributeTypeId), false);
 
-            // If an AC event room make sure the AC event is not cancelled
-            if (!eventRoom.AdventureClub) return eventRoom;
-            eventDto.Cancelled = false;
-            _eventRepository.UpdateEvent(authenticationToken, eventDto);
+            // if we are updating an adventure club event, make sure the cancelled status of the event
+            // is updated accordingly
+            UpdateAdventureClubStatusIfNecessary(eventDto, roomId, authenticationToken);
 
             return eventRoom;
+        }
+
+        private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, int roomId, string token)
+        {
+            // we need to figure out if this event is the adventure club event or the service event
+            // if it is not the AC event, we need to get the AC event
+            if (eventDto.EventTypeId != _applicationConfiguration.AdventureClubEventTypeId)
+            {
+                eventDto = _eventRepository.GetSubeventByParentEventId(token, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+            }
+
+            // search to see if there are existing Event Rooms for the AC subevent
+            var eventRoom = _roomRepository.GetEventRoom(eventDto.EventId);
+            
+            if (eventRoom != null)
+            {
+                // if there are, set cancelled to false
+                eventDto.Cancelled = false;
+                _eventRepository.UpdateEvent(token, eventDto);
+            }
+            else
+            {
+                // if that are not, set cancelled to true
+                // if there are, set cancelled to false
+                eventDto.Cancelled = true;
+                _eventRepository.UpdateEvent(token, eventDto);
+            }
         }
 
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
@@ -375,21 +426,76 @@ namespace SignInCheckIn.Services
             }
         }
 
-        public List<EventRoomDto> GetAvailableRooms(int roomId, int eventId)
+        private void DeleteRoomReservationForOtherEvent(string authenticationToken, EventRoomDto eventRoom, MpEventDto eventDto, int roomId)
+        { 
+            // Make sure there is not an existing room reservation on the 'other' event
+            // (i.e. the AC subevent if creating room reseverations for service event, and vice versa)
+            if (eventRoom.AdventureClub)
+            {
+                // is adventure club, so delete any event rooms on the parent service event
+                var oldEventRoom = _roomRepository.GetEventRoom(eventDto.ParentEventId.Value, roomId);
+                DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventDto.ParentEventId.Value, roomId);
+                if (oldEventRoom != null)
+                {
+                    _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
+                }
+            }
+            else
+            {
+                // not adventure club, so delete any event rooms on the adventure club event
+                var adventureClubSubevent = _eventRepository.GetSubeventByParentEventId(authenticationToken, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+                var oldEventRoom = _roomRepository.GetEventRoom(adventureClubSubevent.EventId, roomId);
+                DeleteCurrentEventGroupsForRoomReservation(authenticationToken, adventureClubSubevent.EventId, roomId);
+                if (oldEventRoom != null)
+                {
+                    _roomRepository.DeleteEventRoom(authenticationToken, oldEventRoom.EventRoomId.Value);
+                }
+            }
+        }
+
+        public List<EventRoomDto> GetAvailableRooms(string token, int roomId, int eventId)
         {
-            var mpEvent = _eventRepository.GetEventById(eventId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
+
+            if (events.Count == 0)
+            {
+                throw new Exception("Event not found for event id: " + eventId + " in GetEventRoom in RoomService");
+            }
+
+            var mpCurrentEventRoom = _roomRepository.GetEventRoomForEventMaps(events.Select(e => e.EventId).ToList(), roomId);
+            
+            // set to the parent id by default
+            var mpEvent = events.FirstOrDefault(e => e.EventId == (mpCurrentEventRoom?.EventId ?? eventId));
 
             // exclude the origin room from the available rooms
             var mpEventAllRooms = _roomRepository.GetRoomsForEvent(mpEvent.EventId, mpEvent.LocationId);
             var mpEventAvailableRooms = mpEventAllRooms.Where(r => r.RoomId != roomId).ToList();
-            var mpCurrentEventRoom = mpEventAllRooms.First(r => r.RoomId == roomId);
+
+
+            // if there is no existing event room for the selected room, create one to have something to
+            // attach the bumping rooms to
+            if (mpCurrentEventRoom == null)
+            {
+                mpCurrentEventRoom = mpEventAllRooms.First(r => r.RoomId == roomId);
+
+                var eventRoom = new MpEventRoomDto
+                {
+                    EventId = eventId,
+                    RoomId = mpCurrentEventRoom.RoomId,
+                    RoomName = mpCurrentEventRoom.RoomName,
+                    RoomNumber = mpCurrentEventRoom.RoomNumber
+                };
+
+                var currentEventRoomDto = _roomRepository.CreateOrUpdateEventRoom(null, eventRoom);
+                mpCurrentEventRoom.EventRoomId = currentEventRoomDto.EventRoomId;
+            }
 
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventAvailableRooms);
 
             // make sure to filter null values
             var eventRoomIds = eventRooms.Select(r => r.EventRoomId).Distinct().Where(r => r != null).ToList();
 
-            if (eventRoomIds.Any(r => r != null))
+            if (eventRoomIds.Any(r => r != null) && mpCurrentEventRoom.EventRoomId != null)
             {
                 var bumpingRules = _roomRepository.GetBumpingRulesForEventRooms(eventRoomIds, mpCurrentEventRoom.EventRoomId);
 
@@ -422,7 +528,7 @@ namespace SignInCheckIn.Services
 
             var selectedRooms = eventRoomDtos.Where(r => r.BumpingRulePriority != null).ToList();
 
-            List<MpBumpingRuleDto> mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
+            var mpBumpingRuleDtos = new List<MpBumpingRuleDto>();
 
             foreach (var selectedRoom in selectedRooms)
             {
@@ -435,7 +541,7 @@ namespace SignInCheckIn.Services
                     selectedRoom.EventRoomId = _roomRepository.CreateOrUpdateEventRoom(null, mpEventRoomDto).EventRoomId;
                 }
 
-                MpBumpingRuleDto mpBumpingRuleDto = new MpBumpingRuleDto
+                var mpBumpingRuleDto = new MpBumpingRuleDto
                 {
                     FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
                     ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
@@ -449,7 +555,7 @@ namespace SignInCheckIn.Services
             _roomRepository.CreateBumpingRules(authenticationToken, mpBumpingRuleDtos);
 
             // pull back the newly created rooms
-            return GetAvailableRooms(roomId, eventId);
+            return GetAvailableRooms(authenticationToken, roomId, eventId);
         }
 
         public EventRoomDto CreateOrUpdateAdventureClubRoom(string authenticationToken, EventRoomDto eventRoom)

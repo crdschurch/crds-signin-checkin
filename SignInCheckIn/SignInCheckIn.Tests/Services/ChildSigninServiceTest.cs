@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Web.Http;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -179,7 +181,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 111,
-                    Selected = true
+                    Selected = true,
+                    DuplicateSignIn = false
                 }
             };
 
@@ -252,12 +255,16 @@ namespace SignInCheckIn.Tests.Services
             participantEventMapDto.Contacts = contactDtos;
             participantEventMapDto.CurrentEvent = eventDto;
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -403,6 +410,9 @@ namespace SignInCheckIn.Tests.Services
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
@@ -410,6 +420,7 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(mpBumpingRooms);
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -500,6 +511,9 @@ namespace SignInCheckIn.Tests.Services
 
             _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
 
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
+
             _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(participantEventMapDto.CurrentEvent);
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
@@ -507,6 +521,7 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(new List<MpBumpingRoomsDto>());
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -1212,6 +1227,454 @@ namespace SignInCheckIn.Tests.Services
             // Testing to make sure that the fields were not set against on the non-guest participant
             Assert.AreEqual(participantEventMapDto.Participants[1].GroupId, nonGuestGroupId);
             Assert.AreEqual(participantEventMapDto.Participants[1].ParticipantId, nonGuestParticipantId);
+        }
+
+        [Test]
+        public void ShouldReverseSignin_ParticipantNotCheckedIn()
+        {
+            // Arrange
+            string token = "ABC123";
+            int eventParticipantId = 1234567;
+            int attendedParticipantStatusId = 3;
+            int checkedInParticipantStatusId = 4;
+            int cancelledParticipantStatusId = 5;
+
+            MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
+            {
+                EventParticipantId = 1234567,
+                ParticipantStatusId = attendedParticipantStatusId
+            };
+
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(token, eventParticipantId))
+                .Returns(mpEventParticipantDto);
+            _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
+            _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CheckedInParticipationStatusId).Returns(checkedInParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CancelledParticipationStatusId).Returns(cancelledParticipantStatusId);
+
+            // Act
+            _fixture.ReverseSignin(token, eventParticipantId);
+
+            // Assert
+            Assert.AreNotEqual(mpEventParticipantDto.EndDate, null);
+            Assert.AreEqual(mpEventParticipantDto.ParticipantStatusId, cancelledParticipantStatusId);
+            _participantRepository.VerifyAll();
+        }
+
+        [Test]
+        public void ShouldNotReverseSignin_ParticipantCheckedIn()
+        {
+            // Arrange
+            string token = "ABC123";
+            int eventParticipantId = 1234567;
+            int attendedParticipantStatusId = 3;
+            int checkedInParticipantStatusId = 4;
+            int cancelledParticipantStatusId = 5;
+
+            MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
+            {
+                EventParticipantId = 1234567,
+                ParticipantStatusId = checkedInParticipantStatusId
+            };
+
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(token, eventParticipantId))
+                .Returns(mpEventParticipantDto);
+            _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
+            _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CheckedInParticipationStatusId).Returns(checkedInParticipantStatusId);
+            _applicationConfiguration.Setup(r => r.CancelledParticipationStatusId).Returns(cancelledParticipantStatusId);
+
+            // Act
+            var result =_fixture.ReverseSignin(token, eventParticipantId);
+
+            // Assert
+            Assert.AreEqual(result, false);
+            Assert.AreEqual(mpEventParticipantDto.ParticipantStatusId, checkedInParticipantStatusId);
+        }
+
+        [Test]
+        public void ShouldReprintEventParticipantTag()
+        {
+            var token = "abcd";
+            var kioskId = "1a11a1a1-a11a-1a1a-11a1-a111a111a11a";
+
+            var participant = new MpEventParticipantDto
+            {
+                EventId = 123,
+                EventParticipantId = 765,
+                FirstName = "Test",
+                LastName = "User",
+                CheckinHouseholdId = 4
+            };
+
+            var contacts = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    HouseholdId = 4,
+                    FirstName = "Dad",
+                    LastName = "Hello"
+                },
+                new MpContactDto
+                {
+                    HouseholdId = 4,
+                    FirstName = "Mom",
+                    LastName = "Hello"
+                }
+            };
+
+            var currentEvent = new EventDto
+            {
+                EventId = 123,
+                EventTitle = "this test"
+            };
+
+            var mpKioskConfigDto = new MpKioskConfigDto
+            {
+                KioskIdentifier = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a"),
+                CongregationId = 1,
+                PrinterMapId = 1111111
+            };
+
+            var mpPrinterMapDto = new MpPrinterMapDto
+            {
+                PrinterMapId = 1111111
+            };
+
+            _participantRepository.Setup(m => m.GetEventParticipantByEventParticipantId(token, 765)).Returns(participant);
+            _eventService.Setup(m => m.GetEvent(123)).Returns(currentEvent);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(4)).Returns(contacts);
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+            _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
+            _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns("");
+            _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1);
+
+
+            var participantEventMapDto = _fixture.PrintParticipant(765, "1a11a1a1-a11a-1a1a-11a1-a111a111a11a", "abcd");
+
+            Assert.AreEqual(participantEventMapDto.Participants.Count, 1);
+            Assert.AreEqual(participantEventMapDto.Participants[0].EventId, participant.EventId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].EventParticipantId, participant.EventParticipantId);
+            Assert.AreEqual(participantEventMapDto.Participants[0].FirstName, participant.FirstName);
+            Assert.AreEqual(participantEventMapDto.Participants[0].LastName, participant.LastName);
+            Assert.AreEqual(participantEventMapDto.Participants[0].CheckinHouseholdId, participant.CheckinHouseholdId);
+
+            Assert.AreEqual(participantEventMapDto.Contacts.Count, 2);
+            Assert.AreEqual(participantEventMapDto.Contacts[0].HouseholdId, contacts[0].HouseholdId);
+            Assert.AreEqual(participantEventMapDto.Contacts[0].FirstName, contacts[0].FirstName);
+            Assert.AreEqual(participantEventMapDto.Contacts[0].LastName, contacts[0].LastName);
+            Assert.AreEqual(participantEventMapDto.Contacts[1].HouseholdId, contacts[1].HouseholdId);
+            Assert.AreEqual(participantEventMapDto.Contacts[1].FirstName, contacts[1].FirstName);
+            Assert.AreEqual(participantEventMapDto.Contacts[1].LastName, contacts[1].LastName);
+
+            Assert.AreEqual(participantEventMapDto.CurrentEvent.EventId, currentEvent.EventId);
+            Assert.AreEqual(participantEventMapDto.CurrentEvent.EventTitle, currentEvent.EventTitle);
+        }
+
+        [Test]
+        public void ShouldMarkDuplicateSigninsSingleEvent()
+        {
+            // Arrange
+            List<MpEventDto> eventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    EventId = 1234567
+                }
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    new ParticipantDto
+                    {
+                        ParticipantId = 4455544,
+                        DuplicateSignIn = false
+                    }
+                }
+            };
+
+            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 1234567,
+                    ParticipantId = 4455544
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns((MpEventDto)null);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+
+            // Act
+            _fixture.CheckForDuplicateSignIns(eventDtos, participantEventMapDto);
+
+            // Assert
+            Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, true);
+        }
+
+        [Test]
+        public void ShouldNotMarkDuplicateSigninsSingleEvent()
+        {
+            // Arrange
+            List<MpEventDto> eventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    EventId = 1234567
+                }
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    new ParticipantDto
+                    {
+                        ParticipantId = 4455544,
+                        DuplicateSignIn = false
+                    }
+                }
+            };
+
+            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>();
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns((MpEventDto)null);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
+
+            // Act
+            _fixture.CheckForDuplicateSignIns(eventDtos, participantEventMapDto);
+
+            // Assert
+            Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, false);
+        }
+
+        [Test]
+        public void ShouldMarkDuplicateSigninsACEvent()
+        {
+            // Arrange
+            List<MpEventDto> eventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    ParentEventId = 1234567,
+                    EventId = 7654321
+                },
+                new MpEventDto
+                {
+                    EventId = 2345678
+                }
+            };
+
+            var parentEvent = new MpEventDto
+            {
+                EventId = 1234567
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    new ParticipantDto
+                    {
+                        ParticipantId = 4455544,
+                        DuplicateSignIn = false
+                    }
+                }
+            };
+
+            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 7654321,
+                    ParticipantId = 4455544
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[1].EventId, 1)).Returns(parentEvent);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(parentEvent.EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+
+            // Act
+            _fixture.CheckForDuplicateSignIns(eventDtos, participantEventMapDto);
+
+            // Assert
+            Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, true);
+        }
+
+        [Test]
+        public void ShouldNotMarkDuplicateSigninsACEvent()
+        {
+            // Arrange
+            List<MpEventDto> eventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    EventId = 1234567
+                },
+                new MpEventDto
+                {
+                    ParentEventId = 1234567,
+                    EventId = 7654321
+                },
+                new MpEventDto
+                {
+                    EventId = 2345678
+                }
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    new ParticipantDto
+                    {
+                        ParticipantId = 4455544,
+                        DuplicateSignIn = false
+                    }
+                }
+            };
+
+            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 7654321,
+                    ParticipantId = 4455544
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns(eventDtos[0]);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[2].EventId, 1)).Returns((MpEventDto)null);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[2].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+
+            // Act
+            _fixture.CheckForDuplicateSignIns(eventDtos, participantEventMapDto);
+
+            // Assert
+            Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, false);
+        }
+
+        [Test]
+        public void ShouldMarkDuplicateSigninsFirstServiceEvent()
+        {
+            // Arrange
+            List<MpEventDto> eventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    ParentEventId = 1234567,
+                    EventId = 7654321
+                },
+                new MpEventDto
+                {
+                    EventId = 2345678
+                }
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    new ParticipantDto
+                    {
+                        ParticipantId = 4455544,
+                        DuplicateSignIn = false
+                    }
+                }
+            };
+
+            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 1234567,
+                    ParticipantId = 4455544
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[1].EventId, 1)).Returns((MpEventDto) null);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(1234567, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(7654321, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+
+            // Act
+            _fixture.CheckForDuplicateSignIns(eventDtos, participantEventMapDto);
+
+            // Assert
+            Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, true);
+        }
+
+        [Test]
+        public void ShouldMarkDuplicateSigninsSecondServiceEvent()
+        {
+            // Arrange
+            List<MpEventDto> eventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    EventId = 1234567
+                },
+                new MpEventDto
+                {
+                    ParentEventId = 1234567,
+                    EventId = 7654321
+                },
+                new MpEventDto
+                {
+                    EventId = 2345678
+                }
+            };
+
+            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            {
+                Participants = new List<ParticipantDto>
+                {
+                    new ParticipantDto
+                    {
+                        ParticipantId = 4455544,
+                        DuplicateSignIn = false
+                    }
+                }
+            };
+
+            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 2345678,
+                    ParticipantId = 4455544
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[2].EventId, 1)).Returns((MpEventDto)null);
+            _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDtos[0].EventId, 1)).Returns(eventDtos[1]);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[0].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[1].EventId, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(eventDtos[2].EventId, It.IsAny<List<int>>())).Returns(mpEventParticipantDtos);
+            _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(0, It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+
+            // Act
+            _fixture.CheckForDuplicateSignIns(eventDtos, participantEventMapDto);
+
+            // Assert
+            Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, true);
         }
     }
 }
