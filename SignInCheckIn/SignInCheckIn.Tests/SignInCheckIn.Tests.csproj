@@ -153,7 +153,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ApiVersioning\SemanticVersionTest.cs" />
     <Compile Include="BuildTester.cs" />
     <Compile Include="Controllers\EventControllerTest.cs" />
     <Compile Include="Controllers\MPAuthTestExtensions.cs" />
