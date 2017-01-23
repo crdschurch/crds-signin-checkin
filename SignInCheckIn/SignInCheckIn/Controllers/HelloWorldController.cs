@@ -2,9 +2,9 @@
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.ModelBinding;
-using SignInCheckIn.ApiVersioning.Attributes;
 using SignInCheckIn.Models;
 using SignInCheckIn.Services.Interfaces;
+using Crossroads.ApiVersioning;
 
 namespace SignInCheckIn.Controllers
 {

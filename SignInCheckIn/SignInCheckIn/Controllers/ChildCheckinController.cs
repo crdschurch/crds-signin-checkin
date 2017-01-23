@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using SignInCheckIn.ApiVersioning.Attributes;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
+using Crossroads.ApiVersioning;
 
 namespace SignInCheckIn.Controllers
 {
@@ -20,6 +20,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "checkin/children/{roomId:int}", minimumVersion: "1.0.0")]
         [Route("checkin/children/{roomId:int}")]
         public IHttpActionResult GetCheckedInChildrenForEventAndRoom(int roomId, [FromUri(Name = "eventId")] int? eventId = null)
         {
@@ -48,6 +49,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "checkin/event/participant", minimumVersion: "1.0.0")]
         [Route("checkin/event/participant")]
         public IHttpActionResult CheckinChildrenForCurrentEventAndRoom(ParticipantDto participant)
         {
@@ -65,6 +67,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantDto))]
+        [VersionedRoute(template: "checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}", minimumVersion: "1.0.0")]
         [Route("checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}")]
         public IHttpActionResult GetEventParticipantByCallNumber(
              [FromUri(Name = "eventId")] int eventId,
@@ -83,6 +86,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPut]
+        [VersionedRoute(template: "checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override", minimumVersion: "1.0.0")]
         [Route("checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override")]
         public IHttpActionResult OverrideChildIntoRoom(
              [FromUri(Name = "eventId")] int eventId,
