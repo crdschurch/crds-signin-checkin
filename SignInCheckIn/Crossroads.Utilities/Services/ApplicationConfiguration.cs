@@ -541,7 +541,7 @@ namespace Crossroads.Utilities.Services
             KcSecondGrade = configurationWrapper.GetConfigIntValue("KcSecond");
             KcThirdGrade = configurationWrapper.GetConfigIntValue("KcThird");
             KcFourthGrade = configurationWrapper.GetConfigIntValue("KcFourth");
-            KcSecondGrade = configurationWrapper.GetConfigIntValue("KcSecond");
+            KcFifthGrade = configurationWrapper.GetConfigIntValue("KcFifth");
         }
     }
 }
