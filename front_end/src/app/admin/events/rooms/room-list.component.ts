@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import {Observable} from 'rxjs/Rx';
+
 import { Event, Room } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { ApiService } from '../../../shared/services';
@@ -30,12 +32,14 @@ export class RoomListComponent implements OnInit {
 
   private getData(): void {
     this.eventId = this.route.snapshot.params['eventId'];
+
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
         this.rooms = rooms;
       },
       (error: any) => console.error(error)
     );
+
     this.apiService.getEvent(this.eventId).subscribe(
       event => {
         this.event = event;
@@ -47,6 +51,19 @@ export class RoomListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData();
+
+    // This is temp. until we add websockets to do an actual update
+    // We will update the rooms information every 5 seconds
+    Observable.interval(5000)
+      .mergeMap(() => this.adminService.getRooms(this.eventId))
+      .subscribe((rooms: Room[]) => {
+          for (let i = 0; i < rooms.length; i++) {
+            this.rooms[i].SignedIn = rooms[i].SignedIn;
+            this.rooms[i].CheckedIn = rooms[i].CheckedIn;
+          }
+        },
+        (error: any) => console.error(error)
+      );
   }
 
   public isReady(): boolean {
