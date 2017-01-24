@@ -69,7 +69,7 @@ export class RoomComponent implements OnInit {
   }
 
   isAdventureClub() {
-    return this.room.EventId != this.mainEventId();
+    return Number(this.room.EventId) !== Number(this.mainEventId());
   }
 
   ageRangeAndGrades(): any {
