@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
-import { Child } from '../../../shared/models/child';
+import { Child, NewChild } from '../../../shared/models';
+import * as moment from 'moment';
 
 @Component({
   selector: 'available-child',
@@ -9,5 +10,5 @@ import { Child } from '../../../shared/models/child';
 })
 
 export class AvailableChildComponent {
-  @Input() child: Child;
+  @Input() child: Child|NewChild;
 }

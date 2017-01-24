@@ -83,4 +83,8 @@ export class Child {
   guest(): boolean {
     return Constants.GuestHouseholdId === this.HouseholdId;
   }
+
+  uniqueIdentifier() {
+    return this.ContactId;
+  }
 }
