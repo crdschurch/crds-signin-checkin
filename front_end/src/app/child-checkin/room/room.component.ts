@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {Observable} from 'rxjs/Rx';
+
 import { Child } from '../../shared/models/child';
 import { Event } from '../../shared/models/event';
 import { ChildCheckinService } from '../child-checkin.service';
@@ -15,6 +17,7 @@ import { Subscription } from 'rxjs/Subscription';
 export class RoomComponent implements OnInit {
 
   private _children: Array<Child> = [];
+  private update: boolean = true;
   subscription: Subscription;
 
   constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, private setupService: SetupService) {
@@ -43,6 +46,18 @@ export class RoomComponent implements OnInit {
           console.error(error);
           comp.rootService.announceEvent('generalError');
         });
+
+        // This is temp. until we add websockets to do an actual update
+        // We will update the rooms information every 15 seconds
+        Observable.interval(15000)
+          .mergeMap(() => comp.childCheckinService.getChildrenForRoom(roomId, event.EventId))
+          .subscribe((children: Child[]) => {
+              if (comp.update) {
+                comp.children = children;
+              }
+            },
+            (error: any) => console.error(error)
+          );
       }
     }
   }
@@ -56,7 +71,9 @@ export class RoomComponent implements OnInit {
   }
 
   toggleCheckIn(child: Child) {
+    this.update = false;
     this.childCheckinService.checkInChildren(child).subscribe(() => {
+      this.update = true;
     }, (error) => {
       console.error(error);
       this.rootService.announceEvent('generalError');
