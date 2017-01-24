@@ -5,7 +5,7 @@
     </div>
   </a>
 </td>
-<td>{{room.RoomName}} <a class="tag tag-info" href="#" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</a></td>
+<td>{{room.RoomName}} <label class="tag tag-info" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</label></td>
 <td>
   <span *ngIf="hasCapacity()">
     <span *ngIf="checkedInEqualsCapacity()">
