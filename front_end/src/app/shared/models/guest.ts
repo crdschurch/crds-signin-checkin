@@ -21,7 +21,7 @@ export class Guest extends Child {
 
   constructor() {
     super();
-    // generate a id so inputs can be attached to label in html
+    // generate an id so inputs can be attached to label in html
     this.LocalId = Math.floor(Math.random() * 1000000000);
   }
 }

@@ -5,8 +5,6 @@ import { ChildSigninService } from '../child-signin.service';
 import { ApiService, RootService } from '../../shared/services';
 import { EventParticipants, Guest, Group } from '../../shared/models';
 
-import * as moment from 'moment';
-
 @Component({
   selector: 'available-children',
   templateUrl: 'available-children.component.html',
