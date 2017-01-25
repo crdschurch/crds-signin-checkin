@@ -41,7 +41,7 @@ namespace MinistryPlatform.Translation.Repositories
                         SearchTable<MpParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Room_ID_Table.[Room_ID] = {roomId} AND Event_Participants.End_Date IS NULL", columnList);
         }
 
-        public MpEventParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber)
+        public MpEventParticipantDto GetEventParticipantByCallNumber(int eventId, int adventureClubSubeventId, int callNumber)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -67,7 +67,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Event_Participants.[Call_Number] = {callNumber}", columnList);
+                        SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] IN ({eventId}, {adventureClubSubeventId}) AND Event_Participants.[Call_Number] = {callNumber}", columnList);
             if (participants.Any())
             {
                 return participants.First();
