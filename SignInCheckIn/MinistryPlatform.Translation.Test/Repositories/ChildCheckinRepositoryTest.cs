@@ -104,6 +104,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             var eventId = 987;
             var subeventId = 456;
+            var eventIds = new List<int> {eventId, subeventId};
             var callNumber = "5646";
 
             var participants = new List<MpEventParticipantDto>
@@ -120,9 +121,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] IN ({eventId}, {subeventId}) AND Event_Participants.[Call_Number] = {callNumber}", _getEventParticipantByCallNumberColumns)).Returns(participants);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] IN ({string.Join(",", eventIds)}) AND Event_Participants.[Call_Number] = {callNumber}", _getEventParticipantByCallNumberColumns)).Returns(participants);
 
-            var result = _fixture.GetEventParticipantByCallNumber(eventId, subeventId, int.Parse(callNumber));
+            var result = _fixture.GetEventParticipantByCallNumber(new List<int> { eventId, subeventId }, int.Parse(callNumber));
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
 

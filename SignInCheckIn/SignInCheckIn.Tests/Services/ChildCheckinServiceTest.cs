@@ -394,7 +394,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _applicationConfiguration.Setup(m => m.CheckedInParticipationStatusId).Returns(4);
-            _childCheckinRepository.Setup(m => m.GetEventParticipantByCallNumber(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(mpEventParticipantDto);
+            _childCheckinRepository.Setup(m => m.GetEventParticipantByCallNumber(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(mpEventParticipantDto);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(mpEventParticipantDto.CheckinHouseholdId.Value)).Returns(mpContactDtos);
             _eventRepository.Setup(mocked => mocked.GetSubeventByParentEventId(It.IsAny<int>(), It.IsAny<int>())).Returns(subevent);
             var result = _fixture.GetEventParticipantByCallNumber(eventId, callNumber, roomId, true);
