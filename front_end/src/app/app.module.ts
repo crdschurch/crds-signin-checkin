@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MomentModule } from 'angular2-moment';
 import { ToasterModule } from 'angular2-toaster/angular2-toaster';
+import { Angulartics2Module, Angulartics2GoogleTagManager } from 'angulartics2';
 import './rxjs-operators';
 
 import { CookieService } from 'angular2-cookie/services/cookies.service';
@@ -23,6 +24,7 @@ import { routing } from './app.routes';
     AppComponent
   ],
   imports: [
+    Angulartics2Module.forRoot([Angulartics2GoogleTagManager]),
     BrowserModule,
     FormsModule,
     HttpModule,
