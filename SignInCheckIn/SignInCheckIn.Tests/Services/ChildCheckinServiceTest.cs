@@ -367,6 +367,7 @@ namespace SignInCheckIn.Tests.Services
         public void ShouldGetEventParticipantByCallNumber()
         {
             var eventId = 888;
+            var subeventId = 999;
             var callNumber = 44;
             var roomId = 321;
 
@@ -387,9 +388,15 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            var subevent = new MpEventDto
+            {
+                EventId = 333
+            };
+
             _applicationConfiguration.Setup(m => m.CheckedInParticipationStatusId).Returns(4);
-            _childCheckinRepository.Setup(m => m.GetEventParticipantByCallNumber(eventId, callNumber)).Returns(mpEventParticipantDto);
+            _childCheckinRepository.Setup(m => m.GetEventParticipantByCallNumber(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(mpEventParticipantDto);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(mpEventParticipantDto.CheckinHouseholdId.Value)).Returns(mpContactDtos);
+            _eventRepository.Setup(mocked => mocked.GetSubeventByParentEventId(It.IsAny<int>(), It.IsAny<int>())).Returns(subevent);
             var result = _fixture.GetEventParticipantByCallNumber(eventId, callNumber, roomId, true);
             _childCheckinRepository.VerifyAll();
 
