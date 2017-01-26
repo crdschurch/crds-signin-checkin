@@ -75,6 +75,6 @@ export class ChildSigninService {
   }
 
   private handleError (error: any) {
-    return Observable.throw(error.json().error || 'Server error');
+    return Observable.throw(error.json().error || error.json().errors[0] || 'Server error');
   }
 }

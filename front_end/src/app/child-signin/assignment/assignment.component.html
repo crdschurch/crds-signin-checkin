@@ -8,6 +8,9 @@
           <div class="card-block">
             <h4 class="card-title">{{child.name()}}</h4>
             <p class="mb-0"><span class="text-muted">{{child.assignedRoom()}}</span></p>
+            <p class="mb-0" [hidden]="!child.AssignedSecondaryRoomName">
+              <span class="text-muted">{{child.AssignedSecondaryRoomName}}</span>
+            </p>
           </div>
         </div><!--/card-->
       </div><!--/eqWrap-->
