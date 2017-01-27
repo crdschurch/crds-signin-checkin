@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+// import {Observable} from 'rxjs/Rx';
 
 import { Child } from '../../shared/models/child';
 import { Event } from '../../shared/models/event';
@@ -49,15 +49,15 @@ export class RoomComponent implements OnInit {
 
         // This is temp. until we add websockets to do an actual update
         // We will update the rooms information every 15 seconds
-        Observable.interval(15000)
-          .mergeMap(() => comp.childCheckinService.getChildrenForRoom(roomId, event.EventId))
-          .subscribe((children: Child[]) => {
-              if (comp.update) {
-                comp.children = children;
-              }
-            },
-            (error: any) => console.error(error)
-          );
+        // Observable.interval(15000)
+        //   .mergeMap(() => comp.childCheckinService.getChildrenForRoom(roomId, event.EventId))
+        //   .subscribe((children: Child[]) => {
+        //       if (comp.update) {
+        //         comp.children = children;
+        //       }
+        //     },
+        //     (error: any) => console.error(error)
+        //   );
       }
     }
   }
