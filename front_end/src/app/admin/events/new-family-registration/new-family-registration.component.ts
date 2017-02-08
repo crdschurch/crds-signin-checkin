@@ -17,13 +17,13 @@ import * as moment from 'moment';
   templateUrl: 'new-family-registration.component.html'
 })
 export class NewFamilyRegistrationComponent implements OnInit {
-  private mask: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
+  private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
+  private maskDate: any = [/[0-1]/, /[0-9]/, '-', /[0-3]/, /\d/, '-', /[1,2]/, /[0,9]/, /[0,1,8,9]/, /\d/];
   private eventId: string;
   private family: NewFamily;
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  private maxDate: Date = moment().toDate();
 
   constructor(
     private route: ActivatedRoute,
@@ -107,8 +107,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
   private newChild(): NewChild {
     let child = new NewChild();
-    child.DateOfBirth = moment().startOf('day').toDate();
-
+    // child.DateOfBirth = moment().startOf('day').toDate();
     return child;
   }
 }
