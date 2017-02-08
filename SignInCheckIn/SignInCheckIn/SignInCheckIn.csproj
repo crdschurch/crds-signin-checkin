@@ -47,8 +47,12 @@
       <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+    <Reference Include="Crossroads.ApiVersioning, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Crossroads.ApiVersioning.1.0.4\lib\net45\Crossroads.ApiVersioning.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -110,7 +114,6 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -160,16 +163,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiVersioning\ApiRouteProvider.cs" />
-    <Compile Include="ApiVersioning\Filters\DeprecatedVersionFilter.cs" />
-    <Compile Include="ApiVersioning\SemanticVersion.cs" />
-    <Compile Include="ApiVersioning\VersionConstraint.cs" />
-    <Compile Include="ApiVersioning\Attributes\VersionedRoute.cs" />
     <Compile Include="App_Start\AutoMapperConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\ApiVersionController.cs" />
     <Compile Include="Controllers\ChildCheckinController.cs" />
     <Compile Include="Controllers\ChildSigninController.cs" />
     <Compile Include="Controllers\EventController.cs" />
