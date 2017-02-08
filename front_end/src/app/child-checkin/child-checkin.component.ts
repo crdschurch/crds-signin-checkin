@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ApiService, SetupService, RootService } from '../shared/services';
-import { Child } from '../shared/models';
+import { Child, Room } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
 import { Event, MachineConfiguration } from '../shared/models';
@@ -26,6 +26,7 @@ export class ChildCheckinComponent implements OnInit {
   isOverrideProcessing: boolean;
   callNumber: string = '';
   overrideChild: Child = new Child();
+  room: Room = new Room();
 
   constructor(private setupService: SetupService,
     private apiService: ApiService,
@@ -60,6 +61,13 @@ export class ChildCheckinComponent implements OnInit {
             this.selectedEvent = this.todaysEvents[0];
           }
         }
+
+        this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
+        this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
+        this.childCheckinService.getEventRoomDetails(this.selectedEvent.EventId, this.kioskDetails.RoomId).subscribe((room) => {
+          this.room = room;
+        });
+
         this.ready = true;
       },
       error => {
@@ -95,8 +103,6 @@ export class ChildCheckinComponent implements OnInit {
 
   public ngOnInit() {
     this.getData();
-    this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
-    this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
   }
 
   private resetShowChildModal() {
