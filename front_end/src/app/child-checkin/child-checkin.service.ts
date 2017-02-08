@@ -73,7 +73,7 @@ export class ChildCheckinService {
   }
 
   getEventRoomDetails(eventId: number, roomId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/rooms/${roomId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
     return this.http.get(url)
                     .map(res => Room.fromJson(res.json()))
                     .catch(this.handleError);
