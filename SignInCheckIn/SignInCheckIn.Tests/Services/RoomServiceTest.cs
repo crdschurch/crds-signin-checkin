@@ -2,7 +2,6 @@ using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using Castle.Components.DictionaryAdapter;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -22,6 +21,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IAttributeRepository> _attributeRepository;
         private Mock<IGroupRepository> _groupRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
+        private Mock<IApiUserRepository> _apiUserRepository;
 
         private const int AgesAttributeTypeId = 102;
         private const int BirthMonthsAttributeTypeId = 103;
@@ -46,6 +46,7 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository = new Mock<IAttributeRepository>(MockBehavior.Strict);
             _groupRepository = new Mock<IGroupRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
+            _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
@@ -66,7 +67,7 @@ namespace SignInCheckIn.Tests.Services
                     "[{'Attribute_ID':9020,'Attribute_Name':'0-1','Sort_Order':1000,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9021,'Attribute_Name':'1-2','Sort_Order':1,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9022,'Attribute_Name':'2-3','Sort_Order':2,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9023,'Attribute_Name':'3-4','Sort_Order':3,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9024,'Attribute_Name':'4-5','Sort_Order':4,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9025,'Attribute_Name':'5-6','Sort_Order':5,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9026,'Attribute_Name':'6-7','Sort_Order':6,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9027,'Attribute_Name':'7-8','Sort_Order':7,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9028,'Attribute_Name':'8-9','Sort_Order':8,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9029,'Attribute_Name':'9-10','Sort_Order':9,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9030,'Attribute_Name':'10-11','Sort_Order':10,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9031,'Attribute_Name':'11-12','Sort_Order':11,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'}]");
 
 
-            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object);
+            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object, _apiUserRepository.Object);
         }
 
         [Test]

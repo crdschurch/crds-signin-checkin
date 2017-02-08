@@ -13,5 +13,6 @@ namespace SignInCheckIn.Services.Interfaces
         List<EventRoomDto> UpdateAvailableRooms(string authenticationToken, int roomId, int locationId, List<EventRoomDto> eventRoomDtos);
         List<AgeGradeDto> GetGradeAttributes(string authenticationToken);
         EventRoomDto CreateOrUpdateAdventureClubRoom(string authenticationToken, EventRoomDto eventRoom);
+        EventRoomDto GetEventRoom(int eventId, int roomId);
     }
 }

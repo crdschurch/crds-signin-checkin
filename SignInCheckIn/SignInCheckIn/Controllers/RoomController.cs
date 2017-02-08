@@ -78,5 +78,22 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpGet]
+        [ResponseType(typeof(EventRoomDto))]
+        [Route("events/{eventId}/rooms/{roomId}")]
+        public IHttpActionResult GetEventRoom(int eventId, int roomId)
+        {
+            try
+            {
+                var room = _roomService.GetEventRoom(eventId, roomId);
+                return Ok(room);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Get Rooms By Location ", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }
