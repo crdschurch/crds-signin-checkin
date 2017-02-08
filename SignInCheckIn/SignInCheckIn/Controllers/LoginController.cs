@@ -3,10 +3,10 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Description;
 using log4net;
-using SignInCheckIn.Filters;
 using SignInCheckIn.Models.Authentication;
 using SignInCheckIn.Services.Interfaces;
 using SignInCheckIn.Util;
+using Crossroads.ApiVersioning;
 
 namespace SignInCheckIn.Controllers
 {
@@ -22,6 +22,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(LoginReturn))]
+        [VersionedRoute(template: "authenticate", minimumVersion: "1.0.0")]
         [Route("authenticate")]
         public IHttpActionResult Authenticate([FromBody] Credentials cred)
         {
