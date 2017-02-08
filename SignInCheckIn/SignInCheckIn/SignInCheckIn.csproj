@@ -203,7 +203,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\ManageRoomsHub.cs" />
+    <Compile Include="Hubs\ChannelEvent.cs" />
+    <Compile Include="Hubs\EventHub.cs" />
     <Compile Include="Models\Authentication\Credentials.cs" />
     <Compile Include="Models\Authentication\LoginReturn.cs" />
     <Compile Include="Models\DTO\ContactDto.cs" />

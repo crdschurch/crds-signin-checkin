@@ -14,5 +14,11 @@ namespace SignInCheckIn.Hubs
         {
             await Groups.Remove(Context.ConnectionId, channel);
         }
+
+        public Task Publish(ChannelEvent channelEvent)
+        {
+            Clients.Group(channelEvent.ChannelName).OnEvent(channelEvent.ChannelName, channelEvent);
+            return Task.FromResult(0);
+        }
     }
 }
