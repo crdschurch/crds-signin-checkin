@@ -4,8 +4,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { RoomComponent } from './room';
 import { HttpClientService } from '../shared/services';
-import { Child } from '../shared/models';
-import { Event } from '../shared/models/event';
+import { Child, Event, Room } from '../shared/models';
 
 @Injectable()
 export class ChildCheckinService {
@@ -71,6 +70,13 @@ export class ChildCheckinService {
                     }).catch(e => {
                       return Observable.throw(e.json().errors[0]);
                     });
+  }
+
+  getEventRoomDetails(eventId: number, roomId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/rooms/${roomId}`;
+    return this.http.get(url)
+                    .map(res => Room.fromJson(res.json()))
+                    .catch(this.handleError);
   }
 
   get selectedEvent(): Event {
