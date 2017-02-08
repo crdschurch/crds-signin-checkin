@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Crossroads.Utilities.Services.Interfaces;
+using Microsoft.AspNet.SignalR;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
+using SignInCheckIn.Hubs;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
@@ -13,10 +16,14 @@ namespace SignInCheckIn.Controllers
     public class RoomController : MpAuth
     {
         private readonly IRoomService _roomService;
+        private IHubContext _context;
+        private IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
+        public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
             _roomService = roomService;
+            _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
+            _applicationConfiguration = applicationConfiguration;
         }
 
         [HttpGet]
@@ -90,7 +97,16 @@ namespace SignInCheckIn.Controllers
                 {
                     eventRoom.EventId = eventId;
                     eventRoom.RoomId = roomId;
-                    return Ok(_roomService.CreateOrUpdateEventRoom(token, eventRoom));
+
+                    var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(token, eventRoom);
+
+                    PublishEvent(_context, new ChannelEvent {
+                        ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{eventId}{roomId}",
+                        Name = "capacity.change",
+                        Data = updatedEventRoom
+                    });
+
+                    return Ok(updatedEventRoom);
                 }
                 catch (Exception e)
                 {
