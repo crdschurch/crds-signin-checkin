@@ -100,9 +100,8 @@ namespace SignInCheckIn.Controllers
 
                     var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(token, eventRoom);
 
-                    PublishEvent(_context, new ChannelEvent {
+                    PublishToChannel(_context, new ChannelEvent {
                         ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{eventId}{roomId}",
-                        Name = "capacity.change",
                         Data = updatedEventRoom
                     });
 
