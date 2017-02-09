@@ -34,36 +34,39 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
         {
-            var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+            _roomRepository.GetRoomListData(1);
+            //var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
 
-            // Set Parent and Child in right order
-            var eventIds = new List<int>();
-            var parentEvent = mpEvents.FirstOrDefault(e => e.ParentEventId == null);
-            if (parentEvent != null) eventIds.Add(parentEvent.EventId);
-            var acEvent = mpEvents.FirstOrDefault(e => e.ParentEventId != null);
-            if (acEvent != null) eventIds.Add(acEvent.EventId);
+            //// Set Parent and Child in right order
+            //var eventIds = new List<int>();
+            //var parentEvent = mpEvents.FirstOrDefault(e => e.ParentEventId == null);
+            //if (parentEvent != null) eventIds.Add(parentEvent.EventId);
+            //var acEvent = mpEvents.FirstOrDefault(e => e.ParentEventId != null);
+            //if (acEvent != null) eventIds.Add(acEvent.EventId);
 
-            // Get All the Event Groups for this Event
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds) ?? new List<MpEventGroupDto>();
+            //// Get All the Event Groups for this Event
+            //var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds) ?? new List<MpEventGroupDto>();
 
-            // Load up lookups for age ranges, grades, birth months, and nursery months
-            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
-            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
-            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
-            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+            //// Load up lookups for age ranges, grades, birth months, and nursery months
+            //var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            //var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            //var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            //var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
 
-            // Get All Rooms for this Event
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(eventIds, parentEvent.LocationId);
-            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+            //// Get All Rooms for this Event
+            //var mpEventRooms = _roomRepository.GetRoomsForEvent(eventIds, parentEvent.LocationId);
+            //var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
-            // Get All the Event Groups Assigned to each room for this event
-            foreach (var eventRoom in eventRooms)
-            {
-                var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
-                eventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
-            }
+            //// Get All the Event Groups Assigned to each room for this event
+            //foreach (var eventRoom in eventRooms)
+            //{
+            //    var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+            //    eventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+            //}
 
-            return eventRooms;
+            //return eventRooms;
+
+            return null;
         }
 
         public EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom)

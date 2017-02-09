@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
+using log4net.Util;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -255,5 +259,25 @@ namespace MinistryPlatform.Translation.Repositories
                     Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
         }
+
+        public void GetRoomListData(int eventId)
+        {
+            var parms = new Dictionary<string, object>
+            {
+                {"EventID", eventId},
+            };
+
+            //List<List<MpEventRoomDto>, List<MpEventGroupDto>,  >
+
+            //var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<dynamic>("api_crds_Get_Checkin_Room_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
+            //var y = JsonConvert.SerializeObject(result[0]);
+            //var x = JsonConvert.DeserializeObject<List<MpEventRoomDto>>(y);
+            //var x = JsonConvert.DeserializeObject<List<MpEventRoomDto>>(result[0].ToString());
+            //var z = result[0][0].ToObject<MpEventRoomDto>();
+            var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
+            var mpEventGroups = result[1].Select(r => r.ToObject<MpEventGroupDto>()).ToList();
+            var mpGroupAttributes = result[2].Select(r => r.ToObject<MpGroupAttributeDto>()).ToList();
+    }
     }
 }

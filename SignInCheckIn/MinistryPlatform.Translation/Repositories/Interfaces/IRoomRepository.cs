@@ -29,5 +29,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpEventRoomDto GetEventRoomForEventMaps(List<int> eventIds, int roomId);
 
         List<MpBumpingRoomsDto> GetBumpingRoomsForEventRoom(int eventId, int fromEventRoomId);
+
+        void GetRoomListData(int eventId);
     }
 }
