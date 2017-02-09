@@ -190,7 +190,7 @@ datepicker {
 }
 
 .manage-rooms-table {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     display: block;
     width: 100%;
     min-height: 0%;
