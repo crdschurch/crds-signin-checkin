@@ -74,7 +74,7 @@ namespace SignInCheckIn.Security
             }
         }
 
-        protected static void PublishEvent(IHubContext context, ChannelEvent channelEvent)
+        protected static void PublishToChannel(IHubContext context, ChannelEvent channelEvent)
         {
             // Taken from: https://github.com/sstorie/experiments/tree/master/angular2-signalr
             // From .NET code like this we can't invoke the methods that
