@@ -24,6 +24,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
+  // public numbers: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -71,6 +72,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
 
     this.family.children = tmpChildren;
+    // this.numbers = Array.apply(null, {length: this.family.numberOfKids}).map(Number.call, Number);
   }
 
   needGradeLevel(child: NewChild): boolean {
@@ -81,10 +83,25 @@ export class NewFamilyRegistrationComponent implements OnInit {
     child.YearGrade = groupId;
   }
 
+  onPhoneBlur(e, phoneNumber) {
+    if (phoneNumber.indexOf('_') > -1) {
+      e.target.value = '';
+    }
+  }
+
+  onDateBlur(e, child) {
+    if (moment(child.DateOfBirthString, 'MM-DD-YYYY').isValid()) {
+      child.DateOfBirth = moment(child.DateOfBirthString, 'MM-DD-YYYY').toDate();
+    } else {
+      delete child.DateOfBirthString;
+      e.target.value = '';
+    }
+  }
+
   onSubmit(form: NgForm) {
     this.submitted = true;
+    this.processing = true;
     if (!form.pristine && form.valid) {
-      this.processing = true;
       this.adminService.createNewFamily(this.family).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();

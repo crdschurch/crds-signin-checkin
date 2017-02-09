@@ -2,8 +2,10 @@ export class NewChild {
   FirstName: string;
   LastName: string;
   DateOfBirth: Date;
+  DateOfBirthString: string;
   YearGrade: number;
   Selected: boolean;
+  Validators: any;
 
   static fromJson(json: any): NewChild {
     let c = new NewChild();
