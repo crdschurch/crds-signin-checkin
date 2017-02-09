@@ -90,7 +90,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   onDateBlur(e, child) {
-    if (moment(child.DateOfBirthString, 'MM-DD-YYYY').isValid()) {
+    if (child.DateOfBirthString.indexOf('_') === -1 && moment(child.DateOfBirthString, 'MM-DD-YYYY').isValid()) {
       child.DateOfBirth = moment(child.DateOfBirthString, 'MM-DD-YYYY').toDate();
     } else {
       delete child.DateOfBirthString;
