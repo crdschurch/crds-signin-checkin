@@ -5,4 +5,4 @@ export { SetupService } from './setup.service';
 export { UserService } from './user.service';
 export { ApiService } from './api.service';
 export { LoginRedirectService } from './login-redirect.service';
-export { ChannelService, ConnectionState, SignalrWindow, ChannelConfig } from './channel.service';
+export { ChannelService, ConnectionState, SignalrWindow, ChannelConfig, ChannelEvent } from './channel.service';

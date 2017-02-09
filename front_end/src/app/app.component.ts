@@ -1,7 +1,8 @@
 import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToasterModule, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
-import { ContentService, RootService, SetupService, HttpClientService, ApiService, UserService, ChannelService, ConnectionState } from './shared/services';
+import { ContentService, RootService, SetupService, HttpClientService } from './shared/services';
+import { ApiService, UserService } from './shared/services';
 
 import { ComponentsHelper } from 'ng2-bootstrap/ng2-bootstrap';
 
@@ -10,7 +11,7 @@ import { ComponentsHelper } from 'ng2-bootstrap/ng2-bootstrap';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  providers: [ToasterModule, ToasterService, ContentService, SetupService, HttpClientService, ApiService, ChannelService]
+  providers: [ToasterModule, ToasterService, ContentService, SetupService, HttpClientService, ApiService]
 })
 export class AppComponent implements OnInit {
 
@@ -22,7 +23,7 @@ export class AppComponent implements OnInit {
       timeout: 3000
     });
 
-    event: any;
+  event: any;
 
   constructor(private router: Router,
               viewContainerRef: ViewContainerRef,
@@ -30,25 +31,7 @@ export class AppComponent implements OnInit {
               private toasterService: ToasterService,
               private setupService: SetupService,
               private rootService: RootService,
-              private userService: UserService,
-              private channelService: ChannelService) {
-
-    // Let's wire up to the signalr observables
-    this.channelService.connectionState$
-        .map((state: ConnectionState) => { return ConnectionState[state]; });
-
-    this.channelService.error$.subscribe(
-        (error: any) => { console.warn(error); },
-        (error: any) => { console.error('errors$ error', error); }
-    );
-
-    // Wire up a handler for the starting$ observable to log the
-    //  success/fail result
-    this.channelService.starting$.subscribe(
-        () => { console.log('signalr service has been started'); },
-        () => { console.warn('signalr service failed to start!'); }
-    );
-
+              private userService: UserService) {
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
 
@@ -61,10 +44,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Start the signalr connection up!
-    console.log('Starting the channel service');
-    this.channelService.start();
-
     this.contentService.loadData();
   }
 

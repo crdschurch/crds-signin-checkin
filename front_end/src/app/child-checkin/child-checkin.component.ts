@@ -1,17 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-import { ApiService, SetupService, RootService } from '../shared/services';
-import { Child, Room } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
+import { Child, Room } from '../shared/models';
+import { Constants } from '../shared/constants';
 import { Event, MachineConfiguration } from '../shared/models';
+import { ApiService, SetupService, RootService, ChannelEvent, ChannelService, ConnectionState } from '../shared/services';
 import { ChildCheckinService } from './child-checkin.service';
 
 @Component({
   selector: 'child-checkin',
   templateUrl: 'child-checkin.component.html',
   styleUrls: ['child-checkin.component.scss', 'scss/_stepper.scss' ],
-  providers: [ ChildCheckinService ]
+  providers: [ ChildCheckinService, ChannelService ]
 })
 export class ChildCheckinComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
@@ -31,10 +32,35 @@ export class ChildCheckinComponent implements OnInit {
   constructor(private setupService: SetupService,
     private apiService: ApiService,
     private childCheckinService: ChildCheckinService,
-    private rootService: RootService) {
-      this.kioskDetails = new MachineConfiguration();
-      this.ready = false;
-      this.isOverrideProcessing = false;
+    private rootService: RootService,
+    private channelService: ChannelService) {
+    // Let's wire up to the signalr observables
+    this.channelService.connectionState$
+        .map((state: ConnectionState) => { return ConnectionState[state]; });
+
+    this.channelService.error$.subscribe(
+        (error: any) => { console.warn(error); },
+        (error: any) => { console.error('errors$ error', error); }
+    );
+
+    // Wire up a handler for the starting$ observable to log the
+    //  success/fail result
+    this.channelService.starting$.subscribe(
+        () => { console.log('signalr service has been started'); },
+        () => { console.warn('signalr service failed to start!'); }
+    );
+
+    this.kioskDetails = new MachineConfiguration();
+    this.ready = false;
+    this.isOverrideProcessing = false;
+  }
+
+  public ngOnInit() {
+    // Start the signalr connection up!
+    console.log('Starting the channel service');
+    this.channelService.start();
+
+    this.getData();
   }
 
   private getData() {
@@ -68,11 +94,27 @@ export class ChildCheckinComponent implements OnInit {
           this.room = room;
         });
 
+        this.subscribeToSignalr();
+
         this.ready = true;
       },
       error => {
         console.error(error);
         this.ready = true;
+      }
+    );
+  }
+
+  subscribeToSignalr() {
+    // Get an observable for events emitted on this channel
+    let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
+    this.channelService.sub(channelName).subscribe(
+      (x: ChannelEvent) => {
+        console.log('connected');
+        this.room = Room.fromJson(x.Data);
+      },
+      (error: any) => {
+        console.warn('Attempt to join channel failed!', error);
       }
     );
   }
@@ -99,10 +141,6 @@ export class ChildCheckinComponent implements OnInit {
 
   public getKioskDetails() {
     return this.kioskDetails;
-  }
-
-  public ngOnInit() {
-    this.getData();
   }
 
   private resetShowChildModal() {
