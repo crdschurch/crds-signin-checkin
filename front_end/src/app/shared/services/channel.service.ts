@@ -223,7 +223,8 @@ export class ChannelService {
         //  the starting$ stream since that won't emit a value until the connection
         //  is ready
         //
-            console.log('hi am connected and need to invoke the server subscribe method');
+        // Could not get it to ever return when subscribing to starting$
+        // this.starting$.subscribe((resp) => {
             this.hubProxy.invoke('Subscribe', channel)
                 .done(() => {
                     console.log(`Successfully subscribed to ${channel} channel`);
@@ -231,6 +232,7 @@ export class ChannelService {
                 .fail((error: any) => {
                     channelSub.subject.error(error);
                 });
+        // });
 
         return channelSub.subject.asObservable();
     }
