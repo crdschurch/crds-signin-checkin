@@ -5,14 +5,14 @@ import { Observable } from 'rxjs/Observable';
 import { Child, Room } from '../shared/models';
 import { Constants } from '../shared/constants';
 import { Event, MachineConfiguration } from '../shared/models';
-import { ApiService, SetupService, RootService, ChannelEvent, ChannelService, ConnectionState } from '../shared/services';
+import { ApiService, SetupService, RootService, ChannelEvent, ChannelService } from '../shared/services';
 import { ChildCheckinService } from './child-checkin.service';
 
 @Component({
   selector: 'child-checkin',
   templateUrl: 'child-checkin.component.html',
   styleUrls: ['child-checkin.component.scss', 'scss/_stepper.scss' ],
-  providers: [ ChildCheckinService, ChannelService ]
+  providers: [ ChildCheckinService ]
 })
 export class ChildCheckinComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
@@ -34,21 +34,6 @@ export class ChildCheckinComponent implements OnInit {
     private childCheckinService: ChildCheckinService,
     private rootService: RootService,
     private channelService: ChannelService) {
-    // Let's wire up to the signalr observables
-    this.channelService.connectionState$
-        .map((state: ConnectionState) => { return ConnectionState[state]; });
-
-    this.channelService.error$.subscribe(
-        (error: any) => { console.warn(error); },
-        (error: any) => { console.error('errors$ error', error); }
-    );
-
-    // Wire up a handler for the starting$ observable to log the
-    //  success/fail result
-    this.channelService.starting$.subscribe(
-        () => { console.log('signalr service has been started'); },
-        () => { console.warn('signalr service failed to start!'); }
-    );
 
     this.kioskDetails = new MachineConfiguration();
     this.ready = false;
@@ -56,10 +41,6 @@ export class ChildCheckinComponent implements OnInit {
   }
 
   public ngOnInit() {
-    // Start the signalr connection up!
-    console.log('Starting the channel service');
-    this.channelService.start();
-
     this.getData();
   }
 
