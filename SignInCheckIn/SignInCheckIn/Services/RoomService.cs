@@ -34,7 +34,46 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
         {
-            _roomRepository.GetRoomListData(1);
+            var result = _roomRepository.GetRoomListData(eventId);
+
+            var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
+            var mpEventGroups = result[1].Select(r => r.ToObject<MpEventGroupDto>()).ToList();
+            var mpGroupAttributes = result[2].Select(r => r.ToObject<MpGroupAttributeDto>()).ToList();
+            var allAttributes = result[3].Select(r => r.ToObject<MpAttributeDto>()).ToList();
+
+
+
+            var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+
+            // Set Parent and Child in right order
+            var eventIds = new List<int>();
+            var parentEvent = mpEvents.FirstOrDefault(e => e.ParentEventId == null);
+            if (parentEvent != null) eventIds.Add(parentEvent.EventId);
+            var acEvent = mpEvents.FirstOrDefault(e => e.ParentEventId != null);
+            if (acEvent != null) eventIds.Add(acEvent.EventId);
+
+            //// Get All the Event Groups for this Event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds) ?? new List<MpEventGroupDto>();
+
+            var ages = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.AgesAttributeTypeId).ToList();
+            var grades = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.GradesAttributeTypeId).ToList();
+            var birthMonths = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.BirthMonthsAttributeTypeId).ToList();
+            var nurseryMonths = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.NurseryAgesAttributeTypeId).ToList();
+
+            // Get All Rooms for this Event
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+
+            // Get All the Event Groups Assigned to each room for this event
+            foreach (var eventRoom in eventRooms)
+            {
+                var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
+                eventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+            }
+
+            return eventRooms;
+
+            //return null;
+
             //var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
 
             //// Set Parent and Child in right order
@@ -66,7 +105,6 @@ namespace SignInCheckIn.Services
 
             //return eventRooms;
 
-            return null;
         }
 
         public EventRoomDto CreateOrUpdateEventRoom(string authenticationToken, EventRoomDto eventRoom)
@@ -152,6 +190,27 @@ namespace SignInCheckIn.Services
             eventRoom.AssignedGroups = agesAndGrades;
 
             return eventRoom;
+
+
+            //// Frontend wants months like "Jan" and "Feb", not "January" and "February" - trim them down here, but we may want to move this to frontend in the future
+            //birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
+
+            //// Get current event groups with a room reservation for this room
+            //var eventRoomGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventGroups, eventRoom.RoomId);
+
+            //var agesAndGrades = new List<AgeGradeDto>();
+
+            //// Add age ranges (including selected groups) to the response
+            //agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventRoomGroups));
+
+            //var maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
+
+            //// Add grade ranges (including selected groups) to the response
+            //agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventRoomGroups, maxSort));
+
+            //eventRoom.AssignedGroups = agesAndGrades;
+
+            //return eventRoom;
         }
 
         public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)

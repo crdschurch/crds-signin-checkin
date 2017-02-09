@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using log4net.Util;
@@ -260,7 +261,7 @@ namespace MinistryPlatform.Translation.Repositories
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
         }
 
-        public void GetRoomListData(int eventId)
+        public List<List<JObject>> GetRoomListData(int eventId)
         {
             var parms = new Dictionary<string, object>
             {
@@ -271,10 +272,8 @@ namespace MinistryPlatform.Translation.Repositories
 
             //var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<dynamic>("api_crds_Get_Checkin_Room_Data", parms);
             var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
-            //var y = JsonConvert.SerializeObject(result[0]);
-            //var x = JsonConvert.DeserializeObject<List<MpEventRoomDto>>(y);
-            //var x = JsonConvert.DeserializeObject<List<MpEventRoomDto>>(result[0].ToString());
-            //var z = result[0][0].ToObject<MpEventRoomDto>();
+            return result;
+
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
             var mpEventGroups = result[1].Select(r => r.ToObject<MpEventGroupDto>()).ToList();
             var mpGroupAttributes = result[2].Select(r => r.ToObject<MpGroupAttributeDto>()).ToList();
