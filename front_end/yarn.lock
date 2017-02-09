@@ -2479,9 +2479,13 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
-"jquery@1.9.1 - 3":
+"jquery@1.9.1 - 3", jquery@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.1.1.tgz#347c1c21c7e004115e0a4da32cece041fad3c8a3"
+
+jquery@^2.2.0:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
 
 js-base64@^2.1.9:
   version "2.1.9"
@@ -3173,6 +3177,12 @@ moment@2.15.1:
 moment@^2.16.0:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
+
+ms-signalr-client@^2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/ms-signalr-client/-/ms-signalr-client-2.2.5.tgz#d19b94ce14b2b4e060f441e2c844bbc7023cf1ea"
+  dependencies:
+    jquery "^2.2.0"
 
 ms@0.7.1:
   version "0.7.1"
