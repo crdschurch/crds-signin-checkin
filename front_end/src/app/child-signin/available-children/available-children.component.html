@@ -112,8 +112,43 @@
                     <div class="form-group required text-xs-left">
                       <label for="guestChildBirthDate" class="control-label">Birth Date</label>
                       <br/>
-                      <crds-datepicker name="guestChildBirthDate" autoClose="true" [(date)]="newGuestChild.DateOfBirth" [maxDate]="maxDate" class="input-lg"></crds-datepicker>
+
+                      <div class="dropdown-datepicker">
+                        <div class="btn-group" dropdown>
+                          <button id="dob-month" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
+                            Month <span class="caret"></span>
+                          </button>
+                          <ul dropdownMenu role="menu" aria-labelledby="dob-month">
+                            <li role="menuitem"><a class="dropdown-item">1</a></li>
+                            <li role="menuitem"><a class="dropdown-item">2</a></li>
+                            <li role="menuitem"><a class="dropdown-item">3</a></li>
+                          </ul>
+                        </div>
+                        <div class="btn-group" dropdown>
+                          <button id="dob-day" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
+                            Day <span class="caret"></span>
+                          </button>
+                          <ul dropdownMenu role="menu" aria-labelledby="dob-day">
+                            <li role="menuitem"><a class="dropdown-item">1</a></li>
+                            <li role="menuitem"><a class="dropdown-item">2</a></li>
+                            <li role="menuitem"><a class="dropdown-item">3</a></li>
+                          </ul>
+                        </div>
+                        <div class="btn-group" dropdown>
+                          <button id="dob-year" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
+                            Year <span class="caret"></span>
+                          </button>
+                          <ul dropdownMenu role="menu" aria-labelledby="dob-year">
+                            <li role="menuitem"><a class="dropdown-item">2017</a></li>
+                            <li role="menuitem"><a class="dropdown-item">2016</a></li>
+                            <li role="menuitem"><a class="dropdown-item">2015</a></li>
+                          </ul>
+                        </div>
+                      </div>
+
                     </div>
+
+
                   </div>
                   <div class="col-xs-12 col-sm-6">
                     <div class="form-group required text-xs-left" *ngIf="needGradeLevel()">
