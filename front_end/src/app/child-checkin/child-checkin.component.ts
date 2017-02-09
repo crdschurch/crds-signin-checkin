@@ -91,7 +91,6 @@ export class ChildCheckinComponent implements OnInit {
     let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
     this.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
-        console.log('connected');
         this.room = Room.fromJson(x.Data);
       },
       (error: any) => {
