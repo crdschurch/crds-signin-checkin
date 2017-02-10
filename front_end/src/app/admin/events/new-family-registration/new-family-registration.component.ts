@@ -18,7 +18,7 @@ import * as moment from 'moment';
 })
 export class NewFamilyRegistrationComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
-  private maskDate: any = [/[0-1]/, /[0-9]/, '-', /[0-3]/, /\d/, '-', /[1,2]/, /[0,9]/, /[0,1,2,8,9]/, /\d/];
+  private maskDate: any = [/[0-1]/, /[0-9]/, '/', /[0-3]/, /\d/, '/', /[1,2]/, /[0,9]/, /[0,1,2,8,9]/, /\d/];
   private eventId: string;
   private family: NewFamily;
   private gradeGroups: Array<Group> = [];
@@ -83,15 +83,17 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   onPhoneBlur(e, parent) {
-    if (parent.PhoneNumber.indexOf('_') > -1) {
-      e.target.value = '';
-      parent.PhoneNumber = undefined;
-    }
+    try {
+      if (parent.PhoneNumber.indexOf('_') > -1) {
+        e.target.value = '';
+        parent.PhoneNumber = undefined;
+      }
+    } catch(e) {}
   }
 
   onDateBlur(e, child) {
-    if (child.DateOfBirthString.indexOf('_') === -1 && moment(child.DateOfBirthString, 'MM-DD-YYYY').isValid()) {
-      child.DateOfBirth = moment(child.DateOfBirthString, 'MM-DD-YYYY').toDate();
+    if (child.DateOfBirthString.indexOf('_') === -1 && moment(child.DateOfBirthString, 'MM/DD/YYYY').isValid()) {
+      child.DateOfBirth = moment(child.DateOfBirthString, 'MM/DD/YYYY').toDate();
     } else {
       delete child.DateOfBirthString;
       e.target.value = '';
