@@ -37,34 +37,88 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
         {
-            var mpEvents = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+            var result = _roomRepository.GetRoomListData(eventId);
 
-            // Set Parent and Child in right order
-            var eventIds = new List<int>();
-            var parentEvent = mpEvents.FirstOrDefault(e => e.ParentEventId == null);
-            if (parentEvent != null) eventIds.Add(parentEvent.EventId);
-            var acEvent = mpEvents.FirstOrDefault(e => e.ParentEventId != null);
-            if (acEvent != null) eventIds.Add(acEvent.EventId);
+            var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
+            var eventGroups = result[1].Select(r => r.ToObject<MpEventGroupDto>()).ToList();
+            var mpGroupAttributes = result[2].Select(r => r.ToObject<MpGroupAttributeDto>()).ToList();
+            var allAttributes = result[3].Select(r => r.ToObject<MpAttributeDto>()).ToList();
 
-            // Get All the Event Groups for this Event
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds) ?? new List<MpEventGroupDto>();
+            // set thr attributes on the group here - can't do it in the db, as they're calculated properties I think
+            foreach (var mpGroupAttribute in mpGroupAttributes)
+            {
+                // try to match the attribute on the groups
+                if (mpGroupAttribute.AttributeTypeId == _applicationConfiguration.AgesAttributeTypeId)
+                {
+                    foreach (var eventGroup in eventGroups.Where(r => r.GroupId == mpGroupAttribute.GroupId))
+                    {
+                        eventGroup.Group.AgeRange = mpGroupAttribute.GetAttributeDto();
+                    }
+                }
 
-            // Load up lookups for age ranges, grades, birth months, and nursery months
-            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
-            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
-            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
-            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+                // try to match the attribute on the groups
+                if (mpGroupAttribute.AttributeTypeId == _applicationConfiguration.GradesAttributeTypeId)
+                {
+                    foreach (var eventGroup in eventGroups.Where(r => r.GroupId == mpGroupAttribute.GroupId))
+                    {
+                        eventGroup.Group.Grade = mpGroupAttribute.GetAttributeDto();
+                    }
+                }
+
+                // try to match the attribute on the groups
+                if (mpGroupAttribute.AttributeTypeId == _applicationConfiguration.BirthMonthsAttributeTypeId)
+                {
+                    foreach (var eventGroup in eventGroups.Where(r => r.GroupId == mpGroupAttribute.GroupId))
+                    {
+                        eventGroup.Group.BirthMonth = mpGroupAttribute.GetAttributeDto();
+                    }
+                }
+
+                // try to match the attribute on the groups
+                if (mpGroupAttribute.AttributeTypeId == _applicationConfiguration.NurseryAgesAttributeTypeId)
+                {
+                    foreach (var eventGroup in eventGroups.Where(r => r.GroupId == mpGroupAttribute.GroupId))
+                    {
+                        eventGroup.Group.NurseryMonth = mpGroupAttribute.GetAttributeDto();
+                    }
+                }
+
+            }
+
+            var ages = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.AgesAttributeTypeId).ToList();
+            var grades = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.GradesAttributeTypeId).ToList();
+            var birthMonths = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.BirthMonthsAttributeTypeId).ToList();
+            var nurseryMonths = allAttributes.Where(r => r.Type.Id == _applicationConfiguration.NurseryAgesAttributeTypeId).ToList();
+            birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
 
             // Get All Rooms for this Event
-            var mpEventRooms = _roomRepository.GetRoomsForEvent(eventIds, parentEvent.LocationId);
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
             // Get All the Event Groups Assigned to each room for this event
             foreach (var eventRoom in eventRooms)
             {
-                var tmpEventRoom = GetEventRoomAgeAndGradeGroups(authenticationToken, eventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
-                eventRoom.AssignedGroups = tmpEventRoom.AssignedGroups;
+                // Get current event groups with a room reservation for this room
+                var eventRoomGroups = eventGroups.Where(r => r.RoomId == eventRoom.RoomId).ToList();
+
+                var agesAndGrades = new List<AgeGradeDto>();
+
+                // Add age ranges (including selected groups) to the response
+                agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventRoomGroups));
+
+                var maxSort = 0;
+
+                if (agesAndGrades.Any())
+                {
+                    maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
+                }
+
+                // Add grade ranges (including selected groups) to the response
+                agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventRoomGroups, maxSort));
+
+                eventRoom.AssignedGroups = agesAndGrades;
             }
+
+            eventRooms = eventRooms.OrderByDescending(r => r.AllowSignIn).ThenBy(r => r.RoomName).ToList();
 
             return eventRooms;
         }
@@ -152,6 +206,27 @@ namespace SignInCheckIn.Services
             eventRoom.AssignedGroups = agesAndGrades;
 
             return eventRoom;
+
+
+            //// Frontend wants months like "Jan" and "Feb", not "January" and "February" - trim them down here, but we may want to move this to frontend in the future
+            //birthMonths.ForEach(m => m.Name = m.Name.Substring(0, 3));
+
+            //// Get current event groups with a room reservation for this room
+            //var eventRoomGroups = GetEventGroupsWithRoomReservationForEvent(authenticationToken, eventGroups, eventRoom.RoomId);
+
+            //var agesAndGrades = new List<AgeGradeDto>();
+
+            //// Add age ranges (including selected groups) to the response
+            //agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventRoomGroups));
+
+            //var maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
+
+            //// Add grade ranges (including selected groups) to the response
+            //agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventRoomGroups, maxSort));
+
+            //eventRoom.AssignedGroups = agesAndGrades;
+
+            //return eventRoom;
         }
 
         public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)

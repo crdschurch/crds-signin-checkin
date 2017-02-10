@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.DTO;
+using Newtonsoft.Json.Linq;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
@@ -29,5 +30,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpEventRoomDto GetEventRoomForEventMaps(List<int> eventIds, int roomId);
 
         List<MpBumpingRoomsDto> GetBumpingRoomsForEventRoom(int eventId, int fromEventRoomId);
+
+        List<List<JObject>> GetRoomListData(int eventId);
     }
 }

@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
+using log4net.Util;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -255,5 +260,16 @@ namespace MinistryPlatform.Translation.Repositories
                     Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
         }
+
+        public List<List<JObject>> GetRoomListData(int eventId)
+        {
+            var parms = new Dictionary<string, object>
+            {
+                {"EventID", eventId},
+            };
+
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
+            return result;
+        }   
     }
 }

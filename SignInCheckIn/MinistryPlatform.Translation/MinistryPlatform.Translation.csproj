@@ -95,6 +95,7 @@
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
     <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpGroupAttributeDto.cs" />
     <Compile Include="Models\DTO\MpGroupParticipantDto.cs" />
     <Compile Include="Models\DTO\MpHouseholdDto.cs" />
     <Compile Include="Models\DTO\MpHouseholdParticipantsDto.cs" />
