@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignInCheckIn", "SignInCheckIn\SignInCheckIn.csproj", "{178426A1-78F0-456F-B3D8-EAEC78A9F348}"
-	ProjectSection(ProjectDependencies) = postProject
-		{837BC104-F8ED-4C38-A441-D1F5DC1E0F44} = {837BC104-F8ED-4C38-A441-D1F5DC1E0F44}
-		{9CA5C91A-96E5-4968-B4CE-213B581B33F6} = {9CA5C91A-96E5-4968-B4CE-213B581B33F6}
-		{C87C7588-00E6-40B4-95CB-C97F1DF19F1F} = {C87C7588-00E6-40B4-95CB-C97F1DF19F1F}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignInCheckIn.Tests", "SignInCheckIn.Tests\SignInCheckIn.Tests.csproj", "{61EF8389-0FF5-407B-B5D2-BC6173C77FBC}"
 EndProject
@@ -23,6 +18,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printing.Utilities.Tests", "Printing.Utilities.Tests\Printing.Utilities.Tests.csproj", "{0E027555-F4B4-46B2-9ED0-EB3E98820CE7}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Demo|Any CPU = Demo|Any CPU

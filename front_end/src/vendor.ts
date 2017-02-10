@@ -7,5 +7,8 @@ import '@angular/http';
 import '@angular/router';
 // RxJS
 import 'rxjs';
+// SignalR
+import 'ms-signalr-client';
+
 // Other vendors for example jQuery, Lodash or Bootstrap
 // You can import js, ts, css, sass, ...

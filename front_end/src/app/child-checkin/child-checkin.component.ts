@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-import { ApiService, SetupService, RootService } from '../shared/services';
-import { Child } from '../shared/models';
 import { Observable } from 'rxjs/Observable';
 
+import { Child, Room } from '../shared/models';
+import { Constants } from '../shared/constants';
 import { Event, MachineConfiguration } from '../shared/models';
+import { ApiService, SetupService, RootService, ChannelEvent, ChannelService } from '../shared/services';
 import { ChildCheckinService } from './child-checkin.service';
 
 @Component({
@@ -26,14 +27,21 @@ export class ChildCheckinComponent implements OnInit {
   isOverrideProcessing: boolean;
   callNumber: string = '';
   overrideChild: Child = new Child();
+  room: Room = new Room();
 
   constructor(private setupService: SetupService,
     private apiService: ApiService,
     private childCheckinService: ChildCheckinService,
-    private rootService: RootService) {
-      this.kioskDetails = new MachineConfiguration();
-      this.ready = false;
-      this.isOverrideProcessing = false;
+    private rootService: RootService,
+    private channelService: ChannelService) {
+
+    this.kioskDetails = new MachineConfiguration();
+    this.ready = false;
+    this.isOverrideProcessing = false;
+  }
+
+  public ngOnInit() {
+    this.getData();
   }
 
   private getData() {
@@ -60,11 +68,33 @@ export class ChildCheckinComponent implements OnInit {
             this.selectedEvent = this.todaysEvents[0];
           }
         }
+
+        this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
+        this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
+        this.childCheckinService.getEventRoomDetails(this.selectedEvent.EventId, this.kioskDetails.RoomId).subscribe((room) => {
+          this.room = room;
+        });
+
+        this.subscribeToSignalr();
+
         this.ready = true;
       },
       error => {
         console.error(error);
         this.ready = true;
+      }
+    );
+  }
+
+  subscribeToSignalr() {
+    // Get an observable for events emitted on this channel
+    let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
+    this.channelService.sub(channelName).subscribe(
+      (x: ChannelEvent) => {
+        this.room = Room.fromJson(x.Data);
+      },
+      (error: any) => {
+        console.warn('Attempt to join channel failed!', error);
       }
     );
   }
@@ -91,12 +121,6 @@ export class ChildCheckinComponent implements OnInit {
 
   public getKioskDetails() {
     return this.kioskDetails;
-  }
-
-  public ngOnInit() {
-    this.getData();
-    this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
-    this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
   }
 
   private resetShowChildModal() {

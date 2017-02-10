@@ -81,28 +81,6 @@ namespace SignInCheckIn.Controllers
             });
         }
 
-        [HttpPut]
-        [ResponseType(typeof(EventRoomDto))]
-        [VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}", minimumVersion: "1.0.0")]
-        [Route("events/{eventId:int}/rooms/{roomId:int}")]
-        public IHttpActionResult UpdateEventRoom([FromUri]int eventId, [FromUri]int roomId, [FromBody]EventRoomDto eventRoom)
-        {
-            return Authorized(token =>
-            {
-                try
-                {
-                    eventRoom.EventId = eventId;
-                    eventRoom.RoomId = roomId;
-                    return Ok(_roomService.CreateOrUpdateEventRoom(token, eventRoom));
-                }
-                catch (Exception e)
-                {
-                    var apiError = new ApiErrorDto($"Error updating event room for event {eventId}, room {roomId}", e);
-                    throw new HttpResponseException(apiError.HttpResponseMessage);
-                }
-            });
-        }
-
         [HttpGet]
         [ResponseType(typeof (EventRoomDto))]
         [VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]

@@ -18,18 +18,21 @@ namespace SignInCheckIn.Services
         private readonly IAttributeRepository _attributeRepository;
         private readonly IGroupRepository _groupRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IApiUserRepository _apiUserRepository;
 
         public RoomService(IEventRepository eventRepository,
                            IRoomRepository roomRepository,
                            IAttributeRepository attributeRepository,
                            IGroupRepository groupRepository,
-                           IApplicationConfiguration applicationConfiguration)
+                           IApplicationConfiguration applicationConfiguration,
+                           IApiUserRepository apiUserRepository)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
             _groupRepository = groupRepository;
             _applicationConfiguration = applicationConfiguration;
+            _apiUserRepository = apiUserRepository;
         }
 
         public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
@@ -157,7 +160,13 @@ namespace SignInCheckIn.Services
             return GetGradesAndCurrentSelection(grades, new List<MpEventGroupDto>(), 0).ToList();
         }
 
-        private EventRoomDto GetEventRoom(string token, int eventId, int roomId)
+        public EventRoomDto GetEventRoom(int eventId, int roomId)
+        {
+            var token = _apiUserRepository.GetToken();
+            return GetEventRoom(token, eventId, roomId, false);
+        }
+
+        private EventRoomDto GetEventRoom(string token, int eventId, int roomId, bool canCreateEventRoom = true)
         {
             var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
 
@@ -171,7 +180,7 @@ namespace SignInCheckIn.Services
             // set to the parent id by default
             var selectedEvent = events.FirstOrDefault(e => e.EventId == (eventRoom?.EventId ?? eventId));
             
-            if (eventRoom == null)
+            if (canCreateEventRoom && eventRoom == null)
             {
                 var room = _roomRepository.GetRoom(roomId);
                 if (room == null)

@@ -34,48 +34,6 @@ namespace SignInCheckIn.Tests.Controllers
         }
 
         [Test]
-        public void TestUpdateEventRoom()
-        {
-            var eventRoom = new EventRoomDto
-            {
-                AllowSignIn = true,
-                Capacity = 1,
-                CheckedIn = 2,
-                EventId = 3,
-                EventRoomId = 999,
-                RoomId = 4,
-                RoomName = "name",
-                RoomNumber = "number",
-                SignedIn = 5,
-                Volunteers = 6
-            };
-
-            var newEventRoom = new EventRoomDto
-            {
-                AllowSignIn = false,
-                Capacity = 11,
-                CheckedIn = 22,
-                EventId = 33,
-                EventRoomId = 9999,
-                RoomId = 44,
-                RoomName = "namename",
-                RoomNumber = "numbernumber",
-                SignedIn = 55,
-                Volunteers = 66
-            };
-
-            _roomService.Setup(mocked => mocked.CreateOrUpdateEventRoom(_auth, eventRoom)).Returns(newEventRoom);
-            var response = _fixture.UpdateEventRoom(123, 456, eventRoom);
-            _roomService.VerifyAll();
-
-            Assert.IsNotNull(response);
-            Assert.IsInstanceOf<OkNegotiatedContentResult<EventRoomDto>>(response);
-            var result = (OkNegotiatedContentResult<EventRoomDto>) response;
-            Assert.IsNotNull(result.Content);
-            Assert.AreSame(newEventRoom, result.Content);
-        }
-
-        [Test]
         public void TestGetEventRoomAgesAndGradesWithAuth()
         {
             const int eventId = 123;
