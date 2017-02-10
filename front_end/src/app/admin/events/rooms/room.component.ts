@@ -31,14 +31,12 @@ export class RoomComponent implements OnInit {
   }
 
   add(field) {
-    // this.roomForm.controls[field].setValue(this.room[field]++);
     this.room[field]++;
     this.change();
   }
 
   remove(field) {
     if (this.room[field] >= 1) {
-      // this.roomForm.controls[field].setValue(this.room[field]--);
       this.room[field]--
       this.change();
     }
@@ -113,16 +111,5 @@ export class RoomComponent implements OnInit {
 
   ngOnInit() {
     this.origRoomData = _.clone(this.room);
-    // this.roomForm = new FormGroup({
-    //   Volunteers: new FormControl(),
-    //   Capacity: new FormControl(),
-    //   AllowSignIn: new FormControl()
-    // });
-    //
-    // this.roomForm.valueChanges
-    //   .distinctUntilChanged()
-    //   .subscribe(props => {
-    //     this.changed = true;
-    //   });
   }
 }
