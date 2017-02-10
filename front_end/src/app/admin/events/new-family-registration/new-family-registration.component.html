@@ -30,7 +30,7 @@
               <div class="form-group required">
                 <label for="phoneNumber" class="control-label">Phone Number</label>
                 <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="family.parent.PhoneNumber" name="phoneNumber" #phoneName="ngModel"
-                  (blur)="onPhoneBlur($event, family.parent.PhoneNumber)" required>
+                  (blur)="onPhoneBlur($event, family.parent)" required>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">

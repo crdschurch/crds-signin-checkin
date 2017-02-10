@@ -82,9 +82,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
     child.YearGrade = groupId;
   }
 
-  onPhoneBlur(e, phoneNumber) {
-    if (phoneNumber.indexOf('_') > -1) {
+  onPhoneBlur(e, parent) {
+    if (parent.PhoneNumber.indexOf('_') > -1) {
       e.target.value = '';
+      parent.PhoneNumber = undefined;
     }
   }
 
