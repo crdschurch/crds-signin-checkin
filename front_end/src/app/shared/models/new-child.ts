@@ -2,6 +2,7 @@ export class NewChild {
   FirstName: string;
   LastName: string;
   DateOfBirth: Date;
+  DateOfBirthString: string;
   YearGrade: number;
   Selected: boolean;
 
