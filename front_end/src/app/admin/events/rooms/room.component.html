@@ -1,12 +1,16 @@
-<td>
+<td [ngClass]="{'disabled': pending }">
   <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
     <div *ngFor="let ageGrade of ageRangeAndGrades();">
       {{ ageGrade }}
     </div>
   </a>
 </td>
-<td>{{room.RoomName}} <label class="tag tag-info" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</label></td>
-<td>
+<td [ngClass]="{'disabled': pending }">
+  {{room.RoomName}} <label class="tag tag-info" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</label>
+  <br>
+  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
+</td>
+<td [ngClass]="{'disabled': pending }">
   <span *ngIf="hasCapacity()">
     <span *ngIf="checkedInEqualsCapacity()">
       <!-- red -->
@@ -26,24 +30,24 @@
     </span>
   </span>
 </td>
-<td [formGroup]="roomForm">
+<td [ngClass]="{'disabled': pending }" [formGroup]="roomForm">
   <input class='tgl tgl-light' id='allow-signin-{{room.RoomId}}' type='checkbox' (change)="toggle('AllowSignIn')" [checked]="room.AllowSignIn" formControlName="AllowSignIn">
-  <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' (click)="toggleClick()" [ngClass]="{'disabled': pending }"><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+  <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' (click)="toggleClick()"><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
 </td>
-<td [formGroup]="roomForm">
+<td [ngClass]="{'disabled': pending }" [formGroup]="roomForm">
   <div class="number-stepper">
     <div class="input-group">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" (change)="sync('Volunteers')" [readonly]="pending">
+      <input type="number" class="form-control text-xs-center" value="{{room.Volunteers}}" formControlName="Volunteers" (change)="sync('Volunteers')" [readonly]="pending" (focus)="highlight($event)">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Volunteers')" [disabled]="pending">+</button>
       </span>
     </div>
   </div>
 </td>
-<td [formGroup]="roomForm">
+<td [ngClass]="{'disabled': pending }" [formGroup]="roomForm">
   <div class="number-stepper">
     <div class="input-group">
       <span class="input-group-btn">
@@ -56,9 +60,9 @@
     </div>
   </div>
 </td>
-<td class="text-xs-right">{{room.SignedIn}}</td>
-<td class="text-xs-right">{{room.CheckedIn}}</td>
-<td class="text-xs-right">{{getRoomRatioString()}}</td>
-<td class="text-xs-right">
-  <a class="btn btn-primary btn-sm" routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right">{{room.SignedIn}}</td>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right">{{room.CheckedIn}}</td>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right">{{getRoomRatioString()}}</td>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right save-button">
+  <a class="btn btn-success btn-sm" (click)="saveRoom()" href="#" [hidden]="!changed">Save</a>
 </td>

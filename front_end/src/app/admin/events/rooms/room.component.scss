@@ -1,7 +1,7 @@
 @import '../../../../assets/scss/_variables.scss';
 
 td {
-  input[type=number] {
+  input[type=number], input[type=text] {
     $width: 50px;
     width: $width;
     // this is necessary for firefox
@@ -13,8 +13,11 @@ td {
       margin: 0;
     }
   }
-  .disabled {
-    opacity: .7;
+  &.disabled {
+    opacity: .3;
+  }
+  &.save-button {
+    width: 120px;
   }
 }
 

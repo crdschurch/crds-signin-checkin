@@ -2,7 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
+import { RootService } from '../../../shared/services';
 import { Room } from '../../../shared/models';
+import * as _ from 'lodash';
 
 @Component({
   selector: '.room',
@@ -14,12 +16,18 @@ export class RoomComponent implements OnInit {
   @Input() room: Room;
   public pending: boolean;
   private roomForm: FormGroup;
+  private origRoomData: Room;
+  public changed: boolean;
 
-  constructor(private route: ActivatedRoute, private adminService: AdminService) {
+  constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService) {
   }
 
   mainEventId() {
     return this.route.snapshot.params['eventId'];
+  }
+
+  highlight(e) {
+    e.target.select();
   }
 
   add(field) {
@@ -33,6 +41,23 @@ export class RoomComponent implements OnInit {
   toggle(field) {
     this.room[field] = !this.room[field];
     this.roomForm.controls[field].setValue(this.room[field]);
+    // this.changed = true;
+  }
+
+  saveRoom() {
+    this.pending = true;
+    this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(room => {
+      this.origRoomData = _.clone(this.room);
+      this.room = room;
+      this.changed = false;
+      this.pending = false;
+    }, (error) => {
+      this.room = this.origRoomData;
+      this.changed = false;
+      this.pending = false;
+      this.rootService.announceEvent('generalError');
+    });
+    return false;
   }
 
   sync(field) {
@@ -83,7 +108,7 @@ export class RoomComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.origRoomData = _.clone(this.room);
     this.roomForm = new FormGroup({
       Volunteers: new FormControl(),
       Capacity: new FormControl(),
@@ -91,14 +116,9 @@ export class RoomComponent implements OnInit {
     });
 
     this.roomForm.valueChanges
-      .debounceTime(1000)
       .distinctUntilChanged()
       .subscribe(props => {
-        this.pending = true;
-        this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(room => {
-          this.room = room;
-          this.pending = false;
-        });
+        this.changed = true;
       });
   }
 }
