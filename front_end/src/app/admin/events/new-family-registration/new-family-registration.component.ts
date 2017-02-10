@@ -18,13 +18,13 @@ import * as moment from 'moment';
 })
 export class NewFamilyRegistrationComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
-  private maskDate: any = [/[0-1]/, /[0-9]/, '-', /[0-3]/, /\d/, '-', /[1,2]/, /[0,9]/, /[0,1,8,9]/, /\d/];
+  private maskDate: any = [/[0-1]/, /[0-9]/, '-', /[0-3]/, /\d/, '-', /[1,2]/, /[0,9]/, /[0,1,2,8,9]/, /\d/];
   private eventId: string;
   private family: NewFamily;
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  numberOfKidsSelection: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  numberOfKidsSelection: any = Array.apply(null, {length: 31}).map(function (e, i) { return i + 1; }, Number);
 
   constructor(
     private route: ActivatedRoute,
