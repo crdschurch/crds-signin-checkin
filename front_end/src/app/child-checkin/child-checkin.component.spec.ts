@@ -1,10 +1,9 @@
 import { ChildCheckinComponent } from './child-checkin.component';
-import { MachineConfiguration, Child, Event } from '../shared/models';
+import { Child, Event } from '../shared/models';
 import { RootService } from '../shared/services';
 import { Observable } from 'rxjs/Observable';
 
 let fixture: ChildCheckinComponent;
-let thisMachineConfig: MachineConfiguration;
 
 const event = { EventId: '123', EventStartDate: '2016-11-22 10:00:00', IsCurrentEvent: false };
 const event2 = { EventId: '456', EventStartDate: '2016-11-22 09:00:00', IsCurrentEvent: false };
@@ -15,14 +14,16 @@ setupService.getMachineDetailsConfigCookie.and.returnValue({RoomId: 123});
 let apiService = jasmine.createSpyObj('apiService', ['getEvents']);
 let childCheckinService = jasmine.createSpyObj('ChildCheckinService', ['selectEvent', 'getChildByCallNumber', 'getEventRoomDetails']);
 let rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
+let channelService = jasmine.createSpyObj('channelService', ['sub']);
 
 describe('ChildCheckinComponent', () => {
   describe('#ngOnInit', () => {
     describe('initalization', () => {
       beforeEach(() => {
         apiService.getEvents.and.returnValue(Observable.of([{}]));
+        channelService.sub.and.returnValue(Observable.of([{}]));
         childCheckinService.getEventRoomDetails.and.returnValue(Observable.of([{}]));
-        fixture = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService);
+        fixture = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
       });
 
       it('should set kiosk config details from cookie and get today\'s events', () => {
@@ -35,7 +36,7 @@ describe('ChildCheckinComponent', () => {
       describe('and there is a current event', () => {
         beforeEach(() => {
           apiService.getEvents.and.returnValue(Observable.of([event, eventCurrent]));
-          fixture = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService);
+          fixture = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
         });
 
         it('should set where IsCurrentEvent is true', () => {
@@ -49,7 +50,7 @@ describe('ChildCheckinComponent', () => {
            childCheckinService = jasmine.createSpyObj('ChildCheckinService', ['selectEvent', 'getEventRoomDetails']);
            childCheckinService.getEventRoomDetails.and.returnValue(Observable.of([{}]));
            apiService.getEvents.and.returnValue(Observable.of([event, event2]));
-           fixture2 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService);
+           fixture2 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
          });
 
          it('should set first when no IsCurrentEvent', () => {
@@ -66,7 +67,7 @@ describe('ChildCheckinComponent', () => {
            childCheckinService.getChildByCallNumber.and.returnValue(Observable.of());
            childCheckinService.forceChildReload.and.returnValue(Observable.of());
            childCheckinService.overrideChildIntoRoom.and.returnValue(Observable.of(new Child()));
-           fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService);
+           fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
            fixture3.callNumber = '431';
            fixture3.overrideChild = new Child();
            fixture3.overrideChild.EventParticipantId = 444;
@@ -115,7 +116,7 @@ describe('ChildCheckinComponent', () => {
            describe('error (room over capacity)', () => {
              beforeEach(() => {
                 childCheckinService.overrideChildIntoRoom.and.returnValue(Observable.throw('capacity'));
-                fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService);
+                fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
              });
              it('should show specific error message', () => {
                fixture3.overrideCheckin();
@@ -125,7 +126,7 @@ describe('ChildCheckinComponent', () => {
            describe('error (room closed)', () => {
              beforeEach(() => {
                 childCheckinService.overrideChildIntoRoom.and.returnValue(Observable.throw('closed'));
-                fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService);
+                fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
              });
              it('should show specific error message', () => {
                fixture3.overrideCheckin();
@@ -135,7 +136,7 @@ describe('ChildCheckinComponent', () => {
            describe('error (general)', () => {
              beforeEach(() => {
                 childCheckinService.overrideChildIntoRoom.and.returnValue(Observable.throw('error!'));
-                fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService);
+                fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
              });
              it('should show specific error message', () => {
                fixture3.overrideCheckin();

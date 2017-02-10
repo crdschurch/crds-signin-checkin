@@ -138,7 +138,7 @@ describe('ChildCheckinService', () => {
       });
 
       let result = fixture.getEventRoomDetails(123, 789);
-      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/checkin/events/123/rooms/789`);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/123/rooms/789`);
       expect(result).toBeDefined();
       result.subscribe((p) => {
         expect(p).toEqual(jasmine.any(Room));
