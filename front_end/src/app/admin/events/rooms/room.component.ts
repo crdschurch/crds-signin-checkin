@@ -31,17 +31,21 @@ export class RoomComponent implements OnInit {
   }
 
   add(field) {
-    this.roomForm.controls[field].setValue(this.room[field]++);
+    // this.roomForm.controls[field].setValue(this.room[field]++);
+    this.room[field]++;
+    this.change();
   }
+
   remove(field) {
     if (this.room[field] >= 1) {
-      this.roomForm.controls[field].setValue(this.room[field]--);
+      // this.roomForm.controls[field].setValue(this.room[field]--);
+      this.room[field]--
+      this.change();
     }
   }
   toggle(field) {
     this.room[field] = !this.room[field];
-    this.roomForm.controls[field].setValue(this.room[field]);
-    // this.changed = true;
+    this.change();
   }
 
   saveRoom() {
@@ -58,10 +62,6 @@ export class RoomComponent implements OnInit {
       this.rootService.announceEvent('generalError');
     });
     return false;
-  }
-
-  sync(field) {
-    this.room[field] = this.roomForm.controls[field].value;
   }
 
   hasCapacity() {
@@ -107,18 +107,22 @@ export class RoomComponent implements OnInit {
     return ageGrades;
   }
 
+  change() {
+    this.changed = true;
+  }
+
   ngOnInit() {
     this.origRoomData = _.clone(this.room);
-    this.roomForm = new FormGroup({
-      Volunteers: new FormControl(),
-      Capacity: new FormControl(),
-      AllowSignIn: new FormControl()
-    });
-
-    this.roomForm.valueChanges
-      .distinctUntilChanged()
-      .subscribe(props => {
-        this.changed = true;
-      });
+    // this.roomForm = new FormGroup({
+    //   Volunteers: new FormControl(),
+    //   Capacity: new FormControl(),
+    //   AllowSignIn: new FormControl()
+    // });
+    //
+    // this.roomForm.valueChanges
+    //   .distinctUntilChanged()
+    //   .subscribe(props => {
+    //     this.changed = true;
+    //   });
   }
 }
