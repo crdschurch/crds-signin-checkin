@@ -5,7 +5,6 @@ export class NewChild {
   DateOfBirthString: string;
   YearGrade: number;
   Selected: boolean;
-  Validators: any;
 
   static fromJson(json: any): NewChild {
     let c = new NewChild();

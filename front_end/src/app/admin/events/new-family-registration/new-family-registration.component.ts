@@ -100,8 +100,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
   onSubmit(form: NgForm) {
     this.submitted = true;
-    this.processing = true;
     if (!form.pristine && form.valid) {
+      this.processing = true;
       this.adminService.createNewFamily(this.family).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();
@@ -123,8 +123,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   private newChild(): NewChild {
-    let child = new NewChild();
-    // child.DateOfBirth = moment().startOf('day').toDate();
-    return child;
+    return new NewChild();
   }
 }
