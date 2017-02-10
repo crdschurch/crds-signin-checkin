@@ -16,8 +16,8 @@ namespace SignInCheckIn.Controllers
     public class RoomController : MpAuth
     {
         private readonly IRoomService _roomService;
-        private IHubContext _context;
-        private IApplicationConfiguration _applicationConfiguration;
+        private readonly IHubContext _context;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
         public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
