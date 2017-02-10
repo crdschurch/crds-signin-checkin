@@ -24,7 +24,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  numberOfKidsSelection: any = Array.apply(null, {length: 31}).map(function (e, i) { return i + 1; }, Number);
+  numberOfKidsSelection: any = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
 
   constructor(
     private route: ActivatedRoute,
