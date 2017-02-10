@@ -112,7 +112,38 @@
                     <div class="form-group required text-xs-left">
                       <label for="guestChildBirthDate" class="control-label">Birth Date</label>
                       <br/>
-                      <crds-datepicker name="guestChildBirthDate" autoClose="true" [(date)]="newGuestChild.DateOfBirth" [maxDate]="maxDate" class="input-lg"></crds-datepicker>
+                      <div class="dropdown-datepicker">
+                        <div class="btn-group" dropdown>
+                          <button id="dob-month" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
+                            {{guestDOB.month | monthName}} <span class="caret"></span>
+                          </button>
+                          <ul dropdownMenu role="menu">
+                            <li role="menuitem" *ngFor="let num of numberOfMonthsSelection">
+                              <a class="dropdown-item" (click)="toggleMonth(num);datePickerBlur()">{{num | monthName}}</a>
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="btn-group" dropdown>
+                          <button id="dob-day" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
+                            {{guestDOB.day || 'Day'}} <span class="caret"></span>
+                          </button>
+                          <ul dropdownMenu role="menu">
+                            <li role="menuitem" *ngFor="let num of numberOfDaysSelection">
+                              <a class="dropdown-item" (click)="toggleDay(num);datePickerBlur()">{{num}}</a>
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="btn-group" dropdown>
+                          <button id="dob-year" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
+                            {{guestDOB.year || 'Year'}} <span class="caret"></span>
+                          </button>
+                          <ul dropdownMenu role="menu">
+                            <li role="menuitem" *ngFor="let num of yearsSelection">
+                              <a class="dropdown-item" (click)="toggleYear(num);datePickerBlur()">{{num}}</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="col-xs-12 col-sm-6">

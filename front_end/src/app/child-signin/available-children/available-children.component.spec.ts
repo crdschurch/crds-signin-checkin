@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService, RootService } from '../../shared/services';
 import { ChildSigninService } from '../child-signin.service';
 import { Observable } from 'rxjs/Observable';
-import { Guest } from '../../shared/models';
+import { DateOfBirth, Guest } from '../../shared/models';
 
 
 import * as moment from 'moment';
@@ -59,7 +59,7 @@ describe('AvailableChildrenComponent', () => {
       expect(fixture.newGuestChild).toBeDefined();
       expect(fixture.newGuestChild.GuestSignin).toBeTruthy();
       expect(fixture.newGuestChild.Selected).toBeTruthy();
-      expect(fixture.newGuestChild.DateOfBirth).toEqual(moment().startOf('day').toDate());
+      expect(fixture.newGuestChild.DateOfBirth).toBeUndefined();
     });
   });
   describe('#saveNewGuestModal adds new guest to event participants', () => {
@@ -73,6 +73,12 @@ describe('AvailableChildrenComponent', () => {
       validGuest.FirstName = 'Pacman';
       validGuest.LastName = 'Jones';
       fixture.newGuestChild = validGuest;
+      fixture.guestDOB = new DateOfBirth();
+      fixture.guestDOB.month = 4;
+      fixture.guestDOB.day = 4;
+      fixture.guestDOB.year = 2012;
+      // ui event after you pick a date
+      fixture.datePickerBlur();
       fixture.saveNewGuest(fakeModal);
       expect(fixture.eventParticipants.Participants[0].FirstName).toEqual('Pacman');
     });
@@ -84,6 +90,21 @@ describe('AvailableChildrenComponent', () => {
       fixture.saveNewGuest(fakeModal);
       expect(fixture.eventParticipants.Participants.length).toEqual(0);
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninAddGuestFormInvalid');
+    });
+    it('shows dob error if invalid date', () => {
+      let validGuest: Guest = new Guest();
+      validGuest.FirstName = 'Vontaze';
+      validGuest.LastName = 'Burfict';
+      fixture.newGuestChild = validGuest;
+      fixture.guestDOB = new DateOfBirth();
+      fixture.guestDOB.month = 2;
+      fixture.guestDOB.day = 30;
+      fixture.guestDOB.year = 2015;
+      // ui event after you pick a date
+      fixture.datePickerBlur();
+      fixture.saveNewGuest(fakeModal);
+      expect(fixture.eventParticipants.Participants.length).toEqual(0);
+      expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
     });
   });
 });

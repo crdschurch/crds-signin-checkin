@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Http;
 using SignInCheckIn.App_Start;
+using Crossroads.ApiVersioning;
 
 namespace SignInCheckIn
 {
@@ -14,7 +15,7 @@ namespace SignInCheckIn
             // Code that runs on application startup
             AreaRegistration.RegisterAllAreas();
             UnityConfig.RegisterComponents();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configure(VersionConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             AutoMapperConfig.RegisterMappings();
         }

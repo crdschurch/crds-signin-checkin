@@ -10,6 +10,7 @@ using SignInCheckIn.Hubs;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
+using Crossroads.ApiVersioning;
 
 namespace SignInCheckIn.Controllers
 {
@@ -28,6 +29,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
+        [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         public IHttpActionResult GetAvailableRooms(
             [FromUri(Name = "roomId")] int roomId,
@@ -50,6 +52,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(List<RoomDto>))]
+        [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         public IHttpActionResult UpdateAvailableRoomsByLocation(
         [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId, [FromBody] List<EventRoomDto> eventRooms)
@@ -71,6 +74,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
+        [VersionedRoute(template: "grade-groups", minimumVersion: "1.0.0")]
         [Route("grade-groups")]
         public IHttpActionResult GetGradeGroups()
         {

@@ -17,13 +17,14 @@ import * as moment from 'moment';
   templateUrl: 'new-family-registration.component.html'
 })
 export class NewFamilyRegistrationComponent implements OnInit {
-  private mask: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
+  private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
+  private maskDate: any = [/[0-1]/, /[0-9]/, '/', /[0-3]/, /\d/, '/', /[1,2]/, /[0,9]/, /[0,1,2,8,9]/, /\d/];
   private eventId: string;
   private family: NewFamily;
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  private maxDate: Date = moment().toDate();
+  numberOfKidsSelection: any = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
 
   constructor(
     private route: ActivatedRoute,
@@ -81,6 +82,24 @@ export class NewFamilyRegistrationComponent implements OnInit {
     child.YearGrade = groupId;
   }
 
+  onPhoneBlur(e, parent) {
+    try {
+      if (parent.PhoneNumber.indexOf('_') > -1) {
+        e.target.value = '';
+        parent.PhoneNumber = undefined;
+      }
+    } catch(e) {}
+  }
+
+  onDateBlur(e, child) {
+    if (child.DateOfBirthString.indexOf('_') === -1 && moment(child.DateOfBirthString, 'MM/DD/YYYY').isValid()) {
+      child.DateOfBirth = moment(child.DateOfBirthString, 'MM/DD/YYYY').toDate();
+    } else {
+      delete child.DateOfBirthString;
+      e.target.value = '';
+    }
+  }
+
   onSubmit(form: NgForm) {
     this.submitted = true;
     if (!form.pristine && form.valid) {
@@ -106,9 +125,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   private newChild(): NewChild {
-    let child = new NewChild();
-    child.DateOfBirth = moment().startOf('day').toDate();
-
-    return child;
+    return new NewChild();
   }
 }
