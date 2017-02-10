@@ -268,15 +268,8 @@ namespace MinistryPlatform.Translation.Repositories
                 {"EventID", eventId},
             };
 
-            //List<List<MpEventRoomDto>, List<MpEventGroupDto>,  >
-
-            //var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<dynamic>("api_crds_Get_Checkin_Room_Data", parms);
             var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
             return result;
-
-            var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
-            var mpEventGroups = result[1].Select(r => r.ToObject<MpEventGroupDto>()).ToList();
-            var mpGroupAttributes = result[2].Select(r => r.ToObject<MpGroupAttributeDto>()).ToList();
-    }
+        }   
     }
 }

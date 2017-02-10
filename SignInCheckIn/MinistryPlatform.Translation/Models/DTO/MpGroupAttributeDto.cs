@@ -17,5 +17,18 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Attribute_Name")]
         public string AttributeName { get; set; }
+
+        [JsonProperty("Sort_Order")]
+        public int SortOrder { get; set; }
+
+        public MpAttributeDto GetAttributeDto()
+        {
+            return new MpAttributeDto
+            {
+                Id = AttributeId,
+                Name = AttributeName,
+                SortOrder = SortOrder
+            };
+        }
     }
 }
