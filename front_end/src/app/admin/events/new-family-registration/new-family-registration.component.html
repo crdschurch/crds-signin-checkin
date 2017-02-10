@@ -37,18 +37,7 @@
               <div class="form-group required">
                 <label for="numberOfPossibleKids" class="control-label">Number of Children</label>
                 <select class="form-control" name="numberOfKids" [(ngModel)]="family.numberOfKids" (change)="updateNumberOfKids()">
-                  <option [selected]="family.numberOfKids == 1">1</option>
-                  <option [selected]="family.numberOfKids == 2">2</option>
-                  <option [selected]="family.numberOfKids == 3">3</option>
-                  <option [selected]="family.numberOfKids == 4">4</option>
-                  <option [selected]="family.numberOfKids == 5">5</option>
-                  <option [selected]="family.numberOfKids == 6">6</option>
-                  <option [selected]="family.numberOfKids == 7">7</option>
-                  <option [selected]="family.numberOfKids == 8">8</option>
-                  <option [selected]="family.numberOfKids == 9">9</option>
-                  <option [selected]="family.numberOfKids == 10">10</option>
-                  <option [selected]="family.numberOfKids == 11">11</option>
-                  <option [selected]="family.numberOfKids == 12">12</option>
+                  <option *ngFor="let num of numberOfKidsSelection" [attr.selected]="family.numberOfKids == num">{{num}}</option>
                 </select>
               </div>
             </div>

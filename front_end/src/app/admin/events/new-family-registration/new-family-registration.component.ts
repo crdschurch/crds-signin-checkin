@@ -24,7 +24,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  // public numbers: any;
+  numberOfKidsSelection: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   constructor(
     private route: ActivatedRoute,
@@ -72,7 +72,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
 
     this.family.children = tmpChildren;
-    // this.numbers = Array.apply(null, {length: this.family.numberOfKids}).map(Number.call, Number);
   }
 
   needGradeLevel(child: NewChild): boolean {
