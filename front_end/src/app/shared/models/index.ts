@@ -1,6 +1,7 @@
 export { Child } from './child';
 export { Contact } from './contact';
 export { ContentBlock } from './content-block';
+export { DateOfBirth } from './date-of-birth';
 export { Event } from './event';
 export { EventParticipants } from './event-participants';
 export { Group } from './group';
