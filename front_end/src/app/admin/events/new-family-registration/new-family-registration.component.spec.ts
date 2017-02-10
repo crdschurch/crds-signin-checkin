@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { NewFamilyRegistrationComponent } from './new-family-registration.component';
-import { NewChild } from '../../../shared/models';
+import { NewChild, NewParent } from '../../../shared/models';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import * as moment from 'moment';
 
@@ -72,5 +72,46 @@ describe('NewFamilyRegistrationComponent', () => {
     let child = new NewChild();
     child.DateOfBirth = moment().subtract(3, 'years').add(1, 'day').toDate();
     expect(fixture.needGradeLevel(child)).toBeFalsy();
+  });
+  describe('validation', () => {
+    let child;
+    let parent;
+    beforeEach(() => {
+      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+      child = new NewChild();
+      parent = new NewParent();
+    });
+    describe('date of birth', () => {
+      it('should delete after input if bad date', () => {
+        child.DateOfBirthString = '02-30-201_';
+        fixture.onDateBlur({target : {value: child.DateOfBirthString} },  child);
+        expect(child.DateOfBirth).toBeFalsy();
+        expect(fixture.needGradeLevel(child)).toBeFalsy();
+      });
+      it('should delete after input if bad date', () => {
+        child.DateOfBirthString = '02-30-2011';
+        fixture.onDateBlur({target : {value: child.DateOfBirthString} },  child);
+        expect(child.DateOfBirth).toBeFalsy();
+        expect(fixture.needGradeLevel(child)).toBeFalsy();
+      });
+      it('should create date of birth when valid date', () => {
+        child.DateOfBirthString = '02-09-2011';
+        fixture.onDateBlur({target : {value: child.DateOfBirthString} },  child);
+        expect(child.DateOfBirth).toBeDefined();
+        expect(fixture.needGradeLevel(child)).toBeTruthy();
+      });
+    });
+    describe('phoneNumber', () => {
+      it('should delete after input if bad phone number', () => {
+        parent.PhoneNumber = '513-554-542_';
+        fixture.onPhoneBlur({target : {value: parent.PhoneNumber} },  parent);
+        expect(parent.PhoneNumber).toBeFalsy();
+      });
+      it('should accept if valid phone number', () => {
+        parent.PhoneNumber = '513-554-5423';
+        fixture.onPhoneBlur({target : {value: parent.PhoneNumber} },  parent);
+        expect(parent.PhoneNumber).toBeTruthy();
+      });
+    });
   });
 });
