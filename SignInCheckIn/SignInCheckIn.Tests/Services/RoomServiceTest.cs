@@ -266,6 +266,61 @@ namespace SignInCheckIn.Tests.Services
             result.ShouldBeEquivalentTo(newEventRoom);
         }
 
+        [Test]
+        public void TestGetEventUnassignedGroups()
+        {
+            // arrange
+            const string token = "token 123";
+            const int eventId = 56465;
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            var eventGroups = new List<MpEventGroupDto>();
+            eventGroups.Add(
+                new MpEventGroupDto
+                {
+                    GroupId = 5
+                }
+            );
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(eventId)).Returns(eventGroups);
+            var mpGroupDtos =  new List<MpGroupDto>();
+            mpGroupDtos.Add(
+                new MpGroupDto
+                {
+                    Name = "Kids Club 3rd Grade",
+                    Id = 66
+                }
+            );
+            mpGroupDtos.Add(
+                new MpGroupDto
+                {
+                    Name = "Kids Club 2nd Grade",
+                    Id = 88
+                }
+            );
+           mpGroupDtos.Add(
+                new MpGroupDto
+                {
+                    Name = "Kids Club 1st Grade",
+                    Id = 77
+                }
+            );
+            _groupRepository.Setup(mocked => mocked.GetGroupsByAttribute(token, It.IsAny<IEnumerable<MpAttributeDto>>(), false)).Returns(mpGroupDtos);
+
+            // act
+            var result = _fixture.GetEventUnassignedGroups(token, eventId);
+
+            // assert
+            _roomRepository.VerifyAll();
+            Assert.IsNotNull(result);
+            result.ShouldBeEquivalentTo(mpGroupDtos);
+            result[0].Id.Should().Be(88);
+            result[1].Id.Should().Be(77);
+            result[2].Id.Should().Be(66);
+
+        }
+
         public void TestGetEventRoomAgesAndGradesNoEventGroups()
         {
             const string token = "token 123";
