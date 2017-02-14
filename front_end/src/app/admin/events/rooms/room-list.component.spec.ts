@@ -55,7 +55,6 @@ describe('RoomListComponent', () => {
       fixture.event = null;
 
       fixture.ngOnInit();
-      console.log("this.route.snapshot.params['eventId'];", route.snapshot.params['eventId'])
       expect(adminService.getRooms).toHaveBeenCalledWith(eventId);
       expect(adminService.getUnassignedGroups).toHaveBeenCalled();
       expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
