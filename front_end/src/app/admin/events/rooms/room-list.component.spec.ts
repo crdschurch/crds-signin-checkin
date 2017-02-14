@@ -39,7 +39,7 @@ describe('RoomListComponent', () => {
   });
 
   describe('#ngOnInit', () => {
-    fit('should get rooms and event details', () => {
+    it('should get rooms and event details', () => {
       let rooms: Room[] = [ new Room(), new Room() ];
       rooms[0].RoomId = '123';
       rooms[1].RoomId = '456';
