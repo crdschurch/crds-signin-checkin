@@ -107,8 +107,7 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token => Ok(_roomService.GetEventUnassignedGroups(token, eventId)),
-                                  () => Ok(_roomService.GetEventUnassignedGroups(null, eventId)));
+                return Authorized(token => Ok(_roomService.GetEventUnassignedGroups(token, eventId)));
             }
             catch (Exception e)
             {
