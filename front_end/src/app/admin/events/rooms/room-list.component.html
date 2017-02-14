@@ -34,6 +34,16 @@
           </div>
         </div>
     </div>
+    <div class="col-xs-12" [hidden]="!unassignedGroups">
+      <div class="alert alert-warning" role="alert">
+        <strong>You have unassigned rooms:</strong>
+        <ul class="list-inline">
+          <li *ngFor="let g of unassignedGroups" class="list-inline-item">
+            {{g.Group_Name}}
+          </li>
+        </ul>
+      </div>
+    </div>
     <div class="col-xs-12">
       <preloader *ngIf="!isReady()"></preloader>
       <table class="table table-striped manage-rooms-table" *ngIf="isReady()">

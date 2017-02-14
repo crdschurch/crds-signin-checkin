@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-// import {Observable} from 'rxjs/Rx';
+import { Component, OnInit, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
 
-import { Event, Room } from '../../../shared/models';
+import { Event, Room, Group } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { ApiService } from '../../../shared/services';
 import { HeaderService } from '../../header/header.service';
@@ -20,6 +20,7 @@ export class RoomListComponent implements OnInit {
   rooms: Room[];
   event: Event = null;
   eventId: string;
+  unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
 
   constructor(
@@ -44,6 +45,14 @@ export class RoomListComponent implements OnInit {
       event => {
         this.event = event;
         this.headerService.announceEvent(event);
+      },
+      error => console.error(error)
+    );
+
+    this.adminService.getUnassignedGroups(+this.eventId).subscribe(
+      groups => {
+        this.unassignedGroups = groups;
+        console.log('this.unassignedGroups', this.unassignedGroups)
       },
       error => console.error(error)
     );
