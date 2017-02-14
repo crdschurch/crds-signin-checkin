@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
@@ -164,6 +165,30 @@ namespace SignInCheckIn.Services
             acEventRoom.Volunteers = eventRoom.Volunteers;
             acEventRoom.AllowSignIn = eventRoom.AllowSignIn;
             _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(acEventRoom));
+        }
+
+        public List<MpGroupDto> GetEventUnassignedGroups(string authenticationToken, int eventId)
+        {
+            var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
+            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
+            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
+
+            // existing groups assigned to a room event
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
+            var allGroupsAttributes = ages.Concat(grades)
+                                    .Concat(birthMonths)
+                                    .Concat(nurseryMonths)
+                                    .ToList();
+
+            var unassignedGroups = _groupRepository.GetGroupsByAttribute(authenticationToken, allGroupsAttributes, false);
+            unassignedGroups = unassignedGroups.GroupBy(n => n.Id).Select(grp => grp.Last()).OrderByDescending(g => g.Id).ToList();
+            eventGroups.ForEach(eg =>
+            {
+                unassignedGroups.RemoveAll(g => eg.GroupId == g.Id);
+            });
+
+            return unassignedGroups;
         }
 
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)

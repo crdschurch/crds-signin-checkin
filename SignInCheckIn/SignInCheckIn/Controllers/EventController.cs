@@ -99,6 +99,23 @@ namespace SignInCheckIn.Controllers
             }
         }
 
+        [HttpGet]
+        [ResponseType(typeof(EventRoomDto))]
+        [VersionedRoute(template: "events/{eventId:int}/groups/unassigned", minimumVersion: "1.0.0")]
+        [Route("events/{eventId:int}/groups/unassigned")]
+        public IHttpActionResult GetEventUnassignedGroups([FromUri] int eventId)
+        {
+            try
+            {
+                return Authorized(token => Ok(_roomService.GetEventUnassignedGroups(token, eventId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting unassigned groups for event {eventId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
         [HttpPut]
         [ResponseType(typeof(EventRoomDto))]
         [VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
