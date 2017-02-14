@@ -41,9 +41,7 @@
           <span [hidden]="!isCollapsed">Open</span>
           <span [hidden]="isCollapsed">Close</span>
       </button>
-      <hr>
-      <div (collapsed)="collapsed($event)"
-           [collapse]="isCollapsed"
+      <div [collapse]="isCollapsed"
            class="card card-block card-header">
         <div class="well well-lg">
           <ul>
