@@ -22,6 +22,7 @@ export class RoomListComponent implements OnInit {
   eventId: string;
   unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
+  public isCollapsed = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +53,6 @@ export class RoomListComponent implements OnInit {
     this.adminService.getUnassignedGroups(+this.eventId).subscribe(
       groups => {
         this.unassignedGroups = groups;
-        console.log('this.unassignedGroups', this.unassignedGroups)
       },
       error => console.error(error)
     );
@@ -60,19 +60,6 @@ export class RoomListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData();
-
-    // This is temp. until we add websockets to do an actual update
-    // We will update the rooms information every 5 seconds
-    // Observable.interval(5000)
-    //   .mergeMap(() => this.adminService.getRooms(this.eventId))
-    //   .subscribe((rooms: Room[]) => {
-    //       for (let i = 0; i < rooms.length; i++) {
-    //          this.rooms[i].SignedIn = rooms[i].SignedIn;
-    //          this.rooms[i].CheckedIn = rooms[i].CheckedIn;
-    //        }
-    //      },
-    //      (error: any) => console.error(error)
-    //    );
   }
 
   public isReady(): boolean {

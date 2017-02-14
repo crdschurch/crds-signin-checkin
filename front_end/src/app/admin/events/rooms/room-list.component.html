@@ -35,15 +35,26 @@
         </div>
     </div>
     <div class="col-xs-12" [hidden]="!unassignedGroups">
-      <div class="alert alert-warning" role="alert">
-        <strong>You have unassigned rooms:</strong>
-        <ul class="list-inline">
-          <li *ngFor="let g of unassignedGroups" class="list-inline-item">
-            {{g.Group_Name}}
-          </li>
-        </ul>
+      <span>You have {{unassignedGroups?.length}} unassigned groups:</span>
+      <button type="button" class="btn btn-link" href="#"
+        (click)="isCollapsed = !isCollapsed">
+          <span [hidden]="!isCollapsed">Open</span>
+          <span [hidden]="isCollapsed">Close</span>
+      </button>
+      <hr>
+      <div (collapsed)="collapsed($event)"
+           [collapse]="isCollapsed"
+           class="card card-block card-header">
+        <div class="well well-lg">
+          <ul>
+            <li *ngFor="let g of unassignedGroups">
+              {{g.Group_Name}}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
+
     <div class="col-xs-12">
       <preloader *ngIf="!isReady()"></preloader>
       <table class="table table-striped manage-rooms-table" *ngIf="isReady()">

@@ -28,7 +28,6 @@ export class Group {
   }
 
   static fromJsons(jsons: any): Group[] {
-    console.log("jsons", jsons)
     let groups: Group[] = [];
     for (let json of jsons) {
         groups.push(Group.fromJson(json));
