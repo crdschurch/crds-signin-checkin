@@ -8,3 +8,14 @@ ul.dropdown-menu {
   max-height: 300px;
   overflow-y: auto;
 }
+
+.dropdown-datepicker {
+  ul {
+    li {
+      &:hover {
+        opacity: .7;
+        cursor: pointer;
+      }
+    }
+  }
+}
