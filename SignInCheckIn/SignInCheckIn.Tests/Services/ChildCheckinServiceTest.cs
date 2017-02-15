@@ -424,7 +424,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _roomRepository.Setup(m => m.GetEventRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(eventRoom);
-            _childCheckinRepository.Setup(m => m.OverrideChildIntoRoom(It.IsAny<int>(), It.IsAny<int>()));
+            _childCheckinRepository.Setup(m => m.OverrideChildIntoRoom(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()));
             _fixture.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
             _childCheckinRepository.VerifyAll();
         }

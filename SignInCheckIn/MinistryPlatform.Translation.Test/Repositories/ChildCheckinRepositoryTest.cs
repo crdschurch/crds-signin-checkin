@@ -156,7 +156,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>())).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UpdateRecord("Event_Participants", It.IsAny<int>(), It.IsAny<Dictionary<string, object>>()));
 
-            _fixture.OverrideChildIntoRoom(3, 123);
+            _fixture.OverrideChildIntoRoom(3, 123, 444);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
         }

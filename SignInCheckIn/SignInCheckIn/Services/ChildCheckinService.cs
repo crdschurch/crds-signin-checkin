@@ -61,6 +61,11 @@ namespace SignInCheckIn.Services
         public bool OverrideChildIntoRoom(int eventId, int eventParticipantId, int roomId)
         {
             var eventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            if (eventRoom == null)
+            {
+                var acSubevent = _eventRepository.GetSubeventByParentEventId(eventId, _applicationConfiguration.AdventureClubEventTypeId);
+                eventRoom = _roomRepository.GetEventRoom(acSubevent.EventId, roomId);
+            }
             bool isClosed = !eventRoom.AllowSignIn;
             bool isAtCapacity = eventRoom.Capacity <= (eventRoom.CheckedIn + eventRoom.SignedIn);
             if (isClosed)
@@ -73,7 +78,7 @@ namespace SignInCheckIn.Services
             }
             else
             {
-                _childCheckinRepository.OverrideChildIntoRoom(eventParticipantId, roomId);
+                _childCheckinRepository.OverrideChildIntoRoom(eventParticipantId, roomId, eventRoom.EventId);
                 return true;
             }
         }
