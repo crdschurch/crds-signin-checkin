@@ -76,6 +76,7 @@ describe('RoomComponent', () => {
     it('should add one volunteer', () => {
       fixture.add('Volunteers');
       expect(fixture.room.Volunteers).toEqual(11);
+      expect(fixture.dirty).toEqual(true);
     });
 
     it('should remove four volunteers', () => {
@@ -84,17 +85,20 @@ describe('RoomComponent', () => {
       fixture.remove('Volunteers');
       fixture.remove('Volunteers');
       expect(fixture.room.Volunteers).toEqual(6);
+      expect(fixture.dirty).toEqual(true);
     });
 
     it('should add two capacitys', () => {
       fixture.add('Capacity');
       fixture.add('Capacity');
       expect(fixture.room.Capacity).toEqual(8);
+      expect(fixture.dirty).toEqual(true);
     });
 
     it('should remove one capacity', () => {
       fixture.remove('Capacity');
       expect(fixture.room.Capacity).toEqual(5);
+      expect(fixture.dirty).toEqual(true);
     });
 
     it('should toggle allowed sign-in', () => {
@@ -102,6 +106,13 @@ describe('RoomComponent', () => {
       expect(fixture.room.AllowSignIn).toBeTruthy();
       fixture.toggle('AllowSignIn');
       expect(fixture.room.AllowSignIn).toBeFalsy();
+      expect(fixture.dirty).toEqual(true);
+    });
+
+    it('should save', () => {
+      fixture.dirty = true;
+      fixture.saveRoom();
+      expect(fixture.dirty).toEqual(false);
     });
 
   });
