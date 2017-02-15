@@ -8,6 +8,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpParticipantDto> GetChildrenByEventAndRoom(int eventId, int roomId);
         void CheckinChildrenForCurrentEventAndRoom(int checkinStatusId, int eventParticipantId);
         MpEventParticipantDto GetEventParticipantByCallNumber(List<int> eventIds, int callNumber);
-        void OverrideChildIntoRoom(int eventParticipantId, int roomId);
+        void OverrideChildIntoRoom(int eventParticipantId, int roomId, int eventId);
     }
 }

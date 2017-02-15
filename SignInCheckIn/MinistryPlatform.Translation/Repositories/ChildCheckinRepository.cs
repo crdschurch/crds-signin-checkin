@@ -91,7 +91,7 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).UpdateRecord("Event_Participants", eventParticipantId, updateObject);
         }
 
-        public void OverrideChildIntoRoom(int eventParticipantId, int roomId)
+        public void OverrideChildIntoRoom(int eventParticipantId, int roomId, int newEventId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -100,6 +100,7 @@ namespace MinistryPlatform.Translation.Repositories
                 { "Event_Participant_ID", eventParticipantId },
                 { "Participation_Status_ID", _applicationConfiguration.CheckedInParticipationStatusId },
                 { "Room_ID", roomId },
+                { "Event_ID", newEventId },
                 { "Time_Confirmed",  DateTime.Now},
             };
 
