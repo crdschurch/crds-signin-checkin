@@ -1,6 +1,8 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
+
 
 import { Event, Room, Group } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
@@ -11,15 +13,22 @@ import { RootService } from '../../../shared/services/root.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
+import { Injectable } from '@angular/core';
+import { CanActivate, CanActivateChild } from '@angular/router';
+
+import { CanDeactivateGuard } from '../../../shared/guards';
+
 @Component({
   templateUrl: 'room-list.component.html',
   styleUrls: ['room-list.component.scss'],
-  providers: [ ]
+  providers: [ CanDeactivateGuard ]
 })
+
 export class RoomListComponent implements OnInit {
   rooms: Room[];
   event: Event = null;
   eventId: string;
+  isDirty = false;
   unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
   public isCollapsed = true;
@@ -62,6 +71,26 @@ export class RoomListComponent implements OnInit {
     this.getData();
   }
 
+  onNotify(message) {
+    console.log("message", message)
+    this.isDirty = message;
+  }
+
+  canDeactivate() {
+    // console.log('canDeactivate?');
+    if (this.isDirty) {
+      let r = confirm('You have unsaved changes. Are you sure you want to leave this page?');
+      if (r == true) {
+          return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+
+  }
+
   public isReady(): boolean {
     return this.event !== undefined && this.rooms !== undefined;
   }
@@ -96,4 +125,5 @@ export class RoomListComponent implements OnInit {
     $event.stopPropagation();
     this.dropdownStatus.isOpen = !this.dropdownStatus.isOpen;
   }
+
 }

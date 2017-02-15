@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
@@ -14,10 +14,11 @@ import * as _ from 'lodash';
 })
 export class RoomComponent implements OnInit {
   @Input() room: Room;
+  @Output() notifyDirty: EventEmitter<boolean> = new EventEmitter<boolean>();
   public pending: boolean;
   private roomForm: FormGroup;
   private origRoomData: Room;
-  public changed: boolean;
+  public _dirty: boolean;
 
   constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService) {
   }
@@ -32,18 +33,18 @@ export class RoomComponent implements OnInit {
 
   add(field) {
     this.room[field]++;
-    this.change();
+    this.dirty = true;
   }
 
   remove(field) {
     if (this.room[field] >= 1) {
       this.room[field]--
-      this.change();
+      this.dirty = true;
     }
   }
   toggle(field) {
     this.room[field] = !this.room[field];
-    this.change();
+    this.dirty = true;
   }
 
   saveRoom() {
@@ -51,15 +52,25 @@ export class RoomComponent implements OnInit {
     this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(room => {
       this.origRoomData = _.clone(this.room);
       this.room = room;
-      this.changed = false;
+      this.dirty = false;
       this.pending = false;
     }, (error) => {
       this.room = this.origRoomData;
-      this.changed = false;
+      this.dirty = false;
       this.pending = false;
       this.rootService.announceEvent('generalError');
     });
     return false;
+  }
+
+  set dirty(isChanged) {
+    console.log(isChanged)
+    this._dirty = isChanged;
+    this.notifyDirty.emit(isChanged);
+  }
+
+  get dirty() {
+    return this._dirty;
   }
 
   hasCapacity() {
@@ -103,10 +114,6 @@ export class RoomComponent implements OnInit {
     }
 
     return ageGrades;
-  }
-
-  change() {
-    this.changed = true;
   }
 
   ngOnInit() {

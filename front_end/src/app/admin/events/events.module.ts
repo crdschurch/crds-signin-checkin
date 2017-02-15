@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { HeaderModule } from '../header';
 import { NewFamilyRegistrationModule } from './new-family-registration';
@@ -16,6 +17,7 @@ import { RoomComponent } from './rooms/room.component';
 import { RoomBumpComponent } from './rooms/alternate-rooms/room-bump.component';
 import { AlternateRoomsComponent } from './rooms/alternate-rooms/alternate-rooms.component';
 import { eventsRouting } from './events.routes';
+import { CanDeactivateGuard } from '../../shared/guards';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,8 @@ import { eventsRouting } from './events.routes';
     NewFamilyRegistrationModule,
     ReactiveFormsModule
   ],
-  exports: [ ]
+  exports: [ ],
+  providers: [ CanDeactivateGuard ]
 })
 
 export class EventsModule { }
