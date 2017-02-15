@@ -120,7 +120,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Extensions\RestSharpExtensionsTest.cs" />
     <Compile Include="Repositories\ChildCheckinRepositoryTest.cs" />
     <Compile Include="Repositories\ChildSigninRepositoryTest.cs" />
     <Compile Include="Extensions\JsonUnmappedDataExtensionsTest.cs" />
@@ -130,7 +129,6 @@
     <Compile Include="Repositories\EventRepositoryTest.cs" />
     <Compile Include="Repositories\GroupRepositoryTest.cs" />
     <Compile Include="Repositories\KioskRepositoryTest.cs" />
-    <Compile Include="Repositories\MinistryPlatformRestRepositoryTest.cs" />
     <Compile Include="Repositories\ParticipantRepositoryTest.cs" />
     <Compile Include="Repositories\RoomRepositoryTest.cs" />
   </ItemGroup>
