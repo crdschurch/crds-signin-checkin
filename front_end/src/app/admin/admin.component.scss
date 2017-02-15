@@ -109,3 +109,7 @@ admin {
 
 .adventure-club-toggle {
 }
+
+/* Print table headings and footers on every page */
+thead {display: table-header-group;}
+tfoot {display: table-header-group;}
