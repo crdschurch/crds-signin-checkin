@@ -53,7 +53,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Capacity')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Capacity" [readonly]="pending" (focus)="highlight($event)" (ngModelChange)="change()">
+      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Capacity" [readonly]="pending" (focus)="highlight($event)" (ngModelChange)="dirty(true)">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Capacity')" [disabled]="pending">+</button>
       </span>
@@ -64,5 +64,5 @@
 <td [ngClass]="{'disabled': pending }" class="text-xs-right">{{room.CheckedIn}}</td>
 <td [ngClass]="{'disabled': pending }" class="text-xs-right">{{getRoomRatioString()}}</td>
 <td [ngClass]="{'disabled': pending }" class="text-xs-right save-button">
-  <a class="btn btn-success btn-sm" (click)="saveRoom()" href="#" [hidden]="!changed">Save</a>
+  <a class="btn btn-success btn-sm" (click)="saveRoom()" href="#" [hidden]="!dirty">Save</a>
 </td>
