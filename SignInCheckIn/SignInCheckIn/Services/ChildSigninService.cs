@@ -289,6 +289,7 @@ namespace SignInCheckIn.Services
                     ParticipantStatusId = 3, // Status ID of 3 = "Attended"
                     FirstName = participant.FirstName,
                     LastName = participant.LastName,
+                    Nickname = participant.Nickname,
                     TimeIn = DateTime.Now,
                     OpportunityId = null,
                     RoomId = eventGroup?.RoomReservation.RoomId,
@@ -416,7 +417,7 @@ namespace SignInCheckIn.Services
                     printerId = kioskPrinterMap.PrinterId,
                     content = mergedPdf + "=",
                     contentType = "pdf_base64",
-                    title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.FirstName} (id #{participant.ParticipantId})",
+                    title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.Nickname} (id #{participant.ParticipantId})",
                     source = "CRDS Checkin"
                 };
 
