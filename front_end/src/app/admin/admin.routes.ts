@@ -12,7 +12,7 @@ const adminRoutes: Routes = [
     children: [
       { path: 'dashboard', redirectTo: 'events' },
       { path: 'sign-in', component: SignInComponent },
-      { path: 'events', children: [...eventsRoutes] }
+      { path: 'events', children: [...eventsRoutes], canActivate: [CanActivateIfLoggedInGuard] }
     ]
   }
 ];

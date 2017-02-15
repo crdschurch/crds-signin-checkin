@@ -13,9 +13,6 @@ import { RootService } from '../../../shared/services/root.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
-import { Injectable } from '@angular/core';
-import { CanActivate, CanActivateChild } from '@angular/router';
-
 import { CanDeactivateGuard } from '../../../shared/guards';
 
 @Component({
@@ -71,16 +68,14 @@ export class RoomListComponent implements OnInit {
     this.getData();
   }
 
-  onNotify(message) {
-    console.log("message", message)
+  onNotifyDirty(message) {
     this.isDirty = message;
   }
 
   canDeactivate() {
-    // console.log('canDeactivate?');
     if (this.isDirty) {
-      let r = confirm('You have unsaved changes. Are you sure you want to leave this page?');
-      if (r == true) {
+      let c = confirm('You have unsaved changes. Are you sure you want to leave this page?');
+      if (c) {
           return true;
       } else {
         return false;

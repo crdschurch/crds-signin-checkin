@@ -9,7 +9,6 @@ export class Child {
   HouseholdPositionId: number;
   FirstName: string;
   LastName: string;
-  Nickname: string;
   DateOfBirth: Date;
   Selected: boolean;
   ParticipationStatusId: number;

@@ -64,7 +64,6 @@ export class RoomComponent implements OnInit {
   }
 
   set dirty(isChanged) {
-    console.log(isChanged)
     this._dirty = isChanged;
     this.notifyDirty.emit(isChanged);
   }
