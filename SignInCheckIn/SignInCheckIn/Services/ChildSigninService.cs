@@ -391,7 +391,7 @@ namespace SignInCheckIn.Services
             {
                 var printValues = new Dictionary<string, string>
                 {
-                    {"ChildName", participant.FirstName},
+                    {"ChildName", participant.Nickname},
                     {"ChildRoomName1", participant.AssignedRoomName},
                     {"ChildRoomName2", participant.AssignedSecondaryRoomName},
                     {"ChildEventName", participantEventMapDto.CurrentEvent.EventTitle},
