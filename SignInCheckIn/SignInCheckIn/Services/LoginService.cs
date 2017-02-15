@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.Authentication;
 using SignInCheckIn.Services.Interfaces;
@@ -28,9 +29,9 @@ namespace SignInCheckIn.Services
 
             LoginReturn loginReturn = new LoginReturn
             {
-                UserToken = authData["token"].ToString(),
-                UserTokenExp = authData["exp"].ToString(),
-                RefreshToken = authData["refreshToken"].ToString()
+                UserToken = authData.AccessToken,
+                UserTokenExp = authData.ExpiresIn + "",
+                RefreshToken = authData.RefreshToken
             };
 
             var roles = _authenticationRepository.GetUserRolesFromToken(loginReturn.UserToken);

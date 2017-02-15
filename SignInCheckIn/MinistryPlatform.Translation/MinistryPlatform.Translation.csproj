@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,6 +71,10 @@
       <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Crossroads.Web.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Crossroads.Web.Common.1.0.12\lib\net45\Crossroads.Web.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -83,14 +89,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\JsonUnmappedDataExtensions.cs" />
     <Compile Include="Extensions\MpEventGroupDtoExtensions.cs" />
-    <Compile Include="Extensions\RestSharpExtensions.cs" />
-    <Compile Include="Models\Attributes\MpRestApiPrimaryKey.cs" />
-    <Compile Include="Models\Attributes\MpRestApiTable.cs" />
     <Compile Include="Models\DTO\MpBumpingRoomsDto.cs" />
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
@@ -113,9 +117,7 @@
     <Compile Include="Models\DTO\MpPrinterMapDto.cs" />
     <Compile Include="Models\DTO\MpRoomDto.cs" />
     <Compile Include="Models\DTO\MpAgeRangeDto.cs" />
-    <Compile Include="Repositories\ApiUserRepository.cs" />
     <Compile Include="Repositories\AttributeRepository.cs" />
-    <Compile Include="Repositories\AuthenticationRepository.cs" />
     <Compile Include="Repositories\ChildCheckinRepository.cs" />
     <Compile Include="Repositories\ChildSigninRepository.cs" />
     <Compile Include="Repositories\ConfigRepository.cs" />
@@ -123,9 +125,7 @@
     <Compile Include="Repositories\EventRepository.cs" />
     <Compile Include="Repositories\GroupLookupRepository.cs" />
     <Compile Include="Repositories\GroupRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IApiUserRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAttributeRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IAuthenticationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IChildCheckinRepository.cs" />
     <Compile Include="Repositories\Interfaces\IChildSigninRepository.cs" />
     <Compile Include="Repositories\Interfaces\IConfigRepository.cs" />
@@ -134,11 +134,9 @@
     <Compile Include="Repositories\Interfaces\IGroupLookupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IGroupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IKioskRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IMinistryPlatformRestRepository.cs" />
     <Compile Include="Repositories\Interfaces\IParticipantRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRoomRepository.cs" />
     <Compile Include="Repositories\KioskRepository.cs" />
-    <Compile Include="Repositories\MinistryPlatformRestRepository.cs" />
     <Compile Include="Repositories\ParticipantRepository.cs" />
     <Compile Include="Repositories\RoomRepository.cs" />
   </ItemGroup>
@@ -148,9 +146,18 @@
       <Name>Crossroads.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\Attributes\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
+  <Import Project="..\packages\Crossroads.Web.Common.1.0.12\build\Crossroads.Web.Common.targets" Condition="Exists('..\packages\Crossroads.Web.Common.1.0.12\build\Crossroads.Web.Common.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Crossroads.Web.Common.1.0.12\build\Crossroads.Web.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Crossroads.Web.Common.1.0.12\build\Crossroads.Web.Common.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

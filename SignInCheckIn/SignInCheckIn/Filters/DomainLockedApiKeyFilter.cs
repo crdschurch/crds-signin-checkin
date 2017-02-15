@@ -7,8 +7,8 @@ using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using Crossroads.Web.Common.MinistryPlatform;
 using log4net;
-using MinistryPlatform.Translation.Models.Attributes;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json;
 
