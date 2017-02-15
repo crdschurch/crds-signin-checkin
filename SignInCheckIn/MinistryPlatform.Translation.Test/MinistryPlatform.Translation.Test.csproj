@@ -75,8 +75,8 @@
       <HintPath>..\packages\FluentAssertions.4.15.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Moq, Version=4.5.22.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
@@ -123,6 +123,7 @@
     <Compile Include="Repositories\GroupRepositoryTest.cs" />
     <Compile Include="Repositories\KioskRepositoryTest.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepositoryTest.cs" />
+    <Compile Include="Repositories\ParticipantRepositoryTest.cs" />
     <Compile Include="Repositories\RoomRepositoryTest.cs" />
   </ItemGroup>
   <ItemGroup>

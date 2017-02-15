@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 import { RoomComponent } from './room';
 import { HttpClientService } from '../shared/services';
-import { Child } from '../shared/models/child';
-import { Event } from '../shared/models/event';
+import { Child, Event, Room } from '../shared/models';
 
 @Injectable()
 export class ChildCheckinService {
@@ -12,9 +12,15 @@ export class ChildCheckinService {
   private _roomSetUpFunc: Function;
   private _selectedEvent: Event;
   private url: string = '';
+  private forceChildReloadSource = new Subject<string>();
+  forceChildReload$ = this.forceChildReloadSource.asObservable();
 
   constructor(private http: HttpClientService) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/checkin`;
+  }
+
+  forceChildReload() {
+    this.forceChildReloadSource.next();
   }
 
   getChildrenForRoom(roomId: number, eventId: number = null) {
@@ -43,6 +49,33 @@ export class ChildCheckinService {
 
     return this.http.put(url, child)
                     .map(res => Child.fromJson(res.json()))
+                    .catch(this.handleError);
+  }
+
+  getChildByCallNumber(eventId: number, callNumber: string, roomId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${callNumber}/rooms/${roomId}`;
+    return this.http.get(url)
+                    .map(res => {
+                      return Child.fromJson(res.json());
+                    }).catch(e => {
+                      return Observable.throw(e);
+                    });
+  }
+
+  overrideChildIntoRoom(child: Child, eventId: number, roomId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/rooms/${roomId}/override`;
+    return this.http.put(url, {})
+                    .map(res => {
+                      return Observable.of();
+                    }).catch(e => {
+                      return Observable.throw(e.json().errors[0]);
+                    });
+  }
+
+  getEventRoomDetails(eventId: number, roomId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`;
+    return this.http.get(url)
+                    .map(res => Room.fromJson(res.json()))
                     .catch(this.handleError);
   }
 

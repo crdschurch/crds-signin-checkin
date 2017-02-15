@@ -12,10 +12,10 @@
 .toast-message {
   -ms-word-wrap: break-word;
   word-wrap: break-word;
-}
-.toast-message a,
-.toast-message label {
-  color: #ffffff;
+  a, label {
+    color: inherit;
+    font-weight: bold;
+  }
 }
 .toast-message a:hover {
   color: #cccccc;
@@ -199,7 +199,7 @@ button.toast-close-button {
   margin: auto;
   left: 0;
   right: 0;
-  top: 13%;
+  top: 1%;
   max-width: 1140px;
 }
 .toast {

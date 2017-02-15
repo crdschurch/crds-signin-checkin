@@ -69,8 +69,8 @@
       <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -91,9 +91,15 @@
     <Compile Include="Extensions\RestSharpExtensions.cs" />
     <Compile Include="Models\Attributes\MpRestApiPrimaryKey.cs" />
     <Compile Include="Models\Attributes\MpRestApiTable.cs" />
+    <Compile Include="Models\DTO\MpBumpingRoomsDto.cs" />
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
     <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpGroupAttributeDto.cs" />
+    <Compile Include="Models\DTO\MpGroupParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpHouseholdDto.cs" />
+    <Compile Include="Models\DTO\MpHouseholdParticipantsDto.cs" />
+    <Compile Include="Models\DTO\MpNewParticipantDto.cs" />
     <Compile Include="Models\DTO\MpParticipantDto.cs" />
     <Compile Include="Models\DTO\MpContactDto.cs" />
     <Compile Include="Models\DTO\MpAttributeTypeDto.cs" />
@@ -115,6 +121,7 @@
     <Compile Include="Repositories\ConfigRepository.cs" />
     <Compile Include="Repositories\ContactRepository.cs" />
     <Compile Include="Repositories\EventRepository.cs" />
+    <Compile Include="Repositories\GroupLookupRepository.cs" />
     <Compile Include="Repositories\GroupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IApiUserRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAttributeRepository.cs" />
@@ -124,12 +131,15 @@
     <Compile Include="Repositories\Interfaces\IConfigRepository.cs" />
     <Compile Include="Repositories\Interfaces\IContactRepository.cs" />
     <Compile Include="Repositories\Interfaces\IEventRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IGroupLookupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IGroupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IKioskRepository.cs" />
     <Compile Include="Repositories\Interfaces\IMinistryPlatformRestRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IParticipantRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRoomRepository.cs" />
     <Compile Include="Repositories\KioskRepository.cs" />
     <Compile Include="Repositories\MinistryPlatformRestRepository.cs" />
+    <Compile Include="Repositories\ParticipantRepository.cs" />
     <Compile Include="Repositories\RoomRepository.cs" />
   </ItemGroup>
   <ItemGroup>

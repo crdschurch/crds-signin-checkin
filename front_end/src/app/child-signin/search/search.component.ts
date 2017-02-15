@@ -48,7 +48,11 @@ export class SearchComponent implements OnInit {
         }
       }, (err) => {
         this.isReady = true;
-        this.rootService.announceEvent('generalError');
+        if (err === 'No current events for site') {
+          this.rootService.announceEvent('noCurrentEvent');
+        } else {
+          this.rootService.announceEvent('generalError');
+        }
       }
     );
     } else {

@@ -148,10 +148,6 @@ a.btn-primary:not([href]):not([tabindex]) {
     color: white !important;
 }
 
-.add-child-guest {
-  color: #fff;
-}
-
 .btn-primary:active,
 .btn-primary.active {
   background: lighten($brand-blue, 30%);
@@ -170,10 +166,47 @@ a.btn-primary.active:not([href]):not([tabindex]) {
   line-height: 1;
 }
 
-.right-call-number {
+.line-height-2 {
   line-height: 2;
 }
 
 .nav-link {
-  cursor: pointer;  
+  cursor: pointer;
+}
+
+datepicker {
+  .btn-info {
+    .text-muted {
+      color: #fff !important;
+    }
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.footer,
+.card {
+  ::selection {
+    background: transparent;
+  }
+}
+
+.manage-rooms-table {
+  @include media-breakpoint-down(lg) {
+    display: block;
+    width: 100%;
+    min-height: 0%;
+    overflow-x: auto;
+
+    td, th {
+      padding: $table-sm-cell-padding;
+    }
+  }
+
+  .tag.tag-info {
+    margin-left: 5px;
+    vertical-align: text-top;
+  }
 }

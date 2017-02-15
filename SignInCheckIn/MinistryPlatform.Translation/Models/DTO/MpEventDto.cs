@@ -10,6 +10,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Event_ID")]
         public int EventId { get; set; }
 
+        [JsonProperty(PropertyName = "Parent_Event_ID")]
+        public int? ParentEventId { get; set; }
+
         [JsonProperty(PropertyName = "Event_Title")]
         public string EventTitle { get; set; }
 
@@ -21,6 +24,9 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Event_Type")]
         public string EventType { get; set; }
+
+        [JsonProperty(PropertyName = "Event_Type_ID")]
+        public int EventTypeId { get; set; }
 
         [JsonProperty(PropertyName = "Early_Check-in_Period")]
         public int? EarlyCheckinPeriod { get; set; }
@@ -36,5 +42,23 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Location_ID")]
         public int LocationId { get; set; }
+
+        [JsonProperty(PropertyName = "Program_ID")]
+        public int ProgramId { get; set; }
+
+        [JsonProperty(PropertyName = "Primary_Contact")]
+        public int PrimaryContact { get; set; }
+
+        [JsonProperty(PropertyName = "Minutes_for_Setup")]
+        public int MinutesForSetup { get; set; }
+
+        [JsonProperty(PropertyName = "Minutes_for_Cleanup")]
+        public int MinutesForCleanup { get; set; }
+
+        [JsonProperty(PropertyName = "Cancelled")]
+        public bool Cancelled { get; set; }
+
+        [JsonProperty(PropertyName = "Allow_Check-in")]
+        public bool AllowCheckIn { get; set; }
     }
 }

@@ -21,6 +21,7 @@
   </div>
   <div class="mt-1" *ngIf="isOpen" class="calendar">
     <datepicker 
+      [maxDate]="maxDate"
       [name]="name" 
       [(ngModel)]="date" 
       [showWeeks]="false" 

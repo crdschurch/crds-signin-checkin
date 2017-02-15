@@ -39,5 +39,17 @@ namespace MinistryPlatform.Translation.Repositories
 
             return contacts;
         }
+
+        public MpHouseholdDto CreateHousehold(string token, MpHouseholdDto mpHouseholdDto)
+        {
+            List<string> householdColumns = new List<string>
+            {
+                "Households.Household_ID",
+                "Households.Home_Phone",
+                "Households.Household_Name"
+            };
+
+           return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpHouseholdDto, householdColumns);
+        }
     }
 }

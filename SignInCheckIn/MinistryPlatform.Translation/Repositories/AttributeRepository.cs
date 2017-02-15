@@ -27,7 +27,9 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpAttributeDto> GetAttributesByAttributeTypeId(int attributeTypeId, string authenticationToken = null)
         {
-            return GetAttributesByAttributeTypeId(new[] {attributeTypeId}, authenticationToken);
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+
+            return GetAttributesByAttributeTypeId(new[] {attributeTypeId}, token);
         }
 
         public List<MpAttributeDto> GetAttributesByAttributeTypeId(IEnumerable<int> attributeTypeIds, string authenticationToken = null)

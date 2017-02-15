@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
+using MinistryPlatform.Translation.Models.DTO;
+using Newtonsoft.Json;
 
 namespace SignInCheckIn.Models.DTO
 {
@@ -20,16 +23,31 @@ namespace SignInCheckIn.Models.DTO
         public string AssignedRoomName { get; set; }
         public int? AssignedSecondaryRoomId { get; set; } // adventure club field
         public string AssignedSecondaryRoomName { get; set; } // adventure club field
+        public string GroupName { get; set; }
+        public DateTime? TimeIn { get; set; } = null;
+        public DateTime? TimeConfirmed { get; set; } = null;
+        [JsonIgnore]
+        public DateTime? TimeOut { get; set; } = null;
+        [JsonIgnore]
+        public int Notes { get; set; }
+        [JsonIgnore]
+        public int? GroupParticipantId { get; set; }
+        [JsonIgnore]
+        public int? CheckinStation { get; set; }
+        [JsonIgnore]
+        public bool CallParents { get; set; }
+        [JsonIgnore]
+        public int? GroupRoleId { get; set; }
+        [JsonIgnore]
+        public int? ResponseId { get; set; }
+        [JsonIgnore]
+        public int? OpportunityId { get; set; }
+        [JsonIgnore]
+        public bool RegistrantMessageSent { get; set; }
+        [JsonIgnore]
+        public int EventId { get; set; }
 
-        public string CallNumber
-        {
-            // TODO Faking out a call number for now (last 4 of EventParticipantId), eventually need to store a real call number on Event Participant
-            get
-            {
-                var c = $"0000{EventParticipantId}";
-                return c.Substring(c.Length - 4);
-            }
-        }
+        public string CallNumber { get; set; }
 
         public string SignInErrorMessage { get; set; }
 
@@ -40,5 +58,17 @@ namespace SignInCheckIn.Models.DTO
         public bool NotSignedIn => Selected && AssignedRoomId == null && string.IsNullOrWhiteSpace(SignInErrorMessage);
 
         public int? GroupId { get; set; }
+
+        public List<ContactDto> HeadsOfHousehold;
+
+        public bool GuestSignin { get; set; }
+
+        public int? YearGrade { get; set; }
+
+        public string CheckinPhone { get; set; }
+
+        public int? CheckinHouseholdId { get; set; }
+
+        public bool DuplicateSignIn { get; set; }
     }
 }

@@ -1,16 +1,21 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+
 @Component({
   selector: 'crds-datepicker',
   templateUrl: 'crds-datepicker.component.html',
-  styleUrls: ['crds-datepicker.component.scss']
+  styleUrls: ['crds-datepicker.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
+
 export class CrdsDatePickerComponent implements OnInit {
   @Input() name: string;
   @Input() date: Date;
   @Output() dateChange: EventEmitter<Date> = new EventEmitter<Date>();
   @Input() isOpen: boolean = false;
   @Input() autoClose: boolean = false;
+  @Input() maxDate: Date;
   @Output() onChange: EventEmitter<any> = new EventEmitter<any>();
+
 
   constructor() { }
 

@@ -1,0 +1,68 @@
+<td [ngClass]="{'disabled': pending }">
+  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
+    <div *ngFor="let ageGrade of ageRangeAndGrades();">
+      {{ ageGrade }}
+    </div>
+  </a>
+</td>
+<td [ngClass]="{'disabled': pending }">
+  {{room.RoomName}} <label class="tag tag-info" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</label>
+  <br>
+  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
+</td>
+<td [ngClass]="{'disabled': pending }">
+  <span *ngIf="hasCapacity()">
+    <span *ngIf="checkedInEqualsCapacity()">
+      <!-- red -->
+      <svg class="brand-danger" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+      <g>
+      </g>
+      	<path d="M18.286 24.554v-3.393q0-0.25-0.17-0.42t-0.402-0.17h-3.429q-0.232 0-0.402 0.17t-0.17 0.42v3.393q0 0.25 0.17 0.42t0.402 0.17h3.429q0.232 0 0.402-0.17t0.17-0.42zM18.25 17.875l0.321-8.196q0-0.214-0.179-0.339-0.232-0.196-0.429-0.196h-3.929q-0.196 0-0.429 0.196-0.179 0.125-0.179 0.375l0.304 8.161q0 0.179 0.179 0.295t0.429 0.116h3.304q0.25 0 0.42-0.116t0.188-0.295zM18 1.196l13.714 25.143q0.625 1.125-0.036 2.25-0.304 0.518-0.83 0.821t-1.134 0.304h-27.429q-0.607 0-1.134-0.304t-0.83-0.821q-0.661-1.125-0.036-2.25l13.714-25.143q0.304-0.554 0.839-0.875t1.161-0.321 1.161 0.321 0.839 0.875z" fill="#000000" />
+      </svg>
+    </span>
+    <span *ngIf="signedInWillEqualCapacity()">
+      <!-- yellow -->
+      <svg class="brand-warning" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+      <g>
+      </g>
+      	<path d="M18.286 24.554v-3.393q0-0.25-0.17-0.42t-0.402-0.17h-3.429q-0.232 0-0.402 0.17t-0.17 0.42v3.393q0 0.25 0.17 0.42t0.402 0.17h3.429q0.232 0 0.402-0.17t0.17-0.42zM18.25 17.875l0.321-8.196q0-0.214-0.179-0.339-0.232-0.196-0.429-0.196h-3.929q-0.196 0-0.429 0.196-0.179 0.125-0.179 0.375l0.304 8.161q0 0.179 0.179 0.295t0.429 0.116h3.304q0.25 0 0.42-0.116t0.188-0.295zM18 1.196l13.714 25.143q0.625 1.125-0.036 2.25-0.304 0.518-0.83 0.821t-1.134 0.304h-27.429q-0.607 0-1.134-0.304t-0.83-0.821q-0.661-1.125-0.036-2.25l13.714-25.143q0.304-0.554 0.839-0.875t1.161-0.321 1.161 0.321 0.839 0.875z" fill="#000000" />
+      </svg>
+    </span>
+  </span>
+</td>
+<td [ngClass]="{'disabled': pending }">
+  <input class='tgl tgl-light' id='allow-signin-{{room.RoomId}}' type='checkbox' (change)="toggle('AllowSignIn')" [checked]="room.AllowSignIn">
+  <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' (click)="toggleClick()"><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+</td>
+<td [ngClass]="{'disabled': pending }">
+  <div class="number-stepper">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')" [disabled]="pending">-</button>
+      </span>
+      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Volunteers" [readonly]="pending" (focus)="highlight($event)">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="add('Volunteers')" [disabled]="pending">+</button>
+      </span>
+    </div>
+  </div>
+</td>
+<td [ngClass]="{'disabled': pending }">
+  <div class="number-stepper">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="remove('Capacity')" [disabled]="pending">-</button>
+      </span>
+      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Capacity" [readonly]="pending" (focus)="highlight($event)" (ngModelChange)="change()">
+      <span class="input-group-btn">
+        <button class="btn btn-secondary" type="button" (click)="add('Capacity')" [disabled]="pending">+</button>
+      </span>
+    </div>
+  </div>
+</td>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right">{{room.SignedIn}}</td>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right">{{room.CheckedIn}}</td>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right">{{getRoomRatioString()}}</td>
+<td [ngClass]="{'disabled': pending }" class="text-xs-right save-button">
+  <a class="btn btn-success btn-sm" (click)="saveRoom()" href="#" [hidden]="!changed">Save</a>
+</td>

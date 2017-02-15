@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
-import { ApiService, SetupService } from '../shared/services';
 import { Observable } from 'rxjs/Observable';
 
+import { Child, Room } from '../shared/models';
+import { Constants } from '../shared/constants';
 import { Event, MachineConfiguration } from '../shared/models';
+import { ApiService, SetupService, RootService, ChannelEvent, ChannelService } from '../shared/services';
 import { ChildCheckinService } from './child-checkin.service';
 
 @Component({
@@ -15,16 +17,31 @@ import { ChildCheckinService } from './child-checkin.service';
 export class ChildCheckinComponent implements OnInit {
   @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
   @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
+  @ViewChild('childSearchModal') public childSearchModal: ModalDirective;
   private kioskDetails: MachineConfiguration;
 
-  clock = Observable.interval(10000).map(() => new Date());
+  clock = Observable.interval(10000).startWith(0).map(() => new Date());
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
+  isOverrideProcessing: boolean;
+  callNumber: string = '';
+  overrideChild: Child = new Child();
+  room: Room = new Room();
 
-  constructor(private setupService: SetupService, private apiService: ApiService,  private childCheckinService: ChildCheckinService) {
+  constructor(private setupService: SetupService,
+    private apiService: ApiService,
+    private childCheckinService: ChildCheckinService,
+    private rootService: RootService,
+    private channelService: ChannelService) {
+
     this.kioskDetails = new MachineConfiguration();
     this.ready = false;
+    this.isOverrideProcessing = false;
+  }
+
+  public ngOnInit() {
+    this.getData();
   }
 
   private getData() {
@@ -51,11 +68,33 @@ export class ChildCheckinComponent implements OnInit {
             this.selectedEvent = this.todaysEvents[0];
           }
         }
+
+        this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
+        this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
+        this.childCheckinService.getEventRoomDetails(this.selectedEvent.EventId, this.kioskDetails.RoomId).subscribe((room) => {
+          this.room = room;
+        });
+
+        this.subscribeToSignalr();
+
         this.ready = true;
       },
       error => {
         console.error(error);
         this.ready = true;
+      }
+    );
+  }
+
+  subscribeToSignalr() {
+    // Get an observable for events emitted on this channel
+    let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
+    this.channelService.sub(channelName).subscribe(
+      (x: ChannelEvent) => {
+        this.room = Room.fromJson(x.Data);
+      },
+      (error: any) => {
+        console.warn('Attempt to join channel failed!', error);
       }
     );
   }
@@ -72,14 +111,73 @@ export class ChildCheckinComponent implements OnInit {
     this.childCheckinService.selectedEvent = event;
   }
 
+  delete(e) {
+    this.callNumber = this.callNumber.slice(0, -1);
+  }
+
+  clear() {
+    this.callNumber = '';
+  }
+
   public getKioskDetails() {
     return this.kioskDetails;
   }
 
-  public ngOnInit() {
-    this.getData();
-    this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
-    this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
+  private resetShowChildModal() {
+    this.clear();
+    this.overrideChild = new Child();
+  }
+
+  setCallNumber(num: string) {
+    // set call number
+    if (this.callNumber.length < 4) {
+      this.callNumber = `${this.callNumber}${num}`;
+    }
+    // if full call number, search child
+    if (this.callNumber.length === 4) {
+      this.isOverrideProcessing = true;
+      this.childCheckinService.getChildByCallNumber(this.selectedEvent.EventId,
+        this.callNumber,
+        this.kioskDetails.RoomId).subscribe((child: Child) => {
+          this.overrideChild = child;
+          this.isOverrideProcessing = false;
+      }, (error) => {
+        switch (error.status) {
+          case 404:
+            this.rootService.announceEvent('checkinChildNotFound');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+        }
+        this.callNumber = '';
+        this.isOverrideProcessing = false;
+      });
+    }
+  }
+
+  overrideCheckin() {
+    this.isOverrideProcessing = true;
+    this.childCheckinService.overrideChildIntoRoom(this.overrideChild, this.selectedEvent.EventId, this.kioskDetails.RoomId)
+      .subscribe((child: Child) => {
+        this.hideChildSearchModal();
+        this.rootService.announceEvent('checkinOverrideSuccess');
+        this.isOverrideProcessing = false;
+        this.childCheckinService.forceChildReload();
+      }, (errorLabel) => {
+        switch (errorLabel) {
+          case 'capacity':
+            this.rootService.announceEvent('checkinOverrideRoomCapacityError');
+            break;
+          case 'closed':
+            this.rootService.announceEvent('checkinOverrideRoomClosedError');
+            break;
+          default:
+            this.rootService.announceEvent('generalError');
+            break;
+        }
+        this.isOverrideProcessing = false;
+      });
   }
 
   public showServiceSelectModal() {
@@ -93,5 +191,13 @@ export class ChildCheckinComponent implements OnInit {
   public showChildDetailModal() {
     this.childDetailModal.show();
   }
-}
 
+  public showChildSearchModal() {
+    this.childSearchModal.show();
+  }
+
+  public hideChildSearchModal() {
+    this.childSearchModal.hide();
+    this.resetShowChildModal();
+  }
+}

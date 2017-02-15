@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Room } from '../shared/models';
+import { Room, NewFamily, Child } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -22,12 +22,12 @@ describe('AdminService', () => {
 
   it('should successfully get list of Rooms', () => {
     let eventId = '4525323';
-    let expectedRooms = [ new Room() ];
+    let expectedRooms = [ Room.fromJson({}) ];
     (<jasmine.Spy>httpClientService.get).and.returnValue(response);
     (<jasmine.Spy>responseObject.json).and.returnValue(expectedRooms);
 
-    fixture.getRooms(eventId).subscribe((rooms: Room[]) => {
-      expect(rooms).toBe(expectedRooms);
+    fixture.getRooms(eventId).subscribe((rooms) => {
+      expect(rooms).toEqual(expectedRooms);
       expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms`);
     });
   });
@@ -41,12 +41,12 @@ describe('AdminService', () => {
     room.EventRoomId = eventRoomId;
     room.RoomId = roomId;
 
-    let expectedRoom = new Room();
+    let expectedRoom = Room.fromJson({});
     (<jasmine.Spy>httpClientService.put).and.returnValue(response);
     (<jasmine.Spy>responseObject.json).and.returnValue(expectedRoom);
 
     fixture.updateRoom(eventId, roomId, room).subscribe((updatedRoom: Room) => {
-      expect(updatedRoom).toBe(expectedRoom);
+      expect(updatedRoom).toEqual(expectedRoom);
       expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}`, room);
     });
   });
@@ -84,7 +84,55 @@ describe('AdminService', () => {
       fixture.importEvent(destinationEventId, sourceEventId).subscribe((r) => {
         expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${destinationEventId}/import/${sourceEventId}`, null, null);
       });
+    });
+  });
 
+  describe('#createNewFamily', () => {
+    it('should return list of rooms imported', () => {
+      let family = new NewFamily();
+
+      (<jasmine.Spy>httpClientService.post).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(undefined);
+
+      fixture.createNewFamily(family).subscribe((res) => {
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`, family);
+      });
+
+    });
+  });
+
+  describe('#getChildrenForEvent', () => {
+    it('should return list of children for the event', () => {
+      let children: Child[] = [
+        new Child(),
+        new Child()
+      ];
+      children[0].ContactId = 12345;
+      children[1].ContactId = 67890;
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(children);
+
+      let result = fixture.getChildrenForEvent(231);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/231/children`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((c) => {
+        expect(c[0].ContactId).toEqual(children[0].ContactId);
+      });
+    });
+  });
+
+  describe('#reprint', () => {
+    it('should reprint name tag', () => {
+      let participantEventId = 123;
+
+      (<jasmine.Spy>httpClientService.post).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue({});
+
+      fixture.reprint(participantEventId).subscribe((res) => {
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/participant/${participantEventId}/print`, {});
+      });
     });
   });
 

@@ -1,0 +1,10 @@
+.modal {
+  a.btn-primary.active:not([href]):not([tabindex]) {
+    color: white!important;
+  }
+}
+
+ul.dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
+}

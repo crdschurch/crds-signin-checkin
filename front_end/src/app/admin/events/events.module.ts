@@ -3,16 +3,18 @@ import { SharedModule } from '../../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { HeaderModule } from '../header';
+import { NewFamilyRegistrationModule } from './new-family-registration';
+import { ManageChildrenComponent } from './manage-children/manage-children.component';
 import { EventImportComponent } from './import/event-import.component';
 import { EventListComponent } from './event-list.component';
 import { EventResetComponent } from './reset/event-reset.component';
-import { RoomListComponent } from '../rooms/room-list.component';
-import { RoomGroupListComponent } from '../rooms/room-group-list.component';
-import { RoomGroupComponent } from '../rooms/room-group.component';
-import { RoomComponent } from '../rooms/room.component';
-import { RoomBumpComponent } from '../rooms/alternate-rooms/room-bump.component';
-import { AlternateRoomsComponent } from '../rooms/alternate-rooms/alternate-rooms.component';
-import { HeaderComponent } from '../header/header.component';
+import { RoomListComponent } from './rooms/room-list.component';
+import { RoomGroupListComponent } from './rooms/room-group-list.component';
+import { RoomGroupComponent } from './rooms/room-group.component';
+import { RoomComponent } from './rooms/room.component';
+import { RoomBumpComponent } from './rooms/alternate-rooms/room-bump.component';
+import { AlternateRoomsComponent } from './rooms/alternate-rooms/alternate-rooms.component';
 import { eventsRouting } from './events.routes';
 
 @NgModule({
@@ -23,8 +25,8 @@ import { eventsRouting } from './events.routes';
     RoomListComponent,
     RoomGroupListComponent,
     RoomGroupComponent,
-    HeaderComponent,
     RoomComponent,
+    ManageChildrenComponent,
     AlternateRoomsComponent,
     RoomBumpComponent
   ],
@@ -32,6 +34,8 @@ import { eventsRouting } from './events.routes';
     eventsRouting,
     SharedModule,
     MomentModule,
+    HeaderModule,
+    NewFamilyRegistrationModule,
     ReactiveFormsModule
   ],
   exports: [ ]

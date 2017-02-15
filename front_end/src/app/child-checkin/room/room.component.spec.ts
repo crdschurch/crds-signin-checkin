@@ -5,6 +5,8 @@ import { Child } from '../../shared/models/child';
 
 let fixture: RoomComponent;
 let childCheckinServiceStub: any = {
+  forceChildReload$: Observable.of(),
+  forceChildReload(): any {},
   getChildrenForRoom(roomId: number, eventId: number = null): any {
     let childrenAvailable: Array<Child> = [];
 

@@ -15,6 +15,7 @@ export class Room {
   AssignedGroups: Group[];
   BumpingRuleId: number;
   BumpingRulePriority: number;
+  AdventureClub: boolean;
 
   static fromJsons(jsons: any): Room[] {
     let rooms: Room[] = [];
@@ -41,7 +42,7 @@ export class Room {
     room.SignedIn = json.SignedIn;
     room.CheckedIn = json.CheckedIn;
     room.Label = json.Label;
-    room.Label = json.Label;
+    room.AdventureClub = json.AdventureClub;
     room.BumpingRuleId = json.BumpingRuleId;
     room.BumpingRulePriority = json.BumpingRulePriority;
     room.AssignedGroups = json.AssignedGroups !== undefined && json.AssignedGroups !== null && json.AssignedGroups.length !== 0
@@ -50,13 +51,18 @@ export class Room {
     return room;
   }
 
-  getSelectionDescription(): string {
+  getSelectionDescription(split = true): any {
     if (this.AssignedGroups === undefined || this.AssignedGroups === null || this.AssignedGroups.length === 0) {
       return '';
     }
 
     let selected = this.AssignedGroups.map((g) => { return g.getSelectionDescription(); }).filter((g) => { return g !== null; } );
-    return selected.join('; ');
+
+    if (split) {
+      return selected.join('; ');
+    }
+
+    return selected;
   }
 
   getRoomNumber() {

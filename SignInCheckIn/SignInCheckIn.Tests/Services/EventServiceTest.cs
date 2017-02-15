@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Crossroads.Utilities.Services.Interfaces;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -16,6 +18,8 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IEventRepository> _eventRepository;
         private Mock<IConfigRepository> _configRepository;
         private Mock<IRoomRepository> _roomRepository;
+        private Mock<IApplicationConfiguration> _applicationConfiguation;
+        private Mock<IParticipantRepository> _participantRepository;
 
         private EventService _fixture;
 
@@ -27,6 +31,8 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository = new Mock<IEventRepository>();
             _configRepository = new Mock<IConfigRepository>();
             _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
+            _applicationConfiguation = new Mock<IApplicationConfiguration>(MockBehavior.Strict);
+            _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
 
             var mpConfigDtoEarly = new MpConfigDto
             {
@@ -47,7 +53,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
-            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object);
+            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object, _participantRepository.Object);
         }
 
         [Test]
@@ -70,7 +76,7 @@ namespace SignInCheckIn.Tests.Services
             var start = new DateTime(2016, 10, 9);
             var end = new DateTime(2016, 10, 12);
             const int site = 1;
-            _eventRepository.Setup(m => m.GetEvents(start, end, site)).Returns(mpEventDtos);
+            _eventRepository.Setup(m => m.GetEvents(start, end, site, false)).Returns(mpEventDtos);
 
             // Act
             var result = _fixture.GetCheckinEvents(start, end, site);
@@ -118,7 +124,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId)).Returns(events);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId, false)).Returns(events);
             var result = _fixture.GetCurrentEventForSite(siteId);
             _eventRepository.VerifyAll();
 
@@ -223,5 +229,174 @@ namespace SignInCheckIn.Tests.Services
             response.Count.Should().Be(eventRooms.Count);
         }
 
+        [Test]
+        public void ItShouldCreateSubevent()
+        {
+            // Arrange
+            var token = "123abc";
+            var eventId = 1234567;
+
+            List<MpEventDto> events = new List<MpEventDto>();
+
+            MpEventDto parentEvent = new MpEventDto
+            {
+                EventId = 1234567
+            };
+
+            events.Add(parentEvent);
+
+            MpEventDto childEvent = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 234567
+            };
+
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
+            _eventRepository.Setup(m => m.CreateSubEvent(token, It.IsAny<MpEventDto>())).Returns(childEvent);
+            _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            // Act
+            var result = _fixture.GetEventMaps(token, eventId);
+
+            // Assert
+            _eventRepository.VerifyAll();
+            Assert.AreEqual(result.Count, 2);
+        }
+
+        [Test]
+        public void ItShouldGetSubevent()
+        {
+            // Arrange
+            var token = "123abc";
+            var eventId = 1234567;
+
+            List<MpEventDto> events = new List<MpEventDto>();
+
+            MpEventDto parentEvent = new MpEventDto
+            {
+                EventId = 1234567
+            };
+
+            events.Add(parentEvent);
+
+            MpEventDto childEvent = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                EventTypeId = 20
+            };
+
+            events.Add(childEvent);
+
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
+            _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
+
+            // Act
+            var result = _fixture.GetEventMaps(token, eventId);
+
+            // Assert
+            _eventRepository.VerifyAll();
+            Assert.AreEqual(result.Count, 2);
+        }
+
+        [Test]
+        public void ItShouldGetGetListOfChildrenForEvent()
+        {// Arrange
+            var token = "123abc";
+            var eventId = 1234567;
+
+            var events = new List<MpEventDto>();
+
+            var parentEvent = new MpEventDto
+            {
+                EventId = 1234567
+            };
+            events.Add(parentEvent);
+
+            var childEvent = new MpEventDto
+            {
+                EventId = 7654321,
+                ParentEventId = 1234567,
+                EventTypeId = 20
+            };
+            events.Add(childEvent);
+
+            var children = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    EventId = 1231,
+                    ParticipantId = 1,
+                    ParticipantStatusId = 1,
+                    FirstName = "FirstName1",
+                    LastName = "LastName1",
+                    CallNumber = "1123",
+                    RoomId = 1,
+                    RoomName = "Room1",
+                    TimeIn = DateTime.Now,
+                    HouseholdId = 1,
+                    HeadsOfHousehold = new List<MpContactDto>
+                    {
+                        new MpContactDto
+                        {
+                            HouseholdId = 1,
+                            FirstName = "FirstName3",
+                            LastName = "LastName3"
+                        },
+                        new MpContactDto
+                        {
+                            HouseholdId = 1,
+                            FirstName = "FirstName4",
+                            LastName = "LastName4"
+                        }
+                    }
+                },
+                new MpEventParticipantDto
+                {
+                    EventId = 1231,
+                    ParticipantId = 2,
+                    ParticipantStatusId = 1,
+                    FirstName = "FirstName2",
+                    LastName = "LastName2",
+                    CallNumber = "1124",
+                    RoomId = 1,
+                    RoomName = "Room1",
+                    TimeIn = DateTime.Now,
+                    HouseholdId = 2,
+                    HeadsOfHousehold = new List<MpContactDto>
+                    {
+                        new MpContactDto
+                        {
+                            HouseholdId = 2,
+                            FirstName = "FirstName5",
+                            LastName = "LastName5"
+                        }
+                    }
+                }
+            };
+            ;
+
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
+            _participantRepository.Setup(m => m.GetChildParticipantsByEvent(token, It.IsAny<List<int>>())).Returns(children);
+
+            var result =_fixture.GetListOfChildrenForEvent(token, eventId);
+
+            // Assert
+            _eventRepository.VerifyAll();
+            _participantRepository.VerifyAll();
+
+            Assert.AreEqual(result.Count, 2);
+            Assert.AreEqual(result[0].FirstName, children[0].FirstName);
+            Assert.AreEqual(result[0].LastName, children[0].LastName);
+            Assert.AreEqual(result[0].HeadsOfHousehold.Count, children[0].HeadsOfHousehold.Count);
+            Assert.AreEqual(result[0].HeadsOfHousehold[0].FirstName, children[0].HeadsOfHousehold[0].FirstName);
+            Assert.AreEqual(result[0].HeadsOfHousehold[1].FirstName, children[0].HeadsOfHousehold[1].FirstName);
+
+            Assert.AreEqual(result[1].FirstName, children[1].FirstName);
+            Assert.AreEqual(result[1].LastName, children[1].LastName);
+            Assert.AreEqual(result[1].HeadsOfHousehold.Count, children[1].HeadsOfHousehold.Count);
+            Assert.AreEqual(result[1].HeadsOfHousehold[0].FirstName, children[1].HeadsOfHousehold[0].FirstName);
+
+        }
     }
 }

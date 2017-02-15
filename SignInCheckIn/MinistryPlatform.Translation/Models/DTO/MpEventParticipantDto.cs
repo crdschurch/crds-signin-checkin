@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 
@@ -34,6 +35,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty("Time_Out")]
         public DateTime? TimeOut { get; set; } = null;
 
+        [JsonProperty("Date_of_Birth")]
+        public DateTime? DateOfBirth { get; set; } = null;
+
         [JsonProperty("Notes")]
         public int Notes { get; set; }
 
@@ -45,6 +49,9 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Group_ID")]
         public int? GroupId { get; set; }
+
+        [JsonProperty("Group_Name")]
+        public string GroupName { get; set; }
 
         [JsonProperty("Room_ID")]
         public int? RoomId { get; set; }
@@ -76,5 +83,22 @@ namespace MinistryPlatform.Translation.Models.DTO
         public bool HasKidsClubGroup => GroupId.HasValue;
 
         public bool HasRoomAssignment => RoomId.HasValue;
+
+        [JsonProperty("Call_Number")]
+        public string CallNumber { get; set; }
+
+        [JsonProperty("Household_ID")]
+        public int HouseholdId { get; set; }
+
+        public List<MpContactDto> HeadsOfHousehold { get; set; }
+
+        [JsonProperty("Checkin_Phone")]
+        public string CheckinPhone { get; set; }
+
+        [JsonProperty("Checkin_Household_ID")]
+        public int? CheckinHouseholdId { get; set; }
+
+        [JsonProperty("End_Date")]
+        public DateTime? EndDate { get; set; }
     }
 }

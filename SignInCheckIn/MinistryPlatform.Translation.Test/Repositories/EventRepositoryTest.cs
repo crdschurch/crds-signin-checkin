@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Castle.Components.DictionaryAdapter;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -32,7 +33,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_Room_ID_Table.[Capacity]",
                 "Event_Room_ID_Table.[Label]",
                 "Event_Room_ID_Table.[Allow_Checkin]",
-                "Event_Room_ID_Table.[Volunteers]"
+                "Event_Room_ID_Table.[Volunteers]",
+                "[dbo].crds_getEventParticipantStatusCount(Event_ID_Table.[Event_ID], Event_Room_ID_Table_Room_ID_Table.[Room_ID], 3) AS Signed_In",
+                "[dbo].crds_getEventParticipantStatusCount(Event_ID_Table.[Event_ID], Event_Room_ID_Table_Room_ID_Table.[Room_ID], 4) AS Checked_In"
             };
 
             _fixture = new EventRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object);
@@ -47,7 +50,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId}", _eventGroupsColumns)).Returns(events);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({eventId})", _eventGroupsColumns)).Returns(events);
             var result = _fixture.GetEventGroupsForEvent(eventId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
@@ -88,6 +91,25 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Verify(
                 mocked =>
                     mocked.PostStoredProc("api_crds_ResetEcheckEvent", It.Is<Dictionary<string, object>>(d => (int) d["@EventId"] == eventId)));
+        }
+
+        [Test]
+        public void ItShouldGetEventAndSubevents()
+        {
+            // Arrange
+            var token = "123abc";
+            var eventId = 1234567;
+
+            List<MpEventDto> mpEventDtos = new List<MpEventDto>();
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventDto>(It.IsAny<string>(), It.IsAny<List<string>>())).Returns(mpEventDtos);
+
+            // Act
+            _fixture.GetEventAndCheckinSubevents(token, eventId);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
         }
     }
 }

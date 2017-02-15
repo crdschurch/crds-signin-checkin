@@ -40,8 +40,9 @@ export class ChildSigninService {
     }
   }
 
-  signInChildren(eventParticipants: EventParticipants): Observable<EventParticipants> {
+  signInChildren(eventParticipants: EventParticipants, servicesAttended: number): Observable<EventParticipants> {
     const url = `${this.url}/children`;
+    eventParticipants.ServicesAttended = servicesAttended;
     return this.http.post(url, eventParticipants)
                     .map(res => {
                       this.eventParticipantsResults = EventParticipants.fromJson(res.json());
@@ -74,6 +75,6 @@ export class ChildSigninService {
   }
 
   private handleError (error: any) {
-    return Observable.throw(error.json().error || 'Server error');
+    return Observable.throw(error.json().error || error.json().errors[0] || 'Server error');
   }
 }
