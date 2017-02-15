@@ -16,6 +16,7 @@ namespace SignInCheckIn.Models.DTO
         public int HouseholdPositionId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Nickname { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool Selected { get; set; } = false;
         public int ParticipationStatusId { get; set; }

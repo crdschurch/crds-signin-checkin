@@ -60,6 +60,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Participation_Status_ID_Table.Participation_Status_ID",
                 "Participant_ID_Table_Contact_ID_Table.First_Name",
                 "Participant_ID_Table_Contact_ID_Table.Last_Name",
+                "Participant_ID_Table_Contact_ID_Table.Nickname",
                 "Event_Participants.Call_Number",
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
