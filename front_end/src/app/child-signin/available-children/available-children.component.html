@@ -112,36 +112,27 @@
                     <div class="form-group required text-xs-left">
                       <label for="guestChildBirthDate" class="control-label">Birth Date</label>
                       <br/>
-                      <div class="dropdown-datepicker">
-                        <div class="btn-group" dropdown>
-                          <button id="dob-month" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
-                            {{guestDOB.month | monthName}} <span class="caret"></span>
-                          </button>
-                          <ul dropdownMenu role="menu">
-                            <li role="menuitem" *ngFor="let num of numberOfMonthsSelection">
-                              <a class="dropdown-item" (click)="toggleMonth(num);datePickerBlur()">{{num | monthName}}</a>
-                            </li>
-                          </ul>
+                      <div class="row">
+                        <div class="col-md-4 col-sm-12 dob-select mb-1">
+                          <select class="form-control" id="dob-month" (click)="toggleMonth(num);datePickerBlur()">
+                            <option role="menuitem" *ngFor="let num of numberOfMonthsSelection">
+                              {{num | monthName}}
+                            </option>
+                          </select>
                         </div>
-                        <div class="btn-group" dropdown>
-                          <button id="dob-day" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
-                            {{guestDOB.day || 'Day'}} <span class="caret"></span>
-                          </button>
-                          <ul dropdownMenu role="menu">
-                            <li role="menuitem" *ngFor="let num of numberOfDaysSelection">
-                              <a class="dropdown-item" (click)="toggleDay(num);datePickerBlur()">{{num}}</a>
-                            </li>
-                          </ul>
+                        <div class="col-md-4 col-sm-12 dob-select mb-1">
+                          <select class="form-control" id="dob-day" (click)="toggleMonth(num);datePickerBlur()">
+                            <option role="menuitem" *ngFor="let num of numberOfDaysSelection">
+                              {{num}}
+                            </option>
+                          </select>
                         </div>
-                        <div class="btn-group" dropdown>
-                          <button id="dob-year" type="button" class="btn btn-secondary btn-lg" dropdownToggle>
-                            {{guestDOB.year || 'Year'}} <span class="caret"></span>
-                          </button>
-                          <ul dropdownMenu role="menu">
-                            <li role="menuitem" *ngFor="let num of yearsSelection">
-                              <a class="dropdown-item" (click)="toggleYear(num);datePickerBlur()">{{num}}</a>
-                            </li>
-                          </ul>
+                        <div class="col-md-4 col-sm-12 mb-1">
+                          <select class="form-control" id="dob-year" (click)="toggleMonth(num);datePickerBlur()">
+                            <option role="menuitem" *ngFor="let num of yearsSelection">
+                              {{num}}
+                            </option>
+                          </select>
                         </div>
                       </div>
                     </div>
