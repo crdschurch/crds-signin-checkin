@@ -1,4 +1,5 @@
 ﻿using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.Configuration;
 
 namespace Crossroads.Utilities.Services
 {

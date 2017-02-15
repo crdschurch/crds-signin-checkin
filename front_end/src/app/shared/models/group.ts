@@ -6,6 +6,7 @@ export class Group {
   Selected: boolean;
   SortOrder: number;
   TypeId: number;
+  Group_Name: string;
   Ranges: Range[];
 
   static fromJson(json: any): Group {
@@ -19,11 +20,21 @@ export class Group {
     group.Selected = json.Selected;
     group.SortOrder = json.SortOrder;
     group.TypeId = json.TypeId;
+    group.Group_Name = json.Group_Name;
     group.Ranges = json.Ranges !== undefined && json.Ranges !== null && json.Ranges.length !== 0
                     ? json.Ranges.map((r) => Range.fromJson(r))
                     : [];
     return group;
   }
+
+  static fromJsons(jsons: any): Group[] {
+    let groups: Group[] = [];
+    for (let json of jsons) {
+        groups.push(Group.fromJson(json));
+    }
+    return groups;
+  }
+
 
   getSelectionDescription(): string {
     if (this.Ranges === undefined || this.Ranges.length === 0) {

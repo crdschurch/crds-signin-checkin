@@ -8,6 +8,7 @@ using SignInCheckIn.Filters;
 using System.Web.Cors;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 
@@ -65,7 +66,7 @@ namespace SignInCheckIn.Tests.Filters
         {
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(MpApiUserToken);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(MpApiUserToken)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<DomainLockedApiKey>(null, (string) null)).Returns(_registeredApiKeys);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<DomainLockedApiKey>(null, (string) null, null, false)).Returns(_registeredApiKeys);
             _fixture = new DomainLockedApiKeyFilter(_ministryPlatformRestRepository.Object, _corsEngine.Object, _apiUserRepository.Object);
         }
 
@@ -87,7 +88,7 @@ namespace SignInCheckIn.Tests.Filters
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(MpApiUserToken);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(MpApiUserToken)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<DomainLockedApiKey>(null, (string)null)).Returns(new List<DomainLockedApiKey>());
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<DomainLockedApiKey>(null, (string)null, null, false)).Returns(new List<DomainLockedApiKey>());
 
             _fixture.ReloadKeys();
             _apiUserRepository.VerifyAll();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -83,7 +84,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Room_ID_Table.[Room_ID] = {roomId} AND Event_Participants.End_Date IS NULL", _getEventParticipantColumns)).Returns(participants);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Room_ID_Table.[Room_ID] = {roomId} AND Event_Participants.End_Date IS NULL", _getEventParticipantColumns, null, false)).Returns(participants);
             
             var result = _fixture.GetChildrenByEventAndRoom(eventId, roomId);
             _apiUserRepository.VerifyAll();
@@ -121,7 +122,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] IN ({string.Join(",", eventIds)}) AND Event_Participants.[Call_Number] = {callNumber}", _getEventParticipantByCallNumberColumns)).Returns(participants);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] IN ({string.Join(",", eventIds)}) AND Event_Participants.[Call_Number] = {callNumber}", _getEventParticipantByCallNumberColumns, null, false)).Returns(participants);
 
             var result = _fixture.GetEventParticipantByCallNumber(new List<int> { eventId, subeventId }, int.Parse(callNumber));
             _apiUserRepository.VerifyAll();
@@ -155,7 +156,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>())).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UpdateRecord("Event_Participants", It.IsAny<int>(), It.IsAny<Dictionary<string, object>>()));
 
-            _fixture.OverrideChildIntoRoom(3, 123);
+            _fixture.OverrideChildIntoRoom(3, 123, 444);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
         }

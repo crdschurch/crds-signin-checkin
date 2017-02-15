@@ -8,6 +8,7 @@ using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
+using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
 {
@@ -95,6 +96,23 @@ namespace SignInCheckIn.Controllers
             catch (Exception e)
             {
                 var apiError = new ApiErrorDto($"Error getting ages and grades for event {eventId}, room {roomId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(EventRoomDto))]
+        [VersionedRoute(template: "events/{eventId:int}/groups/unassigned", minimumVersion: "1.0.0")]
+        [Route("events/{eventId:int}/groups/unassigned")]
+        public IHttpActionResult GetEventUnassignedGroups([FromUri] int eventId)
+        {
+            try
+            {
+                return Authorized(token => Ok(_roomService.GetEventUnassignedGroups(token, eventId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting unassigned groups for event {eventId}", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Owin;
@@ -21,10 +22,17 @@ namespace SignInCheckIn
                 // providing a cors options with a different policy.
                 map.UseCors(CorsOptions.AllowAll);
 
+                // configure signalR
+                var hubConfiguration = new HubConfiguration()
+                {
+                    EnableJavaScriptProxies = false,
+                    EnableDetailedErrors = true
+                };
+
                 // Run the SignalR pipeline. We're not using MapSignalR
                 // since this branch already runs under the /signalr
                 // path.
-                map.RunSignalR();
+                map.RunSignalR(hubConfiguration);
             });
         }
     }

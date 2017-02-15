@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -72,7 +73,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
-                mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>()))
+                mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>(), null, false))
                 .Returns(new List<MpEventRoomDto>());
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create(eventRoom, _eventRoomColumns)).Returns(created);
             var result = _fixture.CreateOrUpdateEventRoom("auth", eventRoom);
@@ -104,7 +105,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
-                mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>()))
+                mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>(), null, false))
                 .Returns(new List<MpEventRoomDto>
                 {
                     new MpEventRoomDto
@@ -160,7 +161,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns))
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns, null, false))
                 .Returns(new List<MpEventRoomDto>
                 {
                     eventRoom
@@ -246,7 +247,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns)).Returns(mpBumpingRooms);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns, null, false)).Returns(mpBumpingRooms);
 
             var result = _fixture.GetBumpingRoomsForEventRoom(eventId, fromEventRoomId);
             _ministryPlatformRestRepository.VerifyAll();

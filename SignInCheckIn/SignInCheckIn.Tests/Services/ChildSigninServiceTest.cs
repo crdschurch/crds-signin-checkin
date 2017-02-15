@@ -10,7 +10,6 @@ using Moq;
 using NUnit.Framework;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
-using SignInCheckIn.App_Start;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
