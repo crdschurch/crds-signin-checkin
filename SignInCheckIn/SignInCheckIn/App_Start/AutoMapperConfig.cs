@@ -2,7 +2,7 @@
 using MinistryPlatform.Translation.Models.DTO;
 using SignInCheckIn.Models.DTO;
 
-namespace SignInCheckIn.App_Start
+namespace SignInCheckIn
 {
     public static class AutoMapperConfig
     {

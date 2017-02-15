@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
@@ -28,11 +29,11 @@ namespace SignInCheckIn.Tests.Services
             string username = "test@test.com";
             string password = "12345678";
 
-            Dictionary<string, object> authData = new Dictionary<string, object>
+            var authData = new AuthToken
             {
-                {"token", "123"},
-                {"exp", 123},
-                {"refreshToken", "456"}
+                AccessToken = "123",
+                ExpiresIn = 123,
+                RefreshToken = "456"
             };
 
             List<string> authRoles = new List<string>
@@ -41,7 +42,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _authenticationRepository.Setup(m => m.Authenticate(username, password)).Returns(authData);
-            _authenticationRepository.Setup(m => m.GetUserRolesFromToken(authData["token"].ToString())).Returns(authRoles);
+            _authenticationRepository.Setup(m => m.GetUserRolesFromToken(authData.AccessToken)).Returns(authRoles);
 
             // Act
             _fixture.Login(username, password);

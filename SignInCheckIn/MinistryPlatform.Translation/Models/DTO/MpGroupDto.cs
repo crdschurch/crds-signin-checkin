@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using MinistryPlatform.Translation.Models.Attributes;
+using Crossroads.Web.Common.MinistryPlatform;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static MinistryPlatform.Translation.Extensions.JsonUnmappedDataExtensions;

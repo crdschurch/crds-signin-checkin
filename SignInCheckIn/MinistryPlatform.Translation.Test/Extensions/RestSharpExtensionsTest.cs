@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using RestSharp;
 using System.Collections.Generic;
+using Crossroads.Web.Common.Extensions;
 
 namespace MinistryPlatform.Translation.Test.Extensions
 {

@@ -6,8 +6,9 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using RestSharp;
 using System.Collections.Generic;
+using Crossroads.Web.Common.Extensions;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Extensions;
-using MinistryPlatform.Translation.Models.Attributes;
 
 namespace MinistryPlatform.Translation.Test.Repositories
 {

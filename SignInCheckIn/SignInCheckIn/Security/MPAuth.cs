@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
+using Crossroads.Web.Common.Security;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -52,8 +53,8 @@ namespace SignInCheckIn.Security
                     var authData = _authenticationRepository.RefreshToken(refreshTokenHeader);
                     if (authData != null)
                     {
-                        var authToken = authData["token"].ToString();
-                        var refreshToken = authData["refreshToken"].ToString();
+                        var authToken = authData.AccessToken;
+                        var refreshToken = authData.RefreshToken;
                         var result = new HttpAuthResult(actionWhenAuthorized(authToken), authToken, refreshToken);
                         return result;
                     }

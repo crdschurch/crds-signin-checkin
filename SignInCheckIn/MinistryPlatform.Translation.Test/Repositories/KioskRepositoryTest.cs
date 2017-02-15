@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Crossroads.Web.Common.MinistryPlatform;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -70,7 +71,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpKioskConfigDto>($"[_Kiosk_Identifier]='{testGuid}' AND cr_Kiosk_Configs.[End_Date] IS NULL", _kioskConfigColumns)).Returns(kioskConfigs);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpKioskConfigDto>($"[_Kiosk_Identifier]='{testGuid}' AND cr_Kiosk_Configs.[End_Date] IS NULL", _kioskConfigColumns, null, false)).Returns(kioskConfigs);
             var result = _fixture.GetMpKioskConfigByIdentifier(testGuid);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
@@ -95,7 +96,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpPrinterMapDto>($"[Printer_Map_ID]={printerMapId}", _printerMapColumns)).Returns(mpPrinterMapDtos);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpPrinterMapDto>($"[Printer_Map_ID]={printerMapId}", _printerMapColumns, null, false)).Returns(mpPrinterMapDtos);
             var result = _fixture.GetPrinterMapById(printerMapId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();

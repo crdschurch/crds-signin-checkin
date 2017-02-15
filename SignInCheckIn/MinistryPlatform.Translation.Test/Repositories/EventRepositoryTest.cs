@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Castle.Components.DictionaryAdapter;
+using Crossroads.Web.Common.MinistryPlatform;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -50,7 +51,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({eventId})", _eventGroupsColumns)).Returns(events);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({eventId})", _eventGroupsColumns, null, false)).Returns(events);
             var result = _fixture.GetEventGroupsForEvent(eventId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
@@ -103,7 +104,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             List<MpEventDto> mpEventDtos = new List<MpEventDto>();
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventDto>(It.IsAny<string>(), It.IsAny<List<string>>())).Returns(mpEventDtos);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventDto>(It.IsAny<string>(), It.IsAny<List<string>>(), null, false)).Returns(mpEventDtos);
 
             // Act
             _fixture.GetEventAndCheckinSubevents(token, eventId);

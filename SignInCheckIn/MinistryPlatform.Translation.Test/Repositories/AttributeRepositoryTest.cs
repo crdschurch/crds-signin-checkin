@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Crossroads.Web.Common.MinistryPlatform;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
@@ -43,7 +44,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var attrs = new List<MpAttributeDto>();
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({typeId})", _attributeColumns)).Returns(attrs);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({typeId})", _attributeColumns, null, false)).Returns(attrs);
 
             var result = _fixture.GetAttributesByAttributeTypeId(typeId, token);
             _apiUserRepository.VerifyAll();
@@ -62,7 +63,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var attrs = new List<MpAttributeDto>();
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({typeId})", _attributeColumns)).Returns(attrs);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({typeId})", _attributeColumns, null, false)).Returns(attrs);
 
             var result = _fixture.GetAttributesByAttributeTypeId(typeId);
             _apiUserRepository.VerifyAll();
@@ -80,7 +81,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             var attrs = new List<MpAttributeDto>();
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
-                mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", typeIds)})", _attributeColumns)).Returns(attrs);
+                mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", typeIds)})", _attributeColumns, null, false)).Returns(attrs);
 
             var result = _fixture.GetAttributesByAttributeTypeId(typeIds, token);
             _apiUserRepository.VerifyAll();
@@ -99,7 +100,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var attrs = new List<MpAttributeDto>();
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", typeIds)})", _attributeColumns)).Returns(attrs);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", typeIds)})", _attributeColumns, null, false)).Returns(attrs);
 
             var result = _fixture.GetAttributesByAttributeTypeId(typeIds);
             _apiUserRepository.VerifyAll();

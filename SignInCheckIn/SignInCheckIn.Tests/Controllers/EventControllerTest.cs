@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http.Results;
+using Crossroads.Web.Common.Security;
 using FluentAssertions;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
