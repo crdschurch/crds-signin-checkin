@@ -62,7 +62,7 @@ describe('AvailableChildrenComponent', () => {
       expect(fixture.newGuestChild.DateOfBirth).toBeUndefined();
     });
   });
-  fdescribe('#signIn', () => {
+  describe('#signIn', () => {
     it('should only send selected kids', () => {
       this._eventParticipants = new EventParticipants();
       this._eventParticipants.Participants = [new Child(), new Child()]
