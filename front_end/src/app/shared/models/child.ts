@@ -7,6 +7,7 @@ export class Child {
   ContactId: number;
   HouseholdId: number;
   HouseholdPositionId: number;
+  Nickname: string;
   FirstName: string;
   LastName: string;
   DateOfBirth: Date;
@@ -34,6 +35,7 @@ export class Child {
     c.HouseholdPositionId = json.HouseholdPositionId;
     c.FirstName = json.FirstName;
     c.LastName = json.LastName;
+    c.Nickname = json.Nickname;
     c.DateOfBirth = json.DateOfBirth;
     c.Selected = json.Selected;
     c.ParticipationStatusId = json.ParticipationStatusId;
@@ -57,7 +59,7 @@ export class Child {
   }
 
   name(): string {
-    return `${this.FirstName} ${this.LastName}`;
+    return `${this.Nickname || this.FirstName} ${this.LastName}`;
   }
 
   assignedRoom() {
