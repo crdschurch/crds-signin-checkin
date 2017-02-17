@@ -125,10 +125,6 @@ export class RoomGroupListComponent implements OnInit {
     return (!this.updating && (this.event !== undefined && this.room !== undefined));
   }
 
-  goBack() {
-    this.location.back();
-  }
-
   openTabIfAlternateRoomsHash() {
     if (this.route.snapshot.queryParams['tab'] === 'alternate-rooms') {
       this.alternateRoomsSelected = true;
