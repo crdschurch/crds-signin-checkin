@@ -205,7 +205,6 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Exceptions\Models\ApiErrorDto.cs" />
-    <Compile Include="Filters\DomainLockedApiKeyFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
