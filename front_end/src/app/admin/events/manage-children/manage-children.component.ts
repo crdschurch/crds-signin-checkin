@@ -42,7 +42,6 @@ export class ManageChildrenComponent implements OnInit {
     let parents = '';
 
     child.HeadsOfHousehold.forEach(hoh => {
-      console.log(hoh)
       if (parents === '') {
         parents = `${hoh.Nickname}`;
         if (hoh.MobilePhone) {

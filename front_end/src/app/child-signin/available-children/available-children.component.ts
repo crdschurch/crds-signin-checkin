@@ -91,15 +91,12 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  signIn() {
-   console.log("1", this._eventParticipants)
    if (!this._eventParticipants.hasSelectedParticipants()) {
      return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
    }
-   console.log("2")
    this.isReady = false;
    // remove unselected event participants
    this._eventParticipants.removeUnselectedParticipants();
-   console.log("3", this._eventParticipants)
    this.childSigninService.signInChildren(this._eventParticipants, this.numberEventsAttending).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;
