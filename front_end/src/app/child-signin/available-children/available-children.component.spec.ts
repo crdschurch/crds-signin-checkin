@@ -62,19 +62,19 @@ describe('AvailableChildrenComponent', () => {
       expect(fixture.newGuestChild.DateOfBirth).toBeUndefined();
     });
   });
-  describe('#signIn', () => {
+  fdescribe('#signIn', () => {
     it('should only send selected kids', () => {
-      this._eventParticipants = new EventParticipants();
-      this._eventParticipants.Participants = [new Child(), new Child()]
-      this._eventParticipants.Participants[0].Selected = false;
-      this._eventParticipants.Participants[1].Selected = true;
+      fixture.eventParticipants = new EventParticipants();
+      fixture.eventParticipants.Participants = [new Child(), new Child()]
+      fixture.eventParticipants.Participants[0].Selected = false;
+      fixture.eventParticipants.Participants[1].Selected = true;
       // spyOn(childSigninService, 'signInChildren').and.callFake(() => {});
       (<jasmine.Spy>(childSigninService.signInChildren)).and.returnValue(Observable.of());
       fixture.signIn();
 
       // remove unselected participant to make sure it is not sent with call
-      this._eventParticipants.Participants.splice(0, 1);
-      expect(childSigninService.signInChildren).toHaveBeenCalledWith(this._eventParticipants, 1);
+      fixture.eventParticipants.Participants.splice(0, 1);
+      expect(childSigninService.signInChildren).toHaveBeenCalledWith(fixture.eventParticipants, 1);
     });
   });
   describe('#saveNewGuestModal adds new guest to event participants', () => {
