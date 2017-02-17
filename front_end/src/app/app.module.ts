@@ -19,6 +19,12 @@ import { SetupModule } from './setup';
 import { AppComponent } from './app.component';
 import { routing } from './app.routes';
 
+import { SignalRModule, SignalRConfiguration } from 'ng2-signalr';
+
+let signalrConfig = new SignalRConfiguration();
+signalrConfig.url = `${process.env.SIGNALR_ENDPOINT}`;
+signalrConfig.hubName = 'EventHub';
+
 let channelConfig = new ChannelConfig();
 channelConfig.url = `${process.env.SIGNALR_ENDPOINT}`;
 channelConfig.hubName = 'EventHub';
@@ -39,7 +45,8 @@ channelConfig.hubName = 'EventHub';
     AdminModule,
     routing,
     MomentModule,
-    ToasterModule
+    ToasterModule,
+    SignalRModule.configure(signalrConfig)
   ],
   exports: [
     ToasterModule
@@ -52,6 +59,7 @@ channelConfig.hubName = 'EventHub';
     ToasterModule,
     UserService,
     CanActivateIfLoggedInGuard,
+    { provide: SignalRConfiguration, useValue: signalrConfig },
     { provide: SignalrWindow, useValue: window },
     { provide: 'channel.config', useValue: channelConfig }
   ],
