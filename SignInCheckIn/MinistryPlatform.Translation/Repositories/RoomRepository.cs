@@ -262,7 +262,7 @@ namespace MinistryPlatform.Translation.Repositories
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
         }
 
-        public List<List<JObject>> GetRoomListData(int eventId)
+        public List<List<JObject>> GetManageRoomsListData(int eventId)
         {
             var parms = new Dictionary<string, object>
             {
@@ -271,6 +271,34 @@ namespace MinistryPlatform.Translation.Repositories
 
             var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
             return result;
-        }   
+        }
+
+        public List<List<JObject>> GetSingleRoomGroupsData(int eventId, int roomId)
+        {
+            var parms = new Dictionary<string, object>
+            {
+                {"EventID", eventId},
+                {"RoomID", roomId},
+            };
+
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Single_Room_Data", parms);
+            return result;
+        }
+
+        public List<List<JObject>> SaveSingleRoomGroupsData(string token, int eventId, int roomId, string groupsXml)
+        {
+            // new line chars come from the string conversion and need to be stripped out here to avoid a parsing error when calling the proc
+            groupsXml = groupsXml.Replace(System.Environment.NewLine, string.Empty);
+
+            var parms = new Dictionary<string, object>
+            {
+                {"@EventId", eventId},
+                {"@RoomId", roomId},
+                {"@GroupsXml", groupsXml}         
+            };
+
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
+            return result;
+        }
     }
 }

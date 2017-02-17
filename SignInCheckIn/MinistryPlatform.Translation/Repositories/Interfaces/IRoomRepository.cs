@@ -31,6 +31,10 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         List<MpBumpingRoomsDto> GetBumpingRoomsForEventRoom(int eventId, int fromEventRoomId);
 
-        List<List<JObject>> GetRoomListData(int eventId);
+        List<List<JObject>> GetManageRoomsListData(int eventId);
+
+        List<List<JObject>> GetSingleRoomGroupsData(int eventId, int roomId);
+
+        List<List<JObject>> SaveSingleRoomGroupsData(string token, int eventId, int roomId, string groupsXml);
     }
 }
