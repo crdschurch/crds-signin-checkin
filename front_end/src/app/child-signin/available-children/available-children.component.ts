@@ -58,15 +58,19 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  toggleMonth(month) {
-   this.guestDOB.month = month;
+   this.guestDOB.month = +month;
+   this.datePickerBlur();
  }
 
  toggleDay(day) {
-   this.guestDOB.day = day;
+   this.guestDOB.day = +day;
+   this.datePickerBlur();
  }
 
  toggleYear(year) {
-   this.guestDOB.year = year;
+   this.guestDOB.year = +year;
+   this.datePickerBlur();
+   console.log(this.guestDOB)
  }
 
  getChildren(phoneNumber) {

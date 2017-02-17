@@ -114,21 +114,24 @@
                       <br/>
                       <div class="row">
                         <div class="col-md-4 col-sm-12 dob-select mb-1">
-                          <select class="form-control" id="dob-month" (click)="toggleMonth(num);datePickerBlur()">
-                            <option role="menuitem" *ngFor="let num of numberOfMonthsSelection">
+                          <select class="form-control form-control-lg" id="dob-month" (change)="toggleMonth(+$event.target.value)">
+                            <option role="menuitem">Month</option>
+                            <option role="menuitem" *ngFor="let num of numberOfMonthsSelection" value="{{num}}">
                               {{num | monthName}}
                             </option>
                           </select>
                         </div>
                         <div class="col-md-4 col-sm-12 dob-select mb-1">
-                          <select class="form-control" id="dob-day" (click)="toggleMonth(num);datePickerBlur()">
+                          <select class="form-control form-control-lg" id="dob-day" (change)="toggleDay(+$event.target.value)">
+                            <option role="menuitem">Day</option>
                             <option role="menuitem" *ngFor="let num of numberOfDaysSelection">
                               {{num}}
                             </option>
                           </select>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-1">
-                          <select class="form-control" id="dob-year" (click)="toggleMonth(num);datePickerBlur()">
+                          <select class="form-control form-control-lg" id="dob-year" (change)="toggleYear(+$event.target.value)">
+                            <option role="menuitem">Year</option>
                             <option role="menuitem" *ngFor="let num of yearsSelection">
                               {{num}}
                             </option>
