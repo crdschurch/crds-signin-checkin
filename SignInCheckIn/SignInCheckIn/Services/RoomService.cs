@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -416,11 +417,11 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom)
         {
-            //_roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventId, roomId, "", "", "");
-            
-
             XElement nurseryGroupXml = new XElement("NurseryGroupXml", null);
-            var nurseryGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == 102 && r.Name == "Nursery").ToList();
+            //var nurseryGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == _applicationConfiguration.AgesAttributeTypeId && r.Name == "Nursery").ToList();
+            var nurseryGroups = eventRoom.AssignedGroups.FindAll(g =>
+                                      (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
+                                      g.Id == _applicationConfiguration.NurseryAgeAttributeId).ToList();
 
             foreach (var nurseryGroup in nurseryGroups)
             {
@@ -434,27 +435,39 @@ namespace SignInCheckIn.Services
                 }
             }
 
-            XElement groupXml = new XElement("Groups", nurseryGroupXml);
+            XElement yearGroupXml = new XElement("YearGroupXml", null);
+            //var yearGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == _applicationConfiguration.AgesAttributeTypeId && r.Name != "Nursery").ToList();
+            var yearGroups = eventRoom.AssignedGroups.FindAll(g =>
+                                                                  (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
+                                                                  g.Id != _applicationConfiguration.NurseryAgeAttributeId).ToList();
 
-            //XElement yearGroupXml = new XElement("YearGroupXml", 1);
-            //XElement gradeGroupXml = new XElement("GradeGroupXml", 1);
+            foreach (var yearGroup in yearGroups)
+            {
+                foreach (var range in yearGroup.Ranges)
+                {
+                    XElement yearIdElement = new XElement("YearId", range.Id);
+                    XElement yearTypeIdElement = new XElement("YearTypeId", range.TypeId);
+                    XElement monthIdElement = new XElement("MonthId", yearGroup.Id);
+                    XElement monthIdTypeElement = new XElement("MonthTypeId", yearGroup.TypeId);
+                    XElement selectedElement = new XElement("Selected", range.Selected);
 
-            //var nurseryAttributes = nurseryGroups.Select(r => r.Ranges).ToList()[0];
+                    yearGroupXml.Add(new XElement("Attribute", yearIdElement, yearTypeIdElement, monthIdElement, monthIdTypeElement, selectedElement));
+                }
+            }
 
-            //var yearGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == 102 && r.Name != "Nursery").ToList();
-            ////var yearAttributes = yearGroups.Select(r => r.Ranges).ToList()[0];
+            XElement gradeGroupXml = new XElement("GradeGroupXml", null);
+            var gradeGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == _applicationConfiguration.GradesAttributeTypeId).ToList();
 
-            //foreach (var yearGroup in yearGroups)
-            //{
-            //    var x = yearGroup.
-            //}
+            foreach (var gradeGroup in gradeGroups)
+            {
+                    XElement idElement = new XElement("Id", gradeGroup.Id);
+                    XElement typeIdElement = new XElement("TypeId", gradeGroup.TypeId);
+                    XElement selectedElement = new XElement("Selected", gradeGroup.Selected);
 
-            var gradeGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == 104).ToList();
-            var gradeAttributes = gradeGroups.Select(r => r.Ranges).ToList()[0];
+                    gradeGroupXml.Add(new XElement("Attribute", idElement, typeIdElement, selectedElement));               
+            }
 
-            //var nurseryAttributes = eventRoom.AssignedGroups.
-
-            //var nurseryData = eventRoom.AssignedGroups.Where(r => r.Ranges.Where(r => r.TypeId == _applicationConfiguration.NurseryAgesAttributeTypeId))
+            XElement groupXml = new XElement("Groups", nurseryGroupXml, yearGroupXml, gradeGroupXml);
 
             _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventId, roomId, groupXml.ToString());
 
@@ -526,6 +539,7 @@ namespace SignInCheckIn.Services
             //return eventRoom;
         }
 
+        [Obsolete("Replaced by the new stored proc - left here for reference")]
         private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, int roomId, string token)
         {
             // we need to figure out if this event is the adventure club event or the service event
@@ -553,6 +567,7 @@ namespace SignInCheckIn.Services
             }
         }
 
+        [Obsolete("Replaced by the new stored proc - left here for reference")]
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
         {
             // Create a list of attributes corresponding to the selected groups
@@ -625,6 +640,7 @@ namespace SignInCheckIn.Services
             }
         }
 
+        [Obsolete("Replaced by the new stored proc - left here for reference")]
         private void DeleteRoomReservationForOtherEvent(string authenticationToken, EventRoomDto eventRoom, MpEventDto eventDto, int roomId)
         { 
             // Make sure there is not an existing room reservation on the 'other' event
@@ -788,6 +804,11 @@ namespace SignInCheckIn.Services
             var response = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(eventRoom));
 
             return Mapper.Map<EventRoomDto>(response);
+        }
+
+        public List<MpGroupDto> GetEventUnassignedGroups(string authenticationToken, int eventId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

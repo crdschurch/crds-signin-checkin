@@ -293,16 +293,17 @@ namespace MinistryPlatform.Translation.Repositories
         {
             // new line chars come from the string conversion and need to be stripped out here to avoid a parsing error when calling the proc
             groupsXml = groupsXml.Replace(System.Environment.NewLine, string.Empty);
+            //groupsXml = groupsXml.Replace(" ", "");
 
             var parms = new Dictionary<string, object>
             {
                 {"@EventId", eventId},
                 {"@RoomId", roomId},
-                {"@GroupsXml", groupsXml}
+                {"@GroupsXml", groupsXml}         
             };
 
             var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
-            return null;
+            return result;
         }
     }
 }
