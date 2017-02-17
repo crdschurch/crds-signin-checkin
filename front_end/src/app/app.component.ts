@@ -65,15 +65,17 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Start the signalr connection up!
     console.log('Starting the channel service');
-    this.channelService.start();
+    // TODO - commenting out to try and track down ws/apache issues
+    // this.channelService.start();
 
     this.contentService.loadData();
   }
 
   ngOnDestroy() {
-    this.channelService.stop();
+    // TODO - commenting out to try and track down ws/apache issues
+    // this.channelService.stop();
   }
-  
+
   inRoom() {
     return this.router.url === '/child-signin/room';
   }
