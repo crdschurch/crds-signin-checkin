@@ -173,6 +173,7 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
+            var events = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
             var result = _roomRepository.GetSingleRoomGroupsData(eventId, roomId);
 
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
@@ -254,9 +255,12 @@ namespace SignInCheckIn.Services
                 eventRoom.AssignedGroups = agesAndGrades;
             }
 
-            eventRooms = eventRooms.OrderByDescending(r => r.AllowSignIn).ThenBy(r => r.RoomName).ToList();
+            // set adventure club status
+            var returnEventRoom = eventRooms.OrderByDescending(r => r.AllowSignIn).ThenBy(r => r.RoomName).First();
+            var selectedEvent = events.FirstOrDefault(e => e.EventId == (returnEventRoom?.EventId ?? eventId));
+            returnEventRoom.AdventureClub = (selectedEvent.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
 
-            return eventRooms.First();
+            return returnEventRoom;
 
             //// Get the EventRoom, or the Room if no EventRoom
             //var selectedEventRoom = GetEventRoom(authenticationToken, eventId, roomId);
@@ -469,9 +473,11 @@ namespace SignInCheckIn.Services
 
             XElement groupXml = new XElement("Groups", nurseryGroupXml, yearGroupXml, gradeGroupXml);
 
-            _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventId, roomId, groupXml.ToString());
+            var result = _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventId, roomId, groupXml.ToString());
+            var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
+            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
-            return null; // this will eventually be an event room that comes back from the DB - probably just need to use a service call
+            return eventRooms.First(); // this will eventually be an event room that comes back from the DB - probably just need to use a service call
             // and load the data based on the returned id, which will be the event room id
 
             /////////////////// old code below ///////////////////////////
