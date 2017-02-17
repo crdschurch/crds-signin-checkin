@@ -59,6 +59,7 @@ channelConfig.hubName = 'EventHub';
     ToasterModule,
     UserService,
     CanActivateIfLoggedInGuard,
+    { provide: SignalRConfiguration, useValue: signalrConfig },
     { provide: SignalrWindow, useValue: window },
     { provide: 'channel.config', useValue: channelConfig }
   ],
