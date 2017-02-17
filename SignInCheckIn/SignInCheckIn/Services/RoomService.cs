@@ -261,21 +261,6 @@ namespace SignInCheckIn.Services
             returnEventRoom.AdventureClub = (selectedEvent.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId);
 
             return returnEventRoom;
-
-            //// Get the EventRoom, or the Room if no EventRoom
-            //var selectedEventRoom = GetEventRoom(authenticationToken, eventId, roomId);
-
-            //// Get All the Event Groups for this Event
-            //var eventGroups = _eventRepository.GetEventGroupsForEvent(selectedEventRoom.EventId) ?? new List<MpEventGroupDto>();
-
-            //// Load up lookups for age ranges, grades, birth months, and nursery months
-            //var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId, authenticationToken);
-            //var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
-            //var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId, authenticationToken);
-            //var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId, authenticationToken);
-
-            //// Get All the Event Groups Assigned to this room for this event
-            //return GetEventRoomAgeAndGradeGroups(authenticationToken, selectedEventRoom, eventGroups, ages, grades, birthMonths, nurseryMonths);
         }
 
         private EventRoomDto GetEventRoomAgeAndGradeGroups(string authenticationToken, EventRoomDto eventRoom, List<MpEventGroupDto> eventGroups, 
@@ -479,70 +464,6 @@ namespace SignInCheckIn.Services
 
             return eventRooms.First(); // this will eventually be an event room that comes back from the DB - probably just need to use a service call
             // and load the data based on the returned id, which will be the event room id
-
-            /////////////////// old code below ///////////////////////////
-
-            //// eventId could be the parent service event or the adventure club subevent
-            //var eventDto = _eventRepository.GetEventById(eventId);
-            //eventRoom.AdventureClub = eventDto.ParentEventId.HasValue && eventDto.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId;
-
-            //// Delete room reservation for the adventure club subevent if this is the parent event, and vice versa
-            //DeleteRoomReservationForOtherEvent(authenticationToken, eventRoom, eventDto, roomId);
-
-            //// Start by deleting all current event groups for this room reservation (if any)
-            //DeleteCurrentEventGroupsForRoomReservation(authenticationToken, eventId, roomId);
-
-            //// Get the existing eventRoom, if any
-            //var existingEventRoom = _roomRepository.GetEventRoom(eventId, roomId) ?? new MpEventRoomDto
-            //{
-            //    EventId = eventId,
-            //    RoomId = roomId,
-            //    AllowSignIn = eventRoom.AllowSignIn,
-            //    Capacity = eventRoom.Capacity,
-            //    Volunteers = eventRoom.Volunteers,
-            //};
-
-            //// Create the room reservation, if needed
-            //if (!existingEventRoom.EventRoomId.HasValue)
-            //{
-            //    var created = _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(existingEventRoom));
-            //    eventRoom.EventRoomId = created.EventRoomId;
-            //    eventRoom.EventId = eventId;
-            //    eventRoom.RoomId = roomId;
-            //}
-            //else
-            //{
-            //    // This is needed in case the frontend does not send the EventRoomId (for instance, when multiple
-            //    // updates are made on the page, but the frontend does not update its model with the new event room id)
-            //    eventRoom.EventRoomId = existingEventRoom.EventRoomId;
-            //}
-
-            //// Create nursery event groups
-            //CreateEventGroups(authenticationToken,
-            //                  eventRoom,
-            //                  eventRoom.AssignedGroups.FindAll(
-            //                      g =>
-            //                          (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
-            //                          g.Id == _applicationConfiguration.NurseryAgeAttributeId), true);
-
-            //// Create age event groups
-            //CreateEventGroups(authenticationToken,
-            //                  eventRoom,
-            //                  eventRoom.AssignedGroups.FindAll(
-            //                      g =>
-            //                          (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
-            //                          g.Id != _applicationConfiguration.NurseryAgeAttributeId), true);
-
-            //// Create grade event groups
-            //CreateEventGroups(authenticationToken,
-            //                  eventRoom,
-            //                  eventRoom.AssignedGroups.FindAll(g => (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.GradesAttributeTypeId), false);
-
-            //// if we are updating an adventure club event, make sure the cancelled status of the event
-            //// is updated accordingly
-            //UpdateAdventureClubStatusIfNecessary(eventDto, roomId, authenticationToken);
-
-            //return eventRoom;
         }
 
         [Obsolete("Replaced by the new stored proc - left here for reference")]
