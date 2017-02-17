@@ -403,6 +403,8 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom)
         {
+            eventRoom.EventId = eventId; // Kind of a hack, but we'll see if it works - looks like the event room event id is not in sync?
+
             XElement nurseryGroupXml = new XElement("NurseryGroupXml", null);
 
             var nurseryGroups = eventRoom.AssignedGroups.FindAll(g =>
@@ -455,7 +457,7 @@ namespace SignInCheckIn.Services
 
             XElement groupXml = new XElement("Groups", nurseryGroupXml, yearGroupXml, gradeGroupXml);
 
-            var result = _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventId, roomId, groupXml.ToString());
+            var result = _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventRoom.EventId, roomId, groupXml.ToString());
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
