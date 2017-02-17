@@ -104,7 +104,7 @@ namespace SignInCheckIn.Services
 
                 var agesAndGrades = new List<AgeGradeDto>();
 
-                // Add age ranges (including selected groups) to the response - makes no service calls
+                // Add age ranges
                 agesAndGrades.AddRange(GetAgeRangesAndCurrentSelections(ages, nurseryMonths, birthMonths, eventRoomGroups));
 
                 var maxSort = 0;
@@ -114,7 +114,7 @@ namespace SignInCheckIn.Services
                     maxSort = agesAndGrades.Select(r => r.SortOrder).Last();
                 }
 
-                // Add grade ranges (including selected groups) to the response - makes no service calls
+                // Add grade ranges
                 agesAndGrades.AddRange(GetGradesAndCurrentSelection(grades, eventRoomGroups, maxSort));
 
                 eventRoom.AssignedGroups = agesAndGrades;
@@ -167,9 +167,6 @@ namespace SignInCheckIn.Services
             acEventRoom.AllowSignIn = eventRoom.AllowSignIn;
             _roomRepository.CreateOrUpdateEventRoom(authenticationToken, Mapper.Map<MpEventRoomDto>(acEventRoom));
         }
-
-        // this function is only being used once in the code - just has two usages in the same controller, based
-        // on if the token is null or not (smh)
 
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
@@ -407,7 +404,7 @@ namespace SignInCheckIn.Services
         public EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom)
         {
             XElement nurseryGroupXml = new XElement("NurseryGroupXml", null);
-            //var nurseryGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == _applicationConfiguration.AgesAttributeTypeId && r.Name == "Nursery").ToList();
+
             var nurseryGroups = eventRoom.AssignedGroups.FindAll(g =>
                                       (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
                                       g.Id == _applicationConfiguration.NurseryAgeAttributeId).ToList();
@@ -425,7 +422,7 @@ namespace SignInCheckIn.Services
             }
 
             XElement yearGroupXml = new XElement("YearGroupXml", null);
-            //var yearGroups = eventRoom.AssignedGroups.Where(r => r.TypeId == _applicationConfiguration.AgesAttributeTypeId && r.Name != "Nursery").ToList();
+            
             var yearGroups = eventRoom.AssignedGroups.FindAll(g =>
                                                                   (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
                                                                   g.Id != _applicationConfiguration.NurseryAgeAttributeId).ToList();
@@ -462,8 +459,7 @@ namespace SignInCheckIn.Services
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
-            return eventRooms.First(); // this will eventually be an event room that comes back from the DB - probably just need to use a service call
-            // and load the data based on the returned id, which will be the event room id
+            return eventRooms.First(); 
         }
 
         [Obsolete("Replaced by the new stored proc - left here for reference")]

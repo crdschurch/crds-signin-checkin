@@ -264,8 +264,6 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<List<JObject>> GetManageRoomsListData(int eventId)
         {
-            var x = _apiUserRepository.GetToken();
-
             var parms = new Dictionary<string, object>
             {
                 {"EventID", eventId},
@@ -277,8 +275,6 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<List<JObject>> GetSingleRoomGroupsData(int eventId, int roomId)
         {
-            var x = _apiUserRepository.GetToken();
-
             var parms = new Dictionary<string, object>
             {
                 {"EventID", eventId},
@@ -293,7 +289,6 @@ namespace MinistryPlatform.Translation.Repositories
         {
             // new line chars come from the string conversion and need to be stripped out here to avoid a parsing error when calling the proc
             groupsXml = groupsXml.Replace(System.Environment.NewLine, string.Empty);
-            //groupsXml = groupsXml.Replace(" ", "");
 
             var parms = new Dictionary<string, object>
             {
