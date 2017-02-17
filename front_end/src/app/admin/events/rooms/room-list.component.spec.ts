@@ -29,7 +29,7 @@ describe('RoomListComponent', () => {
       eventId: eventId
     };
 
-    adminService = <AdminService>jasmine.createSpyObj('adminService', ['getRooms']);
+    adminService = <AdminService>jasmine.createSpyObj('adminService', ['getRooms', 'getUnassignedGroups']);
     apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent']);
     headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
     router = <Router>jasmine.createSpyObj('router', ['navigate']);
@@ -44,6 +44,7 @@ describe('RoomListComponent', () => {
       rooms[0].RoomId = '123';
       rooms[1].RoomId = '456';
       (<jasmine.Spy>(adminService.getRooms)).and.returnValue(Observable.of(rooms));
+      (<jasmine.Spy>(adminService.getUnassignedGroups)).and.returnValue(Observable.of());
 
       let event = new Event();
       event.EventId = eventId;
@@ -54,8 +55,8 @@ describe('RoomListComponent', () => {
       fixture.event = null;
 
       fixture.ngOnInit();
-
       expect(adminService.getRooms).toHaveBeenCalledWith(eventId);
+      expect(adminService.getUnassignedGroups).toHaveBeenCalled();
       expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
       expect(headerService.announceEvent).toHaveBeenCalledWith(event);
 

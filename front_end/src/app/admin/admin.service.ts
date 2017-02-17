@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { Room, NewFamily, Child } from '../shared/models';
+import { Room, NewFamily, Child, Group } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -68,6 +68,13 @@ export class AdminService {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/children`;
     return this.http.get(url)
                     .map(res => { return (<Child[]>res.json()).map(r => Child.fromJson(r)); })
+                    .catch(this.handleError);
+  }
+
+  getUnassignedGroups(eventId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/groups/unassigned`;
+    return this.http.get(url)
+                    .map(res => { return Group.fromJsons(res.json()) })
                     .catch(this.handleError);
   }
 

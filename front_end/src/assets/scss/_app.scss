@@ -170,6 +170,10 @@ a.btn-primary.active:not([href]):not([tabindex]) {
   line-height: 2;
 }
 
+.nav-link {
+  cursor: pointer;
+}
+
 datepicker {
   .btn-info {
     .text-muted {

@@ -4,6 +4,7 @@ using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.MinistryPlatform;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -106,6 +107,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
+                "Contact_ID_Table.Nickname",
                 "Contact_ID_Table.Date_of_Birth"
             };
 
@@ -129,6 +131,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
+                "Contact_ID_Table.Nickname",
                 "Contact_ID_Table.Date_of_Birth"
             };
 
@@ -174,6 +177,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
                 "Participant_ID_Table_Contact_ID_Table.First_Name",
                 "Participant_ID_Table_Contact_ID_Table.Last_Name",
+                "Participant_ID_Table_Contact_ID_Table.Nickname",
                 "Participant_ID_Table_Contact_ID_Table.Date_of_Birth",
                 "Group_ID_Table_Congregation_ID_Table.Congregation_ID",
                 "Group_ID_Table_Group_Type_ID_Table.Group_Type_ID",

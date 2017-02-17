@@ -10,7 +10,6 @@ using Moq;
 using NUnit.Framework;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
-using SignInCheckIn.App_Start;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
@@ -697,6 +696,7 @@ namespace SignInCheckIn.Tests.Services
                 new ParticipantDto
                 {
                     FirstName = "Child1First",
+                    Nickname = "Child1Nickname",
                     AssignedRoomId = 1234567,
                     AssignedRoomName = "TestRoom",
                     AssignedSecondaryRoomId = 2345678,
@@ -707,6 +707,7 @@ namespace SignInCheckIn.Tests.Services
                 new ParticipantDto
                 {
                     FirstName = "Child2First",
+                    Nickname = "Child2Nickname",
                     AssignedRoomId = null,
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
@@ -716,6 +717,7 @@ namespace SignInCheckIn.Tests.Services
                 new ParticipantDto
                 {
                     FirstName = "Child3First",
+                    Nickname = "Child3Nickname",
                     AssignedRoomId = null,
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
@@ -725,6 +727,7 @@ namespace SignInCheckIn.Tests.Services
                 new ParticipantDto
                 {
                     FirstName = "Child4First",
+                    Nickname = "Child4Nickname",
                     AssignedRoomId = null,
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
@@ -768,19 +771,19 @@ namespace SignInCheckIn.Tests.Services
             // Verify specific calls, to make sure we populated the right PDFs for the right participants
             _pdfEditor.Verify(
                 mocked =>
-                    mocked.PopulatePdfMergeFields(Properties.Resources.Checkin_KC_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[0].FirstName))));
+                    mocked.PopulatePdfMergeFields(Properties.Resources.Checkin_KC_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[0].Nickname))));
             _pdfEditor.Verify(
                 mocked =>
-                    mocked.PopulatePdfMergeFields(Properties.Resources.Activity_Kit_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[1].FirstName))));
+                    mocked.PopulatePdfMergeFields(Properties.Resources.Activity_Kit_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[1].Nickname))));
             _pdfEditor.Verify(
                 mocked =>
-                    mocked.PopulatePdfMergeFields(Properties.Resources.Error_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[3].FirstName))));
+                    mocked.PopulatePdfMergeFields(Properties.Resources.Error_Label, It.Is<Dictionary<string, string>>(d => d["ChildName"].Equals(participantDtos[3].Nickname))));
             _pdfEditor.VerifyAll();
 
             // Verify that we called the print service for each expected participant
-            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[0].FirstName))));
-            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[1].FirstName))));
-            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[3].FirstName))));
+            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[0].Nickname))));
+            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[1].Nickname))));
+            _printingService.Verify(mocked => mocked.SendPrintRequest(It.Is<PrintRequestDto>(p => p.title.Contains(participantDtos[3].Nickname))));
             _printingService.VerifyAll();
 
             _kioskRepository.VerifyAll();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -74,6 +75,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Participation_Status_ID_Table.Participation_Status_ID",
                 "Participant_ID_Table_Contact_ID_Table.First_Name",
                 "Participant_ID_Table_Contact_ID_Table.Last_Name",
+                "Participant_ID_Table_Contact_ID_Table.Nickname",
                 "Event_Participants.Call_Number",
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
@@ -139,7 +141,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             };
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL", columns)).Returns(children);
+            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL AND Event_Participants.Call_Number IS NOT NULL AND Event_Participants.Checkin_Household_ID IS NOT NULL", columns, null, false)).Returns(children);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(1)).Returns(household1);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(2)).Returns(household2);
 
@@ -257,7 +259,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventParticipantDto>(
-                $"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL", _eventParticipantColumns)).Returns(mpEventParticipantDtos);
+                $"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL", _eventParticipantColumns, null, false)).Returns(mpEventParticipantDtos);
 
             // Act
             var result = _fixture.GetEventParticipantsByEventAndParticipant(eventId, participantIds);

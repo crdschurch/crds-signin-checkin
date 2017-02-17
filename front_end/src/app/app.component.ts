@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewContainerRef, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, ViewContainerRef, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToasterModule, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { ContentService, RootService, SetupService, HttpClientService } from './shared/services';
@@ -14,7 +14,7 @@ import { ComponentsHelper } from 'ng2-bootstrap/ng2-bootstrap';
   encapsulation: ViewEncapsulation.None,
   providers: [ToasterModule, ToasterService, ContentService, SetupService, HttpClientService, ApiService, ChannelService]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   private viewContainerRef: ViewContainerRef;
 
@@ -70,6 +70,10 @@ export class AppComponent implements OnInit {
     this.contentService.loadData();
   }
 
+  ngOnDestroy() {
+    this.channelService.stop();
+  }
+  
   inRoom() {
     return this.router.url === '/child-signin/room';
   }

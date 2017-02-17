@@ -184,6 +184,10 @@ export class ChannelService {
             });
     }
 
+    stop(): void {
+        this.hubConnection.stop();
+    }
+
     /** 
      * Get an observable that will contain the data associated with a specific 
      * channel 

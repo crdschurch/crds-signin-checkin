@@ -11,6 +11,7 @@ using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
+using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
 {

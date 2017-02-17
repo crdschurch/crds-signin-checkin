@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -50,6 +51,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
+                "Contact_ID_Table.Nickname",
                 "Contact_ID_Table.Date_of_Birth"
             };
 
@@ -61,6 +63,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Household_Position_ID_Table.Household_Position_ID",
                 "Contact_ID_Table.First_Name",
                 "Contact_ID_Table.Last_Name",
+                "Contact_ID_Table.Nickname",
                 "Contact_ID_Table.Date_of_Birth"
             };
 
@@ -72,6 +75,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
                 "Participant_ID_Table_Contact_ID_Table.First_Name",
                 "Participant_ID_Table_Contact_ID_Table.Last_Name",
+                "Participant_ID_Table_Contact_ID_Table.Nickname",
                 "Participant_ID_Table_Contact_ID_Table.Date_of_Birth",
                 "Group_ID_Table_Congregation_ID_Table.Congregation_ID",
                 "Group_ID_Table_Group_Type_ID_Table.Group_Type_ID",
@@ -327,10 +331,10 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _applicationConfiguration.Setup(mocked => mocked.MinorChildId).Returns(2);
             _applicationConfiguration.Setup(mocked => mocked.HouseHoldIdsThatCanCheckIn).Returns("3,4,2");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns)).Returns(primaryChild);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Contact_Households", GetChildParticpantsByOtherHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _otherHouseChildParticipantColumns)).Returns(otherChild);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns)).Returns(children);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns)).Returns(mpEventGroupDtos);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns, null, false)).Returns(primaryChild);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Contact_Households", GetChildParticpantsByOtherHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _otherHouseChildParticipantColumns, null, false)).Returns(otherChild);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns, null, false)).Returns(children);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns, null, false)).Returns(mpEventGroupDtos);
 
             var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId, eventDto);
             _apiUserRepository.VerifyAll();
@@ -455,10 +459,10 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _applicationConfiguration.Setup(mocked => mocked.MinorChildId).Returns(2);
             _applicationConfiguration.Setup(mocked => mocked.HouseHoldIdsThatCanCheckIn).Returns("3,4,2");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns)).Returns(primaryChild);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Contact_Households", GetChildParticpantsByOtherHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _otherHouseChildParticipantColumns)).Returns(otherChild);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns)).Returns(children);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns)).Returns(mpEventGroupDtos);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns, null, false)).Returns(primaryChild);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Contact_Households", GetChildParticpantsByOtherHouseholdFilter(primaryHouseholdId.GetValueOrDefault()), _otherHouseChildParticipantColumns, null, false)).Returns(otherChild);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns, null, false)).Returns(children);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns, null, false)).Returns(mpEventGroupDtos);
 
             var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId, eventDto);
             _apiUserRepository.VerifyAll();
@@ -505,16 +509,16 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _applicationConfiguration.Setup(mocked => mocked.HouseHoldIdsThatCanCheckIn).Returns("3,4,2");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
-                mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(householdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns)).Returns(participants);
+                mocked => mocked.Search<MpParticipantDto>(GetChildParticpantsByPrimaryHouseholdFilter(householdId.GetValueOrDefault()), _primaryHouseChildParticipantColumns, null, false)).Returns(participants);
 
             _ministryPlatformRestRepository.Setup(
-                mocked => mocked.Search<MpEventGroupDto>(It.IsAny<string>(), It.IsAny<List<string>>())).Returns(mpEventGroupDtos);
+                mocked => mocked.Search<MpEventGroupDto>(It.IsAny<string>(), It.IsAny<List<string>>(), null, false)).Returns(mpEventGroupDtos);
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>
-                (It.IsAny<string>(), GetChildParticpantsByOtherHouseholdFilter(householdId.GetValueOrDefault()), _otherHouseChildParticipantColumns)).Returns(participants);
+                (It.IsAny<string>(), GetChildParticpantsByOtherHouseholdFilter(householdId.GetValueOrDefault()), _otherHouseChildParticipantColumns, null, false)).Returns(participants);
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>
-                ("Group_Participants", It.IsAny<string>(), _groupChildParticipantColumns)).Returns(participants);
+                ("Group_Participants", It.IsAny<string>(), _groupChildParticipantColumns, null, false)).Returns(participants);
 
             var result = _fixture.GetChildrenByHouseholdId(householdId, eventDto);
             _apiUserRepository.VerifyAll();
