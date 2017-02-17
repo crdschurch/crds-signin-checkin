@@ -64,8 +64,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Start the signalr connection up!
-    console.log('Starting the channel service');
     // TODO - commenting out to try and track down ws/apache issues
+    // console.log('Starting the channel service');
     // this.channelService.start();
 
     this.contentService.loadData();
