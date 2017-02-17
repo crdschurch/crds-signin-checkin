@@ -58,18 +58,6 @@ export class AvailableChildrenComponent implements OnInit {
    }
  }
 
- toggleMonth(month) {
-   this.guestDOB.month = month;
- }
-
- toggleDay(day) {
-   this.guestDOB.day = day;
- }
-
- toggleYear(year) {
-   this.guestDOB.year = year;
- }
-
  getChildren(phoneNumber) {
    this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe(
        (result) => {

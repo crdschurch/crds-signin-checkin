@@ -1,21 +1,7 @@
+@import '../../../assets/scss/_variables.scss';
+
 .modal {
   a.btn-primary.active:not([href]):not([tabindex]) {
     color: white!important;
-  }
-}
-
-ul.dropdown-menu {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.dropdown-datepicker {
-  ul {
-    li {
-      &:hover {
-        opacity: .7;
-        cursor: pointer;
-      }
-    }
   }
 }
