@@ -47,7 +47,7 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  populateDatepicker() {
-   this.numberOfMonthsSelection = Array.apply(null, {length: 12}).map(function (e, i) { return i + 0; }, Number);
+   this.numberOfMonthsSelection = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
    this.numberOfDaysSelection = Array.apply(null, {length: 31}).map(function (e, i) { return i + 1; }, Number);
    this.yearsSelection = [];
    let i = 0;
