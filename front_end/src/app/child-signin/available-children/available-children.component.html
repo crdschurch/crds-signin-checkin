@@ -112,7 +112,7 @@
                     <div class="form-group required text-xs-left">
                       <label for="guestChildBirthDate" class="control-label">Birth Date</label>
                       <br/>
-                      <div class="row" *ngIf="reset">
+                      <div class="row">
                         <div class="col-md-4 col-sm-12 dob-select mb-1">
                           <select class="form-control form-control-lg" id="dob-month" (change)="datePickerBlur()" [(ngModel)]="guestDOB.month">
                             <option disabled value="0">Month</option>
