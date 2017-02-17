@@ -26,6 +26,8 @@ export class AvailableChildrenComponent implements OnInit {
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
   guestDOB: DateOfBirth = new DateOfBirth();
+  isInit: boolean;
+  reset: boolean = true;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
@@ -47,7 +49,7 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  populateDatepicker() {
-   this.numberOfMonthsSelection = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
+   this.numberOfMonthsSelection = Array.apply(null, {length: 12}).map(function (e, i) { return i + 0; }, Number);
    this.numberOfDaysSelection = Array.apply(null, {length: 31}).map(function (e, i) { return i + 1; }, Number);
    this.yearsSelection = [];
    let i = 0;
@@ -55,22 +57,6 @@ export class AvailableChildrenComponent implements OnInit {
      this.yearsSelection.push(moment().subtract(i, 'y').year());
      i++;
    }
- }
-
- toggleMonth(month) {
-   this.guestDOB.month = +month;
-   this.datePickerBlur();
- }
-
- toggleDay(day) {
-   this.guestDOB.day = +day;
-   this.datePickerBlur();
- }
-
- toggleYear(year) {
-   this.guestDOB.year = +year;
-   this.datePickerBlur();
-   console.log(this.guestDOB)
  }
 
  getChildren(phoneNumber) {
@@ -208,6 +194,9 @@ export class AvailableChildrenComponent implements OnInit {
    this._newGuestChild = new Guest();
    this._newGuestChild.GuestSignin = true;
    this._newGuestChild.Selected = true;
+   this.isInit = true;
+   this.reset = false;
+   this.reset = true;
    modal.show();
  }
 

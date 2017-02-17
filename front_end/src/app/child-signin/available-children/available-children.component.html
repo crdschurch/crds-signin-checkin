@@ -112,26 +112,26 @@
                     <div class="form-group required text-xs-left">
                       <label for="guestChildBirthDate" class="control-label">Birth Date</label>
                       <br/>
-                      <div class="row">
+                      <div class="row" *ngIf="reset">
                         <div class="col-md-4 col-sm-12 dob-select mb-1">
-                          <select class="form-control form-control-lg" id="dob-month" (change)="toggleMonth(+$event.target.value)">
-                            <option role="menuitem">Month</option>
+                          <select class="form-control form-control-lg" id="dob-month" (change)="datePickerBlur()" [(ngModel)]="guestDOB.month">
+                            <option disabled value="0">Month</option>
                             <option role="menuitem" *ngFor="let num of numberOfMonthsSelection" value="{{num}}">
-                              {{num | monthName}}
+                              {{num | monthName }}
                             </option>
                           </select>
                         </div>
                         <div class="col-md-4 col-sm-12 dob-select mb-1">
-                          <select class="form-control form-control-lg" id="dob-day" (change)="toggleDay(+$event.target.value)">
-                            <option role="menuitem">Day</option>
+                          <select class="form-control form-control-lg" id="dob-day" (change)="datePickerBlur()" [(ngModel)]="guestDOB.day">
+                            <option disabled value="0">Day</option>
                             <option role="menuitem" *ngFor="let num of numberOfDaysSelection">
                               {{num}}
                             </option>
                           </select>
                         </div>
                         <div class="col-md-4 col-sm-12 mb-1">
-                          <select class="form-control form-control-lg" id="dob-year" (change)="toggleYear(+$event.target.value)">
-                            <option role="menuitem">Year</option>
+                          <select class="form-control form-control-lg" id="dob-year" (change)="datePickerBlur()" [(ngModel)]="guestDOB.year">
+                            <option disabled value="0">Year</option>
                             <option role="menuitem" *ngFor="let num of yearsSelection">
                               {{num}}
                             </option>
