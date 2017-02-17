@@ -229,6 +229,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_ID",
                 "Participant_ID_Table_Contact_ID_Table.[First_Name]",
                 "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Nickname]",
                 "Participant_ID_Table.[Participant_ID]",
                 "Participation_Status_ID",
                 "Time_In",

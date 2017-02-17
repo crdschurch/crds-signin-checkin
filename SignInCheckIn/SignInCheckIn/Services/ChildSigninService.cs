@@ -235,7 +235,7 @@ namespace SignInCheckIn.Services
 
                 if (eventParticipant.DuplicateSignIn == true)
                 {
-                    eventParticipant.SignInErrorMessage = $"{eventParticipant.FirstName} is already signed in for this event.";
+                    eventParticipant.SignInErrorMessage = $"{eventParticipant.Nickname} is already signed in for this event.";
                     continue;
                 }
 
@@ -243,13 +243,13 @@ namespace SignInCheckIn.Services
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
-                    eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
+                    eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.Nickname} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
                 }
   
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
-                    eventParticipant.SignInErrorMessage = $"There are no '{@group?.Name}' rooms open during the {eventDto.EventTitle} for {eventParticipant.FirstName}";
+                    eventParticipant.SignInErrorMessage = $"There are no '{@group?.Name}' rooms open during the {eventDto.EventTitle} for {eventParticipant.Nickname}";
                 }
                 else
                 {
