@@ -5,7 +5,6 @@ using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
-using SignInCheckIn.App_Start;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
@@ -425,7 +424,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _roomRepository.Setup(m => m.GetEventRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(eventRoom);
-            _childCheckinRepository.Setup(m => m.OverrideChildIntoRoom(It.IsAny<int>(), It.IsAny<int>()));
+            _childCheckinRepository.Setup(m => m.OverrideChildIntoRoom(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()));
             _fixture.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
             _childCheckinRepository.VerifyAll();
         }

@@ -3,12 +3,12 @@
 <div class="wrapper rooms">
   <div class="container-fluid admin-content py-1">
     <div class="row">
-      <div class="col-sm-8">
+      <div class="col-sm-5">
         <h3>Manage Room</h3>
       </div>
-      <div class="col-sm-4 text-sm-right pb-1">
+      <div class="col-sm-7 text-sm-right pb-1">
         <div>
-          <a (click)=goBack() class="pointer">
+          <a [routerLink]="['/admin/events',eventId,'rooms']">
             <span class="icon">
               <svg height="20px" version="1.1" viewBox="0 0 16 16" width="20px" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g fill="none" fill-rule="evenodd" id="Icons with numbers" stroke="none" stroke-width="1"><g id="Group" transform="translate(-96.000000, -144.000000)">

@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Room, NewFamily, Child } from '../shared/models';
+import { Room, NewFamily, Child, Group } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -119,6 +119,28 @@ describe('AdminService', () => {
       expect(result).toEqual(jasmine.any(Observable));
       result.subscribe((c) => {
         expect(c[0].ContactId).toEqual(children[0].ContactId);
+      });
+    });
+  });
+
+  describe('#getUnassignedGroups', () => {
+    it('should return unassigned groups', () => {
+      let group: Group[] = [
+        new Group(),
+        new Group()
+      ];
+      group[0].Group_Name = '12345';
+      group[1].Group_Name = '67890';
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(group);
+
+      let result = fixture.getUnassignedGroups(231);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/231/groups/unassigned`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((c) => {
+        expect(c[0].Group_Name).toEqual(group[0]['Group_Name']);
       });
     });
   });

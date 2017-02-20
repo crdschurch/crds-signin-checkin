@@ -1,5 +1,5 @@
 ﻿using System;
-using MinistryPlatform.Translation.Models.Attributes;
+using Crossroads.Web.Common.MinistryPlatform;
 using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
@@ -30,6 +30,9 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Last_Name")]
         public string LastName { get; set; }
+
+        [JsonProperty(PropertyName = "Nickname")]
+        public string Nickname { get; set; }
 
         [JsonProperty(PropertyName = "Date_of_Birth")]
         public DateTime? DateOfBirth { get; set; }

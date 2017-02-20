@@ -170,6 +170,10 @@ a.btn-primary.active:not([href]):not([tabindex]) {
   line-height: 2;
 }
 
+.nav-link {
+  cursor: pointer;
+}
+
 datepicker {
   .btn-info {
     .text-muted {
@@ -190,7 +194,7 @@ datepicker {
 }
 
 .manage-rooms-table {
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(lg) {
     display: block;
     width: 100%;
     min-height: 0%;

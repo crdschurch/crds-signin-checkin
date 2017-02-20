@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
+using Crossroads.Web.Common.Security;
 using log4net;
+using Microsoft.AspNet.SignalR;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using SignInCheckIn.Hubs;
 using SignInCheckIn.Util;
 
 namespace SignInCheckIn.Security
@@ -50,8 +53,8 @@ namespace SignInCheckIn.Security
                     var authData = _authenticationRepository.RefreshToken(refreshTokenHeader);
                     if (authData != null)
                     {
-                        var authToken = authData["token"].ToString();
-                        var refreshToken = authData["refreshToken"].ToString();
+                        var authToken = authData.AccessToken;
+                        var refreshToken = authData.RefreshToken;
                         var result = new HttpAuthResult(actionWhenAuthorized(authToken), authToken, refreshToken);
                         return result;
                     }
@@ -70,6 +73,16 @@ namespace SignInCheckIn.Security
             {
                 return actionWhenNotAuthorized();
             }
+        }
+
+        protected static void PublishToChannel(IHubContext context, ChannelEvent channelEvent)
+        {
+            // Taken from: https://github.com/sstorie/experiments/tree/master/angular2-signalr
+            // From .NET code like this we can't invoke the methods that
+            //  exist on our actual Hub class...because we only have a proxy
+            //  to it. So to publish the event we need to call the method that
+            //  the clients will be listening on.
+            context.Clients.Group(channelEvent.ChannelName).OnEvent(channelEvent.ChannelName, channelEvent);
         }
     }
 }

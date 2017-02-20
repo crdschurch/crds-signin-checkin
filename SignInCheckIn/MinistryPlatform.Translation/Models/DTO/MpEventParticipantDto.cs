@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using MinistryPlatform.Translation.Models.Attributes;
+using Crossroads.Web.Common.MinistryPlatform;
 using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
@@ -22,6 +22,9 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("Last_Name")]
         public string LastName { get; set; }
+
+        [JsonProperty("Nickname")]
+        public string Nickname { get; set; }
 
         [JsonProperty("Participation_Status_ID")]
         public int ParticipantStatusId { get; set; }

@@ -1,8 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
+import { RootService } from '../../../shared/services';
 import { Room } from '../../../shared/models';
+import * as _ from 'lodash';
 
 @Component({
   selector: '.room',
@@ -12,31 +14,62 @@ import { Room } from '../../../shared/models';
 })
 export class RoomComponent implements OnInit {
   @Input() room: Room;
+  @Output() notifyDirty: EventEmitter<boolean> = new EventEmitter<boolean>();
   public pending: boolean;
   private roomForm: FormGroup;
+  private origRoomData: Room;
+  public _dirty: boolean;
 
-  constructor(private route: ActivatedRoute, private adminService: AdminService) {
+  constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService) {
   }
 
   mainEventId() {
     return this.route.snapshot.params['eventId'];
   }
 
-  add(field) {
-    this.roomForm.controls[field].setValue(this.room[field]++);
+  highlight(e) {
+    e.target.select();
   }
+
+  add(field) {
+    this.room[field]++;
+    this.dirty = true;
+  }
+
   remove(field) {
     if (this.room[field] >= 1) {
-      this.roomForm.controls[field].setValue(this.room[field]--);
+      this.room[field]--
+      this.dirty = true;
     }
   }
   toggle(field) {
     this.room[field] = !this.room[field];
-    this.roomForm.controls[field].setValue(this.room[field]);
+    this.dirty = true;
   }
 
-  sync(field) {
-    this.room[field] = this.roomForm.controls[field].value;
+  saveRoom() {
+    this.pending = true;
+    this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(room => {
+      this.origRoomData = _.clone(this.room);
+      this.room = room;
+      this.dirty = false;
+      this.pending = false;
+    }, (error) => {
+      this.room = this.origRoomData;
+      this.dirty = false;
+      this.pending = false;
+      this.rootService.announceEvent('generalError');
+    });
+    return false;
+  }
+
+  set dirty(isChanged) {
+    this._dirty = isChanged;
+    this.notifyDirty.emit(isChanged);
+  }
+
+  get dirty() {
+    return this._dirty;
   }
 
   hasCapacity() {
@@ -83,22 +116,6 @@ export class RoomComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.roomForm = new FormGroup({
-      Volunteers: new FormControl(),
-      Capacity: new FormControl(),
-      AllowSignIn: new FormControl()
-    });
-
-    this.roomForm.valueChanges
-      .debounceTime(1000)
-      .distinctUntilChanged()
-      .subscribe(props => {
-        this.pending = true;
-        this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(room => {
-          this.room = room;
-          this.pending = false;
-        });
-      });
+    this.origRoomData = _.clone(this.room);
   }
 }

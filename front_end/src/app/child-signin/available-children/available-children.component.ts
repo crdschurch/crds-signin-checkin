@@ -3,9 +3,10 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
 import { ApiService, RootService } from '../../shared/services';
-import { EventParticipants, Guest, Group } from '../../shared/models';
+import { DateOfBirth, EventParticipants, Guest, Group } from '../../shared/models';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'available-children',
@@ -22,6 +23,10 @@ export class AvailableChildrenComponent implements OnInit {
   private maxDate: Date = moment().toDate();
   private _newGuestChild: Guest;
   private gradeGroups: Array<Group> = [];
+  numberOfMonthsSelection: Array<number>;
+  numberOfDaysSelection: Array<number>;
+  yearsSelection: Array<number>;
+  guestDOB: DateOfBirth = new DateOfBirth();
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
@@ -38,6 +43,19 @@ export class AvailableChildrenComponent implements OnInit {
       this.getChildren(phoneNumber);
       this.populateGradeGroups();
     });
+
+    this.populateDatepicker();
+ }
+
+ populateDatepicker() {
+   this.numberOfMonthsSelection = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
+   this.numberOfDaysSelection = Array.apply(null, {length: 31}).map(function (e, i) { return i + 1; }, Number);
+   this.yearsSelection = [];
+   let i = 0;
+   while (i <= 18) {
+     this.yearsSelection.push(moment().subtract(i, 'y').year());
+     i++;
+   }
  }
 
  getChildren(phoneNumber) {
@@ -65,6 +83,8 @@ export class AvailableChildrenComponent implements OnInit {
      return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
    }
    this.isReady = false;
+   // remove unselected event participants
+   this._eventParticipants.removeUnselectedParticipants();
    this.childSigninService.signInChildren(this._eventParticipants, this.numberEventsAttending).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;
@@ -171,11 +191,17 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  openNewGuestModal(modal) {
+   this.guestDOB = new DateOfBirth();
    this._newGuestChild = new Guest();
    this._newGuestChild.GuestSignin = true;
    this._newGuestChild.Selected = true;
-   this._newGuestChild.DateOfBirth = moment().startOf('day').toDate();
    modal.show();
+ }
+
+ datePickerBlur() {
+   if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
+     this.newGuestChild.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
+   }
  }
 
  saveNewGuest(modal) {
@@ -185,6 +211,8 @@ export class AvailableChildrenComponent implements OnInit {
    } finally {
      if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
        return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
+     } else if (!this.newGuestChild.DateOfBirth || !moment(this.newGuestChild.DateOfBirth).isValid()) {
+       return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
      } else {
        this._eventParticipants.Participants.push(this.newGuestChild);
        return modal.hide();

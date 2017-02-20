@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { RequestOptions } from '@angular/http';
 
 import { EventParticipants } from '../shared/models/event-participants';
+import { Room } from '../shared/models/room';
 import { Child } from '../shared/models/child';
 import { Event } from '../shared/models/event';
 import { ChildCheckinService } from './child-checkin.service';
@@ -102,7 +103,7 @@ describe('ChildCheckinService', () => {
     it('override a child into a room', () => {
       let child = new Child();
       child.EventParticipantId = 54321;
-      httpClientService.put.and.callFake((url: string, data: Child, opts: RequestOptions) => {
+      httpClientService.put.and.callFake((url: string, opts: RequestOptions) => {
         return Observable.of();
       });
       let result = fixture.overrideChildIntoRoom(child, 123, 555);
@@ -120,6 +121,27 @@ describe('ChildCheckinService', () => {
           }, error => {
             expect(error).toBeDefined();
         });
+      });
+    });
+  });
+
+  describe('#getEventRoomDetails', () => {
+    it('get event room from backend', () => {
+      let output = new Room();
+      output.EventRoomId = '12341';
+      output.EventId = '6789';
+
+      httpClientService.get.and.callFake((url: string, data: any, opts: RequestOptions) => {
+        return Observable.of({ json: () => {
+          return JSON.stringify(output);
+        }});
+      });
+
+      let result = fixture.getEventRoomDetails(123, 789);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/123/rooms/789`);
+      expect(result).toBeDefined();
+      result.subscribe((p) => {
+        expect(p).toEqual(jasmine.any(Room));
       });
     });
   });

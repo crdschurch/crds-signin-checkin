@@ -7,6 +7,8 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
+using Crossroads.ApiVersioning;
+using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
 {
@@ -31,6 +33,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "signin/children/{phoneNumber}", minimumVersion: "1.0.0")]
         [Route("signin/children/{phoneNumber}")]
         public IHttpActionResult GetChildrenAndEvent(string phoneNumber)
         {
@@ -59,6 +62,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "signin/children", minimumVersion: "1.0.0")]
         [Route("signin/children")]
         public IHttpActionResult SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
@@ -75,6 +79,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "signin/participants/print", minimumVersion: "1.0.0")]
         [Route("signin/participants/print")]
         public IHttpActionResult PrintParticipants(ParticipantEventMapDto participantEventMapDto)
         {
@@ -102,6 +107,7 @@ namespace SignInCheckIn.Controllers
         
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "signin/participant/{eventParticipantId}/print", minimumVersion: "1.0.0")]
         [Route("signin/participant/{eventParticipantId}/print")]
         public IHttpActionResult PrintParticipant(int eventParticipantId)
         {
@@ -139,6 +145,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(int))]
+        [VersionedRoute(template: "signin/newfamily", minimumVersion: "1.0.0")]
         [Route("signin/newfamily")]
         public IHttpActionResult CreateNewFamily(NewFamilyDto newFamilyDto)
         {
@@ -177,6 +184,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "signin/reverse/{eventparticipantid}", minimumVersion: "1.0.0")]
         [Route("signin/reverse/{eventparticipantid}")]
         public IHttpActionResult ReverseSignin(int eventparticipantid)
         {

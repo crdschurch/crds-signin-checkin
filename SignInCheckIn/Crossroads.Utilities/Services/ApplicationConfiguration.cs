@@ -1,4 +1,5 @@
 ﻿using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.Configuration;
 
 namespace Crossroads.Utilities.Services
 {
@@ -33,6 +34,10 @@ namespace Crossroads.Utilities.Services
         public int GuestHouseholdId { get; set; }
 
         public int RoomUsageTypeKidsClub { get; set; }
+
+        public string ManageRoomsChannel { get; set; }
+        public string CheckinParticipantsChannel { get; set; }
+        public string CheckinCapacityChannel { get; set; }
 
         public int KcJan0To1 { get; }
         public int KcJan1To2 { get; }
@@ -296,6 +301,10 @@ namespace Crossroads.Utilities.Services
             GuestHouseholdId = configurationWrapper.GetConfigIntValue("GuestHouseholdId");
 
             RoomUsageTypeKidsClub = configurationWrapper.GetConfigIntValue("RoomUsageTypeKidsClub");
+
+            ManageRoomsChannel = configurationWrapper.GetConfigValue("ManageRoomsChannel");
+            CheckinParticipantsChannel = configurationWrapper.GetConfigValue("CheckinParticipantsChannel");
+            CheckinCapacityChannel = configurationWrapper.GetConfigValue("CheckinCapacityChannel");
 
             // kc groups - January Birth Months
             KcJan0To1 = configurationWrapper.GetConfigIntValue("Jan_0-1");

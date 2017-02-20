@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.MinistryPlatform;
 using FluentAssertions;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -141,7 +142,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpGroupDto>(groupId, _groupColumns)).Returns(group);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpAttributeDto>("Group_Attributes", $"Group_Attributes.Group_ID = {group.Id}", _attributeColumns))
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpAttributeDto>("Group_Attributes", $"Group_Attributes.Group_ID = {group.Id}", _attributeColumns, null, false))
                 .Returns(attrs);
 
             var result = _fixture.GetGroup(token, groupId, true);
@@ -207,7 +208,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpGroupDto>(groupId, _groupColumns)).Returns(group);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpAttributeDto>("Group_Attributes", $"Group_Attributes.Group_ID = {group.Id}", _attributeColumns))
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpAttributeDto>("Group_Attributes", $"Group_Attributes.Group_ID = {group.Id}", _attributeColumns, null, false))
                 .Returns(attrs);
 
             var result = _fixture.GetGroup(null, groupId, true);
@@ -289,7 +290,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpGroupDto>("Group_Attributes", expectedSearchString, _groupAttributeColumns))
+            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpGroupDto>("Group_Attributes", expectedSearchString, _groupAttributeColumns, null, false))
                 .Returns(new List<MpGroupDto> {group});
 
             var result = _fixture.GetGroupsByAttribute(token, attrs, false);

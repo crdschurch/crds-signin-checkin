@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Extensions;
-using MinistryPlatform.Translation.Models.Attributes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

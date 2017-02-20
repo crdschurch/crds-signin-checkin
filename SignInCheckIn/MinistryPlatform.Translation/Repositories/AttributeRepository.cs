@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 

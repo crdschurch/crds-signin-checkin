@@ -2,14 +2,14 @@ using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using Castle.Components.DictionaryAdapter;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using SignInCheckIn.App_Start;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 
@@ -22,6 +22,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IAttributeRepository> _attributeRepository;
         private Mock<IGroupRepository> _groupRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
+        private Mock<IApiUserRepository> _apiUserRepository;
 
         private const int AgesAttributeTypeId = 102;
         private const int BirthMonthsAttributeTypeId = 103;
@@ -46,6 +47,7 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository = new Mock<IAttributeRepository>(MockBehavior.Strict);
             _groupRepository = new Mock<IGroupRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
+            _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
@@ -66,7 +68,7 @@ namespace SignInCheckIn.Tests.Services
                     "[{'Attribute_ID':9020,'Attribute_Name':'0-1','Sort_Order':1000,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9021,'Attribute_Name':'1-2','Sort_Order':1,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9022,'Attribute_Name':'2-3','Sort_Order':2,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9023,'Attribute_Name':'3-4','Sort_Order':3,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9024,'Attribute_Name':'4-5','Sort_Order':4,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9025,'Attribute_Name':'5-6','Sort_Order':5,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9026,'Attribute_Name':'6-7','Sort_Order':6,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9027,'Attribute_Name':'7-8','Sort_Order':7,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9028,'Attribute_Name':'8-9','Sort_Order':8,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9029,'Attribute_Name':'9-10','Sort_Order':9,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9030,'Attribute_Name':'10-11','Sort_Order':10,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9031,'Attribute_Name':'11-12','Sort_Order':11,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'}]");
 
 
-            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object);
+            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object, _apiUserRepository.Object);
         }
 
         [Test]
@@ -97,25 +99,64 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            var eventIds = events.Select(e => e.EventId).ToList();
+            string eventRoomJson = @"{  'Allow_Checkin': true, 'Capacity': 50, 'Checked_In': 0, 'Event_ID': 4534870, 'Event_Room_ID': 4601093,
+                'Room_ID': 1972, 'Room_Name': 'Special Needs (K105)', 'Signed_In': 1, 'Volunteers': 0 }";
+            JObject eventRoomResult = JObject.Parse(eventRoomJson);
+            List<JObject> eventRoomJsonList = new List<JObject>
+            {
+                eventRoomResult
+            };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, 1234567)).Returns(events);
-            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventIds)).Returns((List<MpEventGroupDto>)null);
+            string eventGroupJson = @"{'Event_ID': 4534870, 'Group_ID': 173934, 'Event_Group_ID': 1895918, 'Event_Room_ID': 4601093, 'Room_ID': 1972, 'Signed_In': 0, 'Checked_In': 0}";
+            JObject eventGroupResult = JObject.Parse(eventGroupJson);
+            List<JObject> eventGroupJsonList = new List<JObject>
+            {
+                eventGroupResult
+            };
 
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
-                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
-                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
+            string mpGroupNurseryMonthAttributeJson = @"{'Group_ID': 173934, 'Attribute_Type_ID': 105, 'Attribute_ID': 9031, 'Attribute_Name': '11-12', 'Sort_Order': 11}";
+            JObject mpGroupNurseryMonthAttributeResult = JObject.Parse(mpGroupNurseryMonthAttributeJson);
+            string mpGroupBirthMonthAttributeJson = @"{'Group_ID': 173934, 'Attribute_Type_ID': 103, 'Attribute_ID': 9030, 'Attribute_Name': 'January', 'Sort_Order': 11}";
+            JObject mpGroupBirthMonthAttributeResult = JObject.Parse(mpGroupBirthMonthAttributeJson);
+            string mpGroupAgeAttributeJson = @"{'Group_ID': 173934, 'Attribute_Type_ID': 102, 'Attribute_ID': 9029, 'Attribute_Name': 'Nursery Age', 'Sort_Order': 11}";
+            JObject mpGroupAgeAttributeResult = JObject.Parse(mpGroupAgeAttributeJson);
+            List<JObject> mpGroupAttributeJsonList = new List<JObject>
+            {
+                mpGroupNurseryMonthAttributeResult,
+                mpGroupBirthMonthAttributeResult,
+                mpGroupAgeAttributeResult,
+            };
 
-            _roomRepository.Setup(m => m.GetRoomsForEvent(eventIds, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
+            string mpNurseryMonthAttributeJson = @"{'Attribute_ID': 9031, 'Attribute_Name': 'January', 'Description': 'January birth month', 'Attribute_Type_ID': 105, 'Attribute_Type_Name': 'Nursery Month for Kids Club eCheck group' }";
+            JObject mpNurseryMonthAttributeResult = JObject.Parse(mpNurseryMonthAttributeJson);
+            string mpBirthMonthAttributeJson = @"{'Attribute_ID': 9030, 'Attribute_Name': 'January', 'Description': 'January birth month', 'Attribute_Type_ID': 103, 'Attribute_Type_Name': 'Birth Month for Kids Club eCheck group' }";
+            JObject mpBirthMonthAttributeResult = JObject.Parse(mpBirthMonthAttributeJson);
+            string mpAgeAttributeJson = @"{'Attribute_ID': 9029, 'Attribute_Name': 'January', 'Description': 'January birth month', 'Attribute_Type_ID': 102, 'Attribute_Type_Name': 'Age for Kids Club eCheck group' }";
+            JObject mpAttributeResult = JObject.Parse(mpAgeAttributeJson);
+            List<JObject> mpAgeAttributeJsonList = new List<JObject>
+            {
+                mpNurseryMonthAttributeResult,
+                mpBirthMonthAttributeResult,
+                mpAttributeResult
+            };
+
+            var roomJsonData = new List<List<JObject>>
+            {
+                eventRoomJsonList,
+                eventGroupJsonList,
+                mpGroupAttributeJsonList,
+                mpAgeAttributeJsonList
+            };
+
+            _roomRepository.Setup(m => m.GetManageRoomsListData(mpEventDto.EventId)).Returns(roomJsonData);
 
             // Act
             var result = _fixture.GetLocationRoomsByEventId(token, 1234567);
 
             // Assert
             Assert.IsNotNull(result);
+            Assert.AreEqual(result[0].EventRoomId, 4601093);
+            Assert.AreEqual(result[0].AssignedGroups.Count, 1);
             _roomRepository.VerifyAll();
             _eventRepository.VerifyAll();
         }
@@ -223,6 +264,61 @@ namespace SignInCheckIn.Tests.Services
 
             Assert.IsNotNull(result);
             result.ShouldBeEquivalentTo(newEventRoom);
+        }
+
+        [Test]
+        public void TestGetEventUnassignedGroups()
+        {
+            // arrange
+            const string token = "token 123";
+            const int eventId = 56465;
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            var eventGroups = new List<MpEventGroupDto>();
+            eventGroups.Add(
+                new MpEventGroupDto
+                {
+                    GroupId = 5
+                }
+            );
+            _eventRepository.Setup(m => m.GetEventGroupsForEvent(eventId)).Returns(eventGroups);
+            var mpGroupDtos =  new List<MpGroupDto>();
+            mpGroupDtos.Add(
+                new MpGroupDto
+                {
+                    Name = "Kids Club 3rd Grade",
+                    Id = 66
+                }
+            );
+            mpGroupDtos.Add(
+                new MpGroupDto
+                {
+                    Name = "Kids Club 2nd Grade",
+                    Id = 88
+                }
+            );
+           mpGroupDtos.Add(
+                new MpGroupDto
+                {
+                    Name = "Kids Club 1st Grade",
+                    Id = 77
+                }
+            );
+            _groupRepository.Setup(mocked => mocked.GetGroupsByAttribute(token, It.IsAny<IEnumerable<MpAttributeDto>>(), false)).Returns(mpGroupDtos);
+
+            // act
+            var result = _fixture.GetEventUnassignedGroups(token, eventId);
+
+            // assert
+            _roomRepository.VerifyAll();
+            Assert.IsNotNull(result);
+            result.ShouldBeEquivalentTo(mpGroupDtos);
+            result[0].Id.Should().Be(88);
+            result[1].Id.Should().Be(77);
+            result[2].Id.Should().Be(66);
+
         }
 
         public void TestGetEventRoomAgesAndGradesNoEventGroups()

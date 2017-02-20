@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -27,6 +28,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_ID",
                 "Participant_ID_Table_Contact_ID_Table.[First_Name]",
                 "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Nickname]",
                 "Participant_ID_Table.[Participant_ID]",
                 "Participation_Status_ID",
                 "Time_In",
@@ -59,6 +61,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Participation_Status_ID_Table.Participation_Status_ID",
                 "Participant_ID_Table_Contact_ID_Table.First_Name",
                 "Participant_ID_Table_Contact_ID_Table.Last_Name",
+                "Participant_ID_Table_Contact_ID_Table.Nickname",
                 "Event_Participants.Call_Number",
                 "Room_ID_Table.Room_ID",
                 "Room_ID_Table.Room_Name",
@@ -68,7 +71,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL", columnList);
+                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL AND Event_Participants.Call_Number IS NOT NULL AND Event_Participants.Checkin_Household_ID IS NOT NULL", columnList);
 
             foreach (var child in childPartipantsForEvent)
             {
@@ -123,6 +126,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_ID",
                 "Participant_ID_Table_Contact_ID_Table.[First_Name]",
                 "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Nickname]",
                 "Participant_ID_Table.[Participant_ID]",
                 "Participation_Status_ID",
                 "Time_In",
@@ -162,6 +166,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_ID",
                 "Participant_ID_Table_Contact_ID_Table.[First_Name]",
                 "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Nickname]",
                 "Participant_ID_Table.[Participant_ID]",
                 "Participation_Status_ID",
                 "Time_In",

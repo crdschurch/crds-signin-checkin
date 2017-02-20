@@ -2,8 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Ng2BootstrapModule } from 'ng2-bootstrap/ng2-bootstrap';
+
 import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
 import { OneBasedIndexPipe } from './pipes/one-based-index.pipe';
+import { MonthNamePipe } from './pipes/monthName.pipe';
 import { DashedPipe } from './pipes/dashed.pipe';
 import { ApiService, LoginRedirectService } from './services';
 
@@ -18,11 +20,13 @@ import { CanActivateIfLoggedInGuard } from './guards';
   declarations: [
     PhoneNumberPipe,
     OneBasedIndexPipe,
+    MonthNamePipe,
     DashedPipe
   ],
   exports: [
     PhoneNumberPipe,
     OneBasedIndexPipe,
+    MonthNamePipe,
     DashedPipe,
     CommonModule,
     FormsModule,

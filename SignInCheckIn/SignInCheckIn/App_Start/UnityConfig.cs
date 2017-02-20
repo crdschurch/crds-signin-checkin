@@ -1,8 +1,8 @@
 using System.Configuration;
+using System.Linq;
 using Microsoft.Practices.Unity;
 using System.Web.Http;
 using Microsoft.Practices.Unity.Configuration;
-using SignInCheckIn.Filters;
 using Unity.WebApi;
 
 namespace SignInCheckIn
@@ -11,10 +11,13 @@ namespace SignInCheckIn
     {
         public static void RegisterComponents()
         {
-            var section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
             var container = new UnityContainer();
+            var unitySections = new[] { "crossroadsCommonUnity", "unity" };
 
-            section.Configure(container);
+            foreach (var section in unitySections.Select(sectionName => (UnityConfigurationSection)ConfigurationManager.GetSection(sectionName)))
+            {
+                container.LoadConfiguration(section);
+            }
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }

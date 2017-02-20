@@ -7,5 +7,10 @@ import '@angular/http';
 import '@angular/router';
 // RxJS
 import 'rxjs';
+// SignalRimport jQuery from 'jquery'
+window['jQuery'] = require('jquery');
+window['$'] = require('jquery');
+import 'ms-signalr-client';
+
 // Other vendors for example jQuery, Lodash or Bootstrap
 // You can import js, ts, css, sass, ...
