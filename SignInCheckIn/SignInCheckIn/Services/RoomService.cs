@@ -228,6 +228,16 @@ namespace SignInCheckIn.Services
             // Get All Rooms for this Event
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
+            // JPC - if this is a new room, we just return a new dto - the real event room record will be created when we save
+            if (eventRooms.Count == 0)
+            {
+                eventRooms.Add(new EventRoomDto
+                {
+                    EventId = eventId,
+                    RoomId = roomId
+                });
+            }
+
             // Get All the Event Groups Assigned to each room for this event
             foreach (var eventRoom in eventRooms)
             {
