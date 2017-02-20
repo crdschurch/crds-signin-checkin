@@ -228,7 +228,7 @@ export class ChannelService {
         //  is ready
         //
         // Could not get it to ever return when subscribing to starting$
-        this.starting$.subscribe((resp) => {
+        // this.starting$.subscribe((resp) => {
             this.hubProxy.invoke('Subscribe', channel)
                 .done(() => {
                     console.log(`Successfully subscribed to ${channel} channel`);
@@ -236,7 +236,7 @@ export class ChannelService {
                 .fail((error: any) => {
                     channelSub.subject.error(error);
                 });
-        });
+        // });
 
         return channelSub.subject.asObservable();
     }
