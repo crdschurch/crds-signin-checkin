@@ -10,7 +10,7 @@
   version "2.4.6"
   resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-2.4.6.tgz#17236b858f5730eed257d93e90bcbae45e21e0fe"
 
-"@angular/core@2.4.6", "@angular/core@>=2.0.0":
+"@angular/core@2.4.6":
   version "2.4.6"
   resolved "https://registry.yarnpkg.com/@angular/core/-/core-2.4.6.tgz#4abec78ee035b27e8192acf70409c3dbca24e829"
 
@@ -3160,12 +3160,6 @@ ng2-bootstrap@1.1.16:
   resolved "https://registry.yarnpkg.com/ng2-bootstrap/-/ng2-bootstrap-1.1.16.tgz#0c5cd83a1f89f8d215c43a99e7b9dedab577ac5b"
   dependencies:
     moment "2.15.1"
-
-ng2-signalr@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/ng2-signalr/-/ng2-signalr-1.0.5.tgz#cae534e52c5094e8157a6cae803dec005f2fb2d7"
-  dependencies:
-    "@angular/core" ">=2.0.0"
 
 no-case@^2.2.0:
   version "2.3.1"

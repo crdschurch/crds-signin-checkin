@@ -1,15 +1,12 @@
-import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 
 import { Child, Room } from '../shared/models';
 import { Constants } from '../shared/constants';
 import { Event, MachineConfiguration } from '../shared/models';
 import { ApiService, SetupService, RootService, ChannelEvent, ChannelService } from '../shared/services';
 import { ChildCheckinService } from './child-checkin.service';
-
-import {SignalR, SignalRConfiguration, SignalRConnection, BroadcastEventListener } from 'ng2-signalr';
 
 @Component({
   selector: 'child-checkin',
@@ -22,9 +19,6 @@ export class ChildCheckinComponent implements OnInit {
   @ViewChild('childDetailModal') public childDetailModal: ModalDirective;
   @ViewChild('childSearchModal') public childSearchModal: ModalDirective;
   private kioskDetails: MachineConfiguration;
-  private signalR: SignalR;
-  private signalRConnection: SignalRConnection;
-  private subscription: Subscription = null;
 
   clock = Observable.interval(10000).startWith(0).map(() => new Date());
   thisSiteName: string;
@@ -39,24 +33,15 @@ export class ChildCheckinComponent implements OnInit {
     private apiService: ApiService,
     private childCheckinService: ChildCheckinService,
     private rootService: RootService,
-    private channelService: ChannelService,
-    private signalRConfiguration: SignalRConfiguration,
-    private ngZone: NgZone) {
+    private channelService: ChannelService) {
 
     this.kioskDetails = new MachineConfiguration();
     this.ready = false;
     this.isOverrideProcessing = false;
-    this.signalR = new SignalR(signalRConfiguration, ngZone);
   }
 
   public ngOnInit() {
-    this.signalR.connect().then((conn) => {
-      console.log('Connected to signalr');
-      this.signalRConnection = <SignalRConnection>conn;
-      this.getData();
-    }).catch((err => {
-      console.log(`Error connecting to signalr: ${JSON.stringify(err)}`);
-    }));
+    this.getData();
   }
 
   private getData() {
@@ -90,8 +75,7 @@ export class ChildCheckinComponent implements OnInit {
           this.room = room;
         });
 
-        // this.subscribeToSignalr();
-        this.subscribeToSignalr2();
+        this.subscribeToSignalr();
 
         this.ready = true;
       },
@@ -100,25 +84,6 @@ export class ChildCheckinComponent implements OnInit {
         this.ready = true;
       }
     );
-  }
-
-  subscribeToSignalr2() {
-    if (this.subscription != null) {
-      this.subscription.unsubscribe();
-    }
-
-    let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
-
-    // create listener
-    let onMessageSent$ = new BroadcastEventListener<ChannelEvent>(channelName);
-
-    // register the listener
-    this.signalRConnection.listen(onMessageSent$);
-
-    // subscribe to event
-    this.subscription = onMessageSent$.subscribe((x: ChannelEvent) => {
-      this.room = Room.fromJson(x.Data);
-    });
   }
 
   subscribeToSignalr() {
