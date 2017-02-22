@@ -6,6 +6,7 @@ import { ApiService, RootService } from '../../shared/services';
 import { DateOfBirth, EventParticipants, Guest, Group } from '../../shared/models';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'available-children',
@@ -57,18 +58,6 @@ export class AvailableChildrenComponent implements OnInit {
    }
  }
 
- toggleMonth(month) {
-   this.guestDOB.month = month;
- }
-
- toggleDay(day) {
-   this.guestDOB.day = day;
- }
-
- toggleYear(year) {
-   this.guestDOB.year = year;
- }
-
  getChildren(phoneNumber) {
    this.childSigninService.getChildrenByPhoneNumber(phoneNumber).subscribe(
        (result) => {
@@ -94,6 +83,8 @@ export class AvailableChildrenComponent implements OnInit {
      return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
    }
    this.isReady = false;
+   // remove unselected event participants
+   this._eventParticipants.removeUnselectedParticipants();
    this.childSigninService.signInChildren(this._eventParticipants, this.numberEventsAttending).subscribe(
      (response: EventParticipants) => {
        this.isReady = true;

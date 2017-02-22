@@ -148,7 +148,7 @@ namespace SignInCheckIn.Tests.Services
                 mpAgeAttributeJsonList
             };
 
-            _roomRepository.Setup(m => m.GetRoomListData(mpEventDto.EventId)).Returns(roomJsonData);
+            _roomRepository.Setup(m => m.GetManageRoomsListData(mpEventDto.EventId)).Returns(roomJsonData);
 
             // Act
             var result = _fixture.GetLocationRoomsByEventId(token, 1234567);

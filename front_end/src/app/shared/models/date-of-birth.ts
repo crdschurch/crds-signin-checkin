@@ -1,5 +1,5 @@
 export class DateOfBirth {
-  month: number = undefined;
-  day: number = undefined;
-  year: number = undefined;
+  month: number = 0;
+  day: number = 0;
+  year: number = 0;
 }

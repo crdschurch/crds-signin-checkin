@@ -30,6 +30,10 @@ export class EventParticipants {
     return this.hasParticipants() && this.Participants.find(p => p.selected()) !== undefined;
   }
 
+  public removeUnselectedParticipants() {
+    this.Participants = this.Participants.filter(p => p.selected());
+  }
+
   public hasParticipants(): boolean {
     return this.Participants && this.Participants.length > 0;
   }

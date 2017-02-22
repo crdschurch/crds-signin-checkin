@@ -25,6 +25,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Last_Name")]
         public string LastName { get; set; }
 
+        [JsonProperty(PropertyName = "Nickname")]
+        public string Nickname { get; set; }
+
         [JsonProperty(PropertyName = "Participation_Status_ID")]
         public int ParticipationStatusId { get; set; }
 

@@ -235,7 +235,7 @@ namespace SignInCheckIn.Services
 
                 if (eventParticipant.DuplicateSignIn == true)
                 {
-                    eventParticipant.SignInErrorMessage = $"{eventParticipant.FirstName} is already signed in for this event.";
+                    eventParticipant.SignInErrorMessage = $"{eventParticipant.Nickname} is already signed in for this event.";
                     continue;
                 }
 
@@ -243,13 +243,13 @@ namespace SignInCheckIn.Services
 
                 if (!mpEventParticipant.HasKidsClubGroup)
                 {
-                    eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.FirstName} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
+                    eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.Nickname} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
                 }
   
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
-                    eventParticipant.SignInErrorMessage = $"There are no '{@group?.Name}' rooms open during the {eventDto.EventTitle} for {eventParticipant.FirstName}";
+                    eventParticipant.SignInErrorMessage = $"There are no '{@group?.Name}' rooms open during the {eventDto.EventTitle} for {eventParticipant.Nickname}";
                 }
                 else
                 {
@@ -289,6 +289,7 @@ namespace SignInCheckIn.Services
                     ParticipantStatusId = 3, // Status ID of 3 = "Attended"
                     FirstName = participant.FirstName,
                     LastName = participant.LastName,
+                    Nickname = participant.Nickname,
                     TimeIn = DateTime.Now,
                     OpportunityId = null,
                     RoomId = eventGroup?.RoomReservation.RoomId,
@@ -391,7 +392,7 @@ namespace SignInCheckIn.Services
             {
                 var printValues = new Dictionary<string, string>
                 {
-                    {"ChildName", participant.FirstName},
+                    {"ChildName", participant.Nickname},
                     {"ChildRoomName1", participant.AssignedRoomName},
                     {"ChildRoomName2", participant.AssignedSecondaryRoomName},
                     {"ChildEventName", participantEventMapDto.CurrentEvent.EventTitle},
@@ -416,7 +417,7 @@ namespace SignInCheckIn.Services
                     printerId = kioskPrinterMap.PrinterId,
                     content = mergedPdf + "=",
                     contentType = "pdf_base64",
-                    title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.FirstName} (id #{participant.ParticipantId})",
+                    title = $"Print job for {participantEventMapDto.CurrentEvent.EventTitle}, participant {participant.Nickname} (id #{participant.ParticipantId})",
                     source = "CRDS Checkin"
                 };
 
