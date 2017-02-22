@@ -21,6 +21,7 @@ export class RoomGroupListComponent implements OnInit {
   private room: Room;
   private event: Event;
   private eventsMap: Event[];
+  private _selectedBumpingType: number;
   allAlternateRooms: Room[];
   isAdventureClub: boolean = false;
   alternateRoomsSelected: boolean = false;
@@ -167,6 +168,10 @@ export class RoomGroupListComponent implements OnInit {
     this.isDirty = true;
   }
 
+  setBumpingType(p) {
+    this._selectedBumpingType = p;
+  }
+
   save() {
     if (this.alternateRoomsSelected) {
       this.saveAlternateRooms();
@@ -195,6 +200,11 @@ export class RoomGroupListComponent implements OnInit {
   saveAlternateRooms() {
     this.updating = true;
     this.isDirty = false;
+
+    // set bumping type based on radio selection
+    for (let room of this.allAlternateRooms) {
+      room.BumpingRuleTypeId = this._selectedBumpingType;
+    }
 
     this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'],
       this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp) => {
