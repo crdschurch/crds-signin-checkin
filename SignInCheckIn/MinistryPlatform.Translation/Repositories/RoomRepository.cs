@@ -54,6 +54,7 @@ namespace MinistryPlatform.Translation.Repositories
             _bumpingRuleColumns = new List<string>
             {
                 "Bumping_Rules_ID",
+                "Bumping_Rule_Type_ID",
                 "From_Event_Room_ID",
                 "To_Event_Room_ID",
                 "Priority_Order"

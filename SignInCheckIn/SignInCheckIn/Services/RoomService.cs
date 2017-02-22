@@ -656,6 +656,7 @@ namespace SignInCheckIn.Services
                     {
                         room.BumpingRuleId = rule.BumpingRuleId;
                         room.BumpingRulePriority = rule.PriorityOrder;
+                        room.BumpingRuleTypeId = rule.BumpingRuleTypeId;
                     }
                 }
             }
@@ -665,7 +666,8 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> UpdateAvailableRooms(string authenticationToken, int eventId, int roomId, List<EventRoomDto> eventRoomDtos)
         {
-            var sourceEventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+            var sourceEventRoom = _roomRepository.GetEventRoomForEventMaps(events.Select(e => e.EventId).ToList(), roomId);
 
             if (sourceEventRoom == null)
             {
@@ -696,7 +698,7 @@ namespace SignInCheckIn.Services
                     FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
                     ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
                     PriorityOrder = selectedRoom.BumpingRulePriority.GetValueOrDefault(),
-                    BumpingRuleTypeId = 1
+                    BumpingRuleTypeId = selectedRoom.BumpingRuleTypeId.Value
                 };
 
                 mpBumpingRuleDtos.Add(mpBumpingRuleDto);
