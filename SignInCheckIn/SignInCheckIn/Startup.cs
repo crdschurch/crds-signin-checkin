@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Owin;
@@ -12,6 +11,8 @@ namespace SignInCheckIn
     {
         public void Configuration(IAppBuilder app)
         {
+            log4net.Config.XmlConfigurator.Configure();
+
             // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
             // Branch the pipeline here for requests that start with /signalr
             app.Map("/signalr", map =>

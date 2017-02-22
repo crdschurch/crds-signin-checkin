@@ -12,7 +12,7 @@ namespace SignInCheckIn
         public static void RegisterComponents()
         {
             var container = new UnityContainer();
-            var unitySections = new[] { "crossroadsCommonUnity", "unity" };
+            var unitySections = new[] { "crossroadsCommonUnity", "crossroadsClientApiKeysUnity", "unity" };
 
             foreach (var section in unitySections.Select(sectionName => (UnityConfigurationSection)ConfigurationManager.GetSection(sectionName)))
             {
