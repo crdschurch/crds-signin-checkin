@@ -76,7 +76,8 @@ namespace SignInCheckIn.Controllers
                 var eventId = participants.CurrentEvent.EventId;
                 foreach (var room in rooms)
                 {
-                    var updatedParticipants = _childCheckinService.GetChildrenForCurrentEventAndRoom(room.Value, 0, eventId);
+                    // ignores the site id if there is an event id so therefore we can put a random 0 here
+                    var updatedParticipants = _childCheckinService.GetChildrenForCurrentEventAndRoom(room.Value, eventId);
 
                     PublishToChannel(_context, new ChannelEvent
                     {
