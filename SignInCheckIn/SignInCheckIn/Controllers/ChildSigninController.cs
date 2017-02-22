@@ -81,7 +81,7 @@ namespace SignInCheckIn.Controllers
 
                     PublishToChannel(_context, new ChannelEvent
                     {
-                        ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{eventId}{room}",
+                        ChannelName = $"{_applicationConfiguration.CheckinParticipantsChannel}{eventId}{room}",
                         Data = updatedParticipants
                     });
                 }
