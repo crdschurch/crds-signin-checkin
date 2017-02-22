@@ -7,6 +7,8 @@ import { ChildCheckinService } from '../child-checkin.service';
 import { RootService } from '../../shared/services';
 import { SetupService } from '../../shared/services';
 import { Subscription } from 'rxjs/Subscription';
+import { ChannelEvent, ChannelService } from '../../shared/services';
+import { Constants } from '../../shared/constants';
 
 @Component({
   selector: 'room',
@@ -20,7 +22,8 @@ export class RoomComponent implements OnInit {
   private update: boolean = true;
   subscription: Subscription;
 
-  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, private setupService: SetupService) {
+  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, 
+    private setupService: SetupService, private channelService: ChannelService) {
     // subscribe to forceChildReload so that the parent (ChildCheckinComponent)
     // can talk to the child (RoomComponent) and tell it when to reload children
     this.subscription = childCheckinService.forceChildReload$.subscribe(
@@ -46,18 +49,28 @@ export class RoomComponent implements OnInit {
           console.error(error);
           comp.rootService.announceEvent('generalError');
         });
+        
+        // Get an observable for events emitted on this channel
+        let channelName = `${Constants.CheckinParticipantsChannel}${event.EventId}${roomId}`;
+        this.channelService.sub(channelName).subscribe(
+          (x: ChannelEvent) => {
+            let childrenAvailable: Array<Child> = [];
 
-        // This is temp. until we add websockets to do an actual update
-        // We will update the rooms information every 15 seconds
-        // Observable.interval(15000)
-        //   .mergeMap(() => comp.childCheckinService.getChildrenForRoom(roomId, event.EventId))
-        //   .subscribe((children: Child[]) => {
-        //       if (comp.update) {
-        //         comp.children = children;
-        //       }
-        //     },
-        //     (error: any) => console.error(error)
-        //   );
+            for (let kid of x.Data.json().Participants) {
+              let child = Object.create(Child.prototype);
+              Object.assign(child, kid);
+              // set all selected to true
+              // TODO: backend should probably do this
+              child.Selected = true;
+              childrenAvailable.push(child);
+            }
+
+            comp.children = childrenAvailable;
+          },
+          (error: any) => {
+            console.warn('Attempt to join channel failed!', error);
+          }
+        );
       }
     }
   }
