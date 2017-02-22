@@ -32,6 +32,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(List<RoomDto>))]
         [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
+        [RequiresAuthorization]
         public IHttpActionResult GetAvailableRooms(
             [FromUri(Name = "roomId")] int roomId,
             [FromUri(Name = "eventId")] int eventId)
@@ -55,6 +56,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(List<RoomDto>))]
         [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
+        [RequiresAuthorization]
         public IHttpActionResult UpdateAvailableRoomsByLocation(
         [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId, [FromBody] List<EventRoomDto> eventRooms)
         {
@@ -94,6 +96,7 @@ namespace SignInCheckIn.Controllers
         [HttpPut]
         [ResponseType(typeof(EventRoomDto))]
         [Route("events/{eventId:int}/rooms/{roomId:int}")]
+        [RequiresAuthorization]
         public IHttpActionResult UpdateEventRoom([FromUri]int eventId, [FromUri]int roomId, [FromBody]EventRoomDto eventRoom)
         {
             return Authorized(token =>
