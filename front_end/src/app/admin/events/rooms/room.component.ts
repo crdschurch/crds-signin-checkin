@@ -76,6 +76,10 @@ export class RoomComponent implements OnInit {
     return this.room.Capacity;
   }
 
+  change() {
+    this.dirty = true;
+  }
+
   checkedInEqualsCapacity() {
     return this.room.CheckedIn >= this.room.Capacity;
   }

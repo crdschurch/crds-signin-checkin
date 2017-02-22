@@ -40,7 +40,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Volunteers" [readonly]="pending" (focus)="highlight($event)">
+      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Volunteers" [readonly]="pending" (focus)="highlight($event)" (input)="change()">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Volunteers')" [disabled]="pending">+</button>
       </span>
@@ -53,7 +53,7 @@
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="remove('Capacity')" [disabled]="pending">-</button>
       </span>
-      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Capacity" [readonly]="pending" (focus)="highlight($event)" (ngModelChange)="dirty(true)">
+      <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Capacity" [readonly]="pending" (focus)="highlight($event)" (input)="change()">
       <span class="input-group-btn">
         <button class="btn btn-secondary" type="button" (click)="add('Capacity')" [disabled]="pending">+</button>
       </span>
