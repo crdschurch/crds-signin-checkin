@@ -5,7 +5,6 @@ using System.Web.Http;
 using Crossroads.Web.Common.Security;
 using log4net;
 using Microsoft.AspNet.SignalR;
-using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Hubs;
 using SignInCheckIn.Util;
 

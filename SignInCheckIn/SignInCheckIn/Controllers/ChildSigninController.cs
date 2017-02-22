@@ -8,27 +8,28 @@ using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
+using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
+using Microsoft.AspNet.SignalR;
+using SignInCheckIn.Hubs;
 
 namespace SignInCheckIn.Controllers
 {
     public class ChildSigninController : MpAuth
     {
-
-        //private readonly IRoomService _roomService;
-
-        //public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
-        //{
-        //    _roomService = roomService;
-        //}
-
         private readonly IChildSigninService _childSigninService;
+        private readonly IChildCheckinService _childCheckinService;
         private readonly IKioskRepository _kioskRepository;
+        private readonly IHubContext _context;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildSigninController(IChildSigninService childSigninService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository) : base(authenticationRepository)
+        public ChildSigninController(IChildSigninService childSigninService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
+            _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
             _childSigninService = childSigninService;
+            _childCheckinService = childCheckinService;
             _kioskRepository = kioskRepository;
+            _applicationConfiguration = applicationConfiguration;
         }
 
         [HttpGet]
@@ -68,7 +69,23 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Ok(_childSigninService.SigninParticipants(participantEventMapDto));
+                var participants = _childSigninService.SigninParticipants(participantEventMapDto);
+
+                // loop through rooms that need to have an update and push the update to them
+                var rooms = participants.Participants.Select(m => m.AssignedRoomId);
+                var eventId = participants.CurrentEvent.EventId;
+                foreach (var room in rooms)
+                {
+                    var updatedParticipants = _childCheckinService.GetChildrenForCurrentEventAndRoom(room.Value, 0, eventId);
+
+                    PublishToChannel(_context, new ChannelEvent
+                    {
+                        ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{eventId}{room}",
+                        Data = updatedParticipants
+                    });
+                }
+
+                return Ok(participants);
             }
             catch (Exception e)
             {
