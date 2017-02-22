@@ -1,6 +1,10 @@
 import { Group } from '.';
 
 export class Room {
+  static BUMPING_TYPE = {
+    PRIORITY: 1,
+    VACANCY: 2
+  };
   EventRoomId: string;
   RoomId: string;
   EventId: string;
@@ -15,6 +19,7 @@ export class Room {
   AssignedGroups: Group[];
   BumpingRuleId: number;
   BumpingRulePriority: number;
+  BumpingRuleTypeId: number;
   AdventureClub: boolean;
 
   static fromJsons(jsons: any): Room[] {
@@ -45,6 +50,7 @@ export class Room {
     room.AdventureClub = json.AdventureClub;
     room.BumpingRuleId = json.BumpingRuleId;
     room.BumpingRulePriority = json.BumpingRulePriority;
+    room.BumpingRuleTypeId = json.BumpingRuleTypeId;
     room.AssignedGroups = json.AssignedGroups !== undefined && json.AssignedGroups !== null && json.AssignedGroups.length !== 0
                             ? json.AssignedGroups.map((g) => Group.fromJson(g))
                             : [];
@@ -71,5 +77,12 @@ export class Room {
 
   isBumpingRoom() {
     return this.BumpingRulePriority !== undefined && this.BumpingRulePriority !== null;
+  }
+
+  isTypePriority() {
+    return this.BumpingRuleTypeId === Room.BUMPING_TYPE.PRIORITY;
+  }
+  isTypeVacancy() {
+    return this.BumpingRuleTypeId === Room.BUMPING_TYPE.VACANCY;
   }
 }
