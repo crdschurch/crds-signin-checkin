@@ -36,6 +36,7 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   private getData(): void {
+    debugger;
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
 
@@ -43,7 +44,10 @@ export class RoomGroupListComponent implements OnInit {
       events => {
         this.eventsMap = events;
       },
-      error => console.error(error)
+      error => {
+        debugger;
+        console.error(error);
+      }
     );
 
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
@@ -61,7 +65,10 @@ export class RoomGroupListComponent implements OnInit {
         this.event = event;
         this.headerService.announceEvent(event);
       },
-      error => console.error(error)
+      error =>  {
+        debugger;
+        console.error(error);
+      }
     );
 
     this.adminService.getBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId']).subscribe(
