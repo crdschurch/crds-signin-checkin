@@ -36,7 +36,6 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   private getData(): void {
-    debugger;
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
 
@@ -45,7 +44,6 @@ export class RoomGroupListComponent implements OnInit {
         this.eventsMap = events;
       },
       error => {
-        debugger;
         console.error(error);
       }
     );
@@ -66,7 +64,6 @@ export class RoomGroupListComponent implements OnInit {
         this.headerService.announceEvent(event);
       },
       error =>  {
-        debugger;
         console.error(error);
       }
     );
