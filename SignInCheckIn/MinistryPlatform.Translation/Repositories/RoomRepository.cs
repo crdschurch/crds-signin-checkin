@@ -258,9 +258,19 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var apiUserToken = _apiUserRepository.GetToken();
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+            var priorityOrderRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                     Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
+            var isBumpingTypeVacancy = priorityOrderRooms.First().BumpingRuleTypeId == _applicationConfiguration.BumpingRoomTypeVacancyId;
+            if (isBumpingTypeVacancy)
+            {
+                // order by number signed  in + number checked in ascending
+                return priorityOrderRooms.OrderBy(r => r.SignedIn + r.CheckedIn).ToList();
+            }
+            else
+            {
+                return priorityOrderRooms;
+            }
         }
 
         public List<List<JObject>> GetManageRoomsListData(int eventId)
