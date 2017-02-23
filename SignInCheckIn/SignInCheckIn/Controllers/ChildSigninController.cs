@@ -77,11 +77,12 @@ namespace SignInCheckIn.Controllers
                 foreach (var room in rooms)
                 {
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
-                    var updatedParticipants = _childCheckinService.GetChildrenForCurrentEventAndRoom(room.Value, eventId);
+                    var updatedParticipants = participants.Participants.Where(p => p.AssignedRoomId == room);
 
                     PublishToChannel(_context, new ChannelEvent
                     {
                         ChannelName = $"{_applicationConfiguration.CheckinParticipantsChannel}{eventId}{room}",
+                        Name = "Add",
                         Data = updatedParticipants
                     });
                 }
