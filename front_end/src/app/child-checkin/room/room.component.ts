@@ -52,10 +52,10 @@ export class RoomComponent implements OnInit {
         
         // Get an observable for events emitted on this channel
         let channelName = `${Constants.CheckinParticipantsChannel}${event.EventId}${roomId}`;
-        this.channelService.sub(channelName).subscribe(
+        comp.channelService.sub(channelName).subscribe(
           (x: ChannelEvent) => {
             if (x.Name === 'Add') {
-              for (let kid of x.Data.json()) {
+              for (let kid of x.Data) {
                 let child = Object.create(Child.prototype);
                 Object.assign(child, kid);
                 // set all selected to true
