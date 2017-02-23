@@ -71,23 +71,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var participants = _childSigninService.SigninParticipants(participantEventMapDto);
-
-                // loop through rooms that need to have an update and push the update to them
-                var rooms = participants.Participants.Select(m => m.AssignedRoomId).Distinct();
-                var eventId = participants.CurrentEvent.EventId;
-                foreach (var room in rooms)
-                {
-                    // ignores the site id if there is an event id so therefore we can put a random 0 here
-                    var updatedParticipants = participants.Participants.Where(p => p.AssignedRoomId == room);
-
-                    PublishToChannel(_context, new ChannelEvent
-                    {
-                        ChannelName = $"{_applicationConfiguration.CheckinParticipantsChannel}{eventId}{room}",
-                        Name = "Add",
-                        Data = updatedParticipants
-                    });
-                }
-
+                PublishSignedInParticipantsToRooms(participants);
                 return Ok(participants);
             }
             catch (Exception e)
@@ -191,7 +175,9 @@ namespace SignInCheckIn.Controllers
                 
                 try
                 {
-                    _childSigninService.CreateNewFamily(token, newFamilyDto, kioskIdentifier);
+                    var participants = _childSigninService.CreateNewFamily(token, newFamilyDto, kioskIdentifier);
+
+                    PublishSignedInParticipantsToRooms(participants);
                     return Ok();
                 }
                 catch (Exception e)
@@ -239,6 +225,25 @@ namespace SignInCheckIn.Controllers
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });
+        }
+
+        private void PublishSignedInParticipantsToRooms(ParticipantEventMapDto participants)
+        {
+            // loop through rooms that need to have an update and push the update to them
+            var rooms = participants.Participants.Select(m => m.AssignedRoomId).Distinct();
+            var eventId = participants.CurrentEvent.EventId;
+            foreach (var room in rooms)
+            {
+                // ignores the site id if there is an event id so therefore we can put a random 0 here
+                var updatedParticipants = participants.Participants.Where(p => p.AssignedRoomId == room);
+
+                PublishToChannel(_context, new ChannelEvent
+                {
+                    ChannelName = $"{_applicationConfiguration.CheckinParticipantsChannel}{eventId}{room}",
+                    Name = "Add",
+                    Data = updatedParticipants
+                });
+            }
         }
     }
 }
