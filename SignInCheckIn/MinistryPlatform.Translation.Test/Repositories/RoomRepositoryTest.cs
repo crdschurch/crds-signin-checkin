@@ -200,7 +200,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
 
         [Test]
-        public void TestGetBumpingRooms()
+        public void TestGetBumpingRoomsVacancy()
         {
             const string token = "token 123";
             const int eventId = 1837;
@@ -228,8 +228,21 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     AllowSignIn = true,
                     Capacity = 32,
                     RoomName = "Test Room 1",
-                    SignedIn = 93,
-                    CheckedIn = 12
+                    SignedIn = 1,
+                    CheckedIn = 1,
+                    BumpingRuleTypeId = 2
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 4323,
+                    RoomId = 5344,
+                    PriorityOrder = 3,
+                    AllowSignIn = true,
+                    Capacity = 32,
+                    RoomName = "Test Room 1",
+                    SignedIn = 4,
+                    CheckedIn = 13,
+                    BumpingRuleTypeId = 2
                 },
                 new MpBumpingRoomsDto
                 {
@@ -239,12 +252,13 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     AllowSignIn = true,
                     Capacity = 10,
                     RoomName = "Test Room 2",
-                    SignedIn = 9,
-                    CheckedIn = 1
+                    SignedIn = 1,
+                    CheckedIn = 4,
+                    BumpingRuleTypeId = 2
                 }
             };
 
-
+            _applicationConfiguration.Setup(m => m.BumpingRoomTypeVacancyId).Returns(2);
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns, null, false)).Returns(mpBumpingRooms);
@@ -254,14 +268,97 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.VerifyAll();
 
             Assert.AreEqual(mpBumpingRooms.Count, result.Count);
-            Assert.AreEqual(mpBumpingRooms[1].EventRoomId, result[0].EventRoomId);
-            Assert.AreEqual(mpBumpingRooms[1].RoomId, result[0].RoomId);
-            Assert.AreEqual(mpBumpingRooms[1].PriorityOrder, result[0].PriorityOrder);
-            Assert.AreEqual(mpBumpingRooms[1].AllowSignIn, result[0].AllowSignIn);
-            Assert.AreEqual(mpBumpingRooms[1].Capacity, result[0].Capacity);
-            Assert.AreEqual(mpBumpingRooms[1].RoomName, result[0].RoomName);
-            Assert.AreEqual(mpBumpingRooms[1].SignedIn, result[0].SignedIn);
-            Assert.AreEqual(mpBumpingRooms[1].CheckedIn, result[0].CheckedIn);
+            Assert.AreEqual(mpBumpingRooms[0].EventRoomId, result[0].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[1].EventRoomId, result[2].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[2].EventRoomId, result[1].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[2].RoomId, result[1].RoomId);
+            Assert.AreEqual(mpBumpingRooms[2].PriorityOrder, result[1].PriorityOrder);
+            Assert.AreEqual(mpBumpingRooms[2].AllowSignIn, result[1].AllowSignIn);
+            Assert.AreEqual(mpBumpingRooms[2].Capacity, result[1].Capacity);
+            Assert.AreEqual(mpBumpingRooms[2].RoomName, result[1].RoomName);
+            Assert.AreEqual(mpBumpingRooms[2].SignedIn, result[1].SignedIn);
+            Assert.AreEqual(mpBumpingRooms[2].CheckedIn, result[1].CheckedIn);
+        }
+
+        [Test]
+        public void TestGetBumpingRoomsPriority()
+        {
+            const string token = "token 123";
+            const int eventId = 1837;
+            const int fromEventRoomId = 84672817;
+
+            var bumpingRoomsColumns = new List<string>
+            {
+                "To_Event_Room_ID",
+                "To_Event_Room_ID_Table.Room_ID",
+                "Priority_Order",
+                "To_Event_Room_ID_Table.Capacity",
+                "To_Event_Room_ID_Table.Allow_Checkin",
+                "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 3) AS Signed_In",
+                $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 4) AS Checked_In"
+            };
+
+            var mpBumpingRooms = new List<MpBumpingRoomsDto>
+            {
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 5134,
+                    RoomId = 161641,
+                    PriorityOrder = 2,
+                    AllowSignIn = true,
+                    Capacity = 32,
+                    RoomName = "Test Room 1",
+                    SignedIn = 1,
+                    CheckedIn = 13,
+                    BumpingRuleTypeId = 1
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 4323,
+                    RoomId = 5344,
+                    PriorityOrder = 3,
+                    AllowSignIn = true,
+                    Capacity = 32,
+                    RoomName = "Test Room 1",
+                    SignedIn = 1,
+                    CheckedIn = 13,
+                    BumpingRuleTypeId = 1
+                },
+                new MpBumpingRoomsDto
+                {
+                    EventRoomId = 1248,
+                    RoomId = 3827,
+                    PriorityOrder = 1,
+                    AllowSignIn = true,
+                    Capacity = 10,
+                    RoomName = "Test Room 2",
+                    SignedIn = 2,
+                    CheckedIn = 1,
+                    BumpingRuleTypeId = 1
+                }
+            };
+
+            _applicationConfiguration.Setup(m => m.BumpingRoomTypeVacancyId).Returns(2);
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns, null, false)).Returns(mpBumpingRooms);
+
+            var result = _fixture.GetBumpingRoomsForEventRoom(eventId, fromEventRoomId);
+            _ministryPlatformRestRepository.VerifyAll();
+            _apiUserRepository.VerifyAll();
+
+            Assert.AreEqual(mpBumpingRooms.Count, result.Count);
+            Assert.AreEqual(mpBumpingRooms[2].EventRoomId, result[0].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[0].EventRoomId, result[1].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[1].EventRoomId, result[2].EventRoomId);
+            Assert.AreEqual(mpBumpingRooms[2].RoomId, result[0].RoomId);
+            Assert.AreEqual(mpBumpingRooms[2].PriorityOrder, result[0].PriorityOrder);
+            Assert.AreEqual(mpBumpingRooms[2].AllowSignIn, result[0].AllowSignIn);
+            Assert.AreEqual(mpBumpingRooms[2].Capacity, result[0].Capacity);
+            Assert.AreEqual(mpBumpingRooms[2].RoomName, result[0].RoomName);
+            Assert.AreEqual(mpBumpingRooms[2].SignedIn, result[0].SignedIn);
+            Assert.AreEqual(mpBumpingRooms[2].CheckedIn, result[0].CheckedIn);
         }
 
     }

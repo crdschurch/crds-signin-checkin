@@ -26,6 +26,9 @@ namespace Crossroads.Utilities.Services
         public int GroupRoleMemberId { get; }
         public int AdventureClubEventTypeId { get; }
 
+        public int BumpingRoomTypePriorityId { get; }
+        public int BumpingRoomTypeVacancyId { get; }
+
         public int SignedInParticipationStatusId { get; }
         public int CheckedInParticipationStatusId { get; }
         public int CancelledParticipationStatusId { get; }
@@ -292,6 +295,9 @@ namespace Crossroads.Utilities.Services
             AttendeeParticipantType = configurationWrapper.GetConfigIntValue("AttendeeParticipantType");
             GroupRoleMemberId = configurationWrapper.GetConfigIntValue("GroupRoleMemberId");
             AdventureClubEventTypeId = configurationWrapper.GetConfigIntValue("AdventureClubEventTypeId");
+
+            BumpingRoomTypePriorityId = configurationWrapper.GetConfigIntValue("BumpingRoomTypePriorityId");
+            BumpingRoomTypeVacancyId = configurationWrapper.GetConfigIntValue("BumpingRoomTypeVacancyId");
 
             SignedInParticipationStatusId = configurationWrapper.GetConfigIntValue("SignedInParticipationStatusId");
             CheckedInParticipationStatusId = configurationWrapper.GetConfigIntValue("CheckedInParticipationStatusId");
