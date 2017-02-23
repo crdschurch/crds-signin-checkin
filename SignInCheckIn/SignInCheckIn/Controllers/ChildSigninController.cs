@@ -11,6 +11,7 @@ using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
 using Microsoft.AspNet.SignalR;
+using Newtonsoft.Json.Linq;
 using SignInCheckIn.Hubs;
 
 namespace SignInCheckIn.Controllers
@@ -203,18 +204,28 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/reverse/{eventparticipantid}", minimumVersion: "1.0.0")]
-        [Route("signin/reverse/{eventparticipantid}")]
-        public IHttpActionResult ReverseSignin(int eventparticipantid)
+        [VersionedRoute(template: "signin/event/{eventId}/room/{roomId}/reverse/{eventparticipantId}", minimumVersion: "1.0.0")]
+        [Route("signin/event/{eventId}/room/{roomId}/reverse/{eventparticipantId}")]
+        public IHttpActionResult ReverseSignin(int eventId, int roomId, int eventparticipantId)
         {
             return Authorized(token =>
             {
                 try
                 {
-                    var reverseSuccess = _childSigninService.ReverseSignin(token, eventparticipantid);
+                    var reverseSuccess = _childSigninService.ReverseSignin(token, eventparticipantId);
 
                     if (reverseSuccess == true)
                     {
+                        dynamic data = new JObject();
+                        data.EventParticipantId = eventparticipantId;
+                        data.OriginalRoomId = roomId;
+
+                        PublishToChannel(_context, new ChannelEvent
+                        {
+                            ChannelName = $"{_applicationConfiguration.CheckinParticipantsChannel}{eventId}{roomId}",
+                            Name = "Remove",
+                            Data = data
+                        });
                         return Ok();
                     }
                     else
