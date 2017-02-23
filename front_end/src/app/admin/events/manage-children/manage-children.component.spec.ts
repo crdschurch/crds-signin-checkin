@@ -45,13 +45,16 @@ describe('ManageChildrenComponent', () => {
       let children: Child[] = [ new Child(), new Child() ];
       children[0].EventParticipantId = 123;
       children[1].EventParticipantId = 456;
+      children[1].AssignedRoomId = 456;
       fixture.children = children;
+      fixture.eventId = 20
       let eventParticipantId = children[1].EventParticipantId;
+      let roomId = children[1].AssignedRoomId;
 
       (<jasmine.Spy>(adminService.reverseSignin)).and.returnValue(Observable.of());
       fixture.reverseSignin(children[1]);
 
-      expect(adminService.reverseSignin).toHaveBeenCalledWith(eventParticipantId);
+      expect(adminService.reverseSignin).toHaveBeenCalledWith(fixture.eventId, roomId, eventParticipantId);
       expect(fixture.children[1] === undefined);
     });
   });
