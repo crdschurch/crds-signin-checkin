@@ -54,18 +54,16 @@ export class RoomComponent implements OnInit {
         let channelName = `${Constants.CheckinParticipantsChannel}${event.EventId}${roomId}`;
         this.channelService.sub(channelName).subscribe(
           (x: ChannelEvent) => {
-            let childrenAvailable: Array<Child> = [];
-
-            for (let kid of x.Data.json().Participants) {
-              let child = Object.create(Child.prototype);
-              Object.assign(child, kid);
-              // set all selected to true
-              // TODO: backend should probably do this
-              child.Selected = true;
-              childrenAvailable.push(child);
+            if (x.Name === 'Add') {
+              for (let kid of x.Data.json()) {
+                let child = Object.create(Child.prototype);
+                Object.assign(child, kid);
+                // set all selected to true
+                // TODO: backend should probably do this
+                child.Selected = true;
+                comp.children .push(child);
+              }
             }
-
-            comp.children = childrenAvailable;
           },
           (error: any) => {
             console.warn('Attempt to join channel failed!', error);
