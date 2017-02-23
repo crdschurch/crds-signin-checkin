@@ -83,8 +83,8 @@ export class AdminService {
     return this.http.post(url, {}).catch(this.handleError);
   }
 
-  reverseSignin(eventParticipantId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/reverse/${eventParticipantId}`;
+  reverseSignin(eventId: number, roomId: number, eventParticipantId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/event/${eventId}/room/${roomId}/reverse/${eventParticipantId}`;
     return this.http.put(url, null).catch(this.handleError);
   }
 
