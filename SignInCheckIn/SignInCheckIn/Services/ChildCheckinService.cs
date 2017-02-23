@@ -51,7 +51,7 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public List<ParticipantDto> GetChildrenForCurrentEventAndRoom(int roomId, int eventId)
+        public List<ParticipantDto> GetChildrenForCurrentEventAndRoom(int eventId, int roomId)
         {
             var mpChildren = _childCheckinRepository.GetChildrenByEventAndRoom(eventId, roomId);
             return Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);

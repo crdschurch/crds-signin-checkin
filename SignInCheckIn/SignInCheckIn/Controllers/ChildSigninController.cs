@@ -72,7 +72,7 @@ namespace SignInCheckIn.Controllers
                 var participants = _childSigninService.SigninParticipants(participantEventMapDto);
 
                 // loop through rooms that need to have an update and push the update to them
-                var rooms = participants.Participants.Select(m => m.AssignedRoomId);
+                var rooms = participants.Participants.Select(m => m.AssignedRoomId).Distinct();
                 var eventId = participants.CurrentEvent.EventId;
                 foreach (var room in rooms)
                 {
