@@ -61,7 +61,12 @@ export class RoomComponent implements OnInit {
                 // set all selected to true
                 // TODO: backend should probably do this
                 child.Selected = true;
-                comp.children .push(child);
+                comp.children.push(child);
+              }
+            } else if (x.Name === 'Remove') {
+              let data = x.Data;
+              if (data.OriginalRoomId != data.OverRideRoomId) {
+                comp.children = comp.children.filter( (obj: Child) => { return obj.EventParticipantId != data.EventParticipantId; } );
               }
             }
           },
