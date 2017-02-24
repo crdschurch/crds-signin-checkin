@@ -196,12 +196,12 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(ParticipantDto))]
         [VersionedRoute(template: "events/{eventId:int}/children", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/children")]
-        [RequiresAuthorization]
-        public IHttpActionResult GetChildrenForEvent([FromUri] int eventId)
+        public IHttpActionResult GetChildrenForEvent([FromUri] int eventId, [FromUri] string search = null)
         {
             try
             {
-                return Authorized(token => Ok(_eventService.GetListOfChildrenForEvent(token, eventId)));
+
+                return Authorized(token => Ok(_eventService.GetListOfChildrenForEvent(token, eventId, search)));
             }
             catch (Exception e)
             {
