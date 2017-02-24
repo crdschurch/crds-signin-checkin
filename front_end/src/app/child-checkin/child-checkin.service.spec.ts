@@ -103,11 +103,12 @@ describe('ChildCheckinService', () => {
     it('override a child into a room', () => {
       let child = new Child();
       child.EventParticipantId = 54321;
+      child.AssignedRoomId = 123;
       httpClientService.put.and.callFake((url: string, opts: RequestOptions) => {
         return Observable.of();
       });
       let result = fixture.overrideChildIntoRoom(child, 123, 555);
-      expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/checkin/events/123/child/54321/rooms/555/override`, {});
+      expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/checkin/events/123/child/54321/rooms/123/override/555`, {});
       expect(result).toBeDefined();
     });
     describe('error scenarios', () => {

@@ -180,6 +180,7 @@ export class ChannelService {
                 this.startingSubject.next();
             })
             .fail((error: any) => {
+                alert('Please Refresh to properly connect to server.');
                 this.startingSubject.error(error);
             });
     }
