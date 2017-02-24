@@ -9,7 +9,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
     public interface IParticipantRepository
     {
-        List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, List<int> eventIds);
+        List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, List<int> eventIds, string search);
         MpNewParticipantDto CreateParticipantWithContact(string token, MpNewParticipantDto mpNewParticipantDto);
         List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpGroupParticipantDto> mpGroupParticipantDtos);
         void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos);
