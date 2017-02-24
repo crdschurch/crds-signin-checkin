@@ -14,7 +14,7 @@ export class ManageChildrenComponent implements OnInit {
   children: Array<Child> = [];
   ready: boolean = false;
   searchString: string = '';
-  eventId: string;
+  eventId: any;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
