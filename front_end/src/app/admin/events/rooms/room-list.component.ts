@@ -29,6 +29,7 @@ export class RoomListComponent implements OnInit {
   unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
   public isCollapsed = true;
+  public showClosedRooms = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -119,6 +120,14 @@ export class RoomListComponent implements OnInit {
     $event.preventDefault();
     $event.stopPropagation();
     this.dropdownStatus.isOpen = !this.dropdownStatus.isOpen;
+  }
+
+  public toggleUnusedRooms(): void {
+    if (this.showClosedRooms === true) {
+      this.showClosedRooms = false;
+    } else {
+      this.showClosedRooms = true;
+    }
   }
 
 }
