@@ -13,6 +13,7 @@ import { AdminService } from '../../admin.service';
 export class ManageChildrenComponent implements OnInit {
   children: Array<Child> = [];
   ready: boolean = false;
+  eventId: any;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
@@ -23,11 +24,11 @@ export class ManageChildrenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let eventId = this.route.snapshot.params['eventId'];
-    this.apiService.getEvent(eventId).subscribe((event: Event) => {
+    this.eventId = this.route.snapshot.params['eventId'];
+    this.apiService.getEvent(this.eventId).subscribe((event: Event) => {
       this.headerService.announceEvent(event);
 
-      this.adminService.getChildrenForEvent(eventId).subscribe((resp) => {
+      this.adminService.getChildrenForEvent(this.eventId).subscribe((resp) => {
         this.children = resp;
         this.ready = true;
       });
@@ -80,7 +81,7 @@ export class ManageChildrenComponent implements OnInit {
   public reverseSignin(child: Child) {
     this.ready = false;
 
-    this.adminService.reverseSignin(child.EventParticipantId).subscribe((resp) => {
+    this.adminService.reverseSignin(this.eventId, child.AssignedRoomId, child.EventParticipantId).subscribe((resp) => {
       this.children.splice(this.children.indexOf(child), 1);
       this.ready = true;
       this.rootService.announceEvent('reverseSigninSuccess');
