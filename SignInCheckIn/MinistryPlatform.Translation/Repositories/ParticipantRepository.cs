@@ -52,7 +52,7 @@ namespace MinistryPlatform.Translation.Repositories
         }
 
         // this gets data we won't have with older participants
-        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, List<int> eventIds)
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, List<int> eventIds, string search = null)
         {
             var columnList = new List<string>
             {
@@ -70,8 +70,32 @@ namespace MinistryPlatform.Translation.Repositories
                 "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
             };
 
+            var queryString =
+                $"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL AND Event_Participants.Call_Number IS NOT NULL AND Event_Participants.Checkin_Household_ID IS NOT NULL";
+
+            // add in search criteria if exists
+            if (!string.IsNullOrEmpty(search) && search.Length > 0)
+            {
+                int n;
+                bool isNumeric = int.TryParse(search, out n);
+                if (isNumeric)
+                {
+                    queryString += $" AND Event_Participants.Call_Number = {search}";
+                }
+                else
+                {
+                    queryString += " AND (";
+                    queryString += $"  Participant_ID_Table_Contact_ID_Table.First_Name LIKE '%{search}%'";
+                    queryString += $"  OR Participant_ID_Table_Contact_ID_Table.Last_Name LIKE '%{search}%'";
+                    queryString += $"  OR Participant_ID_Table_Contact_ID_Table.Nickname LIKE '%{search}%'";
+                    queryString += ")";
+                }
+
+
+            }
+
             var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL AND Event_Participants.Call_Number IS NOT NULL AND Event_Participants.Checkin_Household_ID IS NOT NULL", columnList);
+                Search<MpEventParticipantDto>(queryString, columnList);
 
             foreach (var child in childPartipantsForEvent)
             {

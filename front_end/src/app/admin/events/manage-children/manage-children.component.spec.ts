@@ -26,7 +26,7 @@ describe('ManageChildrenComponent', () => {
       eventId: eventId
     };
 
-    adminService = <AdminService>jasmine.createSpyObj('adminService', ['reverseSignin']);
+    adminService = <AdminService>jasmine.createSpyObj('adminService', ['reverseSignin', 'getChildrenForEvent']);
     apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent']);
     headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
     router = <Router>jasmine.createSpyObj('router', ['navigate']);
@@ -34,11 +34,6 @@ describe('ManageChildrenComponent', () => {
     fixture = new ManageChildrenComponent(route, apiService, headerService, rootService, adminService, router);
     fixture.children = new Array<Child>();
   });
-
-  // describe('#ngOnInit', () => {
-  //   // TODO: Implement...
-  // (<jasmine.Spy>(adminService.getChildrenForEvent)).and.returnValue(Observable.of(children));
-  // });
 
   describe('#reverseSignin', () => {
     it('should sign out a child', () => {
@@ -56,6 +51,17 @@ describe('ManageChildrenComponent', () => {
 
       expect(adminService.reverseSignin).toHaveBeenCalledWith(fixture.eventId, roomId, eventParticipantId);
       expect(fixture.children[1] === undefined);
+    });
+  });
+
+  describe('#executeSearch', () => {
+    it('should call the backend', () => {
+      fixture.eventId = 433;
+      fixture.searchString = 'Bluiett';
+      (<jasmine.Spy>(adminService.getChildrenForEvent)).and.returnValue(Observable.of());
+      fixture.onSearch();
+
+      expect(adminService.getChildrenForEvent).toHaveBeenCalledWith(fixture.eventId, fixture.searchString);
     });
   });
 });
