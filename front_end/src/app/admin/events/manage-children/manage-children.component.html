@@ -20,7 +20,8 @@
       </div>
       <div class="col-xs-12">
         <preloader *ngIf="!isReady()"></preloader>
-        <table class="table table-striped" *ngIf="isReady()">
+        <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No children</div>
+        <table class="table table-striped" *ngIf="isReady() && children?.length > 0">
           <thead>
             <tr>
               <th>First Name</th>
