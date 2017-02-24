@@ -24,7 +24,7 @@ export class ManageChildrenComponent implements OnInit {
     private router: Router) {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.eventId = this.route.snapshot.params['eventId'];
     this.apiService.getEvent(this.eventId).subscribe((event: Event) => {
       this.headerService.announceEvent(event);
