@@ -14,11 +14,11 @@
                 <div class="input-group">
                   <input #box type="text" class="form-control" placeholder="Child's First Name, Last Name, or Call Number" (keyup)="onSearchType(box.value)" (keyup.enter)="onSearch()">
                   <span class="input-group-addon" (click)="onClearSearch(box)">
-                    <span [hidden]="!box.value.length">x</span>
+                    <span [hidden]="!box.value.length">&times;</span>
                   </span>
                 </div>
               </div>
-              <div class="col-xs-4">
+              <div class="col-xs-4 pl-0">
                 <button type="submit" class="btn btn-primary" (click)="onSearch()">Search</button>
               </div>
             </div>

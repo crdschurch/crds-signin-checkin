@@ -96,9 +96,14 @@ export class ManageChildrenComponent implements OnInit {
   onClearSearch(box) {
     this.searchString = '';
     box.value = '';
+    this.executeSearch();
   }
 
   onSearch() {
+    this.executeSearch();
+  }
+
+  private executeSearch() {
     this.ready = false;
     this.adminService.getChildrenForEvent(+this.eventId, this.searchString).subscribe((resp) => {
       this.children = resp;
