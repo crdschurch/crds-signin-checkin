@@ -120,7 +120,7 @@ namespace SignInCheckIn.Services
                 eventRoom.AssignedGroups = agesAndGrades;
             }
 
-            eventRooms = eventRooms.OrderByDescending(r => r.AllowSignIn).ThenBy(r => r.RoomName).ToList();
+            eventRooms = eventRooms.OrderBy(r => r.RoomName).ToList();
 
             return eventRooms;
         }
