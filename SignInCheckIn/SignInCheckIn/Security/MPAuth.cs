@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
+using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
 using log4net;
 using Microsoft.AspNet.SignalR;
@@ -82,6 +83,11 @@ namespace SignInCheckIn.Security
             //  to it. So to publish the event we need to call the method that
             //  the clients will be listening on.
             context.Clients.Group(channelEvent.ChannelName).OnEvent(channelEvent.ChannelName, channelEvent);
+        }
+
+        protected string GetChannelNameCheckinParticipants(IApplicationConfiguration applicationConfiguration, int eventId, int roomId)
+        {
+            return $"{applicationConfiguration.CheckinParticipantsChannel}{eventId}{roomId}";
         }
     }
 }

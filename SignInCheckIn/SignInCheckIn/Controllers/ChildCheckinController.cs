@@ -116,7 +116,7 @@ namespace SignInCheckIn.Controllers
 
                 PublishToChannel(_context, new ChannelEvent
                 {
-                    ChannelName = $"{_applicationConfiguration.CheckinParticipantsChannel}{eventId}{roomId}",
+                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, roomId),
                     Name = "Remove",
                     Data = data
                 });
