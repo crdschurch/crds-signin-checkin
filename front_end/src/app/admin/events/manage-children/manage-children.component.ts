@@ -13,8 +13,8 @@ import { AdminService } from '../../admin.service';
 export class ManageChildrenComponent implements OnInit {
   children: Array<Child> = [];
   ready: boolean = false;
-  searchString: '';
-  eventId: string;
+  searchString: string = '';
+  eventId: any;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
