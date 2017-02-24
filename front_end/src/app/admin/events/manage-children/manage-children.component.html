@@ -27,7 +27,7 @@
       </div>
       <div class="col-xs-12">
         <preloader *ngIf="!isReady()"></preloader>
-        <div class="text-xs-center mx-y" *ngIf="isReady() && children?.length === 0">No children</div>
+        <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No children</div>
         <table class="table table-striped" *ngIf="isReady()">
           <thead>
             <tr>
