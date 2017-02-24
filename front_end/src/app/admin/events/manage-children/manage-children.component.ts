@@ -14,6 +14,7 @@ export class ManageChildrenComponent implements OnInit {
   children: Array<Child> = [];
   ready: boolean = false;
   searchString: '';
+  eventId: string;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
@@ -24,11 +25,11 @@ export class ManageChildrenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let eventId = this.route.snapshot.params['eventId'];
-    this.apiService.getEvent(eventId).subscribe((event: Event) => {
+    this.eventId = this.route.snapshot.params['eventId'];
+    this.apiService.getEvent(this.eventId).subscribe((event: Event) => {
       this.headerService.announceEvent(event);
 
-      this.adminService.getChildrenForEvent(eventId).subscribe((resp) => {
+      this.adminService.getChildrenForEvent(+this.eventId).subscribe((resp) => {
         this.children = resp;
         this.ready = true;
       });
@@ -93,13 +94,16 @@ export class ManageChildrenComponent implements OnInit {
   }
 
   onClearSearch(box) {
-    console.log('clear')
     this.searchString = '';
     box.value = '';
   }
 
   onSearch() {
-    console.log('search', this.searchString)
+    this.ready = false;
+    this.adminService.getChildrenForEvent(+this.eventId, this.searchString).subscribe((resp) => {
+      this.children = resp;
+      this.ready = true;
+    });
   }
 
   private handleError (error: any) {
