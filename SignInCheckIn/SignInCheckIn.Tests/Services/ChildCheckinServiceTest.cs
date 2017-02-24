@@ -88,7 +88,7 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.GetCurrentEventForSite(It.IsAny<int>())).Returns(eventDto);
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
-            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, null);
             _childCheckinRepository.VerifyAll();
 
@@ -149,7 +149,7 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
-            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
             _childCheckinRepository.VerifyAll();
 
@@ -210,7 +210,7 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
-            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
             _childCheckinRepository.VerifyAll();
 
@@ -271,7 +271,7 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
-            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(eventDto.EventId, roomId)).Returns(mpParticipantsDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
             _childCheckinRepository.VerifyAll();
 
@@ -332,7 +332,7 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
-            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(2345678, roomId)).Returns(mpParticipantsDto);
+            _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
             var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
             _childCheckinRepository.VerifyAll();
 

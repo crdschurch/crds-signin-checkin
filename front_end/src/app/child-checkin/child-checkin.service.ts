@@ -63,7 +63,7 @@ export class ChildCheckinService {
   }
 
   overrideChildIntoRoom(child: Child, eventId: number, roomId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/rooms/${roomId}/override`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/rooms/${child.AssignedRoomId}/override/${roomId}`;
     return this.http.put(url, {})
                     .map(res => {
                       return Observable.of();
