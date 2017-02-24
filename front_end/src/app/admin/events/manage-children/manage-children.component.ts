@@ -13,6 +13,7 @@ import { AdminService } from '../../admin.service';
 export class ManageChildrenComponent implements OnInit {
   children: Array<Child> = [];
   ready: boolean = false;
+  searchString: '';
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
@@ -85,6 +86,20 @@ export class ManageChildrenComponent implements OnInit {
       this.ready = true;
       this.rootService.announceEvent('reverseSigninSuccess');
     }, error => (this.handleError(error)));
+  }
+
+  onSearchType(searchString) {
+    this.searchString = searchString;
+  }
+
+  onClearSearch(box) {
+    console.log('clear')
+    this.searchString = '';
+    box.value = '';
+  }
+
+  onSearch() {
+    console.log('search', this.searchString)
   }
 
   private handleError (error: any) {
