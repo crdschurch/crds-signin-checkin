@@ -4,27 +4,29 @@
   <router-outlet></router-outlet>
 </div>
 
-<div class="container-fluid mt-2 m-b-1 pt-1">
-  <div class="row">
-    <div class="col-xs-12">
-      <h3 class="heading-highlight m-b-1">First time here? We’ll help you at the New Family Check-In Desk!</h3>
-    </div>
-  </div>
+<div class="container-fluid mt-3">
 
   <div class="row">
-    <div class="col-xs-12 my-1">
+    <div class="container-fluid col-md-8 offset-md-2 my-1">
       <!--DEVNOTE: create an input mask that appears as user types https://igorescobar.github.io/jQuery-Mask-Plugin/ -->
-      <input type="tel" class="num-pad-value col-xs-12 text-white"
+      <input type="tel" class="num-pad-value col-xs-12 text-white heading-highlight"
         readonly placeholder="Enter your phone number to check in your kids."
         value="{{phoneNumber | phoneNumber}}">
     </div>
-  </div>
 
-  <div class="row">
     <div class="container-fluid col-md-8 offset-md-2">
       <number-pad (addNumber)="setPhoneNumber($event)" (deleteNumber)="delete($event)" (clearNumber)="clear($event)"></number-pad>
-      <div class="mt-2">
-        <a class="btn btn-primary btn-lg float-xs-right text-white" (click)="next()">Next &#10095;</a>
+      <div class="my-2">
+        <div class="row">
+          <div class="col-sm-9 text-xs-left text-white new-family-text pb-1">
+            <p class="new-family-text">
+              First time here? We’ll help you at the New Family Check-In Desk!
+            </p>
+          </div>
+          <div class="col-sm-3">
+            <a class="btn btn-success btn-lg float-xs-right text-white btn-block" (click)="next()">Next &#10095;</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
