@@ -250,6 +250,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "To_Event_Room_ID",
                 "To_Event_Room_ID_Table.Room_ID",
                 "Priority_Order",
+                "Bumping_Rule_Type_ID",
                 "To_Event_Room_ID_Table.Capacity",
                 "To_Event_Room_ID_Table.Allow_Checkin",
                 "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
