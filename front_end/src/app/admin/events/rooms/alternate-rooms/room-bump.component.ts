@@ -13,6 +13,7 @@ export class RoomBumpComponent {
   @Input() bumpingRooms: Room[];
   @Input() allRooms: Room[];
   @Input() index: number;
+  @Input() selectedBumpingType: number;
   @Output() setDirtyChild = new EventEmitter<Room[]>();
 
   constructor( private adminService: AdminService,
@@ -73,6 +74,10 @@ export class RoomBumpComponent {
 
   setAsDirty() {
     this.setDirtyChild.emit();
+  }
+
+  isTypeVacancy() {
+    return this.selectedBumpingType === Room.BUMPING_TYPE.VACANCY;
   }
 
 }

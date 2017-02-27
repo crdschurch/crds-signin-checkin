@@ -7,10 +7,10 @@
   <span [hidden]="room.AllowSignIn">Closed</span>
   <span [hidden]="!room.AllowSignIn">Open</span>
 </td>
-<td [hidden]="isUnBumped()">
+<td [hidden]="isUnBumped() || isTypeVacancy()">
   <span>{{room.BumpingRulePriority | oneBasedIndex}}</span>
 </td>
-<td>
+<td [hidden]="isTypeVacancy()">
   <span class="clickable bump" (click)="bump()" [hidden]="isBumped()">&#9658;</span>
   <span class="clickable bump-up" (click)="bumpUp()" [hidden]="isFirst() || isUnBumped()">&#8679;</span>
   <span class="clickable bump-down" (click)="bumpDown()" [hidden]="isLast() || isUnBumped()">&#8681;</span>
