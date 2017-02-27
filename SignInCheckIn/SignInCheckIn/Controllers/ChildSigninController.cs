@@ -230,7 +230,7 @@ namespace SignInCheckIn.Controllers
         private void PublishSignedInParticipantsToRooms(ParticipantEventMapDto participants)
         {
             // loop through rooms that need to have an update and push the update to them
-            var rooms = participants.Participants.Select(m => m.AssignedRoomId).Distinct();
+            var rooms = participants.Participants.Select(m => m.AssignedRoomId).Where(p => p != null).Distinct();
             var eventId = participants.CurrentEvent.EventId;
             foreach (var room in rooms)
             {
