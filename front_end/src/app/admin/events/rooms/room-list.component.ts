@@ -31,7 +31,6 @@ export class RoomListComponent implements OnInit {
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
   public isCollapsed = true;
   public hideClosedRooms = false;
-  public closedRoomsLabelText = 'Hide Unused Rooms';
 
   constructor(
     private route: ActivatedRoute,
@@ -137,10 +136,8 @@ export class RoomListComponent implements OnInit {
   public toggleUnusedRooms(): void {
     if (this.hideClosedRooms === true) {
       this.hideClosedRooms = false;
-      this.closedRoomsLabelText = 'Hide Unused Rooms';
     } else {
       this.hideClosedRooms = true;
-      this.closedRoomsLabelText = 'Show All Rooms';
     }
   }
 
