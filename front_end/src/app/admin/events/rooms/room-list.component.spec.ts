@@ -124,7 +124,7 @@ describe('RoomListComponent', () => {
   describe('should set hide rooms text', () => {
     it('should set label text for hidden rooms', () => {
       fixture.hideClosedRooms = true;
-      fixture.closedRoomsLabelText = 'Show Unused Rooms';
+      fixture.closedRoomsLabelText = 'Show All Rooms';
       fixture.toggleUnusedRooms();
 
       expect(fixture.hideClosedRooms).toBe(false);
@@ -137,7 +137,7 @@ describe('RoomListComponent', () => {
       fixture.toggleUnusedRooms();
 
       expect(fixture.hideClosedRooms).toBe(true);
-      expect(fixture.closedRoomsLabelText).toBe('Show Unused Rooms');
+      expect(fixture.closedRoomsLabelText).toBe('Show All Rooms');
     });
   });
 

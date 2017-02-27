@@ -26,6 +26,7 @@ export class RoomListComponent implements OnInit {
   event: Event = null;
   eventId: string;
   isDirty = false;
+  isSaving = false;
   unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
   public isCollapsed = true;
@@ -72,6 +73,16 @@ export class RoomListComponent implements OnInit {
 
   onNotifyDirty(message) {
     this.isDirty = message;
+  }
+
+  onNotifySaving(message) {
+    this.isSaving = message;
+  }
+
+  // update the allow checkin property on the matching room in the list component - this is necessary to allow the
+  // allow checkin filter to properly hide and show closed rooms
+  updateRooms(message) {
+    this.rooms.find(r => r.RoomId === message.RoomId).AllowSignIn = message.AllowSignIn;
   }
 
   canDeactivate() {
@@ -124,12 +135,13 @@ export class RoomListComponent implements OnInit {
   }
 
   public toggleUnusedRooms(): void {
+    debugger;
     if (this.hideClosedRooms === true) {
       this.hideClosedRooms = false;
       this.closedRoomsLabelText = 'Hide Unused Rooms';
     } else {
       this.hideClosedRooms = true;
-      this.closedRoomsLabelText = 'Show Unused Rooms';
+      this.closedRoomsLabelText = 'Show All Rooms';
     }
   }
 

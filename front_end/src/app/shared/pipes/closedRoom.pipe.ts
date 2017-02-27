@@ -11,9 +11,9 @@ export class ClosedRoomPipe {
       if (allowSignIn === true) {
         return room.AllowSignIn === allowSignIn;
       } else {
-        return room.AllowSignIn !== undefined;
+        return (room.AllowSignIn === true || room.AllowSignIn === false);
       }
-      
+
     });
   }
 }
