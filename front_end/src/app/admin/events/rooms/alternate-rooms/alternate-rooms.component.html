@@ -59,12 +59,12 @@
                 <th>Room Name</th>
                 <th>Room No.</th>
                 <th>Open/Closed</th>
-                <th>Priority</th>
-                <th></th>
+                <th [hidden]="isTypeVacancy()">Priority</th>
+                <th [hidden]="isTypeVacancy()"></th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [index]="i" (setDirtyChild)="setDirtyChild($event)"></tr>
+              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [selectedBumpingType]="selectedBumpingType" [index]="i" (setDirtyChild)="setDirtyChild($event)"></tr>
             </tbody>
           </table>
         </div>
