@@ -11,7 +11,7 @@
           <div class="col-xs-11">
             <!-- TODO -->
 
-            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" >Hide Unused Rooms</button>
+            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" >{{closedRoomsLabelText}}</button>
             <strong>{{getOpenRooms()}}</strong> of <strong>{{getTotalRooms()}}</strong> rooms open
           </div>
           <!-- Single button -->
@@ -72,7 +72,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:showClosedRooms; let i = index;" class="room" (notifyDirty)="onNotifyDirty($event)" [room]="someRoom">
+          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" (notifyDirty)="onNotifyDirty($event)" [room]="someRoom">
           </tr>
         </tbody>
       </table>
