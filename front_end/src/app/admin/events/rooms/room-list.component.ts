@@ -135,7 +135,6 @@ export class RoomListComponent implements OnInit {
   }
 
   public toggleUnusedRooms(): void {
-    debugger;
     if (this.hideClosedRooms === true) {
       this.hideClosedRooms = false;
       this.closedRoomsLabelText = 'Hide Unused Rooms';
