@@ -166,7 +166,7 @@ export class ChildCheckinComponent implements OnInit {
         this.hideChildSearchModal();
         this.rootService.announceEvent('checkinOverrideSuccess');
         this.isOverrideProcessing = false;
-        this.childCheckinService.forceChildReload();
+        this.childCheckinService.forceChildReload(this.selectedEvent);
       }, (errorLabel) => {
         switch (errorLabel) {
           case 'capacity':

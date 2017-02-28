@@ -12,14 +12,15 @@ export class ChildCheckinService {
   private _roomSetUpFunc: Function;
   private _selectedEvent: Event;
   private url: string = '';
-  private forceChildReloadSource = new Subject<string>();
+  private forceChildReloadSource = new Subject<Event>();
   forceChildReload$ = this.forceChildReloadSource.asObservable();
 
   constructor(private http: HttpClientService) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/checkin`;
   }
 
-  forceChildReload() {
+  forceChildReload(newSelectedEvent) {
+    this._selectedEvent = newSelectedEvent;
     this.forceChildReloadSource.next();
   }
 
