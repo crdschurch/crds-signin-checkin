@@ -225,6 +225,7 @@ export class AvailableChildrenComponent implements OnInit {
        return this.rootService.announceEvent('echeckNeedValidGradeSelection');
      } else {
 
+       debugger;
        if (this.newGuestChild.YearGrade === 0) {
          this.newGuestChild.YearGrade = undefined;
        }
