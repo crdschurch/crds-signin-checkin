@@ -48,6 +48,9 @@ export class ChildCheckinComponent implements OnInit {
     let today = new Date();
     this.apiService.getEvents(today, today).subscribe(
       events => {
+        if (!events.length) {
+          return this.ready = true;
+        }
         this.todaysEvents = [];
         // transform to Event
         for (let event of events) {
