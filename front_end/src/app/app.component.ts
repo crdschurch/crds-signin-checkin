@@ -50,8 +50,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // Start the signalr connection up!
-    // TODO - commenting out to try and track down ws/apache issues
-    console.log('Starting the channel service');
     this.channelService.start();
 
     this.contentService.loadData();

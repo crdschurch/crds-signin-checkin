@@ -87,7 +87,6 @@ export class ChildCheckinService {
   }
 
   set selectedEvent(event) {
-    console.log("set", event)
     this._selectedEvent = event;
     this._roomSetUpFunc(this._roomComp);
   }

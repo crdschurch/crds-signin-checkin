@@ -169,7 +169,7 @@ export class ChannelService {
         // Wire up a handler for the starting$ observable to log the
         //  success/fail result
         this.starting$.subscribe(
-            () => { console.log('signalr service has been started'); },
+            () => { console.info('signalr service has been started'); },
             () => { console.warn('signalr service failed to start!'); }
         );
     }
@@ -217,7 +217,7 @@ export class ChannelService {
         // If we already have one for this event, then just return it
         //
         if (channelSub !== undefined) {
-            console.log(`Found existing observable for ${channel} channel`);
+            console.info(`Found existing observable for ${channel} channel`);
             return channelSub.subject.asObservable();
         }
 
@@ -250,12 +250,12 @@ export class ChannelService {
         // this.starting$.subscribe((resp) => {
         this.hubProxy.invoke('Subscribe', channel)
             .done(() => {
-              console.log(`Successfully subscribed to ${channel} channel`);
+              console.info(`Successfully subscribed to ${channel} channel`);
             })
             .fail((error: any) => {
                 channelSub.subject.error(error);
             });
-        // }, (err)=> console.log("not subscribed", err));
+        // }, (err)=> console.info("not subscribed", err));
         // }
 
         return channelSub.subject.asObservable();
