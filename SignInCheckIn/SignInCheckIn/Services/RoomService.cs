@@ -396,7 +396,7 @@ namespace SignInCheckIn.Services
         private static IEnumerable<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
         {
             var response = new List<AgeGradeDto>();
-            grades.OrderBy(g => g.SortOrder).ToList().ForEach(g =>
+            grades.Where(r => r.Id != 9038 || r.Id != 9039).OrderBy(g => g.SortOrder).ToList().ForEach(g =>
             {
                 response.Add(new AgeGradeDto
                 {
