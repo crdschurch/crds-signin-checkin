@@ -38,7 +38,7 @@ export class ChildCheckinService {
             // TODO: backend should probably do this
             child.Selected = true;
             childrenAvailable.push(child);
-          }  
+          }
         }
 
         return childrenAvailable;
@@ -87,6 +87,7 @@ export class ChildCheckinService {
   }
 
   set selectedEvent(event) {
+    console.log("set", event)
     this._selectedEvent = event;
     this._roomSetUpFunc(this._roomComp);
   }
