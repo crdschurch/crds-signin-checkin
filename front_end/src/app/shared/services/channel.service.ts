@@ -76,7 +76,6 @@ export class ChannelService {
     //
     private connectionStateSubject = new Subject<ConnectionState>();
     private startingSubject = new Subject<any>();
-    private isConnected: boolean;
     private errorSubject = new Subject<any>();
 
     // These are used to track the internal SignalR state
@@ -112,7 +111,6 @@ export class ChannelService {
         //
         this.hubConnection.stateChanged((state: any) => {
             let newState = ConnectionState.Connecting;
-            console.log("state changed", state.newState)
             switch (state.newState) {
                 case this.window.$.signalR.connectionState.connecting:
                     newState = ConnectionState.Connecting;
@@ -159,6 +157,21 @@ export class ChannelService {
             }
         });
 
+        // Let's wire up to the signalr observables
+        this.connectionState$
+            .map((state: ConnectionState) => { return ConnectionState[state]; });
+
+        this.error$.subscribe(
+            (error: any) => { console.warn(error); },
+            (error: any) => { console.error('errors$ error', error); }
+        );
+
+        // Wire up a handler for the starting$ observable to log the
+        //  success/fail result
+        this.starting$.subscribe(
+            () => { console.log('signalr service has been started'); },
+            () => { console.warn('signalr service failed to start!'); }
+        );
     }
 
     /**
@@ -177,13 +190,7 @@ export class ChannelService {
         //
         this.hubConnection.start()
             .done(() => {
-                let x = this.startingSubject;
-                // x.next();
-                // this.isConnected = true;
-                setTimeout(function(){
-                  x.next();
-                  this.isConnected = true;
-                }, 7000);
+                this.startingSubject.next();
             })
             .fail((error: any) => {
                 alert('Please Refresh to properly connect to server.');
@@ -202,7 +209,7 @@ export class ChannelService {
     sub(channel: string): Observable<ChannelEvent> {
         // Try to find an observable that we already created for the requested
         //  channel
-        //
+
         let channelSub = this.subjects.find((x: ChannelSubject) => {
             return x.channel === channel;
         }) as ChannelSubject;
@@ -234,26 +241,22 @@ export class ChannelService {
         //  the starting$ stream since that won't emit a value until the connection
         //  is ready
         //
-        console.log("starting$....", this.starting$)
-        if (this.isConnected) {
-          this.hubProxy.invoke('Subscribe', channel)
-              .done(() => {
-                console.log(`Successfully subscribed to ${channel} channel`);
-              })
-              .fail((error: any) => {
-                  channelSub.subject.error(error);
-              });
-        } else {
-          this.starting$.subscribe((resp) => {
-              this.hubProxy.invoke('Subscribe', channel)
-                  .done(() => {
-                    console.log(`Successfully subscribed to ${channel} channel`);
-                  })
-                  .fail((error: any) => {
-                      channelSub.subject.error(error);
-                  });
-          }, (err)=> console.log("not subscribed", err));
-        }
+
+        // TODO this should really be binded to this.start in some way
+        // because this.channelService.start() in app component
+        // could possibly have not started the connection (hubProxy)
+        // by this point
+
+        // this.starting$.subscribe((resp) => {
+        this.hubProxy.invoke('Subscribe', channel)
+            .done(() => {
+              console.log(`Successfully subscribed to ${channel} channel`);
+            })
+            .fail((error: any) => {
+                channelSub.subject.error(error);
+            });
+        // }, (err)=> console.log("not subscribed", err));
+        // }
 
         return channelSub.subject.asObservable();
     }
