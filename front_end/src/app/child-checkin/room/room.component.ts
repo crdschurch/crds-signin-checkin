@@ -22,7 +22,7 @@ export class RoomComponent implements OnInit {
   private update: boolean = true;
   subscription: Subscription;
 
-  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, 
+  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService,
     private setupService: SetupService, private channelService: ChannelService) {
     // subscribe to forceChildReload so that the parent (ChildCheckinComponent)
     // can talk to the child (RoomComponent) and tell it when to reload children
@@ -46,10 +46,9 @@ export class RoomComponent implements OnInit {
         comp.childCheckinService.getChildrenForRoom(roomId, event.EventId).subscribe((children) => {
           comp.children = children;
         }, (error) => {
-          console.error(error);
           comp.rootService.announceEvent('generalError');
         });
-        
+
         // Get an observable for events emitted on this channel
         let channelName = `${Constants.CheckinParticipantsChannel}${event.EventId}${roomId}`;
         comp.channelService.sub(channelName).subscribe(
@@ -91,7 +90,6 @@ export class RoomComponent implements OnInit {
     this.childCheckinService.checkInChildren(child).subscribe(() => {
       this.update = true;
     }, (error) => {
-      console.error(error);
       this.rootService.announceEvent('generalError');
     });
   }
