@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
@@ -211,6 +212,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "To_Event_Room_ID",
                 "To_Event_Room_ID_Table.Room_ID",
                 "Priority_Order",
+                "Bumping_Rule_Type_ID",
                 "To_Event_Room_ID_Table.Capacity",
                 "To_Event_Room_ID_Table.Allow_Checkin",
                 "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
@@ -292,6 +294,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "To_Event_Room_ID",
                 "To_Event_Room_ID_Table.Room_ID",
                 "Priority_Order",
+                "Bumping_Rule_Type_ID",
                 "To_Event_Room_ID_Table.Capacity",
                 "To_Event_Room_ID_Table.Allow_Checkin",
                 "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
