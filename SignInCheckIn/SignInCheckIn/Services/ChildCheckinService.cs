@@ -39,7 +39,15 @@ namespace SignInCheckIn.Services
             eventAndSubeventIds.AddRange(subEvents.Select(r => r.EventId).ToList());
 
             var mpCurrentEventRoom = _roomRepository.GetEventRoomForEventMaps(eventAndSubeventIds, roomId);
-            
+            if (mpCurrentEventRoom == null)
+            {
+                return new ParticipantEventMapDto
+                {
+                    Participants = null,
+                    CurrentEvent = eventDto
+                };
+            }
+        
             var childrenDtos = GetChildrenForCurrentEventAndRoom(mpCurrentEventRoom.EventId, mpCurrentEventRoom.RoomId);
 
             var participantEventMapDto = new ParticipantEventMapDto
