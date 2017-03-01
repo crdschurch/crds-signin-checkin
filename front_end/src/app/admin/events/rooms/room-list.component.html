@@ -4,20 +4,21 @@
   <div class="container-fluid admin-content py-1">
     <div class="row">
       <div class="col-sm-5">
-        <h3>Manage Rooms</h3>
+        <h3 class="hidden-print">Manage Rooms</h3>
+        <h3 class="visible-print-block">KC Service Report</h3>
       </div>
       <div class="col-sm-7 text-sm-right pb-1">
         <div class="row">
           <div class="col-xs-11">
             <!-- TODO -->
 
-            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
-            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
+            <button type="button" class="btn btn-default" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
+            <button type="button" class="btn btn-default" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
             <strong>{{getOpenRooms()}}</strong> of <strong>{{getTotalRooms()}}</strong> rooms open
           </div>
           <!-- Single button -->
           <div class="col-xs-1 pl-0 gear-dropdown" dropdown [(isOpen)]="dropdownStatus.isOpen">
-            <button id="single-button" type="button" class="btn btn-unstyled" dropdownToggle [disabled]="dropdownStatus.isDisabled">
+            <button id="single-button" type="button" class="btn btn-default" dropdownToggle [disabled]="dropdownStatus.isDisabled">
               <span class="icon icon-large">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
                 <g>
