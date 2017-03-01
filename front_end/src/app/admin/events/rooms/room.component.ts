@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
@@ -25,7 +25,7 @@ export class RoomComponent implements OnInit {
   public _dirty: boolean;
   private sobots: Number[] = [];
 
-  constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService, private channelService: ChannelService) {
+  constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService, private channelService: ChannelService, private zone: NgZone) {
   }
 
   mainEventId() {
@@ -137,13 +137,15 @@ export class RoomComponent implements OnInit {
 
   setup(comp) {
     // Get an observable for events emitted on this channel
-    // Get an observable for events emitted on this channel
+    let roooooom = this.room;
+    let zooooone = this.zone;
     let channelName = `${Constants.CheckinParticipantsChannel}${comp.eventId}${comp.room.RoomId}`;
     comp.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
         if (x.Name === 'Add') {
-          comp.room.SignedIn++;
-          comp.sobots.push(11);
+          zooooone.run(() => {
+            roooooom.SignedIn++;
+          });
         } else if (x.Name === 'Remove' && (x.Data.OriginalRoomId != x.Data.OverRideRoomId)) {
           comp.room.SignedIn--;
           return false;
