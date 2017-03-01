@@ -121,4 +121,20 @@ describe('RoomListComponent', () => {
     });
   });
 
+  describe('should set hide rooms text', () => {
+    it('should set label text for hidden rooms', () => {
+      fixture.hideClosedRooms = true;
+      fixture.toggleUnusedRooms();
+
+      expect(fixture.hideClosedRooms).toBe(false);
+    });
+
+    it('should set label text for visible rooms', () => {
+      fixture.hideClosedRooms = false;
+      fixture.toggleUnusedRooms();
+
+      expect(fixture.hideClosedRooms).toBe(true);
+    });
+  });
+
 });

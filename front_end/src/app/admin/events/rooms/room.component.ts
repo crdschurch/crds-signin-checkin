@@ -16,6 +16,8 @@ import * as _ from 'lodash';
 export class RoomComponent implements OnInit {
   @Input() room: Room;
   @Output() notifyDirty: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() notifySaving: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() updateRoomArray: EventEmitter<Room> = new EventEmitter<Room>();
   public pending: boolean;
   private roomForm: FormGroup;
   private origRoomData: Room;
@@ -52,16 +54,21 @@ export class RoomComponent implements OnInit {
 
   saveRoom() {
     this.pending = true;
+    this.notifySaving.emit(this.pending);
+
     this.adminService.updateRoom(this.room.EventId, this.room.RoomId, this.room).subscribe(room => {
       this.origRoomData = _.clone(this.room);
       this.room = room;
+      this.updateRoomArray.emit(this.room); // update the rooms array on the room-list component
       this.dirty = false;
       this.pending = false;
+      this.notifySaving.emit(this.pending);
     }, (error) => {
       this.room = this.origRoomData;
       this.dirty = false;
       this.pending = false;
       this.rootService.announceEvent('generalError');
+      this.notifySaving.emit(this.pending);
     });
     return false;
   }

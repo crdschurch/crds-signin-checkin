@@ -91,7 +91,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.guestDOB = new DateOfBirth();
       fixture.guestDOB.month = 4;
       fixture.guestDOB.day = 4;
-      fixture.guestDOB.year = 2012;
+      fixture.guestDOB.year = 2016;
       // ui event after you pick a date
       fixture.datePickerBlur();
       fixture.saveNewGuest(fakeModal);

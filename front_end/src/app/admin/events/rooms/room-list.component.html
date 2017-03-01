@@ -11,7 +11,9 @@
           <div class="col-xs-11">
             <!-- TODO -->
 
-            <span class="pr-2"><a>Hide Unused Rooms</a></span> <strong>{{getOpenRooms()}}</strong> of <strong>{{getTotalRooms()}}</strong> rooms open
+            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
+            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
+            <strong>{{getOpenRooms()}}</strong> of <strong>{{getTotalRooms()}}</strong> rooms open
           </div>
           <!-- Single button -->
           <div class="col-xs-1 pl-0 gear-dropdown" dropdown [(isOpen)]="dropdownStatus.isOpen">
@@ -71,7 +73,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let someRoom of rooms; let i = index;" class="room" (notifyDirty)="onNotifyDirty($event)" [room]="someRoom">
+          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" 
+              (notifyDirty)="onNotifyDirty($event)" (notifySaving)="onNotifySaving($event)" (updateRoomArray)="updateRooms($event)"
+              [room]="someRoom">
           </tr>
         </tbody>
       </table>
