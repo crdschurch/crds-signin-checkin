@@ -60,10 +60,10 @@
       <table class="table table-striped manage-rooms-table" *ngIf="isReady()">
         <thead>
           <tr>
-            <th>Age Ranges</th>
+            <th class="hidden-print">Age Ranges</th>
             <th>Room</th>
             <th class="alert">&nbsp;</th> <!-- room alerts -->
-            <th>Allow Sign In</th>
+            <th class="hidden-print">Allow Sign In</th>
             <th>Volunteers</th>
             <th>Capacity</th>
             <th class="text-xs-right">Signed In</th>
@@ -73,7 +73,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" 
+          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room"
               (notifyDirty)="onNotifyDirty($event)" (notifySaving)="onNotifySaving($event)" (updateRoomArray)="updateRooms($event)"
               [room]="someRoom">
           </tr>
