@@ -262,6 +262,10 @@ namespace MinistryPlatform.Translation.Repositories
             var priorityOrderRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                     Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
+            if (!priorityOrderRooms.Any())
+            {
+                return null;
+            }
             var isBumpingTypeVacancy = priorityOrderRooms.First().BumpingRuleTypeId == _applicationConfiguration.BumpingRoomTypeVacancyId;
             if (isBumpingTypeVacancy)
             {
