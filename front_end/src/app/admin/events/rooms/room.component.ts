@@ -2,7 +2,8 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
-import { RootService } from '../../../shared/services';
+import { RootService, ChannelEvent, ChannelService  } from '../../../shared/services';
+import { Constants } from '../../../shared/constants';
 import { Room } from '../../../shared/models';
 import * as _ from 'lodash';
 
@@ -18,13 +19,15 @@ export class RoomComponent implements OnInit {
   public pending: boolean;
   private roomForm: FormGroup;
   private origRoomData: Room;
+  private eventId: any;
   public _dirty: boolean;
+  private sobots: Number[] = [];
 
-  constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService) {
+  constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService, private channelService: ChannelService) {
   }
 
   mainEventId() {
-    return this.route.snapshot.params['eventId'];
+    return this.eventId;
   }
 
   highlight(e) {
@@ -121,5 +124,27 @@ export class RoomComponent implements OnInit {
 
   ngOnInit() {
     this.origRoomData = _.clone(this.room);
+    this.eventId = this.route.snapshot.params['eventId']
+    this.setup(this);
+  }
+
+  setup(comp) {
+    // Get an observable for events emitted on this channel
+    // Get an observable for events emitted on this channel
+    let channelName = `${Constants.CheckinParticipantsChannel}${comp.eventId}${comp.room.RoomId}`;
+    comp.channelService.sub(channelName).subscribe(
+      (x: ChannelEvent) => {
+        if (x.Name === 'Add') {
+          comp.room.SignedIn++;
+          comp.sobots.push(11);
+        } else if (x.Name === 'Remove' && (x.Data.OriginalRoomId != x.Data.OverRideRoomId)) {
+          comp.room.SignedIn--;
+          return false;
+        }
+      },
+      (error: any) => {
+        console.warn('Attempt to join channel failed!', error);
+      }
+    );
   }
 }
