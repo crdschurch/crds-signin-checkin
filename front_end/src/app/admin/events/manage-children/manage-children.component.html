@@ -4,9 +4,10 @@
   <div class="container-fluid admin-content py-1">
     <div class="row">
       <div class="col-sm-7">
-        <h3>Manage Children</h3>
+        <h3 class="hidden-print">Manage Children</h3>
+        <h3 class="visible-print-block">Room Roster Report</h3>
       </div>
-      <div class="col-sm-5">
+      <div class="col-sm-5 hidden-print">
         <div class="row">
           <div class="col-xs-3 text-sm-right line-height-2">
               <strong>Filter</strong>
@@ -27,11 +28,11 @@
               <th>Last Name</th>
               <th></th>
               <th>Call Number</th>
-              <th>Room Assigned</th>
-              <th>Time Signed In</th>
-              <th>Guardians</th>
-              <th>Reverse Sign In</th>
-              <th>Label</th>
+              <th class="hidden-print">Room Assigned</th>
+              <th class="hidden-print">Time Signed In</th>
+              <th class="hidden-print">Guardians</th>
+              <th class="hidden-print">Reverse Sign In</th>
+              <th class="hidden-print">Label</th>
             </tr>
           </thead>
           <tbody>
@@ -48,19 +49,19 @@
               <td>
                 {{child.CallNumber}}
               </td>
-              <td>
+              <td class="hidden-print">
                 {{child.AssignedRoomName}}
               </td>
-              <td>
+              <td class="hidden-print">
                 {{child.TimeIn | amDateFormat:'h:mma'}}
               </td>
-              <td>
+              <td class="hidden-print">
                 {{parentAndPhoneNumbers(child)}}
               </td>
-              <td>
+              <td class="hidden-print">
                 <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)" >Reverse</button>
               </td>
-              <td>
+              <td class="hidden-print">
                 <a class="btn btn-primary btn-sm" (click)="reprint(child)">Reprint</a>
               </td>
             </tr>
