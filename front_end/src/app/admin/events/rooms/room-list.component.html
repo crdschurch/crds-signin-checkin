@@ -10,11 +10,11 @@
       <div class="col-lg-9 text-lg-right pb-1 hidden-print">
         <!-- TODO -->
         <button type="button" class="btn btn-unstyled mb-1">{{getOpenRooms()}} of {{getTotalRooms()}} rooms open</button>
-        <button type="button" class="btn btn-default ml-1 mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
-        <button type="button" class="btn btn-default ml-1 mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
-        <button type="button" class="btn btn-default ml-1 mb-1" (click)="isCollapsed = !isCollapsed" [hidden]="!unassignedGroups"><span class="text-primary">{{unassignedGroups?.length}}</span> unassigned groups
+        <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
+        <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
+        <button type="button" class="btn btn-default  mb-1" (click)="isCollapsed = !isCollapsed" [hidden]="!unassignedGroups"><span class="text-primary">{{unassignedGroups?.length}}</span> unassigned groups
         </button>
-        <div class="btn px-0 ml-1 mb-1" dropdown [(isOpen)]="dropdownStatus.isOpen">
+        <div class="btn px-0  mb-1" dropdown [(isOpen)]="dropdownStatus.isOpen">
           <button id="single-button" type="button" class="btn btn-default" dropdownToggle [disabled]="dropdownStatus.isDisabled">
             <span class="icon">
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
@@ -32,7 +32,7 @@
             <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
           </ul>
         </div>
-        <button class="btn btn-default ml-1 mb-1" onClick="window.print();">
+        <button class="btn btn-default  mb-1" onClick="window.print();">
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
               <path d="M8 2h16v4h-16v-4zM30 8h-28c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h6v8h16v-8h6c1.1 0 2-.9 2-2v-10c0-1.1-.9-2-2-2zm-26 6c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2zm18 14h-12v-10h12v10z"/>
