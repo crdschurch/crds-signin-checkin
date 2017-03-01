@@ -3,20 +3,25 @@
 <div class="wrapper children">
   <div class="container-fluid admin-content py-1">
     <div class="row">
-      <div class="col-sm-7">
+      <div class="col-sm-6">
         <h3 class="hidden-print">Manage Children</h3>
         <h3 class="visible-print-block">Room Roster Report</h3>
       </div>
-      <div class="col-sm-5 hidden-print">
-        <div class="row">
-          <div class="col-xs-3 text-sm-right line-height-2">
-              <strong>Filter</strong>
-          </div>
-          <div class="col-xs-9">
-            <div class="form-group">
-               <input type="text" class="form-control" placeholder="First Name, Last Name or Call Number">
-             </div>
-          </div>
+      <div class="col-sm-6 text-sm-right mb-1 hidden-print">
+        <button class="btn btn-default" onClick="window.print();">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" class="icon">
+            <path d="M8 2h16v4h-16v-4zM30 8h-28c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h6v8h16v-8h6c1.1 0 2-.9 2-2v-10c0-1.1-.9-2-2-2zm-26 6c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2zm18 14h-12v-10h12v10z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 mb-3 hidden-print">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Child's First Name, Last Name or Call Number">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button">Search</button>
+          </span>
         </div>
       </div>
       <div class="col-xs-12">

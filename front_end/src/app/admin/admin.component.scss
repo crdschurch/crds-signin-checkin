@@ -33,9 +33,26 @@ admin {
     }
   }
 
+  .btn {
+    .icon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+    }
+  }
+
   .btn-primary {
     background: $brand-primary;
   }
+
+  .btn-default {
+    background: $gray-lighter;
+
+    &:hover {
+      background: darken($gray-lighter, 10%);
+    }
+  }
+
 
   a:hover {
     .icon {
