@@ -38,7 +38,7 @@ export class ChildCheckinService {
             // TODO: backend should probably do this
             child.Selected = true;
             childrenAvailable.push(child);
-          }  
+          }
         }
 
         return childrenAvailable;

@@ -969,7 +969,7 @@ namespace SignInCheckIn.Tests.Services
             
             var result = _fixture.GetGradeAttributes(token);
             result.Should().NotBeNull();
-            Assert.IsTrue(result.Count == 8);
+            Assert.IsTrue(result.Count == 6);
             Assert.AreEqual(_gradeList[1].Id, result[0].Id);
         }
     }
