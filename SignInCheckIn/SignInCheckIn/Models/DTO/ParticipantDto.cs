@@ -48,6 +48,8 @@ namespace SignInCheckIn.Models.DTO
         [JsonIgnore]
         public int EventId { get; set; }
 
+        public int EventIdSecondary { get; set; }
+
         public string CallNumber { get; set; }
 
         public string SignInErrorMessage { get; set; }

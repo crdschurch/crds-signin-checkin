@@ -195,6 +195,9 @@ namespace SignInCheckIn.Services
                 {
                     participantTwo.AssignedSecondaryRoomId = participant.AssignedRoomId;
                     participantTwo.AssignedSecondaryRoomName = participant.AssignedRoomName;
+                    // get the parent id of the secondary room
+                    var participantEvent = eventsForSignin.Single(e => e.EventId == participant.EventId);
+                    participantTwo.EventIdSecondary = participantEvent.ParentEventId.HasValue ? participantEvent.ParentEventId.Value : participantEvent.EventId;
                     participantTwo.CallNumber = participant.CallNumber;
                 }
             }
@@ -245,7 +248,7 @@ namespace SignInCheckIn.Services
                 {
                     eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.Nickname} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
                 }
-  
+
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
@@ -260,7 +263,7 @@ namespace SignInCheckIn.Services
             return mpEventParticipantDtoList;
         }
 
-        private EventDto GetEvent(int eventId,  bool checkEventTime)
+        private EventDto GetEvent(int eventId, bool checkEventTime)
         {
             // Get Event and make sure it occures at a valid time
             var eventDto = _eventService.GetEvent(eventId);
@@ -278,7 +281,7 @@ namespace SignInCheckIn.Services
                 // Get selected participants
                 from participant in participantEventMapDto.Participants.Where(r => r.Selected && r.DuplicateSignIn == false)
 
-                // Get the event group id that they belong to
+                    // Get the event group id that they belong to
                 let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
 
                 // Create the Event Participant
@@ -310,7 +313,8 @@ namespace SignInCheckIn.Services
 
             mpEventParticipant.RoomId = null;
 
-            if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn) {
+            if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn)
+            {
                 ProcessBumpingRules(eventParticipant, mpEventParticipant, assignedRoom);
                 return;
             }
@@ -331,7 +335,7 @@ namespace SignInCheckIn.Services
             {
                 return;
             }
-            foreach(var bumpingRoom in bumpingRooms)
+            foreach (var bumpingRoom in bumpingRooms)
             {
                 // check if open and has capacity
                 var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
