@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { AdminService } from '../../admin.service';
 import { RootService, ChannelEvent, ChannelService  } from '../../../shared/services';
 import { Constants } from '../../../shared/constants';
-import { Room } from '../../../shared/models';
+import { Room, Child } from '../../../shared/models';
 import * as _ from 'lodash';
 
 @Component({
@@ -137,18 +137,32 @@ export class RoomComponent implements OnInit {
 
   setup(comp) {
     // Get an observable for events emitted on this channel
-    let roooooom = this.room;
-    let zooooone = this.zone;
     let channelName = `${Constants.CheckinParticipantsChannel}${comp.eventId}${comp.room.RoomId}`;
     comp.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
         if (x.Name === 'Add') {
-          zooooone.run(() => {
-            roooooom.SignedIn++;
+          comp.zone.run(() => {
+            comp.room.SignedIn += x.Data.length;
           });
         } else if (x.Name === 'Remove' && (x.Data.OriginalRoomId != x.Data.OverRideRoomId)) {
-          comp.room.SignedIn--;
-          return false;
+          comp.zone.run(() => {
+            comp.room.SignedIn--;
+          });
+        } else if (x.Name === 'CheckedIn') {
+          comp.zone.run(() => {
+            let child = Child.fromJson(x.Data);
+            if (child.checkedIn()) {
+              comp.room.CheckedIn++;
+              comp.room.SignedIn--;
+            } else {
+              comp.room.CheckedIn--;
+              comp.room.SignedIn++;
+            }
+          });
+        } else if (x.Name === 'OverRideCheckin') {
+          comp.zone.run(() => {
+            comp.room.CheckedIn++;
+          });
         }
       },
       (error: any) => {
