@@ -141,4 +141,30 @@ export class RoomListComponent implements OnInit {
     }
   }
 
+  public getCheckedInTotal() {
+    if (this.rooms === undefined) {
+      return;
+    }
+
+    let checkedInTotal = this.rooms.reduce(function (checkedIn, room) {
+      checkedIn += room.CheckedIn;
+      return checkedIn;
+    }, 0);
+
+    return checkedInTotal;   
+  }
+
+  public getSignedInTotal() {
+    if (this.rooms === undefined) {
+      return;
+    }
+
+    let signedInTotal = this.rooms.reduce(function (signedIn, room) {
+      signedIn += room.SignedIn;
+      return signedIn;
+    }, 0);
+
+    return signedInTotal;   
+  }
+
 }
