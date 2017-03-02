@@ -25,7 +25,9 @@ export class RoomComponent implements OnInit {
   public _dirty: boolean;
   private sobots: Number[] = [];
 
-  constructor(private route: ActivatedRoute, private adminService: AdminService, private rootService: RootService, private channelService: ChannelService, private zone: NgZone) {
+  constructor(private route: ActivatedRoute, private adminService: AdminService,
+    private rootService: RootService, private channelService: ChannelService,
+    private zone: NgZone) {
   }
 
   mainEventId() {
@@ -43,7 +45,7 @@ export class RoomComponent implements OnInit {
 
   remove(field) {
     if (this.room[field] >= 1) {
-      this.room[field]--
+      this.room[field]--;
       this.dirty = true;
     }
   }
@@ -131,7 +133,7 @@ export class RoomComponent implements OnInit {
 
   ngOnInit() {
     this.origRoomData = _.clone(this.room);
-    this.eventId = this.route.snapshot.params['eventId']
+    this.eventId = this.route.snapshot.params['eventId'];
     this.setup(this);
   }
 
@@ -144,7 +146,7 @@ export class RoomComponent implements OnInit {
           comp.zone.run(() => {
             comp.room.SignedIn += x.Data.length;
           });
-        } else if (x.Name === 'Remove' && (x.Data.OriginalRoomId != x.Data.OverRideRoomId)) {
+        } else if (x.Name === 'Remove' && (x.Data.OriginalRoomId !== x.Data.OverRideRoomId)) {
           comp.zone.run(() => {
             comp.room.SignedIn--;
           });

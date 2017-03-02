@@ -11,7 +11,7 @@ export class ChildCheckinService {
   private _roomComp: RoomComponent;
   private _roomSetUpFunc: Function;
   private _selectedEvent: Event;
-  private url: string = '';
+  private url = '';
   private forceChildReloadSource = new Subject<Event>();
   forceChildReload$ = this.forceChildReloadSource.asObservable();
 
@@ -67,7 +67,8 @@ export class ChildCheckinService {
   }
 
   overrideChildIntoRoom(child: Child, eventId: number, roomId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/rooms/${child.AssignedRoomId}/override/${roomId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/` +
+      `${eventId}/child/${child.EventParticipantId}/rooms/${child.AssignedRoomId}/override/${roomId}`;
     return this.http.put(url, {})
                     .map(res => {
                       return Observable.of();

@@ -12,7 +12,7 @@ import { Observable, Subscription } from 'rxjs';
 export class AssignmentComponent implements OnInit {
   private error: boolean;
   private childrenResult: Array<Child>;
-  private printed: number = 0;
+  private printed = 0;
   private printTotal: number;
   constructor(private childSigninService: ChildSigninService, private router: Router) { }
 

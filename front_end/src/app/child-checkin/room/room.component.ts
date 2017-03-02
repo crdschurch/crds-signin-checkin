@@ -19,7 +19,7 @@ import { Constants } from '../../shared/constants';
 export class RoomComponent implements OnInit {
 
   private _children: Array<Child> = [];
-  private update: boolean = true;
+  private update = true;
   private event: Event;
   private roomId: number;
   subscription: Subscription;
@@ -67,8 +67,8 @@ export class RoomComponent implements OnInit {
               }
             } else if (x.Name === 'Remove') {
               let data = x.Data;
-              if (data.OriginalRoomId != data.OverRideRoomId) {
-                comp.children = comp.children.filter( (obj: Child) => { return obj.EventParticipantId != data.EventParticipantId; } );
+              if (data.OriginalRoomId !== data.OverRideRoomId) {
+                comp.children = comp.children.filter( (obj: Child) => { return obj.EventParticipantId !== data.EventParticipantId; } );
               }
             }
           },
