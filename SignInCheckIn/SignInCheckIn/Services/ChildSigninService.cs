@@ -327,6 +327,10 @@ namespace SignInCheckIn.Services
             var bumpingRooms = _roomRepository.GetBumpingRoomsForEventRoom(mpEventParticipant.EventId, expectedRoomDto.EventRoomId ?? 0);
 
             // go through the bumping rooms in priority order and get the first one that is open and has capacity
+            if (bumpingRooms == null)
+            {
+                return;
+            }
             foreach(var bumpingRoom in bumpingRooms)
             {
                 // check if open and has capacity
@@ -427,7 +431,7 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public void CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier)
+        public ParticipantEventMapDto CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier)
         {
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
@@ -442,6 +446,8 @@ namespace SignInCheckIn.Services
 
             // print labels
             PrintParticipants(participantEventMapDto, kioskIdentifier);
+
+            return participantEventMapDto;
         }
 
         public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)

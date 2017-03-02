@@ -34,22 +34,35 @@ namespace SignInCheckIn.Services
         public ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId)
         {
             var eventDto = (eventId == null) ? _eventService.GetCurrentEventForSite(siteId) : _eventService.GetEvent((int) eventId);
-            List<int> eventAndSubeventIds = new List<int> { eventDto.EventId };
+            var eventAndSubeventIds = new List<int> { eventDto.EventId };
             var subEvents = _eventRepository.GetSubeventsForEvents(new List<int> {eventDto.EventId}, null).ToList();
             eventAndSubeventIds.AddRange(subEvents.Select(r => r.EventId).ToList());
 
             var mpCurrentEventRoom = _roomRepository.GetEventRoomForEventMaps(eventAndSubeventIds, roomId);
+            if (mpCurrentEventRoom == null)
+            {
+                return new ParticipantEventMapDto
+                {
+                    Participants = null,
+                    CurrentEvent = eventDto
+                };
+            }
+        
+            var childrenDtos = GetChildrenForCurrentEventAndRoom(mpCurrentEventRoom.EventId, mpCurrentEventRoom.RoomId);
 
-            var mpChildren = _childCheckinRepository.GetChildrenByEventAndRoom(mpCurrentEventRoom.EventId, mpCurrentEventRoom.RoomId);
-            var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
-
-            ParticipantEventMapDto participantEventMapDto = new ParticipantEventMapDto
+            var participantEventMapDto = new ParticipantEventMapDto
             {
                 Participants = childrenDtos,
                 CurrentEvent = eventDto
             };
 
             return participantEventMapDto;
+        }
+
+        public List<ParticipantDto> GetChildrenForCurrentEventAndRoom(int eventId, int roomId)
+        {
+            var mpChildren = _childCheckinRepository.GetChildrenByEventAndRoom(eventId, roomId);
+            return Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(mpChildren);
         }
 
         public ParticipantDto CheckinChildrenForCurrentEventAndRoom(ParticipantDto eventParticipant)

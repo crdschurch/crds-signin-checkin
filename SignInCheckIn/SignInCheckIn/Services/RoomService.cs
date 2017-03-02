@@ -120,7 +120,7 @@ namespace SignInCheckIn.Services
                 eventRoom.AssignedGroups = agesAndGrades;
             }
 
-            eventRooms = eventRooms.OrderByDescending(r => r.AllowSignIn).ThenBy(r => r.RoomName).ToList();
+            eventRooms = eventRooms.OrderBy(r => r.RoomName).ToList();
 
             return eventRooms;
         }
@@ -396,6 +396,7 @@ namespace SignInCheckIn.Services
         private static IEnumerable<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
         {
             var response = new List<AgeGradeDto>();
+            grades = grades.Where(r => r.Id != 9038 && r.Id != 9039);
             grades.OrderBy(g => g.SortOrder).ToList().ForEach(g =>
             {
                 response.Add(new AgeGradeDto
@@ -408,6 +409,7 @@ namespace SignInCheckIn.Services
                     EventGroupId = eventGroups.GetMatchingGradeGroups(g.Id).Select(e => e.Group.Id).FirstOrDefault()
                 });
             });
+
             return response;
         }
 
@@ -656,6 +658,7 @@ namespace SignInCheckIn.Services
                     {
                         room.BumpingRuleId = rule.BumpingRuleId;
                         room.BumpingRulePriority = rule.PriorityOrder;
+                        room.BumpingRuleTypeId = rule.BumpingRuleTypeId;
                     }
                 }
             }
@@ -665,7 +668,8 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> UpdateAvailableRooms(string authenticationToken, int eventId, int roomId, List<EventRoomDto> eventRoomDtos)
         {
-            var sourceEventRoom = _roomRepository.GetEventRoom(eventId, roomId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+            var sourceEventRoom = _roomRepository.GetEventRoomForEventMaps(events.Select(e => e.EventId).ToList(), roomId);
 
             if (sourceEventRoom == null)
             {
@@ -696,7 +700,7 @@ namespace SignInCheckIn.Services
                     FromEventRoomId = sourceEventRoom.EventRoomId.GetValueOrDefault(),
                     ToEventRoomId = selectedRoom.EventRoomId.GetValueOrDefault(),
                     PriorityOrder = selectedRoom.BumpingRulePriority.GetValueOrDefault(),
-                    BumpingRuleTypeId = 1
+                    BumpingRuleTypeId = selectedRoom.BumpingRuleTypeId.Value
                 };
 
                 mpBumpingRuleDtos.Add(mpBumpingRuleDto);

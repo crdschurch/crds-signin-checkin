@@ -12,14 +12,15 @@ export class ChildCheckinService {
   private _roomSetUpFunc: Function;
   private _selectedEvent: Event;
   private url: string = '';
-  private forceChildReloadSource = new Subject<string>();
+  private forceChildReloadSource = new Subject<Event>();
   forceChildReload$ = this.forceChildReloadSource.asObservable();
 
   constructor(private http: HttpClientService) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/checkin`;
   }
 
-  forceChildReload() {
+  forceChildReload(newSelectedEvent) {
+    this._selectedEvent = newSelectedEvent;
     this.forceChildReloadSource.next();
   }
 
@@ -28,14 +29,16 @@ export class ChildCheckinService {
 
     return this.http.get(url).map((response) => {
         let childrenAvailable: Array<Child> = [];
-
-        for (let kid of response.json().Participants) {
-          let child = Object.create(Child.prototype);
-          Object.assign(child, kid);
-          // set all selected to true
-          // TODO: backend should probably do this
-          child.Selected = true;
-          childrenAvailable.push(child);
+        const participants = response.json().Participants;
+        if (participants) {
+          for (let kid of response.json().Participants) {
+            let child = Object.create(Child.prototype);
+            Object.assign(child, kid);
+            // set all selected to true
+            // TODO: backend should probably do this
+            child.Selected = true;
+            childrenAvailable.push(child);
+          }
         }
 
         return childrenAvailable;
@@ -63,7 +66,7 @@ export class ChildCheckinService {
   }
 
   overrideChildIntoRoom(child: Child, eventId: number, roomId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/rooms/${roomId}/override`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/checkin/events/${eventId}/child/${child.EventParticipantId}/rooms/${child.AssignedRoomId}/override/${roomId}`;
     return this.http.put(url, {})
                     .map(res => {
                       return Observable.of();
@@ -97,6 +100,6 @@ export class ChildCheckinService {
   }
 
   private handleError (error: any) {
-    return Observable.throw(error.json().error || 'Server error');
+    return Observable.throw(error || 'Server error');
   }
 }

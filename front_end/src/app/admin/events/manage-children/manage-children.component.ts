@@ -5,6 +5,8 @@ import { HeaderService } from '../../header/header.service';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
 
+import * as _ from 'lodash';
+
 @Component({
   templateUrl: 'manage-children.component.html',
   styleUrls: ['manage-children.component.scss'],
@@ -12,7 +14,10 @@ import { AdminService } from '../../admin.service';
 })
 export class ManageChildrenComponent implements OnInit {
   children: Array<Child> = [];
+  childrenByRoom: any;
   ready: boolean = false;
+  searchString: string = '';
+  eventId: any;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
@@ -22,14 +27,25 @@ export class ManageChildrenComponent implements OnInit {
     private router: Router) {
   }
 
-  ngOnInit(): void {
-    let eventId = this.route.snapshot.params['eventId'];
-    this.apiService.getEvent(eventId).subscribe((event: Event) => {
+  ngOnInit() {
+    this.eventId = this.route.snapshot.params['eventId'];
+    this.apiService.getEvent(this.eventId).subscribe((event: Event) => {
       this.headerService.announceEvent(event);
 
-      this.adminService.getChildrenForEvent(eventId).subscribe((resp) => {
+      this.adminService.getChildrenForEvent(+this.eventId).subscribe((resp) => {
         this.children = resp;
         this.ready = true;
+
+        //this.children = _(this.children).groupBy(r =>r.AssignedRoomName).value();
+        this.childrenByRoom = _(this.children).groupBy(r =>r.AssignedRoomName).value();
+
+        this.childrenByRoom = Object.keys(this.childrenByRoom).sort().map(k => this.childrenByRoom[k]);
+
+        //var temp = _(this.children).groupBy(r =>r.AssignedRoomName).value();
+
+
+        //this.childrenByRoom = _(this.children).groupBy(r =>r.AssignedRoomName).value();
+        console.log(this.childrenByRoom);
       });
     });
   }
@@ -80,11 +96,33 @@ export class ManageChildrenComponent implements OnInit {
   public reverseSignin(child: Child) {
     this.ready = false;
 
-    this.adminService.reverseSignin(child.EventParticipantId).subscribe((resp) => {
+    this.adminService.reverseSignin(+this.eventId, child.AssignedRoomId, child.EventParticipantId).subscribe((resp) => {
       this.children.splice(this.children.indexOf(child), 1);
       this.ready = true;
       this.rootService.announceEvent('reverseSigninSuccess');
     }, error => (this.handleError(error)));
+  }
+
+  onSearchType(searchString) {
+    this.searchString = searchString;
+  }
+
+  onClearSearch(box) {
+    this.searchString = '';
+    box.value = '';
+    this.executeSearch();
+  }
+
+  onSearch() {
+    this.executeSearch();
+  }
+
+  private executeSearch() {
+    this.ready = false;
+    this.adminService.getChildrenForEvent(+this.eventId, this.searchString).subscribe((resp) => {
+      this.children = resp;
+      this.ready = true;
+    });
   }
 
   private handleError (error: any) {

@@ -139,10 +139,10 @@ namespace SignInCheckIn.Services
             return Mapper.Map<List<MpEventDto>, List<EventDto>>(events);
         }
 
-        public List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId)
+        public List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId, string search)
         {
             var eventIds = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
-            var result = _participantRepository.GetChildParticipantsByEvent(token, eventIds.Select(e => e.EventId).ToList());
+            var result = _participantRepository.GetChildParticipantsByEvent(token, eventIds.Select(e => e.EventId).ToList(), search);
             var children = new List<ParticipantDto>();
 
             foreach (var tmpChild in result)

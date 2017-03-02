@@ -29,6 +29,9 @@ namespace Crossroads.Utilities.Services.Interfaces
         int GroupRoleMemberId { get; }
         int AdventureClubEventTypeId { get; }
 
+        int BumpingRoomTypePriorityId { get; }
+        int BumpingRoomTypeVacancyId { get; }
+
         int SignedInParticipationStatusId { get; }
         int CheckedInParticipationStatusId { get; }
         int CancelledParticipationStatusId { get; }

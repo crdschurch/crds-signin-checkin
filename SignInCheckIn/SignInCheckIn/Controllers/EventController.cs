@@ -65,6 +65,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(List<EventRoomDto>))]
         [VersionedRoute(template: "events/{eventid}/rooms", minimumVersion: "1.0.0")]
         [Route("events/{eventid}/rooms")]
+        [RequiresAuthorization]
         public IHttpActionResult GetRoomsByEvent(int eventid)
         {
             return Authorized(token =>
@@ -86,6 +87,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof (EventRoomDto))]
         [VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
+        [RequiresAuthorization]
         public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId)
         {
             try
@@ -104,6 +106,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(EventRoomDto))]
         [VersionedRoute(template: "events/{eventId:int}/groups/unassigned", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/groups/unassigned")]
+        [RequiresAuthorization]
         public IHttpActionResult GetEventUnassignedGroups([FromUri] int eventId)
         {
             try
@@ -121,6 +124,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(EventRoomDto))]
         [VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
+        [RequiresAuthorization]
         public IHttpActionResult UpdateEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromBody] EventRoomDto eventRoom)
         {
             try
@@ -138,6 +142,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(List<EventRoomDto>))]
         [VersionedRoute(template: "events/{destinationEventId:int}/import/{sourceEventId:int}", minimumVersion: "1.0.0")]
         [Route("events/{destinationEventId:int}/import/{sourceEventId:int}")]
+        [RequiresAuthorization]
         public IHttpActionResult ImportEventSetup(int destinationEventId, int sourceEventId)
         {
             try
@@ -155,6 +160,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(List<EventRoomDto>))]
         [VersionedRoute(template: "event/{destinationEventId:int}/resets", minimumVersion: "1.0.0")]
         [Route("events/{destinationEventId:int}/reset")]
+        [RequiresAuthorization]
         public IHttpActionResult ResetEventSetup(int eventId)
         {
             try
@@ -172,6 +178,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(EventRoomDto))]
         [VersionedRoute(template: "events/{eventId:int}/maps", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/maps")]
+        [RequiresAuthorization]
         public IHttpActionResult GetEventsAndSubEvents([FromUri] int eventId)
         {
             try
@@ -189,11 +196,12 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(ParticipantDto))]
         [VersionedRoute(template: "events/{eventId:int}/children", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/children")]
-        public IHttpActionResult GetChildrenForEvent([FromUri] int eventId)
+        public IHttpActionResult GetChildrenForEvent([FromUri] int eventId, [FromUri] string search = null)
         {
             try
             {
-                return Authorized(token => Ok(_eventService.GetListOfChildrenForEvent(token, eventId)));
+
+                return Authorized(token => Ok(_eventService.GetListOfChildrenForEvent(token, eventId, search)));
             }
             catch (Exception e)
             {

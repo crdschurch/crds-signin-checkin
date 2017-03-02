@@ -20,6 +20,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Priority_Order")]
         public int PriorityOrder { get; set; }
 
+        [JsonProperty(PropertyName = "Bumping_Rule_Type_ID")]
+        public int BumpingRuleTypeId { get; set; }
+
         [JsonProperty(PropertyName = "Allow_Checkin")]
         public bool AllowSignIn { get; set; }
 

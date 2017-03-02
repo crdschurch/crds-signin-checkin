@@ -64,8 +64,11 @@ export class AdminService {
     return this.http.post(url, family).map(res => { return res; }).catch(this.handleError);
   }
 
-  getChildrenForEvent(eventId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/children`;
+  getChildrenForEvent(eventId: number, searchString?: string) {
+    let url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/children`;
+    if (searchString) {
+      url = `${url}?search=${searchString}`
+    }
     return this.http.get(url)
                     .map(res => { return (<Child[]>res.json()).map(r => Child.fromJson(r)); })
                     .catch(this.handleError);
@@ -83,8 +86,8 @@ export class AdminService {
     return this.http.post(url, {}).catch(this.handleError);
   }
 
-  reverseSignin(eventParticipantId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/reverse/${eventParticipantId}`;
+  reverseSignin(eventId: number, roomId: number, eventParticipantId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/event/${eventId}/room/${roomId}/reverse/${eventParticipantId}`;
     return this.http.put(url, null).catch(this.handleError);
   }
 
