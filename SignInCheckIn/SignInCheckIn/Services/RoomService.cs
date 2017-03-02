@@ -473,6 +473,9 @@ namespace SignInCheckIn.Services
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
+
+            UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), roomId, authenticationToken);
+
             return eventRooms.First(); 
         }
 
