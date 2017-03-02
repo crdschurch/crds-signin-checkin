@@ -161,7 +161,7 @@ export class RoomComponent implements OnInit {
               comp.room.SignedIn++;
             }
           });
-        } else if (x.Name === 'OverRideCheckin') {
+        } else if (x.Name === 'OverrideCheckin') {
           comp.zone.run(() => {
             comp.room.CheckedIn++;
           });
