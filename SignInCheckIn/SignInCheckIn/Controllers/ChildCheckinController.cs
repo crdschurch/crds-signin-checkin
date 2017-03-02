@@ -134,7 +134,7 @@ namespace SignInCheckIn.Controllers
                 PublishToChannel(_context, new ChannelEvent
                 {
                     ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, overRideRoomId),
-                    Name = "OverRideCheckin",
+                    Name = "OverrideCheckin",
                     Data = data
                 });
 
