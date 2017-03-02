@@ -36,6 +36,7 @@ export class ChildCheckinService {
             Object.assign(child, kid);
             // set all selected to true
             // TODO: backend should probably do this
+            child.AssignedRoomId = roomId;
             child.Selected = true;
             childrenAvailable.push(child);
           }
@@ -46,8 +47,8 @@ export class ChildCheckinService {
       catch(this.handleError);
   }
 
-  checkInChildren(child: Child) {
-    const url = `${this.url}/event/participant`;
+  checkInChildren(child: Child, eventId: number) {
+    const url = `${this.url}/event/${eventId}/participant`;
     child.toggleCheckIn();
 
     return this.http.put(url, child)
