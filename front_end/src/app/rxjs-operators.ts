@@ -2,7 +2,7 @@
 // and returns the message in a new, failed observable via Observable.throw.
 import 'rxjs/add/observable/throw';
 
-// Chained to a map. We use the Observable catch operator on the service level. 
+// Chained to a map. We use the Observable catch operator on the service level.
 // It takes an error handling function with an error object as the argument.
 import 'rxjs/add/operator/catch';
 

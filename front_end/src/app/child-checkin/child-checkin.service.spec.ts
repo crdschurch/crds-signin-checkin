@@ -63,8 +63,8 @@ describe('ChildCheckinService', () => {
         }});
       });
 
-      let result = fixture.checkInChildren(input);
-      expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/checkin/event/participant`, input);
+      let result = fixture.checkInChildren(input, 123);
+      expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/checkin/event/123/participant`, input);
       expect(result).toBeDefined();
       expect(result).toEqual(jasmine.any(Observable));
     });

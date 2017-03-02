@@ -88,7 +88,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
         e.target.value = '';
         parent.PhoneNumber = undefined;
       }
-    } catch(e) {}
+    } catch (e) { }
   }
 
   onDateBlur(e, child) {

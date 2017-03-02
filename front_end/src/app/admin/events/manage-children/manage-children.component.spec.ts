@@ -42,7 +42,7 @@ describe('ManageChildrenComponent', () => {
       children[1].EventParticipantId = 456;
       children[1].AssignedRoomId = 456;
       fixture.children = children;
-      fixture.eventId = 20
+      fixture.eventId = 20;
       let eventParticipantId = children[1].EventParticipantId;
       let roomId = children[1].AssignedRoomId;
 

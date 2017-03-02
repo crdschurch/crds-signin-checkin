@@ -1,10 +1,10 @@
-import {Pipe} from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'ClosedRoomPipe'
 })
 
-export class ClosedRoomPipe {
+export class ClosedRoomPipe implements PipeTransform {
   transform(value, allowSignIn: boolean) {
     return value.filter(room => {
 
