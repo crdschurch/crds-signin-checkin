@@ -152,6 +152,8 @@ namespace SignInCheckIn.Services
                 children.Add(child);
             }
 
+            children = children.OrderByDescending(r => r.AssignedRoomName).ThenBy(r => r.Nickname).ToList();
+
             return children;
         }
     }
