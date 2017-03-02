@@ -264,11 +264,11 @@ export class ChannelService {
     // Not quite sure how to handle this (if at all) since there could be
     //  more than 1 caller subscribed to an observable we created
     //
-    // unsubscribe(channel: string): Rx.Observable<any> {
-    //     this.observables = this.observables.filter((x: ChannelObservable) => {
-    //         return x.channel === channel;
-    //     });
-    // }
+    unsubscribe(channel: string): any {
+      console.log("unsub", channel);
+      // this.hubProxy.off(channel);
+      this.hubProxy.off('onEvent');
+    }
 
     /** publish provides a way for calles to emit events on any channel. In a
      * production app the server would ensure that only authorized clients can

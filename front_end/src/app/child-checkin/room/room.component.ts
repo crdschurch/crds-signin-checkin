@@ -55,6 +55,7 @@ export class RoomComponent implements OnInit {
         let channelName = `${Constants.CheckinParticipantsChannel}${comp.event.EventId}${comp.roomId}`;
         comp.channelService.sub(channelName).subscribe(
           (x: ChannelEvent) => {
+            console.log("CHANNELEVENT", x)
             if (x.Name === 'Add') {
               for (let kid of x.Data) {
                 let child = Object.create(Child.prototype);
