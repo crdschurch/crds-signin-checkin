@@ -17,16 +17,17 @@
     </div>
     <div class="row">
       <div class="col-sm-6 mb-3 hidden-print">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Child's First Name, Last Name or Call Number">
-          <span class="input-group-btn">
-            <button class="btn btn-primary" type="button">Search</button>
+        <div class="input-group child-search-input">
+          <input #box type="text" class="form-control" placeholder="Child's First Name, Last Name, or Call Number" (keyup)="onSearchType(box.value)" (keyup.enter)="onSearch()">
+          <span class="input-group-addon input-group-addon-unstyled" (click)="onClearSearch(box)">
+            <span [hidden]="!box.value.length">&times;</span>
           </span>
+          <button type="submit" class="btn btn-primary input-group-addon" (click)="onSearch()">Search</button>
         </div>
       </div>
       <div class="col-xs-12">
         <preloader *ngIf="!isReady()"></preloader>
-        <table class="table table-striped" *ngIf="isReady()">
+        <table class="table" *ngIf="isReady()">
           <thead>
             <tr>
               <th>First Name</th>
@@ -40,26 +41,13 @@
               <th class="hidden-print">Label</th>
             </tr>
           </thead>
-        </table>
-        <div *ngFor="let cbr of childrenByRoom" >
-              <strong>{{cbr[0].AssignedRoomName}}</strong>
-              
-              <table class="table table-striped" *ngFor="let child of cbr">
-                <thead>                          
-                  <tr>
-                    <th class="hidden">First Name</th>
-                    <th class="hidden">Last Name</th>
-                    <th class="hidden"></th>
-                    <th class="hidden">Call Number</th>
-                    <th class="hidden">Room Assigned</th>
-                    <th class="hidden">Time Signed In</th>
-                    <th class="hidden">Guardians</th>
-                    <th class="hidden">Reverse Sign In</th>
-                    <th class="hidden">Label</th>
-                  </tr>
-                </thead>
-                <tbody>
-                <tr>
+        <tbody *ngFor="let cbr of childrenByRoom" >
+              <tr>
+                <td colspan="9">
+                  <strong>{{cbr[0].AssignedRoomName}}</strong>
+                </td>
+              </tr>
+                <tr *ngFor="let child of cbr">
                   <td>
                     {{child.Nickname}}
                   </td>
@@ -88,63 +76,9 @@
                     <a class="btn btn-primary btn-sm" (click)="reprint(child)">Reprint</a>
                   </td>
                 </tr>
-                </tbody>
-              </table>
-            </div>
-      </div>
-      <!--<div class="col-xs-12">
-        <preloader *ngIf="!isReady()"></preloader>
-        <table class="table table-striped" *ngIf="isReady()">
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th></th>
-              <th>Call Number</th>
-              <th class="hidden-print">Room Assigned</th>
-              <th class="hidden-print">Time Signed In</th>
-              <th class="hidden-print">Guardians</th>
-              <th class="hidden-print">Reverse Sign In</th>
-              <th class="hidden-print">Label</th>
-            </tr>
-          </thead>
-          <tbody>
-            <div *ngFor="let cbr of childrenByRoom" >
-              {{cbr[0].AssignedRoomName}}
-              <tr *ngFor="let child of cbr">
-              <td>
-                {{child.Nickname}}
-              </td>
-              <td>
-                {{child.LastName}}
-              </td>
-              <td>
-                <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
-              </td>
-              <td>
-                {{child.CallNumber}}
-              </td>
-              <td class="hidden-print">
-                {{child.AssignedRoomName}}
-              </td>
-              <td class="hidden-print">
-                {{child.TimeIn | amDateFormat:'h:mma'}}
-              </td>
-              <td class="hidden-print">
-                {{parentAndPhoneNumbers(child)}}
-              </td>
-              <td class="hidden-print">
-                <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)" >Reverse</button>
-              </td>
-              <td class="hidden-print">
-                <a class="btn btn-primary btn-sm" (click)="reprint(child)">Reprint</a>
-              </td>
-            </tr>
-            </div>
-            
-          </tbody>
+            </tbody>
         </table>
-      </div>-->
+      </div>
     </div>
   </div>
 </div>
