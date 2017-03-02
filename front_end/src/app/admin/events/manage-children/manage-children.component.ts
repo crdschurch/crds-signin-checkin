@@ -36,15 +36,9 @@ export class ManageChildrenComponent implements OnInit {
         this.children = resp;
         this.ready = true;
 
-        //this.children = _(this.children).groupBy(r =>r.AssignedRoomName).value();
         this.childrenByRoom = _(this.children).groupBy(r =>r.AssignedRoomName).value();
-
         this.childrenByRoom = Object.keys(this.childrenByRoom).sort().map(k => this.childrenByRoom[k]);
 
-        //var temp = _(this.children).groupBy(r =>r.AssignedRoomName).value();
-
-
-        //this.childrenByRoom = _(this.children).groupBy(r =>r.AssignedRoomName).value();
         console.log(this.childrenByRoom);
       });
     });
