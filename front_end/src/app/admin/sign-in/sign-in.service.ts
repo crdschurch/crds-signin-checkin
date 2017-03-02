@@ -6,7 +6,7 @@ import { HttpClientService } from '../../shared/services';
 
 @Injectable()
 export class SignInService {
-  private url: string = '';
+  private url = '';
 
   constructor(private http: HttpClientService) {
     this.url = `${process.env.ECHECK_API_ENDPOINT}/authenticate`;

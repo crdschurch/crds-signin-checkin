@@ -23,10 +23,10 @@ export class RoomGroupListComponent implements OnInit {
   private eventsMap: Event[];
   private _selectedBumpingType: number;
   allAlternateRooms: Room[];
-  isAdventureClub: boolean = false;
-  alternateRoomsSelected: boolean = false;
-  updating: boolean = false;
-  isDirty: boolean = false;
+  isAdventureClub = false;
+  alternateRoomsSelected = false;
+  updating = false;
+  isDirty = false;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,

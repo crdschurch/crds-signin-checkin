@@ -10,8 +10,8 @@ import { EventParticipants } from '../../shared/models';
   templateUrl: 'search.component.html'
 })
 export class SearchComponent implements OnInit {
-  private isReady: boolean = true;
-  phoneNumber: string = '';
+  private isReady = true;
+  phoneNumber = '';
 
   constructor(private router: Router,
               private childSigninService: ChildSigninService,

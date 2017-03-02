@@ -16,9 +16,9 @@ import * as _ from 'lodash';
 
 export class AvailableChildrenComponent implements OnInit {
   private _eventParticipants: EventParticipants = new EventParticipants();
-  private _isServingOneHour: boolean = false;
-  private _isServingTwoHours: boolean = false;
-  private isReady: boolean = false;
+  private _isServingOneHour = false;
+  private _isServingTwoHours = false;
+  private isReady = false;
   // tslint:disable:no-unused-variable
   private maxDate: Date = moment().toDate();
   private _newGuestChild: Guest;
@@ -203,7 +203,7 @@ export class AvailableChildrenComponent implements OnInit {
      this.newGuestChild.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
    }
 
-   var needGradeLevelValue = moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+   let needGradeLevelValue = moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
 
     if (needGradeLevelValue === true) {
       this.newGuestChild.YearGrade = -1;
