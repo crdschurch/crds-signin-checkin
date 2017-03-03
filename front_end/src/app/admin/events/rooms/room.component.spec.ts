@@ -1,4 +1,3 @@
-/*
 import { Observable } from 'rxjs/Observable';
 import { RoomComponent } from './room.component';
 import { Room } from '../../../shared/models';
@@ -13,13 +12,27 @@ let adminServiceStub: any = {
   }
 };
 
-let route: any;
+let zone: any = {
+  run(): any {
+    return Observable.of();
+  }
+};
+let channelService: any = {
+  sub(): any {
+    return Observable.of();
+  }
+};
+let route: any = {
+  snapshot: {
+    params: { 'eventId': 123 },
+  }
+};
 let rootService: any;
 
 describe('RoomComponent', () => {
 
   beforeEach(() => {
-    fixture = new RoomComponent(route, adminServiceStub, rootService);
+    fixture = new RoomComponent(route, adminServiceStub, rootService, channelService, zone);
     fixture.room = new Room();
     fixture.room.Volunteers = 10;
     fixture.room.Capacity = 6;
@@ -119,4 +132,3 @@ describe('RoomComponent', () => {
   });
 
 });
-*/

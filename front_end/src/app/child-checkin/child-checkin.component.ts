@@ -25,7 +25,7 @@ export class ChildCheckinComponent implements OnInit {
   todaysEvents: Event[];
   ready: boolean;
   isOverrideProcessing: boolean;
-  callNumber: string = '';
+  callNumber = '';
   overrideChild: Child = new Child();
   room: Room = new Room();
 
@@ -48,6 +48,9 @@ export class ChildCheckinComponent implements OnInit {
     let today = new Date();
     this.apiService.getEvents(today, today).subscribe(
       events => {
+        if (!events.length) {
+          return this.ready = true;
+        }
         this.todaysEvents = [];
         // transform to Event
         for (let event of events) {
@@ -163,7 +166,7 @@ export class ChildCheckinComponent implements OnInit {
         this.hideChildSearchModal();
         this.rootService.announceEvent('checkinOverrideSuccess');
         this.isOverrideProcessing = false;
-        this.childCheckinService.forceChildReload();
+        this.childCheckinService.forceChildReload(this.selectedEvent);
       }, (errorLabel) => {
         switch (errorLabel) {
           case 'capacity':

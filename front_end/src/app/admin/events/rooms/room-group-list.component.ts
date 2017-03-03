@@ -23,10 +23,10 @@ export class RoomGroupListComponent implements OnInit {
   private eventsMap: Event[];
   private _selectedBumpingType: number;
   allAlternateRooms: Room[];
-  isAdventureClub: boolean = false;
-  alternateRoomsSelected: boolean = false;
-  updating: boolean = false;
-  isDirty: boolean = false;
+  isAdventureClub = false;
+  alternateRoomsSelected = false;
+  updating = false;
+  isDirty = false;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -44,7 +44,9 @@ export class RoomGroupListComponent implements OnInit {
       events => {
         this.eventsMap = events;
       },
-      error => console.error(error)
+      error => {
+        console.error(error);
+      }
     );
 
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
@@ -62,7 +64,9 @@ export class RoomGroupListComponent implements OnInit {
         this.event = event;
         this.headerService.announceEvent(event);
       },
-      error => console.error(error)
+      error =>  {
+        console.error(error);
+      }
     );
 
     this.adminService.getBumpingRooms(this.route.snapshot.params['eventId'], this.route.snapshot.params['roomId']).subscribe(

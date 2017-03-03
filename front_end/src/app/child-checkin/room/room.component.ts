@@ -19,10 +19,12 @@ import { Constants } from '../../shared/constants';
 export class RoomComponent implements OnInit {
 
   private _children: Array<Child> = [];
-  private update: boolean = true;
+  private update = true;
+  private event: Event;
+  private roomId: number;
   subscription: Subscription;
 
-  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService, 
+  constructor(private childCheckinService: ChildCheckinService, private rootService: RootService,
     private setupService: SetupService, private channelService: ChannelService) {
     // subscribe to forceChildReload so that the parent (ChildCheckinComponent)
     // can talk to the child (RoomComponent) and tell it when to reload children
@@ -40,18 +42,17 @@ export class RoomComponent implements OnInit {
 
   setup(comp) {
     if (comp) {
-      let roomId: number = comp.setupService.getMachineDetailsConfigCookie().RoomId;
-      let event: Event = comp.childCheckinService.selectedEvent;
-      if (roomId && event) {
-        comp.childCheckinService.getChildrenForRoom(roomId, event.EventId).subscribe((children) => {
+      comp.roomId = comp.setupService.getMachineDetailsConfigCookie().RoomId;
+      comp.event = comp.childCheckinService.selectedEvent;
+      if (comp.roomId && comp.event) {
+        comp.childCheckinService.getChildrenForRoom(comp.roomId, comp.event.EventId).subscribe((children) => {
           comp.children = children;
         }, (error) => {
-          console.error(error);
           comp.rootService.announceEvent('generalError');
         });
-        
+
         // Get an observable for events emitted on this channel
-        let channelName = `${Constants.CheckinParticipantsChannel}${event.EventId}${roomId}`;
+        let channelName = `${Constants.CheckinParticipantsChannel}${comp.event.EventId}${comp.roomId}`;
         comp.channelService.sub(channelName).subscribe(
           (x: ChannelEvent) => {
             if (x.Name === 'Add') {
@@ -61,12 +62,13 @@ export class RoomComponent implements OnInit {
                 // set all selected to true
                 // TODO: backend should probably do this
                 child.Selected = true;
+                child.AssignedRoomId = comp.roomId;
                 comp.children.push(child);
               }
             } else if (x.Name === 'Remove') {
               let data = x.Data;
-              if (data.OriginalRoomId != data.OverRideRoomId) {
-                comp.children = comp.children.filter( (obj: Child) => { return obj.EventParticipantId != data.EventParticipantId; } );
+              if (data.OriginalRoomId !== data.OverRideRoomId) {
+                comp.children = comp.children.filter( (obj: Child) => { return obj.EventParticipantId !== data.EventParticipantId; } );
               }
             }
           },
@@ -88,10 +90,9 @@ export class RoomComponent implements OnInit {
 
   toggleCheckIn(child: Child) {
     this.update = false;
-    this.childCheckinService.checkInChildren(child).subscribe(() => {
+    this.childCheckinService.checkInChildren(child, this.event.EventId).subscribe(() => {
       this.update = true;
     }, (error) => {
-      console.error(error);
       this.rootService.announceEvent('generalError');
     });
   }

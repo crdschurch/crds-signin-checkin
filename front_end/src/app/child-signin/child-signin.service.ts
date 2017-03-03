@@ -7,8 +7,8 @@ import { EventParticipants } from '../shared/models';
 
 @Injectable()
 export class ChildSigninService {
-  private url: string = '';
-  private phoneNumber: string = '';
+  private url = '';
+  private phoneNumber = '';
   private eventParticipantsResults: EventParticipants;
 
   constructor(private http: HttpClientService, private router: Router) {

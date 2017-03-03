@@ -16,9 +16,9 @@ import * as _ from 'lodash';
 
 export class AvailableChildrenComponent implements OnInit {
   private _eventParticipants: EventParticipants = new EventParticipants();
-  private _isServingOneHour: boolean = false;
-  private _isServingTwoHours: boolean = false;
-  private isReady: boolean = false;
+  private _isServingOneHour = false;
+  private _isServingTwoHours = false;
+  private isReady = false;
   // tslint:disable:no-unused-variable
   private maxDate: Date = moment().toDate();
   private _newGuestChild: Guest;
@@ -202,9 +202,17 @@ export class AvailableChildrenComponent implements OnInit {
    if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
      this.newGuestChild.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
    }
+
+   let needGradeLevelValue = moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+
+    if (needGradeLevelValue === true) {
+      this.newGuestChild.YearGrade = -1;
+    } else {
+      this.newGuestChild.YearGrade = 0;
+    }
  }
 
- saveNewGuest(modal) {
+  saveNewGuest(modal) {
    try {
      this.newGuestChild.FirstName.trim();
      this.newGuestChild.LastName.trim();
@@ -213,7 +221,14 @@ export class AvailableChildrenComponent implements OnInit {
        return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
      } else if (!this.newGuestChild.DateOfBirth || !moment(this.newGuestChild.DateOfBirth).isValid()) {
        return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
+     } else if (this.newGuestChild.YearGrade === -1) {
+       return this.rootService.announceEvent('echeckNeedValidGradeSelection');
      } else {
+
+       if (this.newGuestChild.YearGrade === 0) {
+         this.newGuestChild.YearGrade = undefined;
+       }
+
        this._eventParticipants.Participants.push(this.newGuestChild);
        return modal.hide();
      }

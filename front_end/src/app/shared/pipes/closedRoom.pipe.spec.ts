@@ -1,9 +1,9 @@
 import { ClosedRoomPipe } from './closedRoom.pipe';
-import { Room } from '../models'
+import { Room } from '../models';
 
 describe ('ClosedRoomPipe', () => {
 
-  // test class is defined here, because we care about the logic in the pipe, not 
+  // test class is defined here, because we care about the logic in the pipe, not
   // interaction with the room class
   class TestRoom {
     public AllowSignIn: boolean;
@@ -21,12 +21,12 @@ describe ('ClosedRoomPipe', () => {
   let pipe = new ClosedRoomPipe();
 
   it('returns all rooms when not true', () => {
-    var result = pipe.transform(this._rooms, false);
+    let result = pipe.transform(this._rooms, false);
     expect(result.length).toBe(2);
   });
 
   it('returns filtered rooms when true', () => {
-    var result = pipe.transform(this._rooms, true);
+    let result = pipe.transform(this._rooms, true);
     expect(result.length).toBe(1);
   });
 
