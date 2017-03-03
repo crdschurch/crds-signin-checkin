@@ -27,7 +27,7 @@
       </div>
       <div class="col-xs-12">
         <preloader *ngIf="!isReady()"></preloader>
-          <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">There are no kids for this event under that criteria.</div>
+          <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No results found for "{{ searchString }}".</div>
         <table class="table" *ngIf="isReady() && children?.length > 0">
           <thead>
             <tr>
