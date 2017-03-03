@@ -93,16 +93,19 @@
             <td class="hidden-print">
             </td>
             <td>
-              <strong>Total Volunteers:</strong> {{getCheckedInTotal()}}
+              <strong>Total Volunteers:</strong> {{getVolunteersTotal()}}
             </td>
             <td>
-              <strong>Total Capacity: </strong> {{getSignedInTotal()}}
+              <strong>Total Capacity: </strong> {{getCapacityTotal()}}
             </td>
             <td>
-              <strong>Total Signed In:</strong> {{getCheckedInTotal()}}
+              <strong>Total Signed In:</strong> {{getSignedInTotal()}}
             </td>
             <td>
-              <strong>Total Checked In: </strong> {{getSignedInTotal()}}
+              <strong>Total Checked In: </strong> {{getCheckedInTotal()}}
+            </td>
+            <td>
+              <strong>Kids Not Checked In: </strong> {{getSignedInTotal() - getCheckedInTotal()}}
             </td>
             <td class="hidden-print">
             </td>
