@@ -12,6 +12,18 @@ td {
       -webkit-appearance: none;
       margin: 0;
     }
+    @media print {
+      padding: 0;
+      border: none;
+      text-align: right !important;
+      display: inline;
+    }
+  }
+  @media print {
+    .input-group {
+      display: block;
+      text-align: right;
+    }
   }
   &.disabled {
     opacity: .3;
