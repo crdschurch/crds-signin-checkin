@@ -221,10 +221,10 @@ namespace SignInCheckIn.Services
             // JPC - need to handle already-assigned event participants here
 
             // Get Event and make sure it occures at a valid time
+            var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
 
             // Get groups that are configured for the event
             var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
-
 
             // Get a list of participants with their groups and expected rooms - maps groups onto participants
             var mpEventParticipantDtoList = SetParticipantsGroupsAndExpectedRooms(eventGroups, participantEventMapDto);
@@ -281,7 +281,7 @@ namespace SignInCheckIn.Services
                 // Get selected participants
                 from participant in participantEventMapDto.Participants.Where(r => r.Selected && r.DuplicateSignIn == false)
 
-                    // Get the event group id that they belong to
+                // Get the event group id that they belong to
                 let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
 
                 // Create the Event Participant
