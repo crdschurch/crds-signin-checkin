@@ -222,12 +222,9 @@ namespace SignInCheckIn.Services
 
             // Get Event and make sure it occures at a valid time
 
-            // tgtg
-            // var eventDto = _eventRepository.GetSubeventByParentEventId(participantEventMapDto.CurrentEvent.EventId, 20);
-            var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
-
             // Get groups that are configured for the event
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventDto.EventId);
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
+
 
             // Get a list of participants with their groups and expected rooms - maps groups onto participants
             var mpEventParticipantDtoList = SetParticipantsGroupsAndExpectedRooms(eventGroups, participantEventMapDto);
