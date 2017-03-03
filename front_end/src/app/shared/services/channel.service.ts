@@ -213,7 +213,8 @@ export class ChannelService {
       });
       this.subjects.splice(index, 1);
       channelSub.subject.unsubscribe();
-      console.info('unsubscribed from', channelSub, this.subjects);
+      console.log('Unsubscribed from', channelSub);
+      console.log('Subscribed channels:', this.subjects);
     }
 
     unsubAll(channelPrefix: string) {
@@ -282,6 +283,7 @@ export class ChannelService {
       this.hubProxy.invoke('Subscribe', channel)
           .done(() => {
               console.log(`Successfully subscribed to ${channel} channel`);
+              console.log('Subscribed channels:', this.subjects);
           })
           .fail((error: any) => {
               channelSub.subject.error(error);

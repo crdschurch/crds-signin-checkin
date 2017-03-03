@@ -24,6 +24,7 @@ export class ChildCheckinComponent implements OnInit {
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
+  switchingEvents: boolean;
   isOverrideProcessing: boolean;
   callNumber = '';
   overrideChild: Child = new Child();
@@ -37,6 +38,7 @@ export class ChildCheckinComponent implements OnInit {
 
     this.kioskDetails = new MachineConfiguration();
     this.ready = false;
+    this.switchingEvents = false;
     this.isOverrideProcessing = false;
   }
 
@@ -89,9 +91,8 @@ export class ChildCheckinComponent implements OnInit {
 
   subscribeToSignalr() {
     // Get an observable for events emitted on this channel
-    // this.channelService.unsubAll(Constants.CheckinCapacityChannel);
+    this.channelService.unsubAll(Constants.CheckinCapacityChannel);
     let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
-    console.log("sub to capacity")
     this.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
         this.room = Room.fromJson(x.Data);
@@ -115,9 +116,11 @@ export class ChildCheckinComponent implements OnInit {
   set selectedEvent(event) {
     this.childCheckinService.selectedEvent = event;
     // make sure to update event room (for capacity purposes)
+    this.switchingEvents = true;
     this.childCheckinService.getEventRoomDetails(event.EventId, this.kioskDetails.RoomId).subscribe((room) => {
       this.room = room;
       this.subscribeToSignalr();
+      this.switchingEvents = false;
     }, (error) => this.rootService.announceEvent('generalError'));
   }
 
