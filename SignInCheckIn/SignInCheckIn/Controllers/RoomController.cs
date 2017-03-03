@@ -130,8 +130,8 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                var room = _roomService.GetEventRoom(eventId, roomId);
-                return Ok(room);
+                return Ok(_roomService.GetEventRoom(eventId, roomId, true));
+               
             }
             catch (Exception e)
             {

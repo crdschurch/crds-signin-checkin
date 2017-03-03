@@ -302,12 +302,12 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto GetEventRoom(int eventId, int roomId)
         {
-            var token = _apiUserRepository.GetToken();
-            return GetEventRoom(token, eventId, roomId, false);
+            return GetEventRoom(eventId, roomId, false);
         }
 
-        private EventRoomDto GetEventRoom(string token, int eventId, int roomId, bool canCreateEventRoom = true)
+        public EventRoomDto GetEventRoom(int eventId, int roomId, bool canCreateEventRoom = true)
         {
+            var token = _apiUserRepository.GetToken();
             var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
 
             if (events.Count == 0)
