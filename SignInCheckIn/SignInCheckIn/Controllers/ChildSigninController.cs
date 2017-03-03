@@ -18,15 +18,17 @@ namespace SignInCheckIn.Controllers
 {
     public class ChildSigninController : MpAuth
     {
+        private readonly IEventService _eventService;
         private readonly IChildSigninService _childSigninService;
         private readonly IChildCheckinService _childCheckinService;
         private readonly IKioskRepository _kioskRepository;
         private readonly IHubContext _context;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildSigninController(IChildSigninService childSigninService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public ChildSigninController(IChildSigninService childSigninService, IEventService _eventService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
             _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
+            _eventService = _eventService;
             _childSigninService = childSigninService;
             _childCheckinService = childCheckinService;
             _kioskRepository = kioskRepository;
@@ -207,9 +209,17 @@ namespace SignInCheckIn.Controllers
                         data.EventParticipantId = eventparticipantId;
                         data.OriginalRoomId = roomId;
 
+                        // if AC event, we need to publish to parent event channel
+                        var publishEventId = eventId;
+                        var e = _eventService.GetEvent(eventId);
+                        if (e.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId)
+                        {
+                            publishEventId = e.ParentEventId.Value;
+                        }
+
                         PublishToChannel(_context, new ChannelEvent
                         {
-                            ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, roomId),
+                            ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, publishEventId, roomId),
                             Name = "Remove",
                             Data = data
                         });

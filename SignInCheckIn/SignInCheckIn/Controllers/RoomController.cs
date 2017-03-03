@@ -17,12 +17,14 @@ namespace SignInCheckIn.Controllers
 {
     public class RoomController : MpAuth
     {
+        private readonly IEventService _eventService;
         private readonly IRoomService _roomService;
         private readonly IHubContext _context;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public RoomController(IEventService eventService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
+            _eventService = eventService;
             _roomService = roomService;
             _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
             _applicationConfiguration = applicationConfiguration;
@@ -108,8 +110,16 @@ namespace SignInCheckIn.Controllers
 
                     var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(token, eventRoom);
 
+                    // if AC event, we need to publish to parent event channel
+                    var publishEventId = eventId;
+                    var e = _eventService.GetEvent(eventId);
+                    if (e.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId)
+                    {
+                        publishEventId = e.ParentEventId.Value;
+                    }
+
                     PublishToChannel(_context, new ChannelEvent {
-                        ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{eventId}{roomId}",
+                        ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{publishEventId}{roomId}",
                         Data = updatedEventRoom
                     });
 
