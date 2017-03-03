@@ -77,7 +77,7 @@
         </thead>
         <tbody>
           <!-- Tate - just replace 'hidden-print' in the ng-Class what the name of your new class is -->
-          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" [ngClass]="{'hidden-print': someRoom.SignedIn > someRoom.CheckedIn}"
+          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" [ngClass]="{'alert-danger': someRoom.SignedIn > someRoom.CheckedIn}"
               (notifyDirty)="onNotifyDirty($event)" (notifySaving)="onNotifySaving($event)" (updateRoomArray)="updateRooms($event)"
               [room]="someRoom">
           </tr>
