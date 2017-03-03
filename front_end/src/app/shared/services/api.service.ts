@@ -35,7 +35,12 @@ export class ApiService {
         search: new URLSearchParams(`site=${site}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
     });
     return this.http.get(url, options)
-                    .map(res => res.json())
+                    .map(res => {
+                      let events = res.json();
+                      return events.sort((a: Event, b: Event) => {
+                        return a.EventStartDate.localeCompare(b.EventStartDate);
+                      });
+                    })
                     .catch(this.handleError);
   }
 
