@@ -229,28 +229,19 @@ namespace SignInCheckIn.Controllers
 
         private void PublishSignedInParticipantsToRooms(ParticipantEventMapDto participants)
         {
-            //// loop through rooms that need to have an update and push the update to them
-            //var rooms = participants.Participants.Select(m => m.AssignedRoomId).Where(p => p != null).Distinct();
-            //var eventId = participants.CurrentEvent.EventId;
-            //foreach (var room in rooms)
-            //{
-            //    // ignores the site id if there is an event id so therefore we can put a random 0 here
-            //    var updatedParticipants = participants.Participants.Where(p => p.AssignedRoomId == room);
-
-            //    PublishToChannel(_context, new ChannelEvent
-            //    {
-            //        ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, room.Value),
-            //        Name = "Add",
-            //        Data = updatedParticipants
-            //    });
-            //}
-
-
-            // refactored
             foreach (var p in participants.Participants)
             {
                 if (p.AssignedRoomId != null)
                 {
+                    // if this is the first event and it is an AC event, we need to set the publish event id to
+                    // the parent id (not kc Subevent ID)
+                    // we dont need to do this for the AssignedSecondaryRoom (below) because we are already 
+                    // setting the EventIdSecondary to the Parent Event ID
+                    if (participants.CurrentEvent.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId)
+                    {
+                        p.EventId = participants.CurrentEvent.ParentEventId.Value;
+                    }
+
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedRoomId == p.AssignedRoomId);
                     PublishToChannel(_context, new ChannelEvent
