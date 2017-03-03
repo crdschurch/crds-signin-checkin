@@ -41,19 +41,23 @@ namespace SignInCheckIn.Services
         // 2. participant id
         // 3. date?
         // 4. ac signin yes/no
-        public void SignInParticipant(int siteId, bool underThreeSignIn, bool adventureClubSignIn)
+        public void SignInParticipant(int siteId, bool adventureClubSignIn, bool underThreeSignIn, int groupId)
         {
             // first step, get all eligible events -- this is for the site, at least for the next two events
-            var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
+            var dailyEvents = GetSignInEvents(siteId, adventureClubSignIn, underThreeSignIn);
 
-            var dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, siteId, true)
-                .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate);
+            // next, get all event rooms for the event groups that are on those events
+
+
+            //var eligibleRooms = _roomRepository.GetEventRoomsByEventGroup(groupId, dailyEvents.Select(r => r.EventId).ToList());
+
+
 
             // should be get groups for eligible events here
             var eventIds = dailyEvents.Select(r => r.EventId).ToList();
             var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds);
 
-            var groupId = 1;// JPC - crap value
+            //var groupId = 1;// JPC - crap value
 
             // get rooms for the event groups - this has to map the room id and the event id
             var eventRooms = _roomRepository.GetEventRoomsByEventGroup(groupId, eventIds);
@@ -99,19 +103,59 @@ namespace SignInCheckIn.Services
                 return eligibleEvents;
             }
 
+            if (underThree == true)
+            {
+                var serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).ToList();
+
+                // we need to get first two event services, and no matching ac events
+                for (int i = 0; i < 2; i++)
+                {
+                    eligibleEvents.Add(serviceEventSet[i]);
+                }
+
+                return eligibleEvents;
+            }
+
             if (adventureClubSignIn == true)
             {
-                // 
+                var serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).ToList();
+
+                // we need to get first two event services, and then the matching ac events - if there's
+                // a combination of 1, 1AC, 2, 3, 3AC, 3 and 3 AC are not considered for checkin
+                for(int i = 0; i < 2; i++)
+                {
+                    eligibleEvents.Add(serviceEventSet[i]);
+
+                    if (dailyEvents.Any(r => r.ParentEventId == serviceEventSet[i].EventId))
+                    {
+                        eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == serviceEventSet[i].EventId));
+                    }
+                }
+
+                return eligibleEvents;
             }
+
+            return null;
+        }
+
+        public List<MpEventRoomDto> GetSignInEventRooms(int groupId, List<int> eventIds)
+        {
+            var eventGroups = _eventRepository.GetEventGroupsForEvent(groupId, 
+
+
+
 
             return null;
         } 
 
+        /*** Helper Functions ***/
         private bool CheckEventTimeValidity(MpEventDto mpEventDto)
         {
             // check to see if the event's start is equal to or later than the time minus the offset period
             var offsetPeriod = DateTime.Now.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
             return mpEventDto.EventStartDate >= offsetPeriod;
         }
+
+
     }
 }
