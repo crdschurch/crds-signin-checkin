@@ -25,7 +25,7 @@ export class ChildCheckinComponent implements OnInit {
   todaysEvents: Event[];
   ready: boolean;
   isOverrideProcessing: boolean;
-  callNumber: string = '';
+  callNumber = '';
   overrideChild: Child = new Child();
   room: Room = new Room();
 

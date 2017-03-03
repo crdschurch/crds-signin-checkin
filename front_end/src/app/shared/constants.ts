@@ -1,9 +1,9 @@
 export class Constants {
-  static SignedInParticipationStatusId: number = 3;
-  static CheckedInParticipationStatusId: number = 4;
-  static GuestHouseholdId: number = 5771805;
+  static SignedInParticipationStatusId = 3;
+  static CheckedInParticipationStatusId = 4;
+  static GuestHouseholdId = 5771805;
 
-  static ManageRoomsChannel: string = 'ManageRoomsChannel';
-  static CheckinParticipantsChannel: string = 'CheckinParticipantsChannel';
-  static CheckinCapacityChannel: string = 'CheckinCapacityChannel';
+  static ManageRoomsChannel = 'ManageRoomsChannel';
+  static CheckinParticipantsChannel = 'CheckinParticipantsChannel';
+  static CheckinCapacityChannel = 'CheckinCapacityChannel';
 }

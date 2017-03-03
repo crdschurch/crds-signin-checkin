@@ -82,6 +82,7 @@ export class ChannelService {
     //
     private hubConnection: any;
     private hubProxy: any;
+    private isConnected = false;
 
     // An internal array to track what channel subscriptions exist
     //
@@ -169,7 +170,7 @@ export class ChannelService {
         // Wire up a handler for the starting$ observable to log the
         //  success/fail result
         this.starting$.subscribe(
-            () => { console.info('signalr service has been started'); },
+            () => { console.log('signalr service has been started'); },
             () => { console.warn('signalr service failed to start!'); }
         );
     }
@@ -190,6 +191,7 @@ export class ChannelService {
         //
         this.hubConnection.start()
             .done(() => {
+                this.isConnected = true;
                 this.startingSubject.next();
             })
             .fail((error: any) => {
@@ -217,7 +219,7 @@ export class ChannelService {
         // If we already have one for this event, then just return it
         //
         if (channelSub !== undefined) {
-            console.info(`Found existing observable for ${channel} channel`);
+            console.log(`Found existing observable for ${channel} channel`);
             return channelSub.subject.asObservable();
         }
 
@@ -246,19 +248,24 @@ export class ChannelService {
         // because this.channelService.start() in app component
         // could possibly have not started the connection (hubProxy)
         // by this point
-
-        // this.starting$.subscribe((resp) => {
-        this.hubProxy.invoke('Subscribe', channel)
-            .done(() => {
-              console.info(`Successfully subscribed to ${channel} channel`);
-            })
-            .fail((error: any) => {
-                channelSub.subject.error(error);
-            });
-        // }, (err)=> console.info("not subscribed", err));
-        // }
-
+        if (this.isConnected) {
+          this.subscribeToHubProxy(channel, channelSub);
+        } else {
+          this.starting$.subscribe((resp) => {
+            this.subscribeToHubProxy(channel, channelSub);
+          });
+        }
         return channelSub.subject.asObservable();
+    }
+
+    private subscribeToHubProxy(channel, channelSub) {
+      this.hubProxy.invoke('Subscribe', channel)
+          .done(() => {
+              console.log(`Successfully subscribed to ${channel} channel`);
+          })
+          .fail((error: any) => {
+              channelSub.subject.error(error);
+          });
     }
 
     // Not quite sure how to handle this (if at all) since there could be

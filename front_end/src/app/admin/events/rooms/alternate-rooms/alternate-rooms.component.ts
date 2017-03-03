@@ -74,7 +74,7 @@ export class AlternateRoomsComponent implements OnInit {
 
   ngOnInit() {
     if (_.some(this.allAlternateRooms, { 'BumpingRuleTypeId': Room.BUMPING_TYPE.VACANCY })) {
-        this.selectedBumpingType = Room.BUMPING_TYPE.VACANCY
+        this.selectedBumpingType = Room.BUMPING_TYPE.VACANCY;
     } else {
       this.selectedBumpingType = Room.BUMPING_TYPE.PRIORITY;
     }

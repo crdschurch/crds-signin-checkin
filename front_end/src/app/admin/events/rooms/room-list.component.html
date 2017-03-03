@@ -3,54 +3,57 @@
 <div class="wrapper rooms">
   <div class="container-fluid admin-content py-1">
     <div class="row">
-      <div class="col-sm-5">
-        <h3>Manage Rooms</h3>
+      <div class="col-lg-3">
+        <h3 class="hidden-print">Manage Rooms</h3>
+        <h3 class="visible-print-block">KC Service Report</h3>
       </div>
-      <div class="col-sm-7 text-sm-right pb-1">
-        <div class="row">
-          <div class="col-xs-11">
-            <!-- TODO -->
-
-            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
-            <button type="button" class="btn btn-link" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
-            <strong>{{getOpenRooms()}}</strong> of <strong>{{getTotalRooms()}}</strong> rooms open
+      <div class="col-lg-9 text-lg-right pb-1 hidden-print">
+        <!-- TODO -->
+        <button type="button" class="btn btn-unstyled mr-1 mb-1">{{getOpenRooms()}} of {{getTotalRooms()}} rooms open</button>
+        <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
+        <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
+        <button type="button" class="btn btn-default  mb-1" (click)="isCollapsed = !isCollapsed" [hidden]="!unassignedGroups"><span class="text-primary">{{unassignedGroups?.length}}</span> unassigned groups
+        </button>
+        <div class="btn px-0  mb-1" dropdown [(isOpen)]="dropdownStatus.isOpen">
+          <button id="single-button" type="button" class="btn btn-default" dropdownToggle [disabled]="dropdownStatus.isDisabled">
+            <span class="icon">
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+              <g>
+              </g>
+                <path d="M18.286 16q0-1.893-1.339-3.232t-3.232-1.339-3.232 1.339-1.339 3.232 1.339 3.232 3.232 1.339 3.232-1.339 1.339-3.232zM27.429 14.054v3.964q0 0.214-0.143 0.411t-0.357 0.232l-3.304 0.5q-0.339 0.964-0.696 1.625 0.625 0.893 1.911 2.464 0.179 0.214 0.179 0.446t-0.161 0.411q-0.482 0.661-1.768 1.929t-1.679 1.268q-0.214 0-0.464-0.161l-2.464-1.929q-0.786 0.411-1.625 0.679-0.286 2.429-0.518 3.321-0.125 0.5-0.643 0.5h-3.964q-0.25 0-0.438-0.152t-0.205-0.384l-0.5-3.286q-0.875-0.286-1.607-0.661l-2.518 1.911q-0.179 0.161-0.446 0.161-0.25 0-0.446-0.196-2.25-2.036-2.946-3-0.125-0.179-0.125-0.411 0-0.214 0.143-0.411 0.268-0.375 0.911-1.188t0.964-1.259q-0.482-0.893-0.732-1.768l-3.268-0.482q-0.232-0.036-0.375-0.223t-0.143-0.42v-3.964q0-0.214 0.143-0.411t0.339-0.232l3.321-0.5q0.25-0.821 0.696-1.643-0.714-1.018-1.911-2.464-0.179-0.214-0.179-0.429 0-0.179 0.161-0.411 0.464-0.643 1.759-1.92t1.688-1.277q0.232 0 0.464 0.179l2.464 1.911q0.786-0.411 1.625-0.679 0.286-2.429 0.518-3.321 0.125-0.5 0.643-0.5h3.964q0.25 0 0.438 0.152t0.205 0.384l0.5 3.286q0.875 0.286 1.607 0.661l2.536-1.911q0.161-0.161 0.429-0.161 0.232 0 0.446 0.179 2.304 2.125 2.946 3.036 0.125 0.143 0.125 0.393 0 0.214-0.143 0.411-0.268 0.375-0.911 1.188t-0.964 1.259q0.464 0.893 0.732 1.75l3.268 0.5q0.232 0.036 0.375 0.223t0.143 0.42z" fill="#000000" />
+              </svg>
+            </span>
+          </button>
+          <ul dropdownMenu role="menu" aria-labelledby="single-button" class="dropdown-menu-right">
+            <li role="menuitem"><a class="dropdown-item pointer" (click)="goToImport()">Import Event Settings</a></li>
+            <li role="menuitem"><a class="dropdown-item pointer" (click)="goToReset()">Reset Event Settings</a></li>
+            <!-- TODO: Can add separator like this -->
+            <!-- li class="divider dropdown-divider"></li -->
+            <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
+          </ul>
+        </div>
+        <button class="btn btn-default  mb-1" onClick="window.print();">
+          <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <path d="M8 2h16v4h-16v-4zM30 8h-28c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h6v8h16v-8h6c1.1 0 2-.9 2-2v-10c0-1.1-.9-2-2-2zm-26 6c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2zm18 14h-12v-10h12v10z"/>
+            </svg>
+          </span>
+        </button>
+    </div>
+    <div [collapse]="isCollapsed"
+        class="col-xs-12">
+      <div class="mb-2">
+        <div class="card">
+          <div class="card-header">
+            Unassigned Rooms
           </div>
-          <!-- Single button -->
-          <div class="col-xs-1 pl-0 gear-dropdown" dropdown [(isOpen)]="dropdownStatus.isOpen">
-            <button id="single-button" type="button" class="btn btn-unstyled" dropdownToggle [disabled]="dropdownStatus.isDisabled">
-              <span class="icon icon-large">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-                <g>
-                </g>
-                  <path d="M18.286 16q0-1.893-1.339-3.232t-3.232-1.339-3.232 1.339-1.339 3.232 1.339 3.232 3.232 1.339 3.232-1.339 1.339-3.232zM27.429 14.054v3.964q0 0.214-0.143 0.411t-0.357 0.232l-3.304 0.5q-0.339 0.964-0.696 1.625 0.625 0.893 1.911 2.464 0.179 0.214 0.179 0.446t-0.161 0.411q-0.482 0.661-1.768 1.929t-1.679 1.268q-0.214 0-0.464-0.161l-2.464-1.929q-0.786 0.411-1.625 0.679-0.286 2.429-0.518 3.321-0.125 0.5-0.643 0.5h-3.964q-0.25 0-0.438-0.152t-0.205-0.384l-0.5-3.286q-0.875-0.286-1.607-0.661l-2.518 1.911q-0.179 0.161-0.446 0.161-0.25 0-0.446-0.196-2.25-2.036-2.946-3-0.125-0.179-0.125-0.411 0-0.214 0.143-0.411 0.268-0.375 0.911-1.188t0.964-1.259q-0.482-0.893-0.732-1.768l-3.268-0.482q-0.232-0.036-0.375-0.223t-0.143-0.42v-3.964q0-0.214 0.143-0.411t0.339-0.232l3.321-0.5q0.25-0.821 0.696-1.643-0.714-1.018-1.911-2.464-0.179-0.214-0.179-0.429 0-0.179 0.161-0.411 0.464-0.643 1.759-1.92t1.688-1.277q0.232 0 0.464 0.179l2.464 1.911q0.786-0.411 1.625-0.679 0.286-2.429 0.518-3.321 0.125-0.5 0.643-0.5h3.964q0.25 0 0.438 0.152t0.205 0.384l0.5 3.286q0.875 0.286 1.607 0.661l2.536-1.911q0.161-0.161 0.429-0.161 0.232 0 0.446 0.179 2.304 2.125 2.946 3.036 0.125 0.143 0.125 0.393 0 0.214-0.143 0.411-0.268 0.375-0.911 1.188t-0.964 1.259q0.464 0.893 0.732 1.75l3.268 0.5q0.232 0.036 0.375 0.223t0.143 0.42z" fill="#000000" />
-                </svg>
-              </span>
-            </button>
-            <ul dropdownMenu role="menu" aria-labelledby="single-button" class="dropdown-menu-right">
-              <li role="menuitem"><a class="dropdown-item pointer" (click)="goToImport()">Import Event Settings</a></li>
-              <li role="menuitem"><a class="dropdown-item pointer" (click)="goToReset()">Reset Event Settings</a></li>
-              <!-- TODO: Can add separator like this -->
-              <!-- li class="divider dropdown-divider"></li -->
-              <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
+          <div class="card-block">
+            <ul>
+              <li *ngFor="let g of unassignedGroups">
+                {{g.Group_Name}}
+              </li>
             </ul>
           </div>
-        </div>
-    </div>
-    <div class="col-xs-12" [hidden]="!unassignedGroups">
-      <span>You have {{unassignedGroups?.length}} unassigned groups:</span>
-      <button type="button" class="btn btn-link" href="#"
-        (click)="isCollapsed = !isCollapsed">
-          <span [hidden]="!isCollapsed">Open</span>
-          <span [hidden]="isCollapsed">Close</span>
-      </button>
-      <div [collapse]="isCollapsed"
-           class="card card-block card-header">
-        <div class="well well-lg">
-          <ul>
-            <li *ngFor="let g of unassignedGroups">
-              {{g.Group_Name}}
-            </li>
-          </ul>
         </div>
       </div>
     </div>
@@ -60,10 +63,10 @@
       <table class="table table-striped manage-rooms-table" *ngIf="isReady()">
         <thead>
           <tr>
-            <th>Age Ranges</th>
+            <th class="hidden-print">Age Ranges</th>
             <th>Room</th>
             <th class="alert">&nbsp;</th> <!-- room alerts -->
-            <th>Allow Sign In</th>
+            <th class="hidden-print">Allow Sign In</th>
             <th>Volunteers</th>
             <th>Capacity</th>
             <th class="text-xs-right">Signed In</th>
@@ -73,12 +76,43 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" 
+          <!-- Tate - just replace 'hidden-print' in the ng-Class what the name of your new class is -->
+          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" [ngClass]="{'alert-danger': someRoom.SignedIn > someRoom.CheckedIn}"
               (notifyDirty)="onNotifyDirty($event)" (notifySaving)="onNotifySaving($event)" (updateRoomArray)="updateRooms($event)"
               [room]="someRoom">
           </tr>
         </tbody>
+        <tfoot>
+          <tr class="text-xs-right">
+            <td class="hidden-print">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td class="hidden-print">
+            </td>
+            <td>
+              <strong>Total Volunteers:</strong> {{getVolunteersTotal()}}
+            </td>
+            <td>
+              <strong>Total Capacity: </strong> {{getCapacityTotal()}}
+            </td>
+            <td>
+              <strong>Total Signed In:</strong> {{getSignedInTotal()}}
+            </td>
+            <td>
+              <strong>Total Checked In: </strong> {{getCheckedInTotal()}}
+            </td>
+            <td>
+              <strong>Kids Not Checked In: </strong> {{getSignedInTotal() - getCheckedInTotal()}}
+            </td>
+            <td class="hidden-print">
+            </td>
+          </tr>
+        </tfoot>
       </table>
+
     </div>
   </div>
 </div>

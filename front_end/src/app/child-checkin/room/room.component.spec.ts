@@ -6,8 +6,10 @@ import { ChannelService } from '../../shared/services';
 
 let fixture: RoomComponent;
 let channelServiceStub: any = {
-  sub(): any{ return Observable.of(); }
-}
+  sub(): any {
+    return Observable.of();
+  }
+};
 let childCheckinServiceStub: any = {
   forceChildReload$: Observable.of(),
   forceChildReload(): any {},

@@ -67,7 +67,7 @@ export class AdminService {
   getChildrenForEvent(eventId: number, searchString?: string) {
     let url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/children`;
     if (searchString) {
-      url = `${url}?search=${searchString}`
+      url = `${url}?search=${searchString}`;
     }
     return this.http.get(url)
                     .map(res => { return (<Child[]>res.json()).map(r => Child.fromJson(r)); })
@@ -77,7 +77,7 @@ export class AdminService {
   getUnassignedGroups(eventId: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/groups/unassigned`;
     return this.http.get(url)
-                    .map(res => { return Group.fromJsons(res.json()) })
+                    .map(res => { return Group.fromJsons(res.json()); })
                     .catch(this.handleError);
   }
 
