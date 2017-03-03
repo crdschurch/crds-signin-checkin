@@ -129,6 +129,5 @@ export class RoomComponent implements OnInit {
   ngOnInit() {
     this.origRoomData = _.clone(this.room);
   }
-
-  get
+  
 }
