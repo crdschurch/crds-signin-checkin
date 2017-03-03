@@ -36,5 +36,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<List<JObject>> GetSingleRoomGroupsData(int eventId, int roomId);
 
         List<List<JObject>> SaveSingleRoomGroupsData(string token, int eventId, int roomId, string groupsXml);
+
+        List<MpEventRoomDto> GetEventRoomsByEventGroup(int groupId, List<int> eventIds);
     }
 }

@@ -316,5 +316,13 @@ namespace MinistryPlatform.Translation.Repositories
             var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
             return result;
         }
+
+        public List<MpEventRoomDto> GetEventRoomsByEventGroup(int groupId, List<int> eventIds)
+        {
+            //// _eventRoomColumns
+            //var apiUserToken = _apiUserRepository.GetToken();
+            //return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString} AND From_Event_Room_ID = {fromEventRoomId}", _eventRoomColumns);
+            return null;
+        }
     }
 }

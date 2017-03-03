@@ -123,14 +123,18 @@ namespace SignInCheckIn.Services
                     CurrentEvent = Mapper.Map<EventDto>(eventsForSignin[1])
                 };
 
-                // set the assigned room for thiss event
+                // set the assigned room for this event
                 var secondEventParticipants = SetParticipantsAssignedRoom(secondParticipantEventMapDto, false).ToList();
                 mpAllEventParticipantDtoList.AddRange(secondEventParticipants);
             }
 
+            
+
             // null out the room assignment for both participant records if they can't sign in to one or the other,
             // so that they get a rock
             SyncInvalidSignins(currentEventParticipantDtoList, participantEventMapDto);
+
+            ////////////// JPC - everything above gets moved to the logic class
 
             // create participants if they're assigned to a room -- we still need to handle the case where there is an
             // error and they can't be signed into both events
