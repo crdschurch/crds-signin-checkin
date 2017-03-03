@@ -204,6 +204,22 @@ export class ChannelService {
         this.hubConnection.stop();
     }
 
+
+    unsub(channel: string) {
+      console.log("unsub")
+      console.log(this.subjects)
+      let channelSub = this.subjects.find((x: ChannelSubject) => {
+          return x.channel === channel;
+      }) as ChannelSubject;
+      const index = this.subjects.findIndex((x: ChannelSubject) => {
+          return x.channel === channel;
+      })
+      this.subjects.splice(index, 1);
+      console.log("new this.subjects", this.subjects)
+      console.log("unsubscribing from:", channelSub);
+      channelSub.subject.unsubscribe();
+    }
+
     /**
      * Get an observable that will contain the data associated with a specific
      * channel
@@ -271,11 +287,11 @@ export class ChannelService {
     // Not quite sure how to handle this (if at all) since there could be
     //  more than 1 caller subscribed to an observable we created
     //
-    unsubscribe(channel: string): any {
-      console.log("unsub", channel);
-      // this.hubProxy.off(channel);
-      this.hubProxy.off('onEvent');
-    }
+    // unsubscribe() {
+    //   console.log("unsub");
+    //   // this.hubProxy.off(channel);
+    //   this.hubProxy.off('onEvent');
+    // }
 
     /** publish provides a way for calles to emit events on any channel. In a
      * production app the server would ensure that only authorized clients can

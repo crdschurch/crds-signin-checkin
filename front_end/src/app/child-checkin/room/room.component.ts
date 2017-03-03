@@ -22,6 +22,7 @@ export class RoomComponent implements OnInit {
   private update = true;
   private event: Event;
   private roomId: number;
+  private origChannelName: string;
   subscription: Subscription;
 
   constructor(private childCheckinService: ChildCheckinService, private rootService: RootService,
@@ -53,9 +54,15 @@ export class RoomComponent implements OnInit {
 
         // Get an observable for events emitted on this channel
         let channelName = `${Constants.CheckinParticipantsChannel}${comp.event.EventId}${comp.roomId}`;
+
+        // if there is an existing subscription, unsubscribe it
+        if (this.origChannelName && this.origChannelName.length) {
+          comp.channelService.unsub(this.origChannelName);
+        }
+
+        this.origChannelName = channelName;
         comp.channelService.sub(channelName).subscribe(
           (x: ChannelEvent) => {
-            console.log("CHANNELEVENT", x)
             if (x.Name === 'Add') {
               for (let kid of x.Data) {
                 let child = Object.create(Child.prototype);

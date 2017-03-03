@@ -46,6 +46,8 @@ export class ChildCheckinComponent implements OnInit {
 
   private getData() {
     let today = new Date();
+    this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
+    this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
     this.apiService.getEvents(today, today).subscribe(
       events => {
         if (!events.length) {
@@ -59,9 +61,9 @@ export class ChildCheckinComponent implements OnInit {
 
         if (this.todaysEvents && this.todaysEvents.length) {
           // Sort by date
-          this.todaysEvents = this.todaysEvents.sort((a: Event, b: Event) => {
-            return a.EventStartDate.localeCompare(b.EventStartDate);
-          });
+          // this.todaysEvents = this.todaysEvents.sort((a: Event, b: Event) => {
+          //   return a.EventStartDate.localeCompare(b.EventStartDate);
+          // });
 
           // Set current service
           this.selectedEvent = this.todaysEvents.find(e => e.IsCurrentEvent);
@@ -71,12 +73,6 @@ export class ChildCheckinComponent implements OnInit {
             this.selectedEvent = this.todaysEvents[0];
           }
         }
-
-        this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
-        this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
-        this.childCheckinService.getEventRoomDetails(this.selectedEvent.EventId, this.kioskDetails.RoomId).subscribe((room) => {
-          this.room = room;
-        });
 
         this.subscribeToSignalr();
 
@@ -112,6 +108,10 @@ export class ChildCheckinComponent implements OnInit {
 
   set selectedEvent(event) {
     this.childCheckinService.selectedEvent = event;
+    // make sure to update event room (for capacity purposes)
+    this.childCheckinService.getEventRoomDetails(this.selectedEvent.EventId, this.kioskDetails.RoomId).subscribe((room) => {
+      this.room = room;
+    }, (error) => this.rootService.announceEvent('generalError'));
   }
 
   delete(e) {
