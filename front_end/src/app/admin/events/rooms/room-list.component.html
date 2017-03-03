@@ -99,13 +99,12 @@
               <strong>Total Capacity: </strong> {{getCapacityTotal()}}
             </td>
             <td>
-              <strong>Total Signed In:</strong> {{getSignedInTotal()}}
+              <strong>Kids Not Checked in:</strong>  {{getSignedInTotal() - getCheckedInTotal()}}
             </td>
             <td>
               <strong>Total Checked In: </strong> {{getCheckedInTotal()}}
             </td>
-            <td>
-              <strong>Kids Not Checked In: </strong> {{getSignedInTotal() - getCheckedInTotal()}}
+            <td class="hidden-print">
             </td>
             <td class="hidden-print">
             </td>
