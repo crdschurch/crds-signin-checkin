@@ -204,20 +204,24 @@ export class ChannelService {
         this.hubConnection.stop();
     }
 
-
-    unsub(channel: string) {
-      console.log("unsub")
-      console.log(this.subjects)
+    unsub(channelName: string) {
       let channelSub = this.subjects.find((x: ChannelSubject) => {
-          return x.channel === channel;
+          return x.channel === channelName;
       }) as ChannelSubject;
       const index = this.subjects.findIndex((x: ChannelSubject) => {
-          return x.channel === channel;
-      })
+          return x.channel === channelName;
+      });
       this.subjects.splice(index, 1);
-      console.log("new this.subjects", this.subjects)
-      console.log("unsubscribing from:", channelSub);
       channelSub.subject.unsubscribe();
+      console.info('unsubscribed from', channelSub, this.subjects);
+    }
+
+    unsubAll(channelPrefix: string) {
+      // get all channels that match string
+      const allChannels = this.subjects.filter(x => x.channel.includes(channelPrefix));
+      for (let subscribedChannel of allChannels) {
+        this.unsub(subscribedChannel.channel);
+      }
     }
 
     /**

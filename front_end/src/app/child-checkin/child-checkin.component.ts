@@ -66,7 +66,9 @@ export class ChildCheckinComponent implements OnInit {
           // });
 
           // Set current service
-          this.selectedEvent = this.todaysEvents.find(e => e.IsCurrentEvent);
+          if (this.todaysEvents.find(e => e.IsCurrentEvent)) {
+            this.selectedEvent = this.todaysEvents.find(e => e.IsCurrentEvent);
+          }
 
           // if no current service, pick the first one in list
           if (!this.selectedEvent) {
@@ -74,7 +76,7 @@ export class ChildCheckinComponent implements OnInit {
           }
         }
 
-        this.subscribeToSignalr();
+        // this.subscribeToSignalr();
 
         this.ready = true;
       },
@@ -87,7 +89,9 @@ export class ChildCheckinComponent implements OnInit {
 
   subscribeToSignalr() {
     // Get an observable for events emitted on this channel
+    // this.channelService.unsubAll(Constants.CheckinCapacityChannel);
     let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
+    console.log("sub to capacity")
     this.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
         this.room = Room.fromJson(x.Data);
@@ -99,7 +103,9 @@ export class ChildCheckinComponent implements OnInit {
   }
 
   isActive(event): boolean {
-    return event.EventId === this.selectedEvent.EventId;
+    try {
+      return event.EventId === this.selectedEvent.EventId;
+    } catch (e) {}
   }
 
   get selectedEvent(): Event {
@@ -109,8 +115,9 @@ export class ChildCheckinComponent implements OnInit {
   set selectedEvent(event) {
     this.childCheckinService.selectedEvent = event;
     // make sure to update event room (for capacity purposes)
-    this.childCheckinService.getEventRoomDetails(this.selectedEvent.EventId, this.kioskDetails.RoomId).subscribe((room) => {
+    this.childCheckinService.getEventRoomDetails(event.EventId, this.kioskDetails.RoomId).subscribe((room) => {
       this.room = room;
+      this.subscribeToSignalr();
     }, (error) => this.rootService.announceEvent('generalError'));
   }
 
