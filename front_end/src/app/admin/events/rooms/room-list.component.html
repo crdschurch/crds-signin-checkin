@@ -82,14 +82,34 @@
               [room]="someRoom">
           </tr>
         </tbody>
+        <tfoot>
+          <tr class="text-xs-right">
+            <td class="hidden-print">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td class="hidden-print">
+            </td>
+            <td>
+              <strong>Total Volunteers:</strong> {{getCheckedInTotal()}}
+            </td>
+            <td>
+              <strong>Total Capacity: </strong> {{getSignedInTotal()}}
+            </td>
+            <td>
+              <strong>Total Signed In:</strong> {{getCheckedInTotal()}}
+            </td>
+            <td>
+              <strong>Total Checked In: </strong> {{getSignedInTotal()}}
+            </td>
+            <td class="hidden-print">
+            </td>
+          </tr>
+        </tfoot>
       </table>
-      <!-- Tate - these are the values you'll need...just replace them with whatever text or formatting is appropriate -->
-      <div>
-        {{getCheckedInTotal()}}
-      </div>
-      <div>
-        {{getSignedInTotal()}}
-      </div>
+
     </div>
   </div>
 </div>
