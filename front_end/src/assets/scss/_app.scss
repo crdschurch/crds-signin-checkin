@@ -200,8 +200,22 @@ datepicker {
     min-height: 0%;
     overflow-x: auto;
 
-    td, th {
-      padding: $table-sm-cell-padding;
+    @media screen {
+      td, th {
+        padding: $table-sm-cell-padding;
+      }
+    }
+  }
+
+  @media print {
+    .alert-danger {
+      td {
+        background: #e1e1e1 !important;
+
+        input {
+          background: #e1e1e1 !important;
+        }
+      }
     }
   }
 

@@ -302,12 +302,12 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto GetEventRoom(int eventId, int roomId)
         {
-            var token = _apiUserRepository.GetToken();
-            return GetEventRoom(token, eventId, roomId, false);
+            return GetEventRoom(eventId, roomId, false);
         }
 
-        private EventRoomDto GetEventRoom(string token, int eventId, int roomId, bool canCreateEventRoom = true)
+        public EventRoomDto GetEventRoom(int eventId, int roomId, bool canCreateEventRoom = true)
         {
+            var token = _apiUserRepository.GetToken();
             var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
 
             if (events.Count == 0)
@@ -472,11 +472,13 @@ namespace SignInCheckIn.Services
             var result = _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventRoom.EventId, roomId, groupXml.ToString());
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
+            
+            // stored proc is supposed to do this but doesnt seem to be working...
+            UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), roomId, authenticationToken);
 
             return eventRooms.First(); 
         }
 
-        [Obsolete("Replaced by the new stored proc - left here for reference")]
         private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, int roomId, string token)
         {
             // we need to figure out if this event is the adventure club event or the service event
