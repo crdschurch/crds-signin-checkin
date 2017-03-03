@@ -317,12 +317,10 @@ namespace MinistryPlatform.Translation.Repositories
             return result;
         }
 
-        public List<MpEventRoomDto> GetEventRoomsByEventGroup(int groupId, List<int> eventIds)
+        public List<MpEventRoomDto> GetEventRoomsByEventRoomIds(List<int> eventRoomsIds)
         {
-            //// _eventRoomColumns
-            //var apiUserToken = _apiUserRepository.GetToken();
-            //return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString} AND From_Event_Room_ID = {fromEventRoomId}", _eventRoomColumns);
-            return null;
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Room_ID IN ({string.Join(",", eventRoomsIds)})", _eventRoomColumns);
         }
     }
 }

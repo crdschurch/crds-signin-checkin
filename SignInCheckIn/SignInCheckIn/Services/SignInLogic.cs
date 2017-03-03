@@ -29,6 +29,7 @@ namespace SignInCheckIn.Services
             _eventRepository = eventRepository;
             _applicationConfiguration = applicationConfiguration;
             _groupRepository = groupRepository;
+            _roomRepository = roomRepository;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -41,48 +42,22 @@ namespace SignInCheckIn.Services
         // 2. participant id
         // 3. date?
         // 4. ac signin yes/no
-        public void SignInParticipant(int siteId, bool adventureClubSignIn, bool underThreeSignIn, int groupId)
+        public List<MpEventParticipantDto> SignInParticipant(int siteId, bool adventureClubSignIn, bool underThreeSignIn, int groupId)
         {
             // first step, get all eligible events -- this is for the site, at least for the next two events
             var dailyEvents = GetSignInEvents(siteId, adventureClubSignIn, underThreeSignIn);
 
             // next, get all event rooms for the event groups that are on those events
+            var eventRooms = GetSignInEventRooms(groupId, dailyEvents.Select(r => r.EventId).ToList());
 
-
-            //var eligibleRooms = _roomRepository.GetEventRoomsByEventGroup(groupId, dailyEvents.Select(r => r.EventId).ToList());
-
-
-
-            // should be get groups for eligible events here
-            var eventIds = dailyEvents.Select(r => r.EventId).ToList();
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(eventIds);
-
-            //var groupId = 1;// JPC - crap value
-
-            // get rooms for the event groups - this has to map the room id and the event id
-            var eventRooms = _roomRepository.GetEventRoomsByEventGroup(groupId, eventIds);
-
-            // run rules on groups -- if we get a hit on the first room, sign them in and 
-            // move on, otherwise then load and run bumping rules
-            foreach (var eventRoom in eventRooms)
+            if (dailyEvents.Any(r => r.ParentEventId != null))
             {
-                if (eventRoom.SignedIn < eventRoom.Capacity)
-                {
-
-                }
-                else
-                {
-                    var bumpingRooms = _roomRepository.GetBumpingRulesByRoomId(eventRoom.EventRoomId.GetValueOrDefault());
-
-                    foreach (var item in bumpingRooms)
-                    {
-                        // run the rules - probaby needs to be broken out into different functions
-                    }
-                }
+                return AssignParticipantToRoomsNonAc(eventRooms, dailyEvents);
             }
-
-            // return the dataset - probably at least the event rooms and event ids
-
+            else
+            {
+                return AssignParticipantToRoomsWithAc(eventRooms, dailyEvents);
+            }
         }
 
         // parameters determine the behavior of what events we get back
@@ -140,13 +115,68 @@ namespace SignInCheckIn.Services
 
         public List<MpEventRoomDto> GetSignInEventRooms(int groupId, List<int> eventIds)
         {
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(groupId, 
+            var eventGroups = _eventRepository.GetEventGroupsByGroupIdAndEventIds(groupId, eventIds);
+            var eventRoomIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).ToList();
 
+            return eventRooms;
+        }
 
+        // this is going to have a list of the rooms on an event that a participant can be signed into - 
+        // this essentially filters down and finds the actual room, as opposed to potential rooms
+        public List<MpEventParticipantDto> AssignParticipantToRoomsNonAc(List<MpEventRoomDto> eventRoomDtos, List<MpEventDto> eventDtos)
+        {
+            var MpEventParticipantRecords = new List<MpEventParticipantDto>();
 
+            // sort the events in ascending time - want to start with the first service event for this
+            eventDtos = eventDtos.OrderBy(r => r.EventStartDate).ToList();
 
-            return null;
-        } 
+            foreach (var serviceEvent in eventDtos)
+            {
+                // need to make sure that there is only a single event room returned on these...
+                var eventRoom = eventRoomDtos.First(r => r.EventId == serviceEvent.EventId);
+
+                if (eventRoom.Capacity > eventRoom.SignedIn)
+                {
+                    // assign the room to the participant here
+                }
+                else
+                {
+                    var mpEventParticipant = ProcessBumpingRules(serviceEvent.EventId, eventRoom.EventRoomId.GetValueOrDefault());
+                }
+            }
+
+            return MpEventParticipantRecords;
+        }
+
+        // this is going to have a list of the rooms on an event that a participant can be signed into - 
+        // this essentially filters down and finds the actual room, as opposed to potential rooms
+        public List<MpEventParticipantDto> AssignParticipantToRoomsWithAc(List<MpEventRoomDto> eventRoomDtos, List<MpEventDto> eventDtos)
+        {
+            // search for the ac event and rooms first - if we find a room on the first event, switch to the service event and look for a room
+            // on it. If we don't find them for both, we punt and they get a rock
+            var MpEventParticipantRecords = new List<MpEventParticipantDto>();
+
+            // sort the events in ascending time - want to start with the first service event for this
+            var acEventDtos = eventDtos.OrderBy(r => r.EventStartDate).ToList();
+
+            foreach (var acEvent in acEventDtos)
+            {
+                // need to make sure that there is only a single event room returned on these...
+                var eventRoom = eventRoomDtos.First(r => r.EventId == acEvent.EventId);
+
+                if (eventRoom.Capacity > eventRoom.SignedIn)
+                {
+                    // assign the room to the participant here
+                }
+                else
+                {
+                    var mpEventParticipant = ProcessBumpingRules(acEvent.EventId, eventRoom.EventRoomId.GetValueOrDefault());
+                }
+            }
+
+            return MpEventParticipantRecords;
+        }
 
         /*** Helper Functions ***/
         private bool CheckEventTimeValidity(MpEventDto mpEventDto)
@@ -156,6 +186,45 @@ namespace SignInCheckIn.Services
             return mpEventDto.EventStartDate >= offsetPeriod;
         }
 
+        // return event participant data if there's a room for them to bump to
+        public MpEventParticipantDto ProcessBumpingRules(int eventId, int eventRoomId)
+        {
+            var bumpingRooms = _roomRepository.GetBumpingRoomsForEventRoom(eventId, eventRoomId);
 
+            // go through the bumping rooms in priority order and get the first one that is open and has capacity
+            if (bumpingRooms == null)
+            {
+                return null;
+            }
+            foreach (var bumpingRoom in bumpingRooms)
+            {
+                // check if open and has capacity
+                var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
+
+                if (bumpingRoom.AllowSignIn && bumpingRoom.Capacity >= signedAndCheckedIn)
+                {
+                    return new MpEventParticipantDto
+                    {
+                        RoomId = bumpingRoom.RoomId,
+                        RoomName = bumpingRoom.RoomName
+                    };
+                }
+
+                //if (!bumpingRoom.AllowSignIn || bumpingRoom.Capacity <= signedAndCheckedIn)
+                //{
+                //    continue;
+                //}
+                //else
+                //{
+                //    return new MpEventParticipantDto
+                //    {
+                //        RoomId = bumpingRoom.RoomId,
+                //        RoomName = bumpingRoom.RoomName
+                //    };
+                //}
+            }
+
+            return null;
+        }
     }
 }

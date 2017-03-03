@@ -397,8 +397,14 @@ namespace SignInCheckIn.Tests.Services
                 7654321
             };
 
-            _eventRepository.Setup(m => m.GetEventGroupsForEvent(eventIds)).Returns(GetEventGroupsData);
-            _roomRepository.Setup(m => m.GetEventRoomsByEventGroup(groupId, eventIds)).Returns(GetEventRoomsData);
+            var eventRoomIds = new List<int>
+            {
+                1122333,
+                3332211
+            };
+
+            _eventRepository.Setup(m => m.GetEventGroupsByGroupIdAndEventIds(groupId, eventIds)).Returns(GetEventGroupsData());
+            _roomRepository.Setup(m => m.GetEventRoomsByEventRoomIds(eventRoomIds)).Returns(GetEventRoomsData());
 
             // Act
             var result =_fixture.GetSignInEventRooms(groupId, eventIds);
@@ -414,12 +420,14 @@ namespace SignInCheckIn.Tests.Services
                 new MpEventGroupDto
                 {
                     EventId = 1234567,
+                    RoomReservationId = 1122333,
                     GroupId = 5544555,
-                    RoomId = 1234
+                    RoomId = 1234,
                 },
                 new MpEventGroupDto
                 {
                     EventId = 7654321,
+                    RoomReservationId = 3332211,
                     GroupId = 5544555,
                     RoomId = 4321
                 }
@@ -434,17 +442,32 @@ namespace SignInCheckIn.Tests.Services
             {
                 new MpEventRoomDto
                 {
-                    EventId = 1234567,
+                    Capacity = 10,
+                    EventRoomId = 1122333,
                     RoomId = 1234
                 },
                 new MpEventRoomDto
                 {
-                    EventId = 7654321,
+                    Capacity = 10,
+                    EventRoomId = 3332211,
                     RoomId = 4321
                 }
             };
 
             return eventRooms;
+        }
+
+        [Test]
+        public void ShouldAssignParticipantToRooms()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _fixture.AssignParticipantToRooms(GetEventRoomsData());
+
+            // Assert
+            Assert.AreEqual(2, result.Count());
         }
     }
 }
