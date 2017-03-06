@@ -474,7 +474,7 @@ namespace SignInCheckIn.Services
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
             
             // stored proc is supposed to do this but doesnt seem to be working...
-            UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), roomId, authenticationToken);
+            // UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), roomId, authenticationToken);
 
             return eventRooms.First(); 
         }

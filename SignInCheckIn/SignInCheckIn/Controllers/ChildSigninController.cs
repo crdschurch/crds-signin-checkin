@@ -18,17 +18,17 @@ namespace SignInCheckIn.Controllers
 {
     public class ChildSigninController : MpAuth
     {
-        private readonly IEventService _eventService;
+        private readonly IWebsocketService _websocketService;
         private readonly IChildSigninService _childSigninService;
         private readonly IChildCheckinService _childCheckinService;
         private readonly IKioskRepository _kioskRepository;
         private readonly IHubContext _context;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildSigninController(IChildSigninService childSigninService, IEventService _eventService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public ChildSigninController(IChildSigninService childSigninService, IWebsocketService websocketService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
             _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
-            _eventService = _eventService;
+            _websocketService = websocketService;
             _childSigninService = childSigninService;
             _childCheckinService = childCheckinService;
             _kioskRepository = kioskRepository;
@@ -209,20 +209,7 @@ namespace SignInCheckIn.Controllers
                         data.EventParticipantId = eventparticipantId;
                         data.OriginalRoomId = roomId;
 
-                        // if AC event, we need to publish to parent event channel
-                        var publishEventId = eventId;
-                        var e = _eventService.GetEvent(eventId);
-                        if (e.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId)
-                        {
-                            publishEventId = e.ParentEventId.Value;
-                        }
-
-                        PublishToChannel(_context, new ChannelEvent
-                        {
-                            ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, publishEventId, roomId),
-                            Name = "Remove",
-                            Data = data
-                        });
+                        _websocketService.PublishCheckinParticipantsRemove(_context, eventId, roomId, data);
                         return Ok();
                     }
                     else
@@ -244,35 +231,16 @@ namespace SignInCheckIn.Controllers
             {
                 if (p.AssignedRoomId != null)
                 {
-                    // if this is the first event and it is an AC event, we need to set the publish event id to
-                    // the parent id (not kc Subevent ID)
-                    // we dont need to do this for the AssignedSecondaryRoom (below) because we are already 
-                    // setting the EventIdSecondary to the Parent Event ID
-                    if (participants.CurrentEvent.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId)
-                    {
-                        p.EventId = participants.CurrentEvent.ParentEventId.Value;
-                    }
-
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedRoomId == p.AssignedRoomId);
-                    PublishToChannel(_context, new ChannelEvent
-                    {
-                        ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, p.EventId, p.AssignedRoomId.Value),
-                        Name = "Add",
-                        Data = updatedParticipants
-                    });
+                    _websocketService.PublishCheckinParticipantsAdd(_context, p.EventId, p.AssignedRoomId.Value, updatedParticipants);
                 }
 
                 if (p.AssignedSecondaryRoomId != null)
                 {
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedSecondaryRoomId == p.AssignedSecondaryRoomId);
-                    PublishToChannel(_context, new ChannelEvent
-                    {
-                        ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, p.EventIdSecondary, p.AssignedSecondaryRoomId.Value),
-                        Name = "Add",
-                        Data = updatedParticipants
-                    });
+                    _websocketService.PublishCheckinParticipantsAdd(_context, p.EventIdSecondary, p.AssignedSecondaryRoomId.Value, updatedParticipants);
                 }
             }
         }

@@ -118,20 +118,8 @@ namespace SignInCheckIn.Controllers
                 data.OriginalRoomId = roomId;
                 data.OverRideRoomId = overRideRoomId;
 
-                PublishToChannel(_context, new ChannelEvent
-                {
-                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, roomId),
-                    Name = "Remove",
-                    Data = data
-                });
-                
-                //Publish the checked in into the new room
-                PublishToChannel(_context, new ChannelEvent
-                {
-                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, overRideRoomId),
-                    Name = "OverrideCheckin",
-                    Data = data
-                });
+                _websocketService.PublishCheckinParticipantsRemove(_context, eventId, roomId, data);
+                _websocketService.PublishCheckinParticipantsOverrideCheckin(_context, eventId, overRideRoomId, data);
 
                 return Ok();
             }
