@@ -20,7 +20,7 @@ export class EventImportComponent implements OnInit {
   sourceEventDate: Date;
   sourceEventId: number;
   import: { processing: boolean } = { processing: false };
-  ready: boolean = false;
+  ready = false;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,

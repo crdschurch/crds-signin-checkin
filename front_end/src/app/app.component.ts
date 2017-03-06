@@ -44,28 +44,12 @@ export class AppComponent implements OnInit {
         this.addToast(event);
       });
 
-    // Let's wire up to the signalr observables
-    this.channelService.connectionState$
-        .map((state: ConnectionState) => { return ConnectionState[state]; });
 
-    this.channelService.error$.subscribe(
-        (error: any) => { console.warn(error); },
-        (error: any) => { console.error('errors$ error', error); }
-    );
-
-    // Wire up a handler for the starting$ observable to log the
-    //  success/fail result
-    this.channelService.starting$.subscribe(
-        () => { console.log('signalr service has been started'); },
-        () => { console.warn('signalr service failed to start!'); }
-    );
 
   }
 
   ngOnInit() {
     // Start the signalr connection up!
-    // TODO - commenting out to try and track down ws/apache issues
-    console.log('Starting the channel service');
     this.channelService.start();
 
     this.contentService.loadData();

@@ -33,9 +33,26 @@ admin {
     }
   }
 
+  .btn {
+    .icon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+    }
+  }
+
   .btn-primary {
     background: $brand-primary;
   }
+
+  .btn-default {
+    background: $gray-lighter;
+
+    &:hover {
+      background: darken($gray-lighter, 10%);
+    }
+  }
+
 
   a:hover {
     .icon {
@@ -109,6 +126,27 @@ admin {
 
 .adventure-club-toggle {
 }
+
+.child-search-input {
+  input[type="text"] {
+    border-right: 0px !important;
+
+    &:focus {
+      border-color: #ccc;
+    }
+  }
+
+  .input-group-addon-unstyled {
+    background: #fff;
+    border-left-color: #fff !important;
+  }
+
+  .btn-primary.input-group-addon {
+    border-color: $brand-primary;
+  }
+}
+
+
 
 /* Print table headings and footers on every page */
 thead {display: table-header-group;}

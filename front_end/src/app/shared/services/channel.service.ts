@@ -4,8 +4,8 @@ import {Observable} from 'rxjs/Observable';
 
 /**
  * Taken from: https://github.com/sstorie/experiments/tree/master/angular2-signalr
- * 
- * When SignalR runs it will add functions to the global $ variable 
+ *
+ * When SignalR runs it will add functions to the global $ variable
  * that you use to create connections to the hub. However, in this
  * class we won't want to depend on any global variables, so this
  * class provides an abstraction away from using $ directly in here.
@@ -54,7 +54,7 @@ class ChannelSubject {
 export class ChannelService {
 
     /**
-     * starting$ is an observable available to know if the signalr 
+     * starting$ is an observable available to know if the signalr
      * connection is ready or not. On a successful connection this
      * stream will emit a value.
      */
@@ -67,23 +67,24 @@ export class ChannelService {
     connectionState$: Observable<ConnectionState>;
 
     /**
-     * error$ provides a stream of any error messages that occur on the 
+     * error$ provides a stream of any error messages that occur on the
      * SignalR connection
      */
     error$: Observable<string>;
 
-    // These are used to feed the public observables 
+    // These are used to feed the public observables
     //
     private connectionStateSubject = new Subject<ConnectionState>();
     private startingSubject = new Subject<any>();
     private errorSubject = new Subject<any>();
 
-    // These are used to track the internal SignalR state 
+    // These are used to track the internal SignalR state
     //
     private hubConnection: any;
     private hubProxy: any;
+    private isConnected = false;
 
-    // An internal array to track what channel subscriptions exist 
+    // An internal array to track what channel subscriptions exist
     //
     private subjects = new Array<ChannelSubject>();
 
@@ -111,7 +112,6 @@ export class ChannelService {
         //
         this.hubConnection.stateChanged((state: any) => {
             let newState = ConnectionState.Connecting;
-
             switch (state.newState) {
                 case this.window.$.signalR.connectionState.connecting:
                     newState = ConnectionState.Connecting;
@@ -141,9 +141,8 @@ export class ChannelService {
         });
 
         this.hubProxy.on('onEvent', (channel: string, ev: ChannelEvent) => {
-            // console.log(`onEvent - ${channel} channel`, ev);
 
-            // This method acts like a broker for incoming messages. We 
+            // This method acts like a broker for incoming messages. We
             //  check the interal array of subjects to see if one exists
             //  for the channel this came in on, and then emit the event
             //  on it. Otherwise we ignore the message.
@@ -159,10 +158,25 @@ export class ChannelService {
             }
         });
 
+        // Let's wire up to the signalr observables
+        this.connectionState$
+            .map((state: ConnectionState) => { return ConnectionState[state]; });
+
+        this.error$.subscribe(
+            (error: any) => { console.warn(error); },
+            (error: any) => { console.error('errors$ error', error); }
+        );
+
+        // Wire up a handler for the starting$ observable to log the
+        //  success/fail result
+        this.starting$.subscribe(
+            () => { console.log('signalr service has been started'); },
+            () => { console.warn('signalr service failed to start!'); }
+        );
     }
 
     /**
-     * Start the SignalR connection. The starting$ stream will emit an 
+     * Start the SignalR connection. The starting$ stream will emit an
      * event if the connection is established, otherwise it will emit an
      * error.
      */
@@ -177,9 +191,11 @@ export class ChannelService {
         //
         this.hubConnection.start()
             .done(() => {
+                this.isConnected = true;
                 this.startingSubject.next();
             })
             .fail((error: any) => {
+                alert('Please Refresh to properly connect to server.');
                 this.startingSubject.error(error);
             });
     }
@@ -188,14 +204,14 @@ export class ChannelService {
         this.hubConnection.stop();
     }
 
-    /** 
-     * Get an observable that will contain the data associated with a specific 
-     * channel 
+    /**
+     * Get an observable that will contain the data associated with a specific
+     * channel
      * */
     sub(channel: string): Observable<ChannelEvent> {
-        // Try to find an observable that we already created for the requested 
+        // Try to find an observable that we already created for the requested
         //  channel
-        //
+
         let channelSub = this.subjects.find((x: ChannelSubject) => {
             return x.channel === channel;
         }) as ChannelSubject;
@@ -209,7 +225,7 @@ export class ChannelService {
 
         //
         // If we're here then we don't already have the observable to provide the
-        //  caller, so we need to call the server method to join the channel 
+        //  caller, so we need to call the server method to join the channel
         //  and then create an observable that the caller can use to received
         //  messages.
         //
@@ -223,22 +239,33 @@ export class ChannelService {
         this.subjects.push(channelSub);
 
         // Now SignalR is asynchronous, so we need to ensure the connection is
-        //  established before we call any server methods. So we'll subscribe to 
+        //  established before we call any server methods. So we'll subscribe to
         //  the starting$ stream since that won't emit a value until the connection
         //  is ready
         //
-        // Could not get it to ever return when subscribing to starting$
-        // this.starting$.subscribe((resp) => {
-            this.hubProxy.invoke('Subscribe', channel)
-                .done(() => {
-                    console.log(`Successfully subscribed to ${channel} channel`);
-                })
-                .fail((error: any) => {
-                    channelSub.subject.error(error);
-                });
-        // });
 
+        // TODO this should really be binded to this.start in some way
+        // because this.channelService.start() in app component
+        // could possibly have not started the connection (hubProxy)
+        // by this point
+        if (this.isConnected) {
+          this.subscribeToHubProxy(channel, channelSub);
+        } else {
+          this.starting$.subscribe((resp) => {
+            this.subscribeToHubProxy(channel, channelSub);
+          });
+        }
         return channelSub.subject.asObservable();
+    }
+
+    private subscribeToHubProxy(channel, channelSub) {
+      this.hubProxy.invoke('Subscribe', channel)
+          .done(() => {
+              console.log(`Successfully subscribed to ${channel} channel`);
+          })
+          .fail((error: any) => {
+              channelSub.subject.error(error);
+          });
     }
 
     // Not quite sure how to handle this (if at all) since there could be
@@ -250,7 +277,7 @@ export class ChannelService {
     //     });
     // }
 
-    /** publish provides a way for calles to emit events on any channel. In a 
+    /** publish provides a way for calles to emit events on any channel. In a
      * production app the server would ensure that only authorized clients can
      * actually emit the message, but here we're not concerned about that.
      */

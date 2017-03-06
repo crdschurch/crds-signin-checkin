@@ -2,20 +2,31 @@
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Script.Serialization;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
+using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.Security;
+using Microsoft.AspNet.SignalR;
+using Newtonsoft.Json.Linq;
+using SignInCheckIn.Hubs;
+using SignInCheckIn.Security;
 
 namespace SignInCheckIn.Controllers
 {
-    public class ChildCheckinController : ApiController
+    public class ChildCheckinController : MpAuth
     {
         private readonly IChildCheckinService _childCheckinService;
+        private readonly IHubContext _context;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildCheckinController(IChildCheckinService childCheckinService)
+        public ChildCheckinController(IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
         {
+            _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
             _childCheckinService = childCheckinService;
+            _applicationConfiguration = applicationConfiguration;
         }
 
         [HttpGet]
@@ -49,13 +60,21 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "checkin/event/participant", minimumVersion: "1.0.0")]
-        [Route("checkin/event/participant")]
-        public IHttpActionResult CheckinChildrenForCurrentEventAndRoom(ParticipantDto participant)
+        [VersionedRoute(template: "checkin/event/{eventId}/participant", minimumVersion: "1.0.0")]
+        [Route("checkin/event/{eventId}/participant")]
+        public IHttpActionResult CheckinChildrenForCurrentEventAndRoom([FromUri(Name = "eventId")] int eventId, ParticipantDto participant)
         {
             try
             {
                 var child = _childCheckinService.CheckinChildrenForCurrentEventAndRoom(participant);
+                
+                PublishToChannel(_context, new ChannelEvent
+                {
+                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, participant.AssignedRoomId.Value),
+                    Name = "CheckedIn",
+                    Data = child
+                });
+
                 return Ok(child);
             }
             catch (Exception e)
@@ -86,16 +105,39 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPut]
-        [VersionedRoute(template: "checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override", minimumVersion: "1.0.0")]
-        [Route("checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override")]
+        [VersionedRoute(template: "checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override/{overRideRoomId}", minimumVersion: "1.0.0")]
+        [Route("checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override/{overRideRoomId}")]
         public IHttpActionResult OverrideChildIntoRoom(
              [FromUri(Name = "eventId")] int eventId,
              [FromUri(Name = "eventParticipantId")] int eventParticipantId,
-             [FromUri(Name = "roomId")] int roomId)
+             [FromUri(Name = "roomId")] int roomId,
+             [FromUri(Name = "overRideRoomId")] int overRideRoomId)
         {
             try
             {
-                _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, roomId);
+                _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, overRideRoomId);
+
+                //Publish the removal of the kid from the original room
+                dynamic data = new JObject();
+                data.EventParticipantId = eventParticipantId;
+                data.OriginalRoomId = roomId;
+                data.OverRideRoomId = overRideRoomId;
+
+                PublishToChannel(_context, new ChannelEvent
+                {
+                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, roomId),
+                    Name = "Remove",
+                    Data = data
+                });
+                
+                //Publish the checked in into the new room
+                PublishToChannel(_context, new ChannelEvent
+                {
+                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, overRideRoomId),
+                    Name = "OverrideCheckin",
+                    Data = data
+                });
+
                 return Ok();
             }
             catch (Exception e)

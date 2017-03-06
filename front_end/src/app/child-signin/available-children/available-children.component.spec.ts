@@ -65,7 +65,7 @@ describe('AvailableChildrenComponent', () => {
   describe('#signIn', () => {
     it('should only send selected kids', () => {
       fixture.eventParticipants = new EventParticipants();
-      fixture.eventParticipants.Participants = [new Child(), new Child()]
+      fixture.eventParticipants.Participants = [new Child(), new Child()];
       fixture.eventParticipants.Participants[0].Selected = false;
       fixture.eventParticipants.Participants[1].Selected = true;
       // spyOn(childSigninService, 'signInChildren').and.callFake(() => {});
@@ -91,7 +91,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.guestDOB = new DateOfBirth();
       fixture.guestDOB.month = 4;
       fixture.guestDOB.day = 4;
-      fixture.guestDOB.year = 2012;
+      fixture.guestDOB.year = 2016;
       // ui event after you pick a date
       fixture.datePickerBlur();
       fixture.saveNewGuest(fakeModal);

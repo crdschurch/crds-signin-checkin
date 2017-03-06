@@ -54,6 +54,7 @@ namespace MinistryPlatform.Translation.Repositories
             _bumpingRuleColumns = new List<string>
             {
                 "Bumping_Rules_ID",
+                "Bumping_Rule_Type_ID",
                 "From_Event_Room_ID",
                 "To_Event_Room_ID",
                 "Priority_Order"
@@ -249,6 +250,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "To_Event_Room_ID",
                 "To_Event_Room_ID_Table.Room_ID",
                 "Priority_Order",
+                "Bumping_Rule_Type_ID",
                 "To_Event_Room_ID_Table.Capacity",
                 "To_Event_Room_ID_Table.Allow_Checkin",
                 "To_Event_Room_ID_Table_Room_ID_Table.Room_Name",
@@ -257,9 +259,23 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var apiUserToken = _apiUserRepository.GetToken();
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+            var priorityOrderRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                     Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
+            if (!priorityOrderRooms.Any())
+            {
+                return null;
+            }
+            var isBumpingTypeVacancy = priorityOrderRooms.First().BumpingRuleTypeId == _applicationConfiguration.BumpingRoomTypeVacancyId;
+            if (isBumpingTypeVacancy)
+            {
+                // order by number signed  in + number checked in ascending
+                return priorityOrderRooms.OrderBy(r => r.SignedIn + r.CheckedIn).ToList();
+            }
+            else
+            {
+                return priorityOrderRooms;
+            }
         }
 
         public List<List<JObject>> GetManageRoomsListData(int eventId)

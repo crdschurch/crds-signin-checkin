@@ -2,8 +2,14 @@ import { Observable } from 'rxjs/Observable';
 
 import { RoomComponent } from './room.component';
 import { Child } from '../../shared/models/child';
+import { ChannelService } from '../../shared/services';
 
 let fixture: RoomComponent;
+let channelServiceStub: any = {
+  sub(): any {
+    return Observable.of();
+  }
+};
 let childCheckinServiceStub: any = {
   forceChildReload$: Observable.of(),
   forceChildReload(): any {},
@@ -48,7 +54,7 @@ let setupServiceStub: any = {
 describe('Child Checkin RoomComponent', () => {
 
   beforeEach(() => {
-    fixture = new RoomComponent(childCheckinServiceStub, rootServiceStub, setupServiceStub);
+    fixture = new RoomComponent(childCheckinServiceStub, rootServiceStub, setupServiceStub, channelServiceStub);
     fixture.ngOnInit();
   });
 

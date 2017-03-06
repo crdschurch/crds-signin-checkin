@@ -8,13 +8,13 @@
         <label><strong>Open rooms by</strong></label>
         <div class="form-check-inline">
           <label class="form-check-label">
-            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" [checked]="isTypePriority()" (change)="selectTypePriority()">
             Priority
           </label>
         </div>
         <div class="form-check-inline">
           <label class="form-check-label">
-            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2" disabled>
+            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2" [checked]="isTypeVacancy()" (change)="selectTypeVacancy()">
             Vacancy
           </label>
         </div>
@@ -59,12 +59,12 @@
                 <th>Room Name</th>
                 <th>Room No.</th>
                 <th>Open/Closed</th>
-                <th>Priority</th>
-                <th></th>
+                <th [hidden]="isTypeVacancy()">Priority</th>
+                <th [hidden]="isTypeVacancy()"></th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [index]="i" (setDirtyChild)="setDirtyChild($event)"></tr>
+              <tr *ngFor="let room of bumpingRooms; let i = index;" class="room-bump" [room]="room" [bumpingRooms]="bumpingRooms" [selectedBumpingType]="selectedBumpingType" [index]="i" (setDirtyChild)="setDirtyChild($event)"></tr>
             </tbody>
           </table>
         </div>

@@ -26,9 +26,11 @@ export class RoomListComponent implements OnInit {
   event: Event = null;
   eventId: string;
   isDirty = false;
+  isSaving = false;
   unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
   public isCollapsed = true;
+  public hideClosedRooms = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -70,6 +72,16 @@ export class RoomListComponent implements OnInit {
 
   onNotifyDirty(message) {
     this.isDirty = message;
+  }
+
+  onNotifySaving(message) {
+    this.isSaving = message;
+  }
+
+  // update the allow checkin property on the matching room in the list component - this is necessary to allow the
+  // allow checkin filter to properly hide and show closed rooms
+  updateRooms(message) {
+    this.rooms.find(r => r.RoomId === message.RoomId).AllowSignIn = message.AllowSignIn;
   }
 
   canDeactivate() {
@@ -119,6 +131,66 @@ export class RoomListComponent implements OnInit {
     $event.preventDefault();
     $event.stopPropagation();
     this.dropdownStatus.isOpen = !this.dropdownStatus.isOpen;
+  }
+
+  public toggleUnusedRooms(): void {
+    if (this.hideClosedRooms === true) {
+      this.hideClosedRooms = false;
+    } else {
+      this.hideClosedRooms = true;
+    }
+  }
+
+  public getCheckedInTotal() {
+    if (this.rooms === undefined) {
+      return;
+    }
+
+    let checkedInTotal = this.rooms.reduce(function (checkedIn, room) {
+      checkedIn += room.CheckedIn;
+      return checkedIn;
+    }, 0);
+
+    return checkedInTotal;   
+  }
+
+  public getSignedInTotal() {
+    if (this.rooms === undefined) {
+      return;
+    }
+
+    let signedInTotal = this.rooms.reduce(function (signedIn, room) {
+      signedIn += room.SignedIn;
+      return signedIn;
+    }, 0);
+
+    return signedInTotal;   
+  }
+
+  public getCapacityTotal() {
+    if (this.rooms === undefined) {
+      return;
+    }
+
+    let capacityTotal = this.rooms.reduce(function (capacity, room) {
+      capacity += room.Capacity;
+      return capacity;
+    }, 0);
+
+    return capacityTotal;   
+  }
+
+  public getVolunteersTotal() {
+    if (this.rooms === undefined) {
+      return;
+    }
+
+    let volunteersTotal = this.rooms.reduce(function (volunteers, room) {
+      volunteers += room.Volunteers;
+      return volunteers;
+    }, 0);
+
+    return volunteersTotal;   
   }
 
 }

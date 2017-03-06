@@ -922,7 +922,8 @@ namespace SignInCheckIn.Tests.Services
                 {
                     BumpingRuleId = 2345678,
                     ToEventRoomId = 1111,
-                    PriorityOrder = 1
+                    PriorityOrder = 1,
+                    BumpingRuleTypeId = 2
                 }
             };
 
@@ -945,18 +946,17 @@ namespace SignInCheckIn.Tests.Services
 
 
             _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(checkinEvents);
-            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns((MpEventRoomDto)null);
-            _roomRepository.Setup(m => m.CreateOrUpdateEventRoom(null, It.IsAny<MpEventRoomDto>())).Returns(mpEventRoomFrom);
-            _roomRepository.Setup(m => m.GetEventRoom(eventId, roomId)).Returns(mpEventRoomFrom);
+            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesByRoomId(1000)).Returns(mpBumpingRuleDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
             _roomRepository.Setup(m => m.DeleteBumpingRules(It.IsAny<string>(), It.IsAny<IEnumerable<int>>()));
 
             // Act
-            _fixture.UpdateAvailableRooms(token, eventId, roomId, eventRoomDtos);
+            var result =_fixture.UpdateAvailableRooms(token, eventId, roomId, eventRoomDtos);
 
             // Assert
+            Assert.AreEqual(result[0].BumpingRuleTypeId, 2);
             _eventRepository.VerifyAll();
             _roomRepository.VerifyAll();
         }
@@ -969,7 +969,7 @@ namespace SignInCheckIn.Tests.Services
             
             var result = _fixture.GetGradeAttributes(token);
             result.Should().NotBeNull();
-            Assert.IsTrue(result.Count == 8);
+            Assert.IsTrue(result.Count == 6);
             Assert.AreEqual(_gradeList[1].Id, result[0].Id);
         }
     }
