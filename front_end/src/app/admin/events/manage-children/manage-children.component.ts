@@ -18,6 +18,7 @@ export class ManageChildrenComponent implements OnInit {
   ready = false;
   searchString = '';
   eventId: any;
+  totalChildrenInEvent: number;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
@@ -115,10 +116,11 @@ export class ManageChildrenComponent implements OnInit {
     this.ready = false;
     this.adminService.getChildrenForEvent(+this.eventId, this.searchString).subscribe((resp) => {
       this.children = resp;
-      this.ready = true;
 
       this.childrenByRoom = _(this.children).groupBy(r => r.AssignedRoomName).value();
       this.childrenByRoom = Object.keys(this.childrenByRoom).sort().map(k => this.childrenByRoom[k]);
+
+      this.ready = true;
     });
   }
 
