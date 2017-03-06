@@ -211,9 +211,12 @@ datepicker {
     .alert-danger {
       td {
         background: #e1e1e1 !important;
+        -webkit-print-color-adjust:exact;
 
         input {
           background: #e1e1e1 !important;
+          -webkit-print-color-adjust:exact;
+          print-color-adjust:exact;
         }
       }
     }
