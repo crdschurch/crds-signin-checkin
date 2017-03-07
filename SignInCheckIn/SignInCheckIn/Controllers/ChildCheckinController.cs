@@ -19,14 +19,16 @@ namespace SignInCheckIn.Controllers
     public class ChildCheckinController : MpAuth
     {
         private readonly IChildCheckinService _childCheckinService;
+        private readonly IWebsocketService _websocketService;
         private readonly IHubContext _context;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildCheckinController(IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
+        public ChildCheckinController(IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository, IWebsocketService websocketService) : base(authenticationRepository)
         {
             _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
             _childCheckinService = childCheckinService;
             _applicationConfiguration = applicationConfiguration;
+            _websocketService = websocketService;
         }
 
         [HttpGet]
@@ -67,14 +69,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var child = _childCheckinService.CheckinChildrenForCurrentEventAndRoom(participant);
-                
-                PublishToChannel(_context, new ChannelEvent
-                {
-                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, participant.AssignedRoomId.Value),
-                    Name = "CheckedIn",
-                    Data = child
-                });
-
+                _websocketService.PublishCheckinParticipantsCheckedIn(_context, eventId, participant.AssignedRoomId.Value, child);
                 return Ok(child);
             }
             catch (Exception e)
@@ -123,20 +118,8 @@ namespace SignInCheckIn.Controllers
                 data.OriginalRoomId = roomId;
                 data.OverRideRoomId = overRideRoomId;
 
-                PublishToChannel(_context, new ChannelEvent
-                {
-                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, roomId),
-                    Name = "Remove",
-                    Data = data
-                });
-                
-                //Publish the checked in into the new room
-                PublishToChannel(_context, new ChannelEvent
-                {
-                    ChannelName = GetChannelNameCheckinParticipants(_applicationConfiguration, eventId, overRideRoomId),
-                    Name = "OverrideCheckin",
-                    Data = data
-                });
+                _websocketService.PublishCheckinParticipantsRemove(_context, eventId, roomId, data);
+                _websocketService.PublishCheckinParticipantsOverrideCheckin(_context, eventId, overRideRoomId, data);
 
                 return Ok();
             }

@@ -17,12 +17,14 @@ namespace SignInCheckIn.Controllers
 {
     public class RoomController : MpAuth
     {
+        private readonly IWebsocketService _websocketService;
         private readonly IRoomService _roomService;
         private readonly IHubContext _context;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public RoomController(IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
+            _websocketService = websocketService;
             _roomService = roomService;
             _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
             _applicationConfiguration = applicationConfiguration;
@@ -107,11 +109,7 @@ namespace SignInCheckIn.Controllers
                     eventRoom.RoomId = roomId;
 
                     var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(token, eventRoom);
-
-                    PublishToChannel(_context, new ChannelEvent {
-                        ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{eventId}{roomId}",
-                        Data = updatedEventRoom
-                    });
+                    _websocketService.PublishCheckinCapacity(_context, eventId, roomId, updatedEventRoom);
 
                     return Ok(updatedEventRoom);
                 }
