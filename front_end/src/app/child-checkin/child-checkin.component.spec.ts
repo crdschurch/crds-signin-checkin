@@ -1,5 +1,5 @@
 import { ChildCheckinComponent } from './child-checkin.component';
-import { Child, Event } from '../shared/models';
+import { Child, Event, Room } from '../shared/models';
 import { RootService } from '../shared/services';
 import { Observable } from 'rxjs/Observable';
 
@@ -14,16 +14,17 @@ setupService.getMachineDetailsConfigCookie.and.returnValue({RoomId: 123});
 let apiService = jasmine.createSpyObj('apiService', ['getEvents']);
 let childCheckinService = jasmine.createSpyObj('ChildCheckinService', ['selectEvent', 'getChildByCallNumber', 'getEventRoomDetails']);
 let rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
-let channelService = jasmine.createSpyObj('channelService', ['sub']);
+let channelService = jasmine.createSpyObj('channelService', ['sub', 'unsubAll']);
 
 describe('ChildCheckinComponent', () => {
   describe('#ngOnInit', () => {
     describe('initalization', () => {
       beforeEach(() => {
-        apiService.getEvents.and.returnValue(Observable.of([{}]));
+        apiService.getEvents.and.returnValue(Observable.of([new Event(), new Event()]));
         channelService.sub.and.returnValue(Observable.of([{}]));
         childCheckinService.getEventRoomDetails.and.returnValue(Observable.of([{}]));
         fixture = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
+        // fixture.selectedEvent = new Event();
       });
 
       it('should set kiosk config details from cookie and get today\'s events', () => {
@@ -55,7 +56,7 @@ describe('ChildCheckinComponent', () => {
 
          it('should set first when no IsCurrentEvent', () => {
            fixture2.ngOnInit();
-           expect(fixture2.selectedEvent.EventId).toEqual(event2.EventId);
+           expect(fixture2.selectedEvent.EventId).toEqual(event.EventId);
          });
        });
        describe('override modal', () => {
@@ -63,20 +64,21 @@ describe('ChildCheckinComponent', () => {
          let fakeModal = { show: {}, hide: {} };
          beforeEach(() => {
            childCheckinService = jasmine.createSpyObj('ChildCheckinService',
-              ['getChildByCallNumber', 'forceChildReload', 'overrideChildIntoRoom']);
+              ['getChildByCallNumber', 'forceChildReload', 'overrideChildIntoRoom', 'getEventRoomDetails']);
            childCheckinService.getChildByCallNumber.and.returnValue(Observable.of());
            childCheckinService.forceChildReload.and.returnValue(Observable.of());
            childCheckinService.overrideChildIntoRoom.and.returnValue(Observable.of(new Child()));
+           childCheckinService.getEventRoomDetails.and.returnValue(Observable.of(new Room()));
            fixture3 = new ChildCheckinComponent(setupService, apiService, childCheckinService, rootService, channelService);
            fixture3.callNumber = '431';
            fixture3.overrideChild = new Child();
            fixture3.overrideChild.EventParticipantId = 444;
-           fixture3.selectedEvent = new Event();
-           fixture3.selectedEvent.EventId = 333;
            fixture3.kioskDetails = { RoomId: 444 };
            spyOn(fakeModal, 'show').and.callFake(() => {});
            spyOn(fakeModal, 'hide').and.callFake(() => {});
            fixture3.childSearchModal = fakeModal;
+           fixture3.selectedEvent = new Event();
+           fixture3.selectedEvent.EventId = 333;
          });
          describe('#delete', () => {
            it('should delete a digit from call number', () => {
@@ -98,7 +100,12 @@ describe('ChildCheckinComponent', () => {
            });
          });
          describe('#setCallNumber', () => {
+           beforeEach(() => {
+            channelService.sub.and.returnValue(Observable.of([{}]));
+           });
            it('should set the call number and call override checkin if four digits', () => {
+             fixture3.selectedEvent = new Event();
+             fixture3.selectedEvent.EventId = 333;
              fixture3.setCallNumber('8');
              expect(fixture3.callNumber).toEqual('4318');
              expect(childCheckinService.getChildByCallNumber).toHaveBeenCalledWith(333, '4318', 444);
