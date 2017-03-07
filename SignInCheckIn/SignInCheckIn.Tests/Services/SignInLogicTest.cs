@@ -25,6 +25,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IConfigRepository> _configRepository;
+        private Mock<IParticipantRepository> _participantRepository;
 
         private const int AgesAttributeTypeId = 102;
         private const int BirthMonthsAttributeTypeId = 103;
@@ -51,6 +52,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _configRepository = new Mock<IConfigRepository>();
+            _participantRepository = new Mock<IParticipantRepository>();
             _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
@@ -78,7 +80,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(lateCheckInPeriodConfig);
 
             _fixture = new SignInLogic(_eventRepository.Object, _applicationConfiguration.Object, _configRepository.Object,
-                _groupRepository.Object, _roomRepository.Object);
+                _groupRepository.Object, _roomRepository.Object, _participantRepository.Object);
         }
 
         [Test]
@@ -89,7 +91,7 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = false;
             bool adventureClubSignIn = false;
 
-            var signInTime = new DateTime(2017, 3, 3, 0, 00, 00);
+            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
 
             _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
 
@@ -109,7 +111,7 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = false;
             bool adventureClubSignIn = true;
 
-            var signInTime = new DateTime(2017, 3, 3, 0, 00, 00);
+            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
 
             _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
 
@@ -138,7 +140,7 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = false;
             bool adventureClubSignIn = true;
 
-            var signInTime = new DateTime(2017, 3, 3, 0, 00, 00);
+            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
 
             _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSetCurrentEventAc());
 
@@ -166,7 +168,7 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = false;
             bool adventureClubSignIn = true;
 
-            var signInTime = new DateTime(2017, 3, 3, 0, 00, 00);
+            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
 
             _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSetFutureEventAc());
 
@@ -194,7 +196,7 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = true;
             bool adventureClubSignIn = true;
 
-            var signInTime = new DateTime(2017, 3, 3, 0, 00, 00);
+            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
 
             _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
 
@@ -458,16 +460,109 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldAssignParticipantToRooms()
+        public void ShouldAssignNonAcParticipantToRooms()
         {
             // Arrange
 
 
+            //// Act
+            ////var result = _fixture.AssignParticipantToRoomsNonAc(GetEventRoomsData());
+            //var result = _fixture.AssignParticipantToRoomsNonAc(GetEventRoomsData(), GetTestEventSet());
+
+            //// Assert
+            //Assert.AreEqual(2, result.Count);
+        }
+
+        private ParticipantEventMapDto GetEventParticipantMapForAudit()
+        {
+            var kioskEvent = new EventDto
+            {
+                EventId = 1234567
+            };
+
+            List<ParticipantDto> participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    DateOfBirth = new DateTime(2010, 01, 01),
+                    GroupId = 5544555,
+                    LastName = "UnassignedGroup",
+                    Nickname = "Joe",
+                    ParticipantId = 9876789
+                },
+                new ParticipantDto
+                {
+                    DateOfBirth = new DateTime(2010, 01, 01),
+                    GroupId = 7766777,
+                    LastName = "NoOpenRoom",
+                    Nickname = "Jane",
+                    ParticipantId = 8765678
+                }
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = kioskEvent,
+                Participants = participantDtos
+            };
+            
+            return participantEventMapDto;
+        }
+
+        private List<MpEventParticipantDto> GetMpEventParticipantsForAudit()
+        {
+            var mpEventParticipantList = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    GroupId = null,
+                    ParticipantId = 9876789,
+                    RoomId = null
+                },
+                new MpEventParticipantDto
+                {
+                    GroupId = 7766777,
+                    ParticipantId = 8765678,
+                    RoomId = null
+                }
+            };
+
+            return mpEventParticipantList;
+        }
+
+        [Test]
+        public void ShouldSetSigninErrorMessages()
+        {
+            // Arrange
+            var participantEventMapDto = GetEventParticipantMapForAudit();
+            var mpEventParticipantEventList = GetMpEventParticipantsForAudit();
+            var eligibleEvents = GetTestEventSet();
+            var eligibleEventIds = eligibleEvents.Select(r => r.EventId).ToList();
+
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eligibleEventIds)).Returns(GetClosedEventRooms());
+            _groupRepository.Setup(r => r.GetGroup(null, 7766777, false)).Returns(GetGroupForNoOpenRoomsCheck());
+
             // Act
-            var result = _fixture.AssignParticipantToRooms(GetEventRoomsData());
+            _fixture.AuditSigninIssues(participantEventMapDto, mpEventParticipantEventList, eligibleEvents);
 
             // Assert
-            Assert.AreEqual(2, result.Count());
+            Assert.AreEqual("Age/Grade Group Not Assigned. Joe is not in a Kids Club Group (DOB: 1/1/2010)", participantEventMapDto.Participants[0].SignInErrorMessage);
+            Assert.AreEqual("There are no Kindergarten rooms open for Jane", participantEventMapDto.Participants[1].SignInErrorMessage);
+        }
+
+        private List<MpEventRoomDto> GetClosedEventRooms()
+        {
+            return new List<MpEventRoomDto>();
+        }
+
+        private MpGroupDto GetGroupForNoOpenRoomsCheck()
+        {
+            var mpGroupDto = new MpGroupDto
+            {
+                Name = "Kindergarten"
+            };
+
+            return mpGroupDto;
         }
     }
 }
