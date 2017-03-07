@@ -33,7 +33,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
+    <DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,7 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
+    <DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=5.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
@@ -254,10 +254,12 @@
     <Compile Include="Security\MPAuth.cs" />
     <Compile Include="Services\ChildCheckinService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
+    <Compile Include="Services\WebsocketService.cs" />
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\HelloWorldService.cs" />
     <Compile Include="Services\Interfaces\IChildCheckinService.cs" />
     <Compile Include="Services\Interfaces\IChildSigninService.cs" />
+    <Compile Include="Services\Interfaces\IWebsocketService.cs" />
     <Compile Include="Services\Interfaces\IEventService.cs" />
     <Compile Include="Services\Interfaces\IHelloWorldService.cs" />
     <Compile Include="Services\Interfaces\IKioskService.cs" />
