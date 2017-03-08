@@ -64,6 +64,8 @@ namespace SignInCheckIn.Tests.Services
 
             _fixture.PublishCheckinCapacity(eventId, roomId, eventRoom);
 
+            mock.Verify();
+            mockIHubConnectionContext.Verify();
         }
 
         // PublishCheckinParticipantsCheckedIn
