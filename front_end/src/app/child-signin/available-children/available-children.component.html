@@ -10,10 +10,24 @@
           <a (click)="openNewGuestModal(addGuestModal)">
             <div class="card-block">
               <span class="round-plus">+</span>
-              <h4 class="card-title text-uppercase">Add A Guest</h4>
+              <h4 class="card-title guest-title">Add A Guest</h4>
             </div>
           </a>
         </div>
+        <div class="card">
+          <label attr.for='isServing' class="text-xs-center pointer px-1 serving-label">
+            <div class="serving-question-cont mt-2">
+              <span class="tgl-inline-label tgl-serving-label">Are you serving today?</span>
+              <input class='tgl tgl-light' id='isServing' type='checkbox' [(ngModel)]="isServing" (click)="toggleClick(showServiceSelectModal)">
+              <label class='tgl-btn' for='isServing'>
+                <span class="tgl-yes">Yes</span>
+                <span class="tgl-no">No</span>
+              </label>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="eqWrap mt-2">
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
         <div class="card" *ngFor="let kid of childrenAvailable()" >
           <available-child [child]="kid">
@@ -30,21 +44,16 @@
   <div class="container-fluid">
     <div class="row">
 
-      <div class="col-xs-4 pb-1">
-        <a  class="btn btn-primary btn-lg float-xs-left" href="#" routerLink="/child-signin/search">&#10094; Back</a>
+      <div class="col-xs-6 pb-1">
+        <a  class="btn btn-primary btn-lg float-xs-left" href="#" routerLink="/child-signin/search">
+          <svg height="12" viewBox="0 0 9 12" width="9" xmlns="http://www.w3.org/2000/svg"><path d="M7.9 1.4l-1.4-1.4-6 6 6 6 1.4-1.4-4.6-4.6 4.6-4.6z" /></svg>
+          Back</a>
       </div>
 
-      <div class="col-xs-4 text-xs-center serving-question-cont">
-        <span class="tgl-inline-label">Are you serving today?</span>
-        <input class='tgl tgl-light' id='isServing' type='checkbox' [(ngModel)]="isServing" (click)="toggleClick(showServiceSelectModal)">
-        <label class='tgl-btn' for='isServing'>
-          <span class="tgl-yes">Yes</span>
-          <span class="tgl-no">No</span>
-        </label>
-      </div>
-
-      <div class="col-xs-4 pb-1">
-        <a class="btn btn-primary btn-lg float-xs-right" (click)="signIn()">Next &#10095;</a>
+      <div class="col-xs-6 pb-1">
+        <a class="btn btn-primary btn-lg float-xs-right" (click)="signIn()">Next
+          <svg height="12" viewBox="0 0 9 12" width="9" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 0l-1.4 1.4 4.6 4.6-4.6 4.6 1.4 1.4 6-6-6-6z" /></svg>
+        </a>
       </div>
 
     </div>
