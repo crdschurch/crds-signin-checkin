@@ -40,7 +40,8 @@ $num-pad-bg: $brand-gray;
   table button.btn-muted {
     background-color: transparent;
     color: $gray-light;
-    font-size: 1.5em;
+    font-size: 1em;
+
     &:active {
       background-color: #fff;
     }
