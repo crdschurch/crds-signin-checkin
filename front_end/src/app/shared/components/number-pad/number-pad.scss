@@ -41,10 +41,6 @@ $num-pad-bg: $brand-gray;
     background-color: transparent;
     color: $gray-light;
     font-size: 1em;
-    // 
-    // @include media-breakpoint-up(lg) {
-    //   font-size: 1.25em;
-    // }
 
     &:active {
       background-color: #fff;
