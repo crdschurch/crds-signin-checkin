@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Crossroads.Utilities.Services.Interfaces;
 using Microsoft.AspNet.SignalR;
 using MinistryPlatform.Translation.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
 using SignInCheckIn.Hubs;
+using SignInCheckIn.Models.DTO;
 
 namespace SignInCheckIn.Services
 {
@@ -11,50 +13,52 @@ namespace SignInCheckIn.Services
     {
         private readonly IEventService _eventService;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IHubContext _context;
 
-        public WebsocketService(IEventService eventService, IApplicationConfiguration applicationConfiguration)
+        public WebsocketService(IEventService eventService, IApplicationConfiguration applicationConfiguration, IHubContext hubContext)
         {
             _eventService = eventService;
             _applicationConfiguration = applicationConfiguration;
+            _context = hubContext;
         }
 
-        public void PublishCheckinCapacity(IHubContext context, int eventId, int roomId, object data)
+        public void PublishCheckinCapacity(int eventId, int roomId, EventRoomDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
             var channelName = $"{_applicationConfiguration.CheckinCapacityChannel}{publishEventId}{roomId}";
-            Publish(context, channelName, null, data);
+            Publish(channelName, null, data);
         }
 
-        public void PublishCheckinParticipantsCheckedIn(IHubContext context, int eventId, int roomId, object data)
+        public void PublishCheckinParticipantsCheckedIn(int eventId, int roomId, ParticipantDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
             var channelName = GetChannelNameCheckinParticipants(publishEventId, roomId);
-            Publish(context,channelName, "CheckedIn", data);
+            Publish(channelName, "CheckedIn", data);
         }
 
-        public void PublishCheckinParticipantsAdd(IHubContext context, int eventId, int roomId, object data)
+        public void PublishCheckinParticipantsAdd(int eventId, int roomId, IEnumerable<ParticipantDto> data)
         {
             var publishEventId = GetPublishEventId(eventId);
             var channelName = GetChannelNameCheckinParticipants(publishEventId, roomId);
-            Publish(context, channelName, "Add", data);
+            Publish(channelName, "Add", data);
         }
 
-        public void PublishCheckinParticipantsRemove(IHubContext context, int eventId, int roomId, object data)
+        public void PublishCheckinParticipantsRemove(int eventId, int roomId, ParticipantDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
             var channelName = GetChannelNameCheckinParticipants(publishEventId, roomId);
-            Publish(context, channelName, "Remove", data);
+            Publish(channelName, "Remove", data);
         }
 
-        public void PublishCheckinParticipantsOverrideCheckin(IHubContext context, int eventId, int roomId, object data)
+        public void PublishCheckinParticipantsOverrideCheckin(int eventId, int roomId, ParticipantDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
             var channelName = GetChannelNameCheckinParticipants(publishEventId, roomId);
-            Publish(context, channelName, "OverrideCheckin", data);
+            Publish(channelName, "OverrideCheckin", data);
         }
 
 
-        private void Publish(IHubContext context, string channelName, string action, object data)
+        private void Publish(string channelName, string action, object data)
         {
             var channelEvent = new ChannelEvent
             {
@@ -65,7 +69,7 @@ namespace SignInCheckIn.Services
             {
                 channelEvent.Name = action;
             }
-            context.Clients.Group(channelEvent.ChannelName).OnEvent(channelEvent.ChannelName, channelEvent);
+            _context.Clients.Group(channelEvent.ChannelName).OnEvent(channelEvent.ChannelName, channelEvent);
         }
 
         /*

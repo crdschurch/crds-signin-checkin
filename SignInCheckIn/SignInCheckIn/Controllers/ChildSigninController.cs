@@ -10,9 +10,7 @@ using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
-using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json.Linq;
-using SignInCheckIn.Hubs;
 
 namespace SignInCheckIn.Controllers
 {
@@ -22,12 +20,10 @@ namespace SignInCheckIn.Controllers
         private readonly IChildSigninService _childSigninService;
         private readonly IChildCheckinService _childCheckinService;
         private readonly IKioskRepository _kioskRepository;
-        private readonly IHubContext _context;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
         public ChildSigninController(IChildSigninService childSigninService, IWebsocketService websocketService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
-            _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
             _websocketService = websocketService;
             _childSigninService = childSigninService;
             _childCheckinService = childCheckinService;
@@ -209,7 +205,7 @@ namespace SignInCheckIn.Controllers
                         data.EventParticipantId = eventparticipantId;
                         data.OriginalRoomId = roomId;
 
-                        _websocketService.PublishCheckinParticipantsRemove(_context, eventId, roomId, data);
+                        _websocketService.PublishCheckinParticipantsRemove(eventId, roomId, data);
                         return Ok();
                     }
                     else
@@ -233,14 +229,14 @@ namespace SignInCheckIn.Controllers
                 {
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedRoomId == p.AssignedRoomId);
-                    _websocketService.PublishCheckinParticipantsAdd(_context, p.EventId, p.AssignedRoomId.Value, updatedParticipants);
+                    _websocketService.PublishCheckinParticipantsAdd(p.EventId, p.AssignedRoomId.Value, updatedParticipants);
                 }
 
                 if (p.AssignedSecondaryRoomId != null)
                 {
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedSecondaryRoomId == p.AssignedSecondaryRoomId);
-                    _websocketService.PublishCheckinParticipantsAdd(_context, p.EventIdSecondary, p.AssignedSecondaryRoomId.Value, updatedParticipants);
+                    _websocketService.PublishCheckinParticipantsAdd(p.EventIdSecondary, p.AssignedSecondaryRoomId.Value, updatedParticipants);
                 }
             }
         }
