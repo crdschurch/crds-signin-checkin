@@ -1,4 +1,5 @@
-﻿using Crossroads.Utilities.Services.Interfaces;
+﻿using System.Collections.Generic;
+using Crossroads.Utilities.Services.Interfaces;
 using Moq;
 using NUnit.Framework;
 using SignInCheckIn.Models.DTO;
@@ -6,6 +7,7 @@ using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using NUnit.Framework.Internal;
 using SignInCheckIn.Hubs;
 
 namespace SignInCheckIn.Tests.Services
@@ -17,6 +19,9 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IHubContext> _hubContext;
         
         private WebsocketService _fixture;
+
+        private int eventId = 123;
+        private int roomId = 456;
 
 
         [SetUp]
@@ -46,33 +51,93 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void ShouldPublishCheckinCapacity()
         {
-            var eventId = 123;
-            var roomId = 456;
-            const string expectedChannelName = "CheckinCapacityChannel123456";
-
-            var eventRoom = new EventRoomDto()
-            {
-                Capacity = 4,
-                EventRoomId = 333
-            };
-
+            const string expectedChannelName = "CheckinParticipantsChannel123456";
+            var data = new List<ParticipantDto>();
             var mock = new Mock<IDependance>();
             mock.Setup(m => m.OnEvent(expectedChannelName, It.IsAny<ChannelEvent>()));
             var mockIHubConnectionContext = new Mock<IHubConnectionContext<dynamic>>();
             mockIHubConnectionContext.Setup(hc => hc.Group(expectedChannelName)).Returns(mock.Object);
             _hubContext.SetupGet(hc => hc.Clients).Returns(mockIHubConnectionContext.Object);
 
-            _fixture.PublishCheckinCapacity(eventId, roomId, eventRoom);
+            _fixture.PublishCheckinParticipantsAdd(eventId, roomId, data);
 
             mock.Verify();
             mockIHubConnectionContext.Verify();
         }
 
-        // PublishCheckinParticipantsCheckedIn
-        // PublishCheckinParticipantsAdd
-        // PublishCheckinParticipantsRemove
-        // PublishCheckinParticipantsOverrideCheckin
-        // PublishesParentEventId
+        [Test]
+        public void ShouldPublishCheckinParticipantsCheckedIn()
+        {
+            const string expectedChannelName = "CheckinParticipantsChannel123456";
+            var data = new ParticipantDto();
+            var mock = new Mock<IDependance>();
+            mock.Setup(m => m.OnEvent(expectedChannelName, It.IsAny<ChannelEvent>()));
+            var mockIHubConnectionContext = new Mock<IHubConnectionContext<dynamic>>();
+            mockIHubConnectionContext.Setup(hc => hc.Group(expectedChannelName)).Returns(mock.Object);
+            _hubContext.SetupGet(hc => hc.Clients).Returns(mockIHubConnectionContext.Object);
+
+            _fixture.PublishCheckinParticipantsCheckedIn(eventId, roomId, data);
+
+            mock.Verify();
+            mockIHubConnectionContext.Verify();
+        }
+
+        [Test]
+        public void ShouldPublishCheckinParticipantsAdd()
+        {
+            const string expectedChannelName = "CheckinParticipantsChannel123456";
+            var data = new List<ParticipantDto>();
+            var mock = new Mock<IDependance>();
+            mock.Setup(m => m.OnEvent(expectedChannelName, It.IsAny<ChannelEvent>()));
+            var mockIHubConnectionContext = new Mock<IHubConnectionContext<dynamic>>();
+            mockIHubConnectionContext.Setup(hc => hc.Group(expectedChannelName)).Returns(mock.Object);
+            _hubContext.SetupGet(hc => hc.Clients).Returns(mockIHubConnectionContext.Object);
+
+            _fixture.PublishCheckinParticipantsAdd(eventId, roomId, data);
+
+            mock.Verify();
+            mockIHubConnectionContext.Verify();
+        }
+
+        [Test]
+        public void ShouldPublishCheckinParticipantsRemove()
+        {
+            const string expectedChannelName = "CheckinParticipantsChannel123456";
+            var data = new ParticipantDto();
+            var mock = new Mock<IDependance>();
+            mock.Setup(m => m.OnEvent(expectedChannelName, It.IsAny<ChannelEvent>()));
+            var mockIHubConnectionContext = new Mock<IHubConnectionContext<dynamic>>();
+            mockIHubConnectionContext.Setup(hc => hc.Group(expectedChannelName)).Returns(mock.Object);
+            _hubContext.SetupGet(hc => hc.Clients).Returns(mockIHubConnectionContext.Object);
+
+            _fixture.PublishCheckinParticipantsRemove(eventId, roomId, data);
+
+            mock.Verify();
+            mockIHubConnectionContext.Verify();
+        }
+
+        [Test]
+        public void ShouldPublishCheckinParticipantsOverrideCheckin()
+        {
+            const string expectedChannelName = "CheckinParticipantsChannel123456";
+            var data = new ParticipantDto();
+            var mock = new Mock<IDependance>();
+            mock.Setup(m => m.OnEvent(expectedChannelName, It.IsAny<ChannelEvent>()));
+            var mockIHubConnectionContext = new Mock<IHubConnectionContext<dynamic>>();
+            mockIHubConnectionContext.Setup(hc => hc.Group(expectedChannelName)).Returns(mock.Object);
+            _hubContext.SetupGet(hc => hc.Clients).Returns(mockIHubConnectionContext.Object);
+
+            _fixture.PublishCheckinParticipantsOverrideCheckin(eventId, roomId, data);
+
+            mock.Verify();
+            mockIHubConnectionContext.Verify();
+        }
+
+        [Test]
+        public void ShouldPublishByParentEventId()
+        {
+            Assert.Fail();
+        }
 
     }
 
