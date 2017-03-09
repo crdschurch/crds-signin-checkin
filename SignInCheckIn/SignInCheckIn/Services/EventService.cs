@@ -185,7 +185,8 @@ namespace SignInCheckIn.Services
             if (!events.Any(r => r.ParentEventId == eventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId))
             {
                 // 2. If not, create it
-                CreateAdventureClubSubevent(parentEvent, token);
+                var newAcEvent = CreateAdventureClubSubevent(parentEvent, token);
+                events.Add(newAcEvent);
             }
 
             return Mapper.Map<List<MpEventDto>, List<EventDto>>(events);
