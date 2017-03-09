@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using Crossroads.Utilities.Services.Interfaces;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using Moq;
 using NUnit.Framework;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
-using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using SignInCheckIn.Hubs;
 
 namespace SignInCheckIn.Tests.Services
@@ -19,8 +19,8 @@ namespace SignInCheckIn.Tests.Services
         
         private WebsocketService _fixture;
 
-        private int eventId = 123;
-        private int roomId = 456;
+        private const int eventId = 123;
+        private const int roomId = 456;
 
 
         [SetUp]
