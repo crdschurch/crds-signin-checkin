@@ -476,33 +476,6 @@ namespace SignInCheckIn.Services
             return eventRooms.First(); 
         }
 
-        [Obsolete("Replaced by the new stored proc - left here for reference")]
-        private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, int roomId, string token)
-        {
-            // we need to figure out if this event is the adventure club event or the service event
-            // if it is not the AC event, we need to get the AC event
-            if (eventDto.EventTypeId != _applicationConfiguration.AdventureClubEventTypeId)
-            {
-                eventDto = _eventRepository.GetSubeventByParentEventId(token, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
-            }
-
-            // search to see if there are existing Event Rooms for the AC subevent
-            var eventRoom = _roomRepository.GetEventRoom(eventDto.EventId);
-            
-            if (eventRoom != null)
-            {
-                // if there are, set cancelled to false
-                eventDto.Cancelled = false;
-                _eventRepository.UpdateEvent(token, eventDto);
-            }
-            else
-            {
-                // if that are not, set cancelled to true
-                // if there are, set cancelled to false
-                eventDto.Cancelled = true;
-                _eventRepository.UpdateEvent(token, eventDto);
-            }
-        }
 
         [Obsolete("Replaced by the new stored proc - left here for reference")]
         private void CreateEventGroups(string authenticationToken, EventRoomDto eventRoom, List<AgeGradeDto> selectedGroups, bool isAgeGroup)
