@@ -80,6 +80,33 @@ namespace SignInCheckIn.Services
         //    return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
         //}
 
+        private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token)
+        {
+            // we need to figure out if this event is the adventure club event or the service event
+            // if it is not the AC event, we need to get the AC event
+            if (eventDto.EventTypeId != _applicationConfiguration.AdventureClubEventTypeId)
+            {
+                eventDto = _eventRepository.GetSubeventByParentEventId(token, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+            }
+
+            // search to see if there are existing Event Rooms for the AC subevent
+            var eventRoom = _roomRepository.GetEventRoom(eventDto.EventId);
+
+            if (eventRoom != null)
+            {
+                // if there are, set cancelled to false
+                eventDto.Cancelled = false;
+                _eventRepository.UpdateEvent(token, eventDto);
+            }
+            else
+            {
+                // if that are not, set cancelled to true
+                // if there are, set cancelled to false
+                eventDto.Cancelled = true;
+                _eventRepository.UpdateEvent(token, eventDto);
+            }
+        }
+
         public bool CheckEventTimeValidity(EventDto eventDto)
         {
             // use the event's checkin period if available, otherwise default to the mp config values
@@ -96,7 +123,47 @@ namespace SignInCheckIn.Services
             _eventRepository.ResetEventSetup(authenticationToken, destinationEventId);
             _eventRepository.ImportEventSetup(authenticationToken, destinationEventId, sourceEventId);
 
+            // import AC event if source has one
+            var sourceAcSubevent = _eventRepository.GetSubeventByParentEventId(sourceEventId, _applicationConfiguration.AdventureClubEventTypeId);
+            if (sourceAcSubevent != null)
+            {
+                var destinationEvent = _eventRepository.GetEventById(destinationEventId);
+                var destinationAcSubevent = _eventRepository.GetSubeventByParentEventId(destinationEventId, _applicationConfiguration.AdventureClubEventTypeId);
+                // create a new AC subevent under the destination event if one doesnt exist
+                if (destinationAcSubevent == null)
+                {
+                    destinationAcSubevent = CreateAdventureClubSubevent(destinationEvent, authenticationToken);
+                }
+                else
+                {
+                    // if we aren't creating a new AC subevent, reset the existing one
+                    _eventRepository.ResetEventSetup(authenticationToken, destinationAcSubevent.EventId);
+                }
+                _eventRepository.ImportEventSetup(authenticationToken, destinationAcSubevent.EventId, sourceAcSubevent.EventId);
+                // set correct adventure club flag
+                UpdateAdventureClubStatusIfNecessary(destinationAcSubevent, authenticationToken);
+            }
+
             return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(destinationEventId, targetEvent.LocationId));
+        }
+
+        public MpEventDto CreateAdventureClubSubevent(MpEventDto parentEvent, string token)
+        {
+            MpEventDto mpEventDto = new MpEventDto();
+            mpEventDto.EventTitle = $"Adventure Club for Event {parentEvent.EventId}";
+            mpEventDto.ParentEventId = parentEvent.EventId;
+            mpEventDto.EventTypeId = _applicationConfiguration.AdventureClubEventTypeId;
+            mpEventDto.CongregationId = parentEvent.CongregationId;
+            mpEventDto.LocationId = parentEvent.LocationId;
+            mpEventDto.ProgramId = parentEvent.ProgramId;
+            mpEventDto.PrimaryContact = parentEvent.PrimaryContact;
+            mpEventDto.MinutesForSetup = parentEvent.MinutesForSetup;
+            mpEventDto.MinutesForCleanup = parentEvent.MinutesForCleanup;
+            mpEventDto.EventStartDate = parentEvent.EventStartDate;
+            mpEventDto.EventEndDate = parentEvent.EventEndDate;
+            mpEventDto.Cancelled = true;
+            mpEventDto.AllowCheckIn = parentEvent.AllowCheckIn;
+            return _eventRepository.CreateSubEvent(token, mpEventDto);
         }
 
         public List<EventRoomDto> ResetEventSetup(string authenticationToken, int eventId)
@@ -118,22 +185,8 @@ namespace SignInCheckIn.Services
             if (!events.Any(r => r.ParentEventId == eventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId))
             {
                 // 2. If not, create it
-                MpEventDto mpEventDto = new MpEventDto();
-                mpEventDto.EventTitle = $"Adventure Club for Event {parentEvent.EventId}";
-                mpEventDto.ParentEventId = parentEvent.EventId;
-                mpEventDto.EventTypeId = _applicationConfiguration.AdventureClubEventTypeId;
-                mpEventDto.CongregationId = parentEvent.CongregationId;
-                mpEventDto.LocationId = parentEvent.LocationId;
-                mpEventDto.ProgramId = parentEvent.ProgramId;
-                mpEventDto.PrimaryContact = parentEvent.PrimaryContact;
-                mpEventDto.MinutesForSetup = parentEvent.MinutesForSetup;
-                mpEventDto.MinutesForCleanup = parentEvent.MinutesForCleanup;
-                mpEventDto.EventStartDate = parentEvent.EventStartDate;
-                mpEventDto.EventEndDate = parentEvent.EventEndDate;
-                mpEventDto.Cancelled = true;
-                mpEventDto.AllowCheckIn = parentEvent.AllowCheckIn;
-                var subEvent = _eventRepository.CreateSubEvent(token, mpEventDto);
-                events.Add(subEvent);
+                var newAcEvent = CreateAdventureClubSubevent(parentEvent, token);
+                events.Add(newAcEvent);
             }
 
             return Mapper.Map<List<MpEventDto>, List<EventDto>>(events);
