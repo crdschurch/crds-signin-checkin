@@ -62,11 +62,6 @@ export class ChildCheckinComponent implements OnInit {
         }
 
         if (this.todaysEvents && this.todaysEvents.length) {
-          // Sort by date
-          // this.todaysEvents = this.todaysEvents.sort((a: Event, b: Event) => {
-          //   return a.EventStartDate.localeCompare(b.EventStartDate);
-          // });
-
           // Set current service
           if (this.todaysEvents.find(e => e.IsCurrentEvent)) {
             this.selectedEvent = this.todaysEvents.find(e => e.IsCurrentEvent);
@@ -77,9 +72,6 @@ export class ChildCheckinComponent implements OnInit {
             this.selectedEvent = this.todaysEvents[0];
           }
         }
-
-        // this.subscribeToSignalr();
-
         this.ready = true;
       },
       error => {
