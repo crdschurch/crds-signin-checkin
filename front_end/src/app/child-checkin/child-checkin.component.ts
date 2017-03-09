@@ -24,6 +24,7 @@ export class ChildCheckinComponent implements OnInit {
   thisSiteName: string;
   todaysEvents: Event[];
   ready: boolean;
+  switchingEvents: boolean;
   isOverrideProcessing: boolean;
   callNumber = '';
   overrideChild: Child = new Child();
@@ -37,6 +38,7 @@ export class ChildCheckinComponent implements OnInit {
 
     this.kioskDetails = new MachineConfiguration();
     this.ready = false;
+    this.switchingEvents = false;
     this.isOverrideProcessing = false;
   }
 
@@ -46,6 +48,8 @@ export class ChildCheckinComponent implements OnInit {
 
   private getData() {
     let today = new Date();
+    this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
+    this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
     this.apiService.getEvents(today, today).subscribe(
       events => {
         if (!events.length) {
@@ -58,28 +62,16 @@ export class ChildCheckinComponent implements OnInit {
         }
 
         if (this.todaysEvents && this.todaysEvents.length) {
-          // Sort by date
-          this.todaysEvents = this.todaysEvents.sort((a: Event, b: Event) => {
-            return a.EventStartDate.localeCompare(b.EventStartDate);
-          });
-
           // Set current service
-          this.selectedEvent = this.todaysEvents.find(e => e.IsCurrentEvent);
+          if (this.todaysEvents.find(e => e.IsCurrentEvent)) {
+            this.selectedEvent = this.todaysEvents.find(e => e.IsCurrentEvent);
+          }
 
           // if no current service, pick the first one in list
           if (!this.selectedEvent) {
             this.selectedEvent = this.todaysEvents[0];
           }
         }
-
-        this.kioskDetails = this.setupService.getMachineDetailsConfigCookie();
-        this.thisSiteName = this.getKioskDetails() ? this.getKioskDetails().CongregationName : null;
-        this.childCheckinService.getEventRoomDetails(this.selectedEvent.EventId, this.kioskDetails.RoomId).subscribe((room) => {
-          this.room = room;
-        });
-
-        this.subscribeToSignalr();
-
         this.ready = true;
       },
       error => {
@@ -91,6 +83,7 @@ export class ChildCheckinComponent implements OnInit {
 
   subscribeToSignalr() {
     // Get an observable for events emitted on this channel
+    this.channelService.unsubAll(Constants.CheckinCapacityChannel);
     let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
     this.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
@@ -103,7 +96,9 @@ export class ChildCheckinComponent implements OnInit {
   }
 
   isActive(event): boolean {
-    return event.EventId === this.selectedEvent.EventId;
+    try {
+      return event.EventId === this.selectedEvent.EventId;
+    } catch (e) {}
   }
 
   get selectedEvent(): Event {
@@ -112,6 +107,13 @@ export class ChildCheckinComponent implements OnInit {
 
   set selectedEvent(event) {
     this.childCheckinService.selectedEvent = event;
+    // make sure to update event room (for capacity purposes)
+    this.switchingEvents = true;
+    this.childCheckinService.getEventRoomDetails(event.EventId, this.kioskDetails.RoomId).subscribe((room) => {
+      this.room = room;
+      this.subscribeToSignalr();
+      this.switchingEvents = false;
+    }, (error) => this.rootService.announceEvent('generalError'));
   }
 
   delete(e) {

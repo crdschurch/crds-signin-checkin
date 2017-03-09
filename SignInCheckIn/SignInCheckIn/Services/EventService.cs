@@ -80,7 +80,7 @@ namespace SignInCheckIn.Services
         //    return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
         //}
 
-        private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token)
+        public void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token)
         {
             // we need to figure out if this event is the adventure club event or the service event
             // if it is not the AC event, we need to get the AC event
