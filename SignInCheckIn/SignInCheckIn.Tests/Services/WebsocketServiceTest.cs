@@ -7,7 +7,6 @@ using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
-using NUnit.Framework.Internal;
 using SignInCheckIn.Hubs;
 
 namespace SignInCheckIn.Tests.Services
@@ -38,7 +37,7 @@ namespace SignInCheckIn.Tests.Services
 
             var eventDto = new EventDto()
             {
-                ParentEventId = 678,
+                ParentEventId = null,
                 EventId = 123,
                 EventTypeId = 7 // not Adventure Club
             };
@@ -61,8 +60,8 @@ namespace SignInCheckIn.Tests.Services
 
             _fixture.PublishCheckinParticipantsAdd(eventId, roomId, data);
 
-            mock.Verify();
-            mockIHubConnectionContext.Verify();
+            mock.VerifyAll();
+            mockIHubConnectionContext.VerifyAll();
         }
 
         [Test]
@@ -78,8 +77,8 @@ namespace SignInCheckIn.Tests.Services
 
             _fixture.PublishCheckinParticipantsCheckedIn(eventId, roomId, data);
 
-            mock.Verify();
-            mockIHubConnectionContext.Verify();
+            mock.VerifyAll();
+            mockIHubConnectionContext.VerifyAll();
         }
 
         [Test]
@@ -95,8 +94,8 @@ namespace SignInCheckIn.Tests.Services
 
             _fixture.PublishCheckinParticipantsAdd(eventId, roomId, data);
 
-            mock.Verify();
-            mockIHubConnectionContext.Verify();
+            mock.VerifyAll();
+            mockIHubConnectionContext.VerifyAll();
         }
 
         [Test]
@@ -112,8 +111,8 @@ namespace SignInCheckIn.Tests.Services
 
             _fixture.PublishCheckinParticipantsRemove(eventId, roomId, data);
 
-            mock.Verify();
-            mockIHubConnectionContext.Verify();
+            mock.VerifyAll();
+            mockIHubConnectionContext.VerifyAll();
         }
 
         [Test]
@@ -129,14 +128,44 @@ namespace SignInCheckIn.Tests.Services
 
             _fixture.PublishCheckinParticipantsOverrideCheckin(eventId, roomId, data);
 
-            mock.Verify();
-            mockIHubConnectionContext.Verify();
+            mock.VerifyAll();
+            mockIHubConnectionContext.VerifyAll();
         }
 
         [Test]
         public void ShouldPublishByParentEventId()
         {
-            Assert.Fail();
+            _eventService = new Mock<IEventService>(MockBehavior.Strict);
+            _applicationConfiguration = new Mock<IApplicationConfiguration>();
+
+            _applicationConfiguration.Setup(ac => ac.CheckinParticipantsChannel).Returns("CheckinParticipantsChannel");
+            _applicationConfiguration.Setup(ac => ac.CheckinCapacityChannel).Returns("CheckinCapacityChannel");
+            _applicationConfiguration.Setup(ac => ac.AdventureClubEventTypeId).Returns(20);
+
+            var eventDto = new EventDto()
+            {
+                ParentEventId = 678,
+                EventId = 123,
+                EventTypeId = 20 // Adventure Club
+            };
+            _eventService.Setup(m => m.GetEvent(It.IsAny<int>())).Returns(eventDto);
+            _hubContext = new Mock<IHubContext>();
+
+            _fixture = new WebsocketService(_eventService.Object, _applicationConfiguration.Object, _hubContext.Object);
+
+            // should publish via the parent channel since it is AC event
+            const string expectedChannelName = "CheckinParticipantsChannel678456";
+            var data = new ParticipantDto();
+            var mock = new Mock<IDependance>();
+            mock.Setup(m => m.OnEvent(expectedChannelName, It.IsAny<ChannelEvent>()));
+            var mockIHubConnectionContext = new Mock<IHubConnectionContext<dynamic>>();
+            mockIHubConnectionContext.Setup(hc => hc.Group(expectedChannelName)).Returns(mock.Object);
+            _hubContext.SetupGet(hc => hc.Clients).Returns(mockIHubConnectionContext.Object);
+
+            _fixture.PublishCheckinParticipantsOverrideCheckin(eventId, roomId, data);
+
+            mock.VerifyAll();
+            mockIHubConnectionContext.VerifyAll();
         }
 
     }

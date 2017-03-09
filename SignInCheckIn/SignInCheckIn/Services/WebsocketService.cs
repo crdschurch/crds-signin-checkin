@@ -69,7 +69,12 @@ namespace SignInCheckIn.Services
             {
                 channelEvent.Name = action;
             }
-            _context.Clients.Group(channelEvent.ChannelName).OnEvent(channelEvent.ChannelName, channelEvent);
+
+            var group = _context.Clients.Group(channelEvent.ChannelName);
+            if (group != null)
+            {
+                group.OnEvent(channelEvent.ChannelName, channelEvent);
+            }
         }
 
         /*
