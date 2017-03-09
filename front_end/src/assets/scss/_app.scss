@@ -162,6 +162,11 @@ a.btn-primary.active:not([href]):not([tabindex]) {
   font-size: 1.5rem;
 }
 
+.btn:disabled,
+.btn.disabled {
+  opacity: .4;
+}
+
 .line-height-1 {
   line-height: 1;
 }
