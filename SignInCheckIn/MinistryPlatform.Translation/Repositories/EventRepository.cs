@@ -186,7 +186,7 @@ namespace MinistryPlatform.Translation.Repositories
         public List<MpEventGroupDto> GetEventGroupsByGroupIdAndEventIds(int groupId, List<int> eventIds)
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
-                .Search<MpEventGroupDto>($"Group_ID ={groupId} AND Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
+                .Search<MpEventGroupDto>($"Event_Groups.Group_ID ={groupId} AND Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
     }
 }

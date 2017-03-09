@@ -142,13 +142,13 @@ namespace SignInCheckIn.Services
 
             var currentEventParticipantDtoList = _signInLogic.SignInParticipants(participantEventMapDto);
 
-            
+            ////////////// JPC - everything above gets moved to the logic class
 
             // null out the room assignment for both participant records if they can't sign in to one or the other,
-            // so that they get a rock
+            // so that they get a rock -- I think this can be left alone, as long as we're passing in the right stuff
             SyncInvalidSignins(currentEventParticipantDtoList, participantEventMapDto);
 
-            ////////////// JPC - everything above gets moved to the logic class
+
 
             // create participants if they're assigned to a room -- we still need to handle the case where there is an
             // error and they can't be signed into both events
@@ -170,7 +170,9 @@ namespace SignInCheckIn.Services
 
             SetParticipantsPrintInformation(response.Participants, eventsForSignin);
 
-            // Add back those participants that didn't get a room assigned
+            // Add back those participants that didn't get a room assigned -- the room id is not getting set on the participant in the 
+            // assignment code, so this is doubling up -- not sure this is still needed??
+            // TODO: Figure out how to deal with the participants that don't have an assigned room - 
             response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
             response.Participants.ForEach(p => p.Selected = true);
 

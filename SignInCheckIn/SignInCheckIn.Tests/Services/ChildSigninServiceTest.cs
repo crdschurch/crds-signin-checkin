@@ -267,6 +267,9 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
+            // TODO: Determine what this should return from a unit test?
+            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto)).Returns(mpEventParticipantDtos);
+
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
 
@@ -423,6 +426,9 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
+            // TODO: Determine what this should return from a unit test?
+            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto)).Returns(mpEventParticipantDtos);
+
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
 
@@ -523,6 +529,9 @@ namespace SignInCheckIn.Tests.Services
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
+
+            // TODO: Determine what this should return from a unit test?
+            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto)).Returns(mpEventParticipantDtos);
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);

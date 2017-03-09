@@ -164,10 +164,10 @@ namespace SignInCheckIn.Controllers
                     var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
                     // must be kiosk type admin and have a printer set up
 
-                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
-                    {
-                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
-                    }
+                    //if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    //{
+                    //    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    //}
                 }
                 else
                 {

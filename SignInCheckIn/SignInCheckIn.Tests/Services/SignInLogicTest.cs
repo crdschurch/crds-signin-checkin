@@ -3,6 +3,7 @@ using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Castle.Components.DictionaryAdapter;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
@@ -563,6 +564,225 @@ namespace SignInCheckIn.Tests.Services
             };
 
             return mpGroupDto;
+        }
+
+        [Test]
+        public void ShouldDetermineEligibleSignInRooms()
+        {
+            // Arrange
+            var eventDtos = GetTwoNonAcEvents();
+            var eventRoomDtos = GetTwoNonAcEventRoomsData();
+
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(eventDtos[0].EventId, eventRoomDtos[0].EventRoomId.GetValueOrDefault())).Returns(new List<MpBumpingRoomsDto>());
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(eventDtos[1].EventId, eventRoomDtos[1].EventRoomId.GetValueOrDefault())).Returns(new List<MpBumpingRoomsDto>());
+
+            // Act
+            var result = _fixture.GetEligibleRoomsForEvents(eventDtos, eventRoomDtos);
+
+            // Assert
+            Assert.AreEqual(2, result.Count);
+        }
+
+        [Test]
+        public void ShouldDetermineEligibleBumpingSignInRooms()
+        {
+            // Arrange
+            var eventDtos = GetTwoNonAcEvents();
+            var eventRoomDtos = GetTwoNonAcNoCapacityEventRoomsData();
+
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(eventDtos[0].EventId, eventRoomDtos[0].EventRoomId.GetValueOrDefault()))
+                .Returns(GetNonAcBumpingRoomsDataByEventRoomId(eventRoomDtos[0].EventRoomId.GetValueOrDefault()));
+            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(eventDtos[1].EventId, eventRoomDtos[1].EventRoomId.GetValueOrDefault()))
+                .Returns(GetNonAcBumpingRoomsDataByEventRoomId(eventRoomDtos[1].EventRoomId.GetValueOrDefault()));
+
+            // Act
+            var result = _fixture.GetEligibleRoomsForEvents(eventDtos, eventRoomDtos);
+
+            // Assert
+            Assert.AreEqual(2, result.Count);
+        }
+
+        private List<MpEventDto> GetTwoNonAcEvents()
+        {
+            // we need to set times dynamically on the test data set, to avoid having unit tests
+            // break when run at later or earlier hours - this may still be a trouble spot
+            var currentStartTime = System.DateTime.Now;
+            var futureStartTime = System.DateTime.Now.AddHours(2);
+
+            List<MpEventDto> mpEventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    EventId = 1234567,
+                    EventStartDate = currentStartTime,
+                    EventTitle = "First Non Ac Event",
+                    Cancelled = false,
+                    ParentEventId = null
+                },
+                new MpEventDto
+                {
+                    EventId = 2345678,
+                    EventStartDate = futureStartTime,
+                    EventTitle = "Second Non Ac Event",
+                    Cancelled = false,
+                    ParentEventId = null
+                }
+            };
+
+            return mpEventDtos;
+        }
+
+        private List<MpEventRoomDto> GetTwoNonAcEventRoomsData()
+        {
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    Capacity = 10,
+                    CheckedIn = 0,
+                    EventId = 1234567,
+                    EventRoomId = 1122333,
+                    RoomId = 1234,
+                    SignedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    Capacity = 10,
+                    CheckedIn = 0,
+                    EventId = 2345678,
+                    EventRoomId = 3332211,
+                    RoomId = 4321,
+                    SignedIn = 0
+                }
+            };
+
+            return eventRooms;
+        }
+
+        private List<MpEventRoomDto> GetTwoNonAcNoCapacityEventRoomsData()
+        {
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    Capacity = 5,
+                    EventId = 1234567,
+                    EventRoomId = 1122333,
+                    RoomId = 1234,
+                    SignedIn = 10
+                },
+                new MpEventRoomDto
+                {
+                    Capacity = 10,
+                    EventId = 2345678,
+                    EventRoomId = 3332211,
+                    RoomId = 4321,
+                    SignedIn = 10
+                }
+            };
+
+            return eventRooms;
+        }
+
+        private List<MpBumpingRoomsDto> GetNonAcBumpingRoomsDataByEventRoomId(int eventRoomId)
+        {
+            if (eventRoomId == 1122333)
+            {
+                List<MpBumpingRoomsDto> bumpingRooms = new List<MpBumpingRoomsDto>
+                {
+                    new MpBumpingRoomsDto
+                    {
+                        RoomId = 1231231,
+                        AllowSignIn = true,
+                        Capacity = 10,
+                        RoomName = "Bumping Room 1231231"
+                    }
+                };
+
+                return bumpingRooms;
+            }
+
+            if (eventRoomId == 3332211)
+            {
+                List<MpBumpingRoomsDto> bumpingRooms = new List<MpBumpingRoomsDto>
+                {
+                    new MpBumpingRoomsDto
+                    {
+                        RoomId = 3213213,
+                        AllowSignIn = true,
+                        Capacity = 10,
+                        RoomName = "Bumping Room 3213213"
+                    }
+                };
+
+                return bumpingRooms;
+            }
+
+            return null;
+        }
+
+        [Test]
+        public void ShouldFinalizeAcRoomAssignments()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _fixture.FinalizeAcRoomAssignments(GetAcEventRoomSignInDataTwoRooms(), GetNonAcEventRoomSignInDataTwoRooms());
+
+            // Assert
+            Assert.AreEqual(2, result.Count);
+
+        }
+
+        private List<EventRoomSignInData> GetNonAcEventRoomSignInDataTwoRooms()
+        {
+            var eventRoomSignInData = new List<EventRoomSignInData>
+            {
+                new EventRoomSignInData
+                {
+                    EventId = 1234567,
+                    EventRoomId = 1122333,
+                    ParentEventId = null,
+                    RoomId = 1234,
+                    RoomName = "First Non Ac Event Room Sign In Data"
+                },
+                new EventRoomSignInData
+                {
+                    EventId = 2345678,
+                    EventRoomId = 2233444,
+                    ParentEventId = null,
+                    RoomId = 2345,
+                    RoomName = "Second Non Ac Event Room Sign In Data"
+                }
+            };
+
+            return eventRoomSignInData;
+        }
+
+        private List<EventRoomSignInData> GetAcEventRoomSignInDataTwoRooms()
+        {
+            var eventRoomSignInData = new List<EventRoomSignInData>
+            {
+                new EventRoomSignInData
+                {
+                    EventId = 7654321,
+                    EventRoomId = 3332211,
+                    ParentEventId = 1234567,
+                    RoomId = 4321,
+                    RoomName = "First Ac Event Room Sign In Data"
+                },
+                new EventRoomSignInData
+                {
+                    EventId = 8765432,
+                    EventRoomId = 4443322,
+                    ParentEventId = 2345678,
+                    RoomId = 5432,
+                    RoomName = "Second Ac Event Room Sign In Data"
+                }
+            };
+
+            return eventRoomSignInData;
         }
     }
 }
