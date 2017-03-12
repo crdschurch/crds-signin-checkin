@@ -97,7 +97,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
 
             // Act
-            var result = _fixture.GetSignInEvents(siteId, underThreeSignIn, adventureClubSignIn);
+            var result = _fixture.EvaluateSignInEvents(siteId, underThreeSignIn, adventureClubSignIn, GetTestEventSet());
 
             // Assert
             Assert.AreEqual(result[0].EventId, 1234567);
@@ -117,7 +117,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
 
             // Act
-            var result = _fixture.GetSignInEvents(siteId, adventureClubSignIn, underThreeSignIn);
+            var result = _fixture.EvaluateSignInEvents(siteId, adventureClubSignIn, underThreeSignIn, GetTestEventSet());
 
             // Assert
             var serviceEventCount = result.Count(r => r.ParentEventId == null);
@@ -141,12 +141,8 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = false;
             bool adventureClubSignIn = true;
 
-            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
-
-            _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSetCurrentEventAc());
-
             // Act
-            var result = _fixture.GetSignInEvents(siteId, adventureClubSignIn, underThreeSignIn);
+            var result = _fixture.EvaluateSignInEvents(siteId, adventureClubSignIn, underThreeSignIn, GetTestEventSetCurrentEventAc());
 
             // Assert
             var serviceEventCount = result.Count(r => r.ParentEventId == null);
@@ -169,12 +165,8 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = false;
             bool adventureClubSignIn = true;
 
-            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
-
-            _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSetFutureEventAc());
-
             // Act
-            var result = _fixture.GetSignInEvents(siteId, adventureClubSignIn, underThreeSignIn);
+            var result = _fixture.EvaluateSignInEvents(siteId, adventureClubSignIn, underThreeSignIn, GetTestEventSetFutureEventAc());
 
             // Assert
             var serviceEventCount = result.Count(r => r.ParentEventId == null);
@@ -197,12 +189,8 @@ namespace SignInCheckIn.Tests.Services
             bool underThreeSignIn = true;
             bool adventureClubSignIn = true;
 
-            var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
-
-            _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
-
             // Act
-            var result = _fixture.GetSignInEvents(siteId, adventureClubSignIn, underThreeSignIn);
+            var result = _fixture.EvaluateSignInEvents(siteId, adventureClubSignIn, underThreeSignIn, GetTestEventSet());
 
             // Assert
             var serviceEventCount = result.Count(r => r.ParentEventId == null);

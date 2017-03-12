@@ -102,6 +102,7 @@ namespace SignInCheckIn.Services
                 ProcessGuestSignins(participantEventMapDto);
             }
 
+            // this needs to check all four events...
             var eventsForSignin = GetEventsForSignin(participantEventMapDto);
             CheckForDuplicateSignIns(eventsForSignin, participantEventMapDto);
 
@@ -140,7 +141,7 @@ namespace SignInCheckIn.Services
             //    mpAllEventParticipantDtoList.AddRange(secondEventParticipants);
             //}
 
-            var currentEventParticipantDtoList = _signInLogic.SignInParticipants(participantEventMapDto);
+            var currentEventParticipantDtoList = _signInLogic.SignInParticipants(participantEventMapDto, eventsForSignin);
 
             ////////////// JPC - everything above gets moved to the logic class
 
@@ -168,8 +169,10 @@ namespace SignInCheckIn.Services
                 r.CheckinPhone = participantEventMapDto.HouseholdPhoneNumber;
             });
 
-            SetParticipantsPrintInformation(response.Participants, eventsForSignin);
-
+            // sort the participants, and use only the first participant in each group as the return print value thing
+            var groupedParticipants = SetParticipantsPrintInformation(response.Participants, eventsForSignin);
+            response.Participants = groupedParticipants.Select(r => r.First()).ToList();
+            
             // Add back those participants that didn't get a room assigned -- the room id is not getting set on the participant in the 
             // assignment code, so this is doubling up -- not sure this is still needed??
             // TODO: Figure out how to deal with the participants that don't have an assigned room - 
@@ -179,52 +182,66 @@ namespace SignInCheckIn.Services
             return response;
         }
 
-        private void SetParticipantsPrintInformation(List<ParticipantDto> participants, IReadOnlyList<MpEventDto> eventsForSignin)
+        private List<List<ParticipantDto>> SetParticipantsPrintInformation(List<ParticipantDto> participants, IReadOnlyList<MpEventDto> eventsForSignin)
         {
-            if (eventsForSignin.Count == 1)
-            {
-                SetParticipantsPrintInformationForOneEvent(participants);
-            }
-            else
-            {
-                SetParticipantsPrintInformationForMultiEvents(participants, eventsForSignin);
-            }
-        }
+            var groupedParticipants = participants.GroupBy(r => r.ParticipantId).Select(r => r.ToList()).ToList();
 
-        private void SetParticipantsPrintInformationForOneEvent(List<ParticipantDto> participants)
-        {
-            foreach (var participant in participants)
+            foreach (var groupedParticipantSet in groupedParticipants)
             {
-                SetCallNumber(participant, participant.EventParticipantId);
-            }
+                SetCallNumber(groupedParticipantSet[0], groupedParticipantSet[0].EventParticipantId);
 
-            // Update the MP Database with this information
-            var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
-            _participantRepository.UpdateEventParticipants(mpParticipantDtos);
-        }
-
-        private void SetParticipantsPrintInformationForMultiEvents(List<ParticipantDto> participants, IReadOnlyList<MpEventDto> eventsForSignin)
-        {
-            foreach (var participant in participants.Where(r => r.EventId == eventsForSignin[1].EventId))
-            {
-                SetCallNumber(participant, participant.EventParticipantId);
-
-                // If they are sigining into multiple events set there participant information
-                if (eventsForSignin.Count != 2) continue;
-                foreach (var participantTwo in participants.Where(p2 => p2.ParticipantId == participant.ParticipantId && p2.EventId == eventsForSignin[0].EventId))
+                // if there is a second participant record, set their print data
+                if (groupedParticipantSet.Count > 1)
                 {
-                    participantTwo.AssignedSecondaryRoomId = participant.AssignedRoomId;
-                    participantTwo.AssignedSecondaryRoomName = participant.AssignedRoomName;
-                    participantTwo.CallNumber = participant.CallNumber;
+                    SetCallNumber(groupedParticipantSet[1], groupedParticipantSet[0].EventParticipantId);
+
+                    // set the information for printing on the print cards
+                    groupedParticipantSet[0].AssignedSecondaryRoomId = groupedParticipantSet[1].AssignedRoomId;
+                    groupedParticipantSet[0].AssignedSecondaryRoomName = groupedParticipantSet[1].AssignedRoomName;
                 }
             }
 
-            // Update the MP Database with this information
             var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
             _participantRepository.UpdateEventParticipants(mpParticipantDtos);
-
-            participants.RemoveAll(r => r.EventId == eventsForSignin[1].EventId);
+            return groupedParticipants;
         }
+
+        //private void SetParticipantsPrintInformationForOneEvent(ParticipantDto participant)
+        //{
+        //    //foreach (var participant in participants)
+        //    //{
+        //    //    SetCallNumber(participant, participant.EventParticipantId);
+        //    //}
+
+        //    SetCallNumber(participant, participant.EventParticipantId);
+
+        //    //// Update the MP Database with this information
+        //    //var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
+        //    //_participantRepository.UpdateEventParticipants(mpParticipantDtos);
+        //}
+
+        //private void SetParticipantsPrintInformationForMultiEvents(List<ParticipantDto> participants, IReadOnlyList<MpEventDto> eventsForSignin)
+        //{
+        //    foreach (var participant in participants.Where(r => r.EventId == eventsForSignin[1].EventId))
+        //    {
+        //        SetCallNumber(participant, participant.EventParticipantId);
+
+        //        // If they are sigining into multiple events set there participant information
+        //        if (eventsForSignin.Count != 2) continue;
+        //        foreach (var participantTwo in participants.Where(p2 => p2.ParticipantId == participant.ParticipantId && p2.EventId == eventsForSignin[0].EventId))
+        //        {
+        //            participantTwo.AssignedSecondaryRoomId = participant.AssignedRoomId;
+        //            participantTwo.AssignedSecondaryRoomName = participant.AssignedRoomName;
+        //            participantTwo.CallNumber = participant.CallNumber;
+        //        }
+        //    }
+
+        //    //// Update the MP Database with this information
+        //    //var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
+        //    //_participantRepository.UpdateEventParticipants(mpParticipantDtos);
+
+        //    //participants.RemoveAll(r => r.EventId == eventsForSignin[1].EventId);
+        //}
 
         private void SetCallNumber(ParticipantDto participant, int eventParticipantId)
         {
@@ -551,55 +568,80 @@ namespace SignInCheckIn.Services
         // service event id
         public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)
         {
-            var returnEvents = new List<MpEventDto>();
-
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
             var dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true)
-                .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate);
+                .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
 
-            if (!dailyEvents.Any())
+            var eligibleEvents = new List<MpEventDto>();
+
+            // pull off (at most) the top 2 service events
+            var serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).Take(2).ToList();
+
+            // we need to get first two event services, and then the matching ac events - if there's
+            // a combination of 1, 1AC, 2, 3, 3AC, 3 and 3 AC are not considered for checkin
+            for (int i = 0; i < serviceEventSet.Count; i++)
             {
-                throw new Exception("GetEventsForSignin: No daily events for site");
-            }
+                eligibleEvents.Add(serviceEventSet[i]);
 
-            // Get the first AC event that day
-            var mpAcEventDto = dailyEvents.FirstOrDefault(r => r.ParentEventId != null && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId && r.Cancelled == false);
-
-            if (participantEventMapDto.ServicesAttended == 2 && mpAcEventDto != null)
-            {
-                // Case #1 - no AC event for current event, but later AC, sign them into the current
-                // event and later AC
-                if (mpAcEventDto.ParentEventId != participantEventMapDto.CurrentEvent.EventId)
+                if (dailyEvents.Any(r => r.ParentEventId == serviceEventSet[i].EventId))
                 {
-                    returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
-                    returnEvents.Add(mpAcEventDto);
-                    return returnEvents;
-                }
-
-                // check to see if there is another service event that day
-                var nextServiceEvent = dailyEvents.FirstOrDefault(r => r.EventId != participantEventMapDto.CurrentEvent.EventId && r.ParentEventId == null);
-
-                // Case #2 - no following service events, sign them into the current service event
-                if (nextServiceEvent == null)
-                {
-                    returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
-                    return returnEvents;
-                }
-
-                // Case #3 - AC for current event and later event exists, sign them
-                // into the current AC event and later service event
-                if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId)
-                {
-                    returnEvents.Add(mpAcEventDto);
-                    returnEvents.Add(nextServiceEvent);
-                    return returnEvents;
+                    eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == serviceEventSet[i].EventId));
                 }
             }
 
-            // if there are no AC events for the day or they select to serve 1 hour, they are signed into the current service
-            returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
-            return returnEvents;
+
+            return eligibleEvents;
+
+            //var returnEvents = new List<MpEventDto>();
+
+            //var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
+
+            //var dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true)
+            //    .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate);
+
+            //if (!dailyEvents.Any())
+            //{
+            //    throw new Exception("GetEventsForSignin: No daily events for site");
+            //}
+
+            //// Get the first AC event that day
+            //var mpAcEventDto = dailyEvents.FirstOrDefault(r => r.ParentEventId != null && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId && r.Cancelled == false);
+
+            //if (participantEventMapDto.ServicesAttended == 2 && mpAcEventDto != null)
+            //{
+            //    // Case #1 - no AC event for current event, but later AC, sign them into the current
+            //    // event and later AC
+            //    if (mpAcEventDto.ParentEventId != participantEventMapDto.CurrentEvent.EventId)
+            //    {
+            //        returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+            //        returnEvents.Add(mpAcEventDto);
+            //        return returnEvents;
+            //    }
+
+            //    // check to see if there is another service event that day
+            //    var nextServiceEvent = dailyEvents.FirstOrDefault(r => r.EventId != participantEventMapDto.CurrentEvent.EventId && r.ParentEventId == null);
+
+            //    // Case #2 - no following service events, sign them into the current service event
+            //    if (nextServiceEvent == null)
+            //    {
+            //        returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+            //        return returnEvents;
+            //    }
+
+            //    // Case #3 - AC for current event and later event exists, sign them
+            //    // into the current AC event and later service event
+            //    if (mpAcEventDto.ParentEventId == participantEventMapDto.CurrentEvent.EventId)
+            //    {
+            //        returnEvents.Add(mpAcEventDto);
+            //        returnEvents.Add(nextServiceEvent);
+            //        return returnEvents;
+            //    }
+            //}
+
+            //// if there are no AC events for the day or they select to serve 1 hour, they are signed into the current service
+            //returnEvents.Add(dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId));
+            //return returnEvents;
         }
 
         private bool CheckEventTimeValidity(MpEventDto mpEventDto)

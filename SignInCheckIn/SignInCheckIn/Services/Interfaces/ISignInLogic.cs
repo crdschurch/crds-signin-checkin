@@ -10,6 +10,6 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface ISignInLogic
     {
-        List<MpEventParticipantDto> SignInParticipants(ParticipantEventMapDto participantEventMapDto);
+        List<MpEventParticipantDto> SignInParticipants(ParticipantEventMapDto participantEventMapDto, List<MpEventDto> eligibleEvents);
     }
 }

@@ -44,7 +44,7 @@ namespace SignInCheckIn.Services
         // 2. participant id
         // 3. date?
         // 4. ac signin yes/no
-        public List<MpEventParticipantDto> SignInParticipants(ParticipantEventMapDto participantEventMapDto)
+        public List<MpEventParticipantDto> SignInParticipants(ParticipantEventMapDto participantEventMapDto, List<MpEventDto> currentEvents)
         {
             var mpEventParticipantList = new List<MpEventParticipantDto>();
 
@@ -52,13 +52,13 @@ namespace SignInCheckIn.Services
             // be pulling all events on the day
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.DuplicateSignIn == false && r.Selected == true))
             {
-                mpEventParticipantList.AddRange(SignInParticipant(participant, participantEventMapDto));
+                mpEventParticipantList.AddRange(SignInParticipant(participant, participantEventMapDto, currentEvents));
             }
 
             return mpEventParticipantList;
         }
 
-        public List<MpEventParticipantDto> SignInParticipant(ParticipantDto participant, ParticipantEventMapDto participantEventMapDto)
+        public List<MpEventParticipantDto> SignInParticipant(ParticipantDto participant, ParticipantEventMapDto participantEventMapDto, List<MpEventDto> currentEvents)
         {
             var mpEventParticipantList = new List<MpEventParticipantDto>();
 
@@ -69,7 +69,7 @@ namespace SignInCheckIn.Services
             var adventureClubSignIn = (participantEventMapDto.ServicesAttended == 2);
 
             // get the events they can sign into
-            var eligibleEvents = GetSignInEvents(participantEventMapDto.CurrentEvent.EventSiteId, adventureClubSignIn, underThreeSignIn);
+            var eligibleEvents = EvaluateSignInEvents(participantEventMapDto.CurrentEvent.EventSiteId, adventureClubSignIn, underThreeSignIn, currentEvents);
 
             // // TODO: Add check here to make sure there's a group assigned for the event room, otherwise set an error --
             // this actually needs to be run after the attempt to sign in, so we can post-mortem why they couldn't sign in
@@ -104,26 +104,23 @@ namespace SignInCheckIn.Services
         } 
 
         // parameters determine the behavior of what events we get back
-        public List<MpEventDto> GetSignInEvents(int siteId, bool adventureClubSignIn, bool underThree)
+        public List<MpEventDto> EvaluateSignInEvents(int siteId, bool adventureClubSignIn, bool underThree, List<MpEventDto> currentEvents)
         {
             List<MpEventDto> eligibleEvents = new List<MpEventDto>();
 
             // we start by getting a list of all events for the day
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
-            var dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, siteId, true)
-                .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate);
-
             // return only a single event
             if (adventureClubSignIn == false)
             {
-                eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == null));
+                eligibleEvents.Add(currentEvents.First(r => r.ParentEventId == null));
                 return eligibleEvents;
             }
 
             if (underThree == true)
             {
-                var serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).ToList();
+                var serviceEventSet = currentEvents.Where(r => r.ParentEventId == null).ToList();
 
                 // we need to get first two event services, and no matching ac events
                 for (int i = 0; i < 2; i++)
@@ -136,7 +133,7 @@ namespace SignInCheckIn.Services
 
             if (adventureClubSignIn == true)
             {
-                var serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).ToList();
+                var serviceEventSet = currentEvents.Where(r => r.ParentEventId == null).ToList();
 
                 // we need to get first two event services, and then the matching ac events - if there's
                 // a combination of 1, 1AC, 2, 3, 3AC, 3 and 3 AC are not considered for checkin
@@ -144,9 +141,9 @@ namespace SignInCheckIn.Services
                 {
                     eligibleEvents.Add(serviceEventSet[i]);
 
-                    if (dailyEvents.Any(r => r.ParentEventId == serviceEventSet[i].EventId))
+                    if (currentEvents.Any(r => r.ParentEventId == serviceEventSet[i].EventId))
                     {
-                        eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == serviceEventSet[i].EventId));
+                        eligibleEvents.Add(currentEvents.First(r => r.ParentEventId == serviceEventSet[i].EventId));
                     }
                 }
 
@@ -195,6 +192,22 @@ namespace SignInCheckIn.Services
                         var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, bumpedRoom.RoomId);
                         mpEventParticipantRecords.Add(mpEventParticipantDto);
                     }
+                }
+            }
+
+            // set the room ids and other data on the participant here? - what order do we want the room ids in?
+            for (int i = 0; i < mpEventParticipantRecords.Count; i++)
+            {
+                if (i == 0)
+                {
+                    participant.AssignedRoomId = mpEventParticipantRecords[i].RoomId;
+                    participant.AssignedRoomName = mpEventParticipantRecords[i].RoomName;
+                }
+
+                if (i == 1)
+                {
+                    participant.AssignedSecondaryRoomId = mpEventParticipantRecords[i].RoomId;
+                    participant.AssignedSecondaryRoomName = mpEventParticipantRecords[i].RoomName;
                 }
             }
 
@@ -278,6 +291,21 @@ namespace SignInCheckIn.Services
             //    //continue;
             //}
 
+            // set the room ids and other data on the participant here? - what order do we want the room ids in?
+            for (int i = 0; i < mpEventParticipantRecords.Count; i++)
+            {
+                if (i == 0)
+                {
+                    participant.AssignedRoomId = mpEventParticipantRecords[i].RoomId;
+                    participant.AssignedRoomName = mpEventParticipantRecords[i].RoomName;
+                }
+
+                if (i == 1)
+                {
+                    participant.AssignedSecondaryRoomId = mpEventParticipantRecords[i].RoomId;
+                    participant.AssignedSecondaryRoomName = mpEventParticipantRecords[i].RoomName;
+                }
+            }
 
             return mpEventParticipantRecords;
         }
