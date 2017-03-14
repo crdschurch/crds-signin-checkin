@@ -202,7 +202,7 @@ namespace SignInCheckIn.Controllers
 
                     if (reverseSuccess == true)
                     {
-                        dynamic data = new JObject();
+                        var data = new ParticipantDto();
                         data.EventParticipantId = eventparticipantId;
                         data.OriginalRoomId = roomId;
 
