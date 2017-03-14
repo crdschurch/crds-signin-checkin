@@ -404,7 +404,7 @@ namespace SignInCheckIn.Services
             {
                 EventId = eventId,
                 ParticipantId = participant.ParticipantId,
-                ParticipantStatusId = _applicationConfiguration.AttendeeParticipantType,
+                ParticipantStatusId = _applicationConfiguration.SignedInParticipationStatusId,
                 FirstName = participant.FirstName,
                 LastName = participant.LastName,
                 Nickname = participant.Nickname,

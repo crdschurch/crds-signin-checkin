@@ -158,6 +158,8 @@ namespace SignInCheckIn.Services
                     // set the information for printing on the print cards
                     groupedParticipantSet[0].AssignedSecondaryRoomId = groupedParticipantSet[1].AssignedRoomId;
                     groupedParticipantSet[0].AssignedSecondaryRoomName = groupedParticipantSet[1].AssignedRoomName;
+                    var participantEvent = eventsForSignin.Single(e => e.EventId == groupedParticipantSet[1].EventId);
+                    groupedParticipantSet[0].EventIdSecondary = participantEvent.ParentEventId.HasValue ? participantEvent.ParentEventId.Value : participantEvent.EventId;
                 }
             }
 
