@@ -377,7 +377,6 @@ namespace SignInCheckIn.Services
                 if (participant.AssignedRoomId == null && participant.GroupId != null)
                 {
                     // select rooms for the events...see if there were any rooms on the event for the participant
-                    //var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eligibleEvents.Select(r => r.EventId).ToList());
                     var eventRooms = _roomRepository.GetRoomsForEvent(eligibleEvents.Select(r => r.EventId).ToList(), participantEventMapDto.CurrentEvent.EventSiteId);
 
                     if (!(eventRooms.Any(r => r.AllowSignIn == true)))
