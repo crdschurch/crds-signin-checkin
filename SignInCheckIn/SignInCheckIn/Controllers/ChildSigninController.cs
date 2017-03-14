@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -229,14 +230,14 @@ namespace SignInCheckIn.Controllers
                 {
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedRoomId == p.AssignedRoomId);
-                    _websocketService.PublishCheckinParticipantsAdd(p.EventId, p.AssignedRoomId.Value, updatedParticipants);
+                    _websocketService.PublishCheckinParticipantsAdd(p.EventId, p.AssignedRoomId.Value, new List<ParticipantDto>() {p});
                 }
 
                 if (p.AssignedSecondaryRoomId != null)
                 {
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedSecondaryRoomId == p.AssignedSecondaryRoomId);
-                    _websocketService.PublishCheckinParticipantsAdd(p.EventIdSecondary, p.AssignedSecondaryRoomId.Value, updatedParticipants);
+                    _websocketService.PublishCheckinParticipantsAdd(p.EventIdSecondary, p.AssignedSecondaryRoomId.Value, new List<ParticipantDto>() { p });
                 }
             }
         }

@@ -36,7 +36,7 @@ namespace SignInCheckIn.Services
             Publish(channelName, "CheckedIn", data);
         }
 
-        public void PublishCheckinParticipantsAdd(int eventId, int roomId, IEnumerable<ParticipantDto> data)
+        public void PublishCheckinParticipantsAdd(int eventId, int roomId, List<ParticipantDto> data)
         {
             var publishEventId = GetPublishEventId(eventId);
             var channelName = GetChannelNameCheckinParticipants(publishEventId, roomId);
