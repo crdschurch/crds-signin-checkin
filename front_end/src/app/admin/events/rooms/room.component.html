@@ -1,4 +1,4 @@
-<td [ngClass]="{'disabled': pending }">
+<td [ngClass]="{'disabled': pending }"  class="hidden-print">
   <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
     <div *ngFor="let ageGrade of ageRangeAndGrades();">
       {{ ageGrade }}
@@ -8,7 +8,7 @@
 <td [ngClass]="{'disabled': pending }">
   {{room.RoomName}} <label class="tag tag-info" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</label>
   <br>
-  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt Rooms</a>
+  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }"  class="hidden-print">Alt Rooms</a>
 </td>
 <td [ngClass]="{'disabled': pending }">
   <span *ngIf="hasCapacity()">
@@ -30,18 +30,18 @@
     </span>
   </span>
 </td>
-<td [ngClass]="{'disabled': pending }">
+<td [ngClass]="{'disabled': pending }"  class="hidden-print">
   <input class='tgl tgl-light' id='allow-signin-{{room.RoomId}}' type='checkbox' (change)="toggle('AllowSignIn')" [checked]="room.AllowSignIn">
   <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' (click)="toggleClick()"><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
 </td>
 <td [ngClass]="{'disabled': pending }">
   <div class="number-stepper">
     <div class="input-group">
-      <span class="input-group-btn">
+      <span class="input-group-btn hidden-print">
         <button class="btn btn-secondary" type="button" (click)="remove('Volunteers')" [disabled]="pending">-</button>
       </span>
       <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Volunteers" [readonly]="pending" (focus)="highlight($event)" (input)="change()">
-      <span class="input-group-btn">
+      <span class="input-group-btn hidden-print">
         <button class="btn btn-secondary" type="button" (click)="add('Volunteers')" [disabled]="pending">+</button>
       </span>
     </div>
@@ -50,11 +50,11 @@
 <td [ngClass]="{'disabled': pending }">
   <div class="number-stepper">
     <div class="input-group">
-      <span class="input-group-btn">
+      <span class="input-group-btn hidden-print">
         <button class="btn btn-secondary" type="button" (click)="remove('Capacity')" [disabled]="pending">-</button>
       </span>
       <input type="number" class="form-control text-xs-center" [(ngModel)]="room.Capacity" [readonly]="pending" (focus)="highlight($event)" (input)="change()">
-      <span class="input-group-btn">
+      <span class="input-group-btn hidden-print">
         <button class="btn btn-secondary" type="button" (click)="add('Capacity')" [disabled]="pending">+</button>
       </span>
     </div>

@@ -25,9 +25,13 @@
           <button type="submit" class="btn btn-primary input-group-addon" (click)="onSearch()">Search</button>
         </div>
       </div>
+      <div class="col-xs-12" *ngIf="isReady()">
+          <strong>Total Children for All Rooms: {{children.length}}</strong>
+      </div>
       <div class="col-xs-12">
         <preloader *ngIf="!isReady()"></preloader>
-        <table class="table" *ngIf="isReady()">
+          <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No results found for "{{ searchString }}".</div>
+        <table class="table" *ngIf="isReady() && children?.length > 0">
           <thead>
             <tr>
               <th>First Name</th>
@@ -44,7 +48,7 @@
         <tbody *ngFor="let cbr of childrenByRoom" >
               <tr>
                 <td colspan="9">
-                  <strong>{{cbr[0].AssignedRoomName}}</strong>
+                  <strong>{{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}</strong>
                 </td>
               </tr>
                 <tr *ngFor="let child of cbr">

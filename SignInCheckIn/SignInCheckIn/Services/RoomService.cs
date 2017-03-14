@@ -16,6 +16,7 @@ namespace SignInCheckIn.Services
     public class RoomService : IRoomService
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IEventService _eventService;
         private readonly IRoomRepository _roomRepository;
         private readonly IAttributeRepository _attributeRepository;
         private readonly IGroupRepository _groupRepository;
@@ -23,6 +24,7 @@ namespace SignInCheckIn.Services
         private readonly IApiUserRepository _apiUserRepository;
 
         public RoomService(IEventRepository eventRepository,
+                           IEventService eventService,
                            IRoomRepository roomRepository,
                            IAttributeRepository attributeRepository,
                            IGroupRepository groupRepository,
@@ -30,6 +32,7 @@ namespace SignInCheckIn.Services
                            IApiUserRepository apiUserRepository)
         {
             _eventRepository = eventRepository;
+            _eventService = eventService;
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
             _groupRepository = groupRepository;
@@ -302,12 +305,12 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto GetEventRoom(int eventId, int roomId)
         {
-            var token = _apiUserRepository.GetToken();
-            return GetEventRoom(token, eventId, roomId, false);
+            return GetEventRoom(eventId, roomId, false);
         }
 
-        private EventRoomDto GetEventRoom(string token, int eventId, int roomId, bool canCreateEventRoom = true)
+        public EventRoomDto GetEventRoom(int eventId, int roomId, bool canCreateEventRoom = true)
         {
+            var token = _apiUserRepository.GetToken();
             var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
 
             if (events.Count == 0)
@@ -473,35 +476,10 @@ namespace SignInCheckIn.Services
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
             var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
+            // stored proc is supposed to do this but doesnt seem to be working...
+            _eventService.UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), authenticationToken);
+
             return eventRooms.First(); 
-        }
-
-        [Obsolete("Replaced by the new stored proc - left here for reference")]
-        private void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, int roomId, string token)
-        {
-            // we need to figure out if this event is the adventure club event or the service event
-            // if it is not the AC event, we need to get the AC event
-            if (eventDto.EventTypeId != _applicationConfiguration.AdventureClubEventTypeId)
-            {
-                eventDto = _eventRepository.GetSubeventByParentEventId(token, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
-            }
-
-            // search to see if there are existing Event Rooms for the AC subevent
-            var eventRoom = _roomRepository.GetEventRoom(eventDto.EventId);
-            
-            if (eventRoom != null)
-            {
-                // if there are, set cancelled to false
-                eventDto.Cancelled = false;
-                _eventRepository.UpdateEvent(token, eventDto);
-            }
-            else
-            {
-                // if that are not, set cancelled to true
-                // if there are, set cancelled to false
-                eventDto.Cancelled = true;
-                _eventRepository.UpdateEvent(token, eventDto);
-            }
         }
 
         [Obsolete("Replaced by the new stored proc - left here for reference")]

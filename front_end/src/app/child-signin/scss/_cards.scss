@@ -25,18 +25,36 @@
   color: #fff;
   font-size: 2rem;
   font-weight: bold;
-  height: 2em;
-  width: 2em;
-  line-height: 2em;
+  height: 1.75em;
+  width: 1.75em;
+  line-height: 1.75em;
   text-align: center;
   transition: background-color .3s ease-out;
   display: block;
-  margin: 0 auto .5em;
+  margin: 0 auto;
+
+  @include media-breakpoint-up(lg) {
+    float: left;
+    margin: 0;
+  }
+}
+
+.guest-title {
+  margin: 0;
+  padding: 1em 0 0 0;
+  text-align: center;
+
+  @include media-breakpoint-up(lg) {
+    padding: 0 0 0 1em;
+    line-height: 60px;
+    float: left;
+    text-align: left;
+  }
 }
 
 a:hover {
   .round-plus {
-    background: $brand-dkblue;
+    background: darken( $brand-primary, 15% );
   }
 }
 

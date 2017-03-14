@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.DTO;
 using SignInCheckIn.Models.DTO;
 
@@ -16,5 +17,6 @@ namespace SignInCheckIn.Services.Interfaces
         List<MpGroupDto> GetEventUnassignedGroups(string authenticationToken, int eventId);
         EventRoomDto CreateOrUpdateAdventureClubRoom(string authenticationToken, EventRoomDto eventRoom);
         EventRoomDto GetEventRoom(int eventId, int roomId);
+        EventRoomDto GetEventRoom(int eventId, int roomId, bool canCreateEventRoom);
     }
 }

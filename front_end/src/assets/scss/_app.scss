@@ -85,7 +85,7 @@ body {
 }
 .num-pad-value {
   @extend .display-4;
-  font-size: 2.5rem;
+  font-size: 1rem;
   text-align: center;
   background: none;
   border: none;
@@ -95,10 +95,34 @@ body {
     font-size: 1.5rem;
     line-height: 1em;
     color: #fff;
+    opacity: 1;
     vertical-align: bottom;
   }
   &:focus {
     outline: none;
+  }
+  @include media-breakpoint-up(sm) {
+    font-size: 1.25rem;
+  }
+  @include media-breakpoint-up(lg) {
+    font-size: 1.5rem;
+  }
+  @include media-breakpoint-up(xl) {
+    font-size: 2rem;
+  }
+}
+
+.new-family-text {
+  padding-top: 0;
+  font-size: 1rem;
+
+  @include media-breakpoint-up(lg) {
+    padding-top: .45rem;
+  }
+
+  @include media-breakpoint-up(xl) {
+    padding-top: .45rem;
+    font-size: 1.25rem;
   }
 }
 
@@ -111,6 +135,22 @@ body {
   padding: .45em 1em;
   color: #fff;
 }
+
+.child-signin-wrapper {
+  ::-webkit-input-placeholder {
+    color: #fff;
+    opacity: 1;
+  }
+  ::-moz-placeholder {
+    color: #fff;
+    opacity: 1;
+  }
+  ::placeholder {
+    color: #fff;
+    opacity: 1;
+  }
+}
+
 .modal-full {
   position: absolute;
   top: 0;
@@ -162,6 +202,20 @@ a.btn-primary.active:not([href]):not([tabindex]) {
   font-size: 1.5rem;
 }
 
+.btn:disabled,
+.btn.disabled {
+  opacity: .4;
+}
+
+.btn {
+  svg {
+    height: 15px;
+    width: 20px;
+    vertical-align: baseline;
+    fill: white;
+  }
+}
+
 .line-height-1 {
   line-height: 1;
 }
@@ -200,8 +254,25 @@ datepicker {
     min-height: 0%;
     overflow-x: auto;
 
-    td, th {
-      padding: $table-sm-cell-padding;
+    @media screen {
+      td, th {
+        padding: $table-sm-cell-padding;
+      }
+    }
+  }
+
+  @media print {
+    .alert-danger {
+      td {
+        background: #e1e1e1 !important;
+        -webkit-print-color-adjust:exact;
+
+        input {
+          background: #e1e1e1 !important;
+          -webkit-print-color-adjust:exact;
+          print-color-adjust:exact;
+        }
+      }
     }
   }
 

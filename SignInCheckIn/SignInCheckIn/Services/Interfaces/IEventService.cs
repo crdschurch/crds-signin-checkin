@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SignInCheckIn.Models.DTO;
+using MinistryPlatform.Translation.Models.DTO;
 
 namespace SignInCheckIn.Services.Interfaces
 {
@@ -16,5 +17,6 @@ namespace SignInCheckIn.Services.Interfaces
         List<EventRoomDto> ResetEventSetup(string authenticationToken, int eventId);
         List<EventDto> GetEventMaps(string token, int eventId);
         List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId, string search);
+        void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token);
     }
 }
