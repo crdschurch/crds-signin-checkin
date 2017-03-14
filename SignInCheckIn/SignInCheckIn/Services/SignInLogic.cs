@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using SignInCheckIn.Services.Interfaces;
-using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
-using Printing.Utilities.Models;
-using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.Models.DTO;
 
 namespace SignInCheckIn.Services
@@ -37,13 +33,6 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
-        // JPC - might also be able to add some overloads and whatnot to handle other kinds of sign in?
-
-        // this is probably going to need - 
-        // 1. site id
-        // 2. participant id
-        // 3. date?
-        // 4. ac signin yes/no
         public List<MpEventParticipantDto> SignInParticipants(ParticipantEventMapDto participantEventMapDto, List<MpEventDto> currentEvents)
         {
             var mpEventParticipantList = new List<MpEventParticipantDto>();
@@ -75,18 +64,6 @@ namespace SignInCheckIn.Services
             // this actually needs to be run after the attempt to sign in, so we can post-mortem why they couldn't sign in
             var eventRooms = GetSignInEventRooms(participant.GroupId.GetValueOrDefault(), eligibleEvents.Select(r => r.EventId).ToList());
 
-            //foreach (var eligibleEvent in eligibleEvents)
-            //{
-            //    if (!(eventRooms.Exists(r => r.EventId == eligibleEvent.EventId)))
-            //    {
-            //        // set participant status as age/grade group not assigned for the event - this may need to be reworked, since
-            //        // it should only be doing this for events they're being signed into - do we want to account for bumping between
-            //        // events based on this? or do a check once they're assigned to an event? Or is this actually necessary?
-            //    }
-            //}
-
-            // TODO: Add invalid event time check in here - might live a little father up?
-
             // the first condition is for non-ac signins, second is for ac signins 
             // we will need to set error messages on them as part of a sub-function
             if (eligibleEvents.Any(r => r.ParentEventId != null))
@@ -107,9 +84,6 @@ namespace SignInCheckIn.Services
         public List<MpEventDto> EvaluateSignInEvents(int siteId, bool adventureClubSignIn, bool underThree, List<MpEventDto> currentEvents)
         {
             List<MpEventDto> eligibleEvents = new List<MpEventDto>();
-
-            // we start by getting a list of all events for the day
-            var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
             // return only a single event
             if (adventureClubSignIn == false)
@@ -158,13 +132,12 @@ namespace SignInCheckIn.Services
             // return all event rooms which match up to groups on the events
             var eventGroups = _eventRepository.GetEventGroupsByGroupIdAndEventIds(groupId, eventIds);
             var eventRoomIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
-            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).ToList();
+            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).Where(r => r.AllowSignIn = true).ToList();
 
             return eventRooms;
         }
 
-        // this will assign a person to one or two event rooms, depending on how many events are passed in - there is no bumping between events here, so just
-        // look to see how many 
+        // set assignments for non-ac rooms here
         public List<MpEventParticipantDto> AssignParticipantToRoomsNonAc(List<MpEventRoomDto> eventRoomDtos, List<MpEventDto> eventDtos, ParticipantDto participant)
         {
             var mpEventParticipantRecords = new List<MpEventParticipantDto>();
@@ -185,7 +158,7 @@ namespace SignInCheckIn.Services
                 }
                 else
                 {
-                    var bumpedRoom = ProcessBumpingRules(serviceEvent.EventId, eventRoom.EventId);
+                    var bumpedRoom = ProcessBumpingRules(serviceEvent.EventId, eventRoom.EventRoomId.GetValueOrDefault());
 
                     if (bumpedRoom != null)
                     {
@@ -195,24 +168,9 @@ namespace SignInCheckIn.Services
                 }
             }
 
-            // set the room ids and other data on the participant here? - what order do we want the room ids in?
-            for (int i = 0; i < mpEventParticipantRecords.Count; i++)
-            {
-                if (i == 0)
-                {
-                    participant.AssignedRoomId = mpEventParticipantRecords[i].RoomId;
-                    participant.AssignedRoomName = mpEventParticipantRecords[i].RoomName;
-                }
+            // set the room ids and other data on the participant here
+            SetParticipantRoomAssignments(participant, mpEventParticipantRecords);
 
-                if (i == 1)
-                {
-                    participant.AssignedSecondaryRoomId = mpEventParticipantRecords[i].RoomId;
-                    participant.AssignedSecondaryRoomName = mpEventParticipantRecords[i].RoomName;
-                }
-            }
-
-            // TODO: We need to coalesce the participant records, so if they can't sign into one event or the other, we get a 
-            // correct message
             return mpEventParticipantRecords;
         }
 
@@ -238,74 +196,8 @@ namespace SignInCheckIn.Services
                 mpEventParticipantRecords.Add(TranslateParticipantDtoToMpEventParticipantDto(participant, room.EventId, room.RoomId));
             }
 
-            //foreach (var acEvent in acEventDtos)
-            //{
-            //    // need to make sure that there is only a single event room returned on these...
-            //    var eventRoom = eventRoomDtos.First(r => r.EventId == acEvent.EventId);
-
-            //    if (eventRoom.Capacity > eventRoom.SignedIn)
-            //    {
-            //        acEventRooms.Add(new EventRoomSignInData
-            //        {
-            //            EventId = acEvent.EventId,
-            //            EventRoomId = eventRoom.EventRoomId.GetValueOrDefault(),
-            //            RoomId = eventRoom.RoomId,
-            //            RoomName = eventRoom.RoomName
-            //        });
-            //    }
-            //    else
-            //    {
-            //        var bumpedRoom = ProcessBumpingRules(acEvent.EventId, eventRoom.EventId);
-
-            //        if (bumpedRoom != null)
-            //        {
-            //            acEventRooms.Add(new EventRoomSignInData
-            //            {
-            //                EventId = acEvent.EventId,
-            //                EventRoomId = bumpedRoom.EventRoomId,
-            //                RoomId = bumpedRoom.RoomId,
-            //                RoomName = bumpedRoom.RoomName
-            //            });
-            //        }
-            //    }
-            //}
-
-            // if we are already signed into an ac event, go ahead and try to sign into the other service event -- this feels kinda soorta wrong. 
-            // it feels like we need to look at both events and determine which one we can sign into before actually trying to sign in...
-            //var serviceEvents = eventDtos.Where(r => r.EventId != mpEventParticipantRecords[0].EventId);
-
-            // some obsolete code here
-            //if (bumpedRoom != null)
-            //{
-            //    acEventRooms.Add(bumpedRoom);
-            //}
-
-            //if (bumpedRoom != null)
-            //{
-            //    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, acEvent.EventId, bumpedRoom.RoomId);
-            //    mpEventParticipantRecords.Add(mpEventParticipantDto);
-            //}
-            //else
-            //{
-            //    // if we are not able to sign into this AC event, look at the next AC event
-            //    //continue;
-            //}
-
-            // set the room ids and other data on the participant here? - what order do we want the room ids in?
-            for (int i = 0; i < mpEventParticipantRecords.Count; i++)
-            {
-                if (i == 0)
-                {
-                    participant.AssignedRoomId = mpEventParticipantRecords[i].RoomId;
-                    participant.AssignedRoomName = mpEventParticipantRecords[i].RoomName;
-                }
-
-                if (i == 1)
-                {
-                    participant.AssignedSecondaryRoomId = mpEventParticipantRecords[i].RoomId;
-                    participant.AssignedSecondaryRoomName = mpEventParticipantRecords[i].RoomName;
-                }
-            }
+            // set the room ids on the participant here
+            SetParticipantRoomAssignments(participant, mpEventParticipantRecords);
 
             return mpEventParticipantRecords;
         }
@@ -316,6 +208,12 @@ namespace SignInCheckIn.Services
 
             foreach (var acEvent in eventDtos)
             {
+                // this is to guard against no event rooms being assigned for the group on the event
+                if (!mpEventRoomDtos.Any(r => r.EventId == acEvent.EventId))
+                {
+                    continue;
+                }
+
                 var eventRoom = mpEventRoomDtos.First(r => r.EventId == acEvent.EventId);
 
                 if (eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn))
@@ -350,6 +248,7 @@ namespace SignInCheckIn.Services
             return eligibleRooms;
         } 
 
+        // this function actually determines what ac and non-ac rooms a participant is assigned to
         public List<EventRoomSignInData> FinalizeAcRoomAssignments(List<EventRoomSignInData> acEventRoomDtos, List<EventRoomSignInData> serviceEventRoomDtos)
         {
             // do some logic here to figure out which one to sign into
@@ -392,17 +291,7 @@ namespace SignInCheckIn.Services
             return returnEventRooms;
         } 
 
-        /*** Helper Functions ***/
-        private bool CheckEventTimeValidity(MpEventDto mpEventDto)
-        {
-            // check to see if the event's start is equal to or later than the time minus the offset period
-            var offsetPeriod = DateTime.Now.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
-            return mpEventDto.EventStartDate >= offsetPeriod;
-        }
-
-        // return event participant data if there's a room for them to bump to
-        // TODO: Possibly switch this to returning a room id?
-        //public MpEventParticipantDto ProcessBumpingRules(int eventId, int eventRoomId)
+        // return the event room if there's an event room for them to bump to
         public MpBumpingRoomsDto ProcessBumpingRules(int eventId, int eventRoomId)
         {
             var bumpingRooms = _roomRepository.GetBumpingRoomsForEventRoom(eventId, eventRoomId);
@@ -418,7 +307,7 @@ namespace SignInCheckIn.Services
                 // check if open and has capacity
                 var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
 
-                if (bumpingRoom.AllowSignIn && bumpingRoom.Capacity >= signedAndCheckedIn)
+                if (bumpingRoom.AllowSignIn && bumpingRoom.Capacity > signedAndCheckedIn)
                 {
                     return bumpingRoom;
                 }
@@ -480,40 +369,43 @@ namespace SignInCheckIn.Services
         {
             foreach (var participant in participantEventMapDto.Participants)
             {
-                var unassignedParticipants = mpEventParticipantDtos.Where(r => r.HasRoomAssignment == false && r.ParticipantId == participant.ParticipantId).ToList();
-
-                if (unassignedParticipants.Any(r => r.GroupId == null))
+                if (participant.GroupId == null)
                 {
                     participant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {participant.Nickname} is not in a Kids Club Group (DOB: {participant.DateOfBirth.ToShortDateString() })";
                 }
 
-                if (unassignedParticipants.Any(r => r.HasRoomAssignment == false && r.GroupId.HasValue))
+                if (participant.AssignedRoomId == null && participant.GroupId != null)
                 {
-                    var mpEventParticipant = unassignedParticipants.First(r => r.HasRoomAssignment == false);
-
                     // select rooms for the events...see if there were any rooms on the event for the participant
-                    var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eligibleEvents.Select(r => r.EventId).ToList());
+                    //var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eligibleEvents.Select(r => r.EventId).ToList());
+                    var eventRooms = _roomRepository.GetRoomsForEvent(eligibleEvents.Select(r => r.EventId).ToList(), participantEventMapDto.CurrentEvent.EventSiteId);
 
-                    // probably need to look at the service count, too
                     if (!(eventRooms.Any(r => r.AllowSignIn == true)))
                     {
                         // since we have multiple events we can possibly sign into, it does not make sense to record the event name
                         // they could not sign into
-                        var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
+                        var group = participant.GroupId.HasValue ? _groupRepository.GetGroup(null, participant.GroupId.Value) : null;
                         participant.SignInErrorMessage = $"There are no {@group?.Name} rooms open for {participant.Nickname}";
                     }
                 }
             }
         }
 
-        // TODO: Possibly use automapper here
+        /*** Helper Functions ***/
+        private bool CheckEventTimeValidity(MpEventDto mpEventDto)
+        {
+            // check to see if the event's start is equal to or later than the time minus the offset period
+            var offsetPeriod = DateTime.Now.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
+            return mpEventDto.EventStartDate >= offsetPeriod;
+        }
+
         private MpEventParticipantDto TranslateParticipantDtoToMpEventParticipantDto(ParticipantDto participant, int eventId, int roomId)
         {
             MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
             {
                 EventId = eventId,
                 ParticipantId = participant.ParticipantId,
-                ParticipantStatusId = 3, // TODO: Switch to live config value; Status ID of 3 = "Attended"
+                ParticipantStatusId = _applicationConfiguration.AttendeeParticipantType,
                 FirstName = participant.FirstName,
                 LastName = participant.LastName,
                 Nickname = participant.Nickname,
@@ -525,8 +417,28 @@ namespace SignInCheckIn.Services
 
             return mpEventParticipantDto;
         }
+
+        private void SetParticipantRoomAssignments(ParticipantDto participant, List<MpEventParticipantDto> mpEventParticipantRecords)
+        {
+            // set the room ids and other data on the participant here
+            for (int i = 0; i < mpEventParticipantRecords.Count; i++)
+            {
+                if (i == 0)
+                {
+                    participant.AssignedRoomId = mpEventParticipantRecords[i].RoomId;
+                    participant.AssignedRoomName = mpEventParticipantRecords[i].RoomName;
+                }
+
+                if (i == 1)
+                {
+                    participant.AssignedSecondaryRoomId = mpEventParticipantRecords[i].RoomId;
+                    participant.AssignedSecondaryRoomName = mpEventParticipantRecords[i].RoomName;
+                }
+            }
+        }
     }
 
+    // this is used to handle data for both event rooms and bumping rooms
     public class EventRoomSignInData
     {
         public int EventId { get; set; }

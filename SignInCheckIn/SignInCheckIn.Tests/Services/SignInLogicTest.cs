@@ -1,16 +1,11 @@
 ﻿using System;
-using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
-using Castle.Components.DictionaryAdapter;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
@@ -448,20 +443,6 @@ namespace SignInCheckIn.Tests.Services
             return eventRooms;
         }
 
-        [Test]
-        public void ShouldAssignNonAcParticipantToRooms()
-        {
-            // Arrange
-
-
-            //// Act
-            ////var result = _fixture.AssignParticipantToRoomsNonAc(GetEventRoomsData());
-            //var result = _fixture.AssignParticipantToRoomsNonAc(GetEventRoomsData(), GetTestEventSet());
-
-            //// Assert
-            //Assert.AreEqual(2, result.Count);
-        }
-
         private ParticipantEventMapDto GetEventParticipantMapForAudit()
         {
             var kioskEvent = new EventDto
@@ -474,7 +455,7 @@ namespace SignInCheckIn.Tests.Services
                 new ParticipantDto
                 {
                     DateOfBirth = new DateTime(2010, 01, 01),
-                    GroupId = 5544555,
+                    GroupId = null,
                     LastName = "UnassignedGroup",
                     Nickname = "Joe",
                     ParticipantId = 9876789
@@ -528,7 +509,7 @@ namespace SignInCheckIn.Tests.Services
             var eligibleEvents = GetTestEventSet();
             var eligibleEventIds = eligibleEvents.Select(r => r.EventId).ToList();
 
-            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eligibleEventIds)).Returns(GetClosedEventRooms());
+            _roomRepository.Setup(r => r.GetRoomsForEvent(eligibleEventIds, It.IsAny<int>())).Returns(GetClosedEventRooms);
             _groupRepository.Setup(r => r.GetGroup(null, 7766777, false)).Returns(GetGroupForNoOpenRoomsCheck());
 
             // Act
@@ -712,15 +693,11 @@ namespace SignInCheckIn.Tests.Services
         [Test]
         public void ShouldFinalizeAcRoomAssignments()
         {
-            // Arrange
-
-
             // Act
             var result = _fixture.FinalizeAcRoomAssignments(GetAcEventRoomSignInDataTwoRooms(), GetNonAcEventRoomSignInDataTwoRooms());
 
             // Assert
             Assert.AreEqual(2, result.Count);
-
         }
 
         private List<EventRoomSignInData> GetNonAcEventRoomSignInDataTwoRooms()
