@@ -623,26 +623,7 @@ namespace SignInCheckIn.Services
 
         public void CheckForDuplicateSignIns(List<MpEventDto> eventsForSignin, ParticipantEventMapDto participantEventMapDto)
         {
-            // check for the current and next event set to see if the participants are already signed in
-            var eventIds = new List<int>();
-            foreach (var signinEvent in eventsForSignin)
-            {
-                eventIds.Add(signinEvent.EventId);
-
-                // if parent event get subevent else get parent event
-                if (signinEvent.ParentEventId == null)
-                {
-                    var subEvent = _eventRepository.GetSubeventByParentEventId(signinEvent.EventId, _applicationConfiguration.AdventureClubEventTypeId);
-                    if (subEvent != null)
-                    {
-                        eventIds.Add(subEvent.EventId);
-                    }
-                }
-                else
-                {
-                    eventIds.Add(signinEvent.ParentEventId.Value);
-                }
-            }
+            var eventIds = eventsForSignin.Select(r => r.EventId).ToList();
 
             foreach (var eventItemId in eventIds)
             {

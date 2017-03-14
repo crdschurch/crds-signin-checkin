@@ -206,38 +206,38 @@ namespace SignInCheckIn.Services
         {
             List<EventRoomSignInData> eligibleRooms = new List<EventRoomSignInData>();
 
-            foreach (var acEvent in eventDtos)
+            foreach (var eventDto in eventDtos)
             {
                 // this is to guard against no event rooms being assigned for the group on the event
-                if (!mpEventRoomDtos.Any(r => r.EventId == acEvent.EventId))
+                if (!mpEventRoomDtos.Any(r => r.EventId == eventDto.EventId))
                 {
                     continue;
                 }
 
-                var eventRoom = mpEventRoomDtos.First(r => r.EventId == acEvent.EventId);
+                var eventRoom = mpEventRoomDtos.First(r => r.EventId == eventDto.EventId);
 
                 if (eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn))
                 {
                     eligibleRooms.Add(new EventRoomSignInData
                     {
-                        EventId = acEvent.EventId,
+                        EventId = eventDto.EventId,
                         EventRoomId = eventRoom.EventRoomId.GetValueOrDefault(),
-                        ParentEventId = acEvent.ParentEventId,
+                        ParentEventId = eventDto.ParentEventId,
                         RoomId = eventRoom.RoomId,
                         RoomName = eventRoom.RoomName
                     });
                 }
                 else
                 {
-                    var bumpedRoom = ProcessBumpingRules(acEvent.EventId, eventRoom.EventRoomId.GetValueOrDefault());
+                    var bumpedRoom = ProcessBumpingRules(eventDto.EventId, eventRoom.EventRoomId.GetValueOrDefault());
 
                     if (bumpedRoom != null)
                     {
                         eligibleRooms.Add(new EventRoomSignInData
                         {
-                            EventId = acEvent.EventId,
+                            EventId = eventDto.EventId,
                             EventRoomId = bumpedRoom.EventRoomId,
-                            ParentEventId = acEvent.ParentEventId,
+                            ParentEventId = eventDto.ParentEventId,
                             RoomId = bumpedRoom.RoomId,
                             RoomName = bumpedRoom.RoomName
                         });
