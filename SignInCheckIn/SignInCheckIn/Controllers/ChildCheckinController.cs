@@ -109,7 +109,7 @@ namespace SignInCheckIn.Controllers
                 _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, overRideRoomId);
 
                 //Publish the removal of the kid from the original room
-                dynamic data = new JObject();
+                var data = new ParticipantDto();
                 data.EventParticipantId = eventParticipantId;
                 data.OriginalRoomId = roomId;
                 data.OverRideRoomId = overRideRoomId;
