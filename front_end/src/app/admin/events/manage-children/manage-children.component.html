@@ -19,7 +19,7 @@
       <div class="col-sm-6 mb-3 hidden-print">
         <div class="input-group child-search-input">
           <input #box type="text" class="form-control" placeholder="Child's First Name, Last Name, or Call Number" (keyup)="onSearchType(box.value)" (keyup.enter)="onSearch()">
-          <span class="input-group-addon input-group-addon-unstyled" (click)="onClearSearch(box)">
+          <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
             <span [hidden]="!box.value.length">&times;</span>
           </span>
           <button type="submit" class="btn btn-primary input-group-addon" (click)="onSearch()">Search</button>
