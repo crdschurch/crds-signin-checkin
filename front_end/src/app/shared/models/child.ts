@@ -3,6 +3,8 @@ import { Contact } from '.';
 
 export class Child {
   EventParticipantId: number;
+  EventId: number;
+  EventIdSecondary: number;
   ParticipantId: number;
   ContactId: number;
   HouseholdId: number;
@@ -26,9 +28,12 @@ export class Child {
   TimeConfirmed: Date;
   HeadsOfHousehold: Array<Contact> = [];
 
+
   static fromJson(json: any): Child {
     let c = new Child();
     c.EventParticipantId = json.EventParticipantId;
+    c.EventId = json.EventId;
+    c.EventIdSecondary = json.EventIdSecondary;
     c.ParticipantId = json.ParticipantId;
     c.ContactId = json.ContactId;
     c.HouseholdId = json.HouseholdId;
