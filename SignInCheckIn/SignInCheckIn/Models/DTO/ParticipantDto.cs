@@ -47,7 +47,7 @@ namespace SignInCheckIn.Models.DTO
         public int? OpportunityId { get; set; }
         [JsonIgnore]
         public bool RegistrantMessageSent { get; set; }
-        [JsonIgnore]
+        
         public int EventId { get; set; }
 
         public int EventIdSecondary { get; set; }
