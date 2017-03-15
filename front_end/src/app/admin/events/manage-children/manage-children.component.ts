@@ -13,7 +13,7 @@ import * as _ from 'lodash';
   providers: [ ],
 })
 export class ManageChildrenComponent implements OnInit {
-  _children: Array<Child> = [];
+  private _children: Array<Child> = [];
   childrenByRoom: any;
   ready = false;
   searchString = '';
