@@ -432,13 +432,22 @@ namespace SignInCheckIn.Tests.Services
                 {
                     Capacity = 10,
                     EventRoomId = 1122333,
-                    RoomId = 1234
+                    RoomId = 1234,
+                    AllowSignIn = true
                 },
                 new MpEventRoomDto
                 {
                     Capacity = 10,
                     EventRoomId = 3332211,
-                    RoomId = 4321
+                    RoomId = 4321,
+                    AllowSignIn = true
+                },
+                new MpEventRoomDto
+                {
+                    Capacity = 10,
+                    EventRoomId = 677788,
+                    RoomId = 8888,
+                    AllowSignIn = false
                 }
             };
 

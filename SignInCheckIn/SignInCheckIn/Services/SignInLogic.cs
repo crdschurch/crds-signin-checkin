@@ -149,7 +149,7 @@ namespace SignInCheckIn.Services
             // return all event rooms which match up to groups on the events
             var eventGroups = _eventRepository.GetEventGroupsByGroupIdAndEventIds(groupId, eventIds);
             var eventRoomIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
-            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).Where(r => r.AllowSignIn = true).ToList();
+            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).Where(r => r.AllowSignIn).ToList();
 
             return eventRooms;
         }
@@ -165,7 +165,11 @@ namespace SignInCheckIn.Services
             foreach (var serviceEvent in eventDtos)
             {
                 // need to make sure that there is only a single event room returned on these...
-                var eventRoom = eventRoomDtos.First(r => r.EventId == serviceEvent.EventId);
+                var eventRoom = eventRoomDtos.FirstOrDefault(r => r.EventId == serviceEvent.EventId);
+                if (eventRoom == null)
+                {
+                    continue;
+                }
 
                 if (eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn))
                 {

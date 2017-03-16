@@ -350,17 +350,31 @@ namespace SignInCheckIn.Services
 
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
             {
+                // the AssignedRoom and AssignedSecondaryRoom are not necessarily the first and second
+                // chronologically. So if there are two events, lets get the event id's for each 
+                // (EventId and EventIdSecondary) and see if we should switch them around so they 
+                // print in order on the tag
+                var firstRoomName = participant.AssignedRoomName;
+                var secondRoomName = participant.AssignedSecondaryRoomName;
+                if (participant.AssignedSecondaryRoomId != null)
+                {
+                    if (participantEventMapDto.CurrentEvent.EventId != participant.EventId)
+                    {
+                        firstRoomName = participant.AssignedSecondaryRoomName;
+                        secondRoomName = participant.AssignedRoomName;
+                    }
+                }
                 var printValues = new Dictionary<string, string>
                 {
                     {"ChildName", participant.Nickname},
-                    {"ChildRoomName1", participant.AssignedRoomName},
-                    {"ChildRoomName2", participant.AssignedSecondaryRoomName},
+                    {"ChildRoomName1", firstRoomName},
+                    {"ChildRoomName2", secondRoomName},
                     {"ChildEventName", participantEventMapDto.CurrentEvent.EventTitle},
                     {"ChildParentName", headsOfHousehold},
                     {"ChildCallNumber", participant.CallNumber},
                     {"ParentCallNumber", participant.CallNumber},
-                    {"ParentRoomName1", participant.AssignedRoomName},
-                    {"ParentRoomName2", participant.AssignedSecondaryRoomName},
+                    {"ParentRoomName1", firstRoomName},
+                    {"ParentRoomName2", secondRoomName},
                     {"Informative1", "This label is worn by a parent/guardian"},
                     {"Informative2", "You must have this label to pick up your child"},
                     {"ErrorText", participant.SignInErrorMessage}

@@ -32,7 +32,6 @@ describe('ManageChildrenComponent', () => {
     router = <Router>jasmine.createSpyObj('router', ['navigate']);
     rootService = <RootService>jasmine.createSpyObj('rootService', ['announceEvent']);
     fixture = new ManageChildrenComponent(route, apiService, headerService, rootService, adminService, router);
-    fixture.children = new Array<Child>();
   });
 
   describe('#reverseSignin', () => {
@@ -41,7 +40,7 @@ describe('ManageChildrenComponent', () => {
       children[0].EventParticipantId = 123;
       children[1].EventParticipantId = 456;
       children[1].AssignedRoomId = 456;
-      fixture.children = children;
+      fixture.childrenByRoom = children;
       fixture.eventId = 20;
       let eventParticipantId = children[1].EventParticipantId;
       let roomId = children[1].AssignedRoomId;
@@ -50,7 +49,7 @@ describe('ManageChildrenComponent', () => {
       fixture.reverseSignin(children[1]);
 
       expect(adminService.reverseSignin).toHaveBeenCalledWith(fixture.eventId, roomId, eventParticipantId);
-      expect(fixture.children[1] === undefined);
+      expect(fixture.childrenByRoom[1] === undefined);
     });
   });
 
