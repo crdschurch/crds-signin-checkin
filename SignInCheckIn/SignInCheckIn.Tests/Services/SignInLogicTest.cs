@@ -22,6 +22,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IConfigRepository> _configRepository;
         private Mock<IParticipantRepository> _participantRepository;
+        private Mock<IChildSigninRepository> _signinRepository;
 
         private const int AgesAttributeTypeId = 102;
         private const int BirthMonthsAttributeTypeId = 103;
@@ -49,6 +50,7 @@ namespace SignInCheckIn.Tests.Services
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _configRepository = new Mock<IConfigRepository>();
             _participantRepository = new Mock<IParticipantRepository>();
+            _signinRepository = new Mock<IChildSigninRepository>();
             _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
@@ -76,7 +78,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(lateCheckInPeriodConfig);
 
             _fixture = new SignInLogic(_eventRepository.Object, _applicationConfiguration.Object, _configRepository.Object,
-                _groupRepository.Object, _roomRepository.Object, _participantRepository.Object);
+                _groupRepository.Object, _roomRepository.Object, _participantRepository.Object, _signinRepository.Object);
         }
 
         [Test]
@@ -757,6 +759,45 @@ namespace SignInCheckIn.Tests.Services
             };
 
             return eventRoomSignInData;
+        }
+
+        [Test]
+        public void ShouldSyncInvalidSignins()
+        {
+            // Arrange
+            var participant = new ParticipantDto
+            {
+                ParticipantId = 5544555,
+                AssignedRoomId = 1234,
+                AssignedRoomName = "First Room",
+                AssignedSecondaryRoomId = 2345,
+                AssignedSecondaryRoomName = "Second Room"
+            };
+
+            var mpEventParticipantDtos = new List<MpEventParticipantDto>
+            {
+                new MpEventParticipantDto
+                {
+                    ParticipantId = 5544555,
+                    RoomId = 1234,
+                    RoomName = "First Room"
+                },
+                new MpEventParticipantDto
+                {
+                    ParticipantId = 5544555,
+                    RoomId = null,
+                    RoomName = String.Empty
+                }
+            };
+
+            // Act
+            _fixture.SyncInvalidSignins(mpEventParticipantDtos, participant);
+
+            // Assert
+            Assert.AreEqual(null, participant.AssignedRoomId);
+            Assert.AreEqual(string.Empty, participant.AssignedRoomName);
+            Assert.AreEqual(null, participant.AssignedSecondaryRoomId);
+            Assert.AreEqual(string.Empty, participant.AssignedSecondaryRoomName);
         }
     }
 }
