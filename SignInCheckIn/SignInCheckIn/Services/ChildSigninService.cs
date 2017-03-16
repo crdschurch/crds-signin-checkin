@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Web.Http;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
@@ -106,22 +104,17 @@ namespace SignInCheckIn.Services
             var eventsForSignin = GetEventsForSignin(participantEventMapDto);
             CheckForDuplicateSignIns(eventsForSignin, participantEventMapDto);
 
-            var currentEventParticipantDtoList = _signInLogic.SignInParticipants(participantEventMapDto, eventsForSignin);
+            // this needs to be a list of participants, not a list of event participants - the automapping
+            // needs to happen in the logic class
+            var rawParticipants = _signInLogic.SignInParticipants(participantEventMapDto, eventsForSignin);
 
-            // null out the room assignment for both participant records if they can't sign in to one or the other,
-            // so that they get a rock
-            SyncInvalidSignins(currentEventParticipantDtoList, participantEventMapDto);
-
-            // create participants if they're assigned to a room -- we still need to handle the case where there is an
-            // error and they can't be signed into both events
+            // TODO: Determine that there doesn't need to be anything further done with assigning the participants this way, like
+            // some logic around it
             var response = new ParticipantEventMapDto
             {
                 CurrentEvent = participantEventMapDto.CurrentEvent,
-                Participants =
-                    _childSigninRepository.CreateEventParticipants(
-                        currentEventParticipantDtoList.Where(p => participantEventMapDto.Participants.Find(q => q.Selected && q.ParticipantId == p.ParticipantId) != null && p.HasRoomAssignment).ToList())
-                        .Select(Mapper.Map<ParticipantDto>).ToList(),
-                Contacts = participantEventMapDto.Contacts
+                Contacts = participantEventMapDto.Contacts,
+                Participants = rawParticipants
             };
 
             // set checkin household data on the participants
@@ -135,7 +128,8 @@ namespace SignInCheckIn.Services
             response.Participants = groupedParticipants.Select(r => r.First()).ToList();
             
             // Add back those participants that didn't get a room assigned - this may be able to be removed
-            response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
+            // TODO: Verify this can be removed
+            //response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
             response.Participants.ForEach(p => p.Selected = true);
 
             return response;
@@ -163,7 +157,7 @@ namespace SignInCheckIn.Services
                 }
             }
 
-            var mpParticipantDtos = participants.Select(Mapper.Map<MpEventParticipantDto>).ToList();
+            var mpParticipantDtos = participants.Where(r => r.EventParticipantId != 0).Select(Mapper.Map<MpEventParticipantDto>).ToList();
             _participantRepository.UpdateEventParticipants(mpParticipantDtos);
             return groupedParticipants;
         }

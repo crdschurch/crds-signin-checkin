@@ -268,7 +268,7 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
             // TODO: Determine what this should return from a unit test?
-            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto, eventDtosBySite)).Returns(mpEventParticipantDtos);
+            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto, eventDtosBySite)).Returns(participantDtos);
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -278,7 +278,8 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsNull(response.Participants[0].SignInErrorMessage);
         }
         
-        [Test]
+        [Obsolete]
+        //[Test]
         public void ShouldSignInParticipantsViaBumpingRules()
         {
             // Arrange
@@ -427,7 +428,7 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
             // TODO: Determine what this should return from a unit test?
-            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto, eventDtosBySite)).Returns(mpEventParticipantDtos);
+            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto, eventDtosBySite)).Returns(participantDtos);
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
@@ -531,7 +532,7 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
 
             // TODO: Determine what this should return from a unit test?
-            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto, eventDtosBySite)).Returns(mpEventParticipantDtos);
+            _signInLogic.Setup(m => m.SignInParticipants(participantEventMapDto, eventDtosBySite)).Returns(participantDtos);
 
             // Act
             var response = _fixture.SigninParticipants(participantEventMapDto);
