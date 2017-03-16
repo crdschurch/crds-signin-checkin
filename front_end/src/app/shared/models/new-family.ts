@@ -22,4 +22,13 @@ export class NewFamily {
 
     return newFamily;
   }
+
+  allChildrenHaveBirthdays() {
+    for (let c of this.children) {
+      if (!c.DateOfBirth) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
