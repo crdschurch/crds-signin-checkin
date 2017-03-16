@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { NewFamilyRegistrationComponent } from './new-family-registration.component';
-import { NewChild, NewParent } from '../../../shared/models';
+import { Child, NewChild, NewParent, NewFamily } from '../../../shared/models';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import * as moment from 'moment';
 
@@ -26,6 +26,12 @@ describe('NewFamilyRegistrationComponent', () => {
     (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
     fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+    fixture.family = new NewFamily();
+    fixture.family.children = [];
+    fixture.family.children[0] = new Child();
+    fixture.family.children[0].DateOfBirth = new Date();
+    fixture.family.children[1] = new Child();
+    fixture.family.children[1].DateOfBirth = new Date();
   });
   it('#ngOnInit', () => {
     spyOn(fixture, 'setUp');
@@ -41,6 +47,17 @@ describe('NewFamilyRegistrationComponent', () => {
     expect(apiService.getEvent).toHaveBeenCalledWith(event.EventId);
     expect(apiService.getGradeGroups).toHaveBeenCalled();
     expect(headerService.announceEvent).toHaveBeenCalledWith(event);
+  });
+  it('#onSubmit should not submit form with a missing child DOB', () => {
+    let form = {
+      pristine: false,
+      valid: true
+    };
+    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
+    // this child has no DOB
+    fixture.family.children[2] = new Child();
+    fixture.onSubmit(form);
+    expect(adminService.createNewFamily).not.toHaveBeenCalled();
   });
   it('#onSubmit success', () => {
     let form = {
