@@ -168,6 +168,8 @@ namespace SignInCheckIn.Services
                 var eventRoom = eventRoomDtos.FirstOrDefault(r => r.EventId == serviceEvent.EventId);
                 if (eventRoom == null)
                 {
+                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null);
+                    mpEventParticipantRecords.Add(mpEventParticipantDto);
                     continue;
                 }
 
