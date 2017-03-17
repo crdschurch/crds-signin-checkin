@@ -19,6 +19,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Room_Name")]
         public string RoomName { get; set; }
 
+        [JsonProperty(PropertyName = "KC_Sort_Order")]
+        public int? KcSortOrder { get; set; }
+
         [JsonProperty(PropertyName = "Room_Number")]
         public string RoomNumber { get; set; }
 
