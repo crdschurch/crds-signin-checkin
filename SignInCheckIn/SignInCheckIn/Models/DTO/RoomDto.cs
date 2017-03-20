@@ -8,6 +8,6 @@
 
         public string RoomNumber { get; set; }
 
-        public int KcSortOrder { get; set; }
+        public int? KcSortOrder { get; set; }
     }
 }
