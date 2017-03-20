@@ -45,7 +45,12 @@ export class RoomListComponent implements OnInit {
 
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
-        this.rooms = rooms;
+        // sort by KcSortOrder ascending, if null, put at end
+        this.rooms = rooms.sort((r1, r2) => {
+            return +(r1.KcSortOrder == null) - +(r2.KcSortOrder == null)
+              || +(r1.KcSortOrder > r2.KcSortOrder)
+              || -(r1.KcSortOrder < r2.KcSortOrder);
+        });
       },
       (error: any) => console.error(error)
     );
@@ -151,7 +156,7 @@ export class RoomListComponent implements OnInit {
       return checkedIn;
     }, 0);
 
-    return checkedInTotal;   
+    return checkedInTotal;
   }
 
   public getSignedInTotal() {
@@ -164,7 +169,7 @@ export class RoomListComponent implements OnInit {
       return signedIn;
     }, 0);
 
-    return signedInTotal;   
+    return signedInTotal;
   }
 
   public getCapacityTotal() {
@@ -177,7 +182,7 @@ export class RoomListComponent implements OnInit {
       return capacity;
     }, 0);
 
-    return capacityTotal;   
+    return capacityTotal;
   }
 
   public getVolunteersTotal() {
@@ -190,7 +195,7 @@ export class RoomListComponent implements OnInit {
       return volunteers;
     }, 0);
 
-    return volunteersTotal;   
+    return volunteersTotal;
   }
 
 }
