@@ -74,20 +74,5 @@ namespace SignInCheckIn.Security
                 return actionWhenNotAuthorized();
             }
         }
-
-        protected static void PublishToChannel(IHubContext context, ChannelEvent channelEvent)
-        {
-            // Taken from: https://github.com/sstorie/experiments/tree/master/angular2-signalr
-            // From .NET code like this we can't invoke the methods that
-            //  exist on our actual Hub class...because we only have a proxy
-            //  to it. So to publish the event we need to call the method that
-            //  the clients will be listening on.
-            context.Clients.Group(channelEvent.ChannelName).OnEvent(channelEvent.ChannelName, channelEvent);
-        }
-
-        protected string GetChannelNameCheckinParticipants(IApplicationConfiguration applicationConfiguration, int eventId, int roomId)
-        {
-            return $"{applicationConfiguration.CheckinParticipantsChannel}{eventId}{roomId}";
-        }
     }
 }

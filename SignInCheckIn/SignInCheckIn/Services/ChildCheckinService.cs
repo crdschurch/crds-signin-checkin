@@ -79,6 +79,10 @@ namespace SignInCheckIn.Services
                 var acSubevent = _eventRepository.GetSubeventByParentEventId(eventId, _applicationConfiguration.AdventureClubEventTypeId);
                 eventRoom = _roomRepository.GetEventRoom(acSubevent.EventId, roomId);
             }
+            if (eventRoom == null)
+            {
+                throw new Exception($"no event room for room {roomId}");
+            }
             bool isClosed = !eventRoom.AllowSignIn;
             bool isAtCapacity = eventRoom.Capacity <= (eventRoom.CheckedIn + eventRoom.SignedIn);
             if (isClosed)

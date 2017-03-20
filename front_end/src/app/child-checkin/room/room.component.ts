@@ -52,6 +52,7 @@ export class RoomComponent implements OnInit {
         });
 
         // Get an observable for events emitted on this channel
+        comp.channelService.unsubAll(Constants.CheckinParticipantsChannel);
         let channelName = `${Constants.CheckinParticipantsChannel}${comp.event.EventId}${comp.roomId}`;
         comp.channelService.sub(channelName).subscribe(
           (x: ChannelEvent) => {

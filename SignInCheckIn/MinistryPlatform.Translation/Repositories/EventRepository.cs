@@ -164,7 +164,7 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var events = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
                  .Search<MpEventDto>($"Events.Parent_Event_ID = {serviceEventId} AND Events.[Event_Type_ID] = {eventTypeId}", _eventColumns);
-            return events.First();
+            return events.FirstOrDefault();
         }
 
         public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
@@ -181,6 +181,12 @@ namespace MinistryPlatform.Translation.Repositories
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>($"Events.[Parent_Event_ID] IN {queryString} AND Events.[Allow_Check-in] = 1 {typeQueryString}", _eventColumns);
+        }
+
+        public List<MpEventGroupDto> GetEventGroupsByGroupIdAndEventIds(int groupId, List<int> eventIds)
+        {
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
+                .Search<MpEventGroupDto>($"Event_Groups.Group_ID ={groupId} AND Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
     }
 }

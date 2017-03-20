@@ -51,6 +51,7 @@ namespace SignInCheckIn.Tests.Services
 
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
+            _applicationConfiguation.Setup(ac => ac.AdventureClubEventTypeId).Returns(20);
 
             _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object, _participantRepository.Object);
         }
@@ -247,7 +248,8 @@ namespace SignInCheckIn.Tests.Services
             MpEventDto childEvent = new MpEventDto
             {
                 EventId = 7654321,
-                ParentEventId = 234567
+                ParentEventId = 234567,
+                EventTypeId = 20
             };
 
             _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
