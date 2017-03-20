@@ -34,6 +34,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Event_Rooms.Room_ID",
                 "Room_ID_Table.Room_Name",
                 "Room_ID_Table.Room_Number",
+                "Room_ID_Table.KC_Sort_Order",
                 "Event_Rooms.Allow_Checkin",
                 "Event_Rooms.Volunteers",
                 "Event_Rooms.Capacity",
@@ -46,7 +47,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 "Room_ID",
                 "Room_Name",
-                "Room_Number"
+                "Room_Number",
+                "KC_Sort_Order"
             };
 
             _fixture = new RoomRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
