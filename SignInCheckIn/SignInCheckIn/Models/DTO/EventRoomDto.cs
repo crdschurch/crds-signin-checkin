@@ -10,7 +10,7 @@ namespace SignInCheckIn.Models.DTO
 
         public int EventId { get; set; }
 
-        public int KcSortOrder { get; set; }
+        public int? KcSortOrder { get; set; }
 
         public string RoomName { get; set; }
 
