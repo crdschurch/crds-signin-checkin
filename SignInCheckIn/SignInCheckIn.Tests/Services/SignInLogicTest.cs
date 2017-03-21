@@ -454,7 +454,7 @@ namespace SignInCheckIn.Tests.Services
             return eventRooms;
         }
 
-        private ParticipantEventMapDto GetEventParticipantMapForAudit()
+        private ParticipantEventMapDto GetEventParticipantMapForAuditNoParticipantGroup()
         {
             var kioskEvent = new EventDto
             {
@@ -490,7 +490,35 @@ namespace SignInCheckIn.Tests.Services
             return participantEventMapDto;
         }
 
-        private List<MpEventParticipantDto> GetMpEventParticipantsForAudit()
+        private ParticipantEventMapDto GetEventParticipantMapForAuditNoOpenRoom()
+        {
+            var kioskEvent = new EventDto
+            {
+                EventId = 1234567
+            };
+
+            List<ParticipantDto> participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    DateOfBirth = new DateTime(2010, 01, 01),
+                    GroupId = 7766777,
+                    LastName = "NoOpenRoom",
+                    Nickname = "Jane",
+                    ParticipantId = 8765678
+                }
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = kioskEvent,
+                Participants = participantDtos
+            };
+
+            return participantEventMapDto;
+        }
+
+        private List<MpEventParticipantDto> GetMpEventParticipantsForAuditNoGroup()
         {
             var mpEventParticipantList = new List<MpEventParticipantDto>
             {
@@ -499,7 +527,16 @@ namespace SignInCheckIn.Tests.Services
                     GroupId = null,
                     ParticipantId = 9876789,
                     RoomId = null
-                },
+                }
+            };
+
+            return mpEventParticipantList;
+        }
+
+        private List<MpEventParticipantDto> GetMpEventParticipantsForAuditNoGroupRoom()
+        {
+            var mpEventParticipantList = new List<MpEventParticipantDto>
+            {
                 new MpEventParticipantDto
                 {
                     GroupId = 7766777,
@@ -511,25 +548,43 @@ namespace SignInCheckIn.Tests.Services
             return mpEventParticipantList;
         }
 
-        //[Test]
-        //public void ShouldSetSigninErrorMessages()
-        //{
-        //    // Arrange
-        //    var participantEventMapDto = GetEventParticipantMapForAudit();
-        //    var mpEventParticipantEventList = GetMpEventParticipantsForAudit();
-        //    var eligibleEvents = GetTestEventSet();
-        //    var eligibleEventIds = eligibleEvents.Select(r => r.EventId).ToList();
+        [Test]
+        public void ShouldSetSigninErrorMessagesNoGroup()
+        {
+            // Arrange
+            var participantEventMapDto = GetEventParticipantMapForAuditNoParticipantGroup();
+            var mpEventParticipantEventList = GetMpEventParticipantsForAuditNoGroup();
+            var eligibleEvents = GetTestEventSet();
+            var eligibleEventIds = eligibleEvents.Select(r => r.EventId).ToList();
 
-        //    _roomRepository.Setup(r => r.GetRoomsForEvent(eligibleEventIds, It.IsAny<int>())).Returns(GetClosedEventRooms);
-        //    _groupRepository.Setup(r => r.GetGroup(null, 7766777, false)).Returns(GetGroupForNoOpenRoomsCheck());
+            _roomRepository.Setup(r => r.GetRoomsForEvent(eligibleEventIds, It.IsAny<int>())).Returns(GetClosedEventRooms);
+            _groupRepository.Setup(r => r.GetGroup(null, 7766777, false)).Returns(GetGroupForNoOpenRoomsCheck());
 
-        //    // Act
-        //    _fixture.AuditSigninIssues(participantEventMapDto, mpEventParticipantEventList, eligibleEvents);
+            // Act
+            _fixture.AuditSigninIssues(participantEventMapDto, mpEventParticipantEventList, eligibleEvents, participantEventMapDto.Participants[0]);
 
-        //    // Assert
-        //    Assert.AreEqual("Age/Grade Group Not Assigned. Joe is not in a Kids Club Group (DOB: 1/1/2010)", participantEventMapDto.Participants[0].SignInErrorMessage);
-        //    Assert.AreEqual("There are no Kindergarten rooms open for Jane", participantEventMapDto.Participants[1].SignInErrorMessage);
-        //}
+            // Assert
+            Assert.AreEqual("Age/Grade Group Not Assigned. Joe is not in a Kids Club Group (DOB: 1/1/2010)", participantEventMapDto.Participants[0].SignInErrorMessage);
+        }
+
+        [Test]
+        public void ShouldSetSigninErrorMessagesNoGroupRooms()
+        {
+            // Arrange
+            var participantEventMapDto = GetEventParticipantMapForAuditNoOpenRoom();
+            var mpEventParticipantEventList = GetMpEventParticipantsForAuditNoGroupRoom();
+            var eligibleEvents = GetTestEventSet();
+            var eligibleEventIds = eligibleEvents.Select(r => r.EventId).ToList();
+
+            _roomRepository.Setup(r => r.GetRoomsForEvent(eligibleEventIds, It.IsAny<int>())).Returns(GetClosedEventRooms);
+            _groupRepository.Setup(r => r.GetGroup(null, 7766777, false)).Returns(GetGroupForNoOpenRoomsCheck());
+
+            // Act
+            _fixture.AuditSigninIssues(participantEventMapDto, mpEventParticipantEventList, eligibleEvents, participantEventMapDto.Participants[0]);
+
+            // Assert
+            Assert.AreEqual("There are no Kindergarten rooms open for Jane", participantEventMapDto.Participants[0].SignInErrorMessage);
+        }
 
         private List<MpEventRoomDto> GetClosedEventRooms()
         {
