@@ -83,7 +83,7 @@ namespace SignInCheckIn.Services
 
             SyncInvalidSignins(mpEventParticipantList, participant);
 
-            AuditSigninIssues(participantEventMapDto, mpEventParticipantList, eligibleEvents);
+            AuditSigninIssues(participantEventMapDto, mpEventParticipantList, eligibleEvents, participant);
 
             // save the participant if they are selected and have a valid room assignment - moved down here so that we
             // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
@@ -417,27 +417,24 @@ namespace SignInCheckIn.Services
 
         // foreach participant, if either of their event participant records do not have an assigned room,
         // determine what the problem is and set the error message correctly
-        public void AuditSigninIssues(ParticipantEventMapDto participantEventMapDto, List<MpEventParticipantDto> mpEventParticipantDtos, List<MpEventDto> eligibleEvents)
+        public void AuditSigninIssues(ParticipantEventMapDto participantEventMapDto, List<MpEventParticipantDto> mpEventParticipantDtos, List<MpEventDto> eligibleEvents, ParticipantDto participant)
         {
-            foreach (var participant in participantEventMapDto.Participants)
+            if (participant.GroupId == null)
             {
-                if (participant.GroupId == null)
-                {
-                    participant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {participant.Nickname} is not in a Kids Club Group (DOB: {participant.DateOfBirth.ToShortDateString() })";
-                }
+                participant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {participant.Nickname} is not in a Kids Club Group (DOB: {participant.DateOfBirth.ToShortDateString() })";
+            }
 
-                if (participant.AssignedRoomId == null && participant.GroupId != null)
-                {
-                    // select rooms for the events...see if there were any rooms on the event for the participant
-                    var eventRooms = _roomRepository.GetRoomsForEvent(eligibleEvents.Select(r => r.EventId).ToList(), participantEventMapDto.CurrentEvent.EventSiteId);
+            if (participant.AssignedRoomId == null && participant.GroupId != null)
+            {
+                // select rooms for the events...see if there were any rooms on the event for the participant
+                var eventRooms = _roomRepository.GetRoomsForEvent(eligibleEvents.Select(r => r.EventId).ToList(), participantEventMapDto.CurrentEvent.EventSiteId);
 
-                    if (!(eventRooms.Any(r => r.AllowSignIn == true)))
-                    {
-                        // since we have multiple events we can possibly sign into, it does not make sense to record the event name
-                        // they could not sign into
-                        var group = participant.GroupId.HasValue ? _groupRepository.GetGroup(null, participant.GroupId.Value) : null;
-                        participant.SignInErrorMessage = $"There are no {@group?.Name} rooms open for {participant.Nickname}";
-                    }
+                if (!(eventRooms.Any(r => r.AllowSignIn == true)))
+                {
+                    // since we have multiple events we can possibly sign into, it does not make sense to record the event name
+                    // they could not sign into
+                    var group = participant.GroupId.HasValue ? _groupRepository.GetGroup(null, participant.GroupId.Value) : null;
+                    participant.SignInErrorMessage = $"There are no {@group?.Name} rooms open for {participant.Nickname}";
                 }
             }
         }
