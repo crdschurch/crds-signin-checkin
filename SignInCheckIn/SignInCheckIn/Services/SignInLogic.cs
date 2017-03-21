@@ -83,7 +83,7 @@ namespace SignInCheckIn.Services
 
             SyncInvalidSignins(mpEventParticipantList, participant);
 
-            AuditSigninIssues(participantEventMapDto, mpEventParticipantList, eligibleEvents);
+            AuditSigninIssues(participantEventMapDto, mpEventParticipantList, eligibleEvents, participant);
 
             // save the participant if they are selected and have a valid room assignment - moved down here so that we
             // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
@@ -417,10 +417,11 @@ namespace SignInCheckIn.Services
 
         // foreach participant, if either of their event participant records do not have an assigned room,
         // determine what the problem is and set the error message correctly
-        public void AuditSigninIssues(ParticipantEventMapDto participantEventMapDto, List<MpEventParticipantDto> mpEventParticipantDtos, List<MpEventDto> eligibleEvents)
+        //public void AuditSigninIssues(ParticipantEventMapDto participantEventMapDto, List<MpEventParticipantDto> mpEventParticipantDtos, List<MpEventDto> eligibleEvents)
+        public void AuditSigninIssues(ParticipantEventMapDto participantEventMapDto, List<MpEventParticipantDto> mpEventParticipantDtos, List<MpEventDto> eligibleEvents, ParticipantDto participant)
         {
-            foreach (var participant in participantEventMapDto.Participants)
-            {
+            //foreach (var participant in participantEventMapDto.Participants)
+            //{
                 if (participant.GroupId == null)
                 {
                     participant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {participant.Nickname} is not in a Kids Club Group (DOB: {participant.DateOfBirth.ToShortDateString() })";
@@ -439,7 +440,7 @@ namespace SignInCheckIn.Services
                         participant.SignInErrorMessage = $"There are no {@group?.Name} rooms open for {participant.Nickname}";
                     }
                 }
-            }
+            //}
         }
 
         /*** Helper Functions ***/
