@@ -2,7 +2,6 @@
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Crossroads.ApiVersioning;
-using Crossroads.ClientApiKeys;
 
 namespace SignInCheckIn
 {
