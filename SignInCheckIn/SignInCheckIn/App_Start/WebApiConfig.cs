@@ -21,10 +21,6 @@ namespace SignInCheckIn
             var cors = new EnableCorsAttribute(ConfigurationManager.AppSettings["CORS"], "*", "*");
             cors.SupportsCredentials = true;
             config.EnableCors(cors);
-
-            // Add a filter to verify domain-locked API keys
-            var domainLockedApiKeyFilter = (DomainLockedApiKeyFilter)config.DependencyResolver.GetService(typeof(DomainLockedApiKeyFilter));
-            config.Filters.Add(domainLockedApiKeyFilter);
         }
     }
 }
