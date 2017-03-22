@@ -212,6 +212,13 @@ a.btn-primary.active:not([href]):not([tabindex]) {
     height: 15px;
     width: 20px;
     vertical-align: baseline;
+  }
+
+  &.btn-primary {
+    fill: #fff;
+  }
+
+  &.btn-default {
     fill: #000;
   }
 }
@@ -244,6 +251,26 @@ datepicker {
 .card {
   ::selection {
     background: transparent;
+  }
+}
+
+.manage-rooms-table-container {
+  @media screen {
+    height: 70vh;
+    overflow-y: scroll;
+  }
+
+  .manage-rooms-fixed-header {
+    position: absolute;
+    top: 0;
+    background: white;
+    z-index: 20;
+  }
+
+  .manage-rooms-scroll-header thead {
+    @media screen {
+      opacity: 0;
+    }
   }
 }
 
