@@ -247,6 +247,26 @@ datepicker {
   }
 }
 
+.manage-rooms-table-container {
+  @media screen {
+    height: 70vh;
+    overflow-y: scroll;
+  }
+
+  .manage-rooms-fixed-header {
+    position: absolute;
+    top: 0;
+    background: white;
+    z-index: 20;
+  }
+
+  .manage-rooms-scroll-header thead {
+    @media screen {
+      opacity: 0;
+    }
+  }
+}
+
 .manage-rooms-table {
   @include media-breakpoint-down(lg) {
     display: block;
