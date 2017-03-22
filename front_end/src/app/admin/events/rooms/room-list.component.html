@@ -10,7 +10,7 @@
       <div class="col-lg-9 text-lg-right pb-1 hidden-print">
         <!-- TODO -->
         <button type="button" class="btn btn-unstyled mr-1 mb-1">{{getOpenRooms()}} of {{getTotalRooms()}} rooms open</button>
-        <button type="button" class="jquery btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
+        <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
         <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
         <button type="button" class="btn btn-default  mb-1" (click)="isCollapsed = !isCollapsed" [hidden]="!unassignedGroups"><span class="text-primary">{{unassignedGroups?.length}}</span> unassigned groups
         </button>

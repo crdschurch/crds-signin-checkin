@@ -28,7 +28,6 @@ export class RoomListComponent implements OnInit {
   eventId: string;
   isDirty = false;
   isSaving = false;
-  isTableHeaderCloned = false;
   unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
   public isCollapsed = true;
