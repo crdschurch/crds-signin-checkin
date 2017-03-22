@@ -151,7 +151,7 @@ export class RoomListComponent implements OnInit {
       return checkedIn;
     }, 0);
 
-    return checkedInTotal;   
+    return checkedInTotal;
   }
 
   public getSignedInTotal() {
@@ -164,7 +164,7 @@ export class RoomListComponent implements OnInit {
       return signedIn;
     }, 0);
 
-    return signedInTotal;   
+    return signedInTotal;
   }
 
   public getCapacityTotal() {
@@ -177,7 +177,7 @@ export class RoomListComponent implements OnInit {
       return capacity;
     }, 0);
 
-    return capacityTotal;   
+    return capacityTotal;
   }
 
   public getVolunteersTotal() {
@@ -190,7 +190,7 @@ export class RoomListComponent implements OnInit {
       return volunteers;
     }, 0);
 
-    return volunteersTotal;   
+    return volunteersTotal;
   }
 
 }
