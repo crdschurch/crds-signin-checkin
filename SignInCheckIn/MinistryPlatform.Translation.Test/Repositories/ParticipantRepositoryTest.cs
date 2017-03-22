@@ -143,20 +143,20 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 child2JsonResult
             };
 
-            var houseHold1 = @"{'Event_ID': 1231, 'Event_Participant_ID': 3, 'Household_ID': 1, 'First_Name': 'FirstName3', 'Last_Name': 'LastName3', 'NickName': 't'}";
-            var houseHold1Result = JObject.Parse(houseHold1);
+            var householdOne = @"{'Event_ID': 1231, 'Event_Participant_ID': 3, 'Household_ID': 1, 'First_Name': 'FirstName3', 'Last_Name': 'LastName3', 'NickName': 't'}";
+            var household1Result = JObject.Parse(householdOne);
 
-            var houseHold2 = @"{'Event_ID': 1231, 'Event_Participant_ID': 4, 'Household_ID': 1, 'First_Name': 'FirstName4', 'Last_Name': 'LastName4', 'NickName': 't'}";
-            var houseHold2Result = JObject.Parse(houseHold2);
+            var householdTwo = @"{'Event_ID': 1231, 'Event_Participant_ID': 4, 'Household_ID': 1, 'First_Name': 'FirstName4', 'Last_Name': 'LastName4', 'NickName': 't'}";
+            var household2Result = JObject.Parse(householdTwo);
 
-            var houseHold3 = @"{'Event_ID': 1231, 'Event_Participant_ID': 5, 'Household_ID': 2, 'First_Name': 'FirstName5', 'Last_Name': 'LastName5', 'NickName': 't'}";
-            var houseHold3Result = JObject.Parse(houseHold3);
+            var householdThree = @"{'Event_ID': 1231, 'Event_Participant_ID': 5, 'Household_ID': 2, 'First_Name': 'FirstName5', 'Last_Name': 'LastName5', 'NickName': 't'}";
+            var household3Result = JObject.Parse(householdThree);
 
             var houseHoldResults = new List<JObject>
             {
-                houseHold1Result,
-                houseHold2Result,
-                houseHold3Result
+                household2Result,
+                household2Result,
+                household3Result
             };
 
             var spResult = new List<List<JObject>>

@@ -55,17 +55,17 @@ namespace MinistryPlatform.Translation.Repositories
         // this gets data we won't have with older participants
         public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, int eventId, string search = null)
         {
-            var parms = new Dictionary<string, object>
+            var parameters = new Dictionary<string, object>
             {
                 {"EventId", eventId}
             };
 
             if (search != null)
             {
-                parms.Add("Search", search);
+                parameters.Add("Search", search);
             }
 
-            var results = _ministryPlatformRestRepository.UsingAuthenticationToken(token).GetFromStoredProc<JObject>("api_crds_Get_Manage_Children_data", parms);
+            var results = _ministryPlatformRestRepository.UsingAuthenticationToken(token).GetFromStoredProc<JObject>("api_crds_Get_Manage_Children_data", parameters);
 
             // This check indicates that no household was found
             if (results == null || !results.Any() || results.Count < 2)
