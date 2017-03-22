@@ -22,14 +22,14 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
-            var contactColumnList = new List<string>
+            var congregationColumnList = new List<string>
             {
                 "Congregation_ID",
                 "Congregation_Name"
             };
 
             var congregations = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpCongregationDto>($"Available_Online = 1 AND (End_Date IS NULL OR End_Date > '{DateTime.Now:yyyy-MM-dd H:mm:ss}')", contactColumnList);
+                .Search<MpCongregationDto>($"Available_Online = 1 AND (End_Date IS NULL OR End_Date > '{DateTime.Now:yyyy-MM-dd}')", congregationColumnList);
 
             return congregations;
         }
