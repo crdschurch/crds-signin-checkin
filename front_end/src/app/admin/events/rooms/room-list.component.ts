@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
 
-
 import { Event, Room, Group } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { ApiService } from '../../../shared/services';
@@ -14,6 +13,8 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 
 import { CanDeactivateGuard } from '../../../shared/guards';
+
+declare var jQuery:any;
 
 @Component({
   templateUrl: 'room-list.component.html',
@@ -27,6 +28,7 @@ export class RoomListComponent implements OnInit {
   eventId: string;
   isDirty = false;
   isSaving = false;
+  isTableHeaderCloned = false;
   unassignedGroups: Group[];
   public dropdownStatus: { isOpen: boolean, isDisabled: boolean } = { isOpen: false, isDisabled: false };
   public isCollapsed = true;
@@ -151,7 +153,7 @@ export class RoomListComponent implements OnInit {
       return checkedIn;
     }, 0);
 
-    return checkedInTotal;   
+    return checkedInTotal;
   }
 
   public getSignedInTotal() {
@@ -164,7 +166,7 @@ export class RoomListComponent implements OnInit {
       return signedIn;
     }, 0);
 
-    return signedInTotal;   
+    return signedInTotal;
   }
 
   public getCapacityTotal() {
@@ -177,7 +179,7 @@ export class RoomListComponent implements OnInit {
       return capacity;
     }, 0);
 
-    return capacityTotal;   
+    return capacityTotal;
   }
 
   public getVolunteersTotal() {
@@ -190,7 +192,44 @@ export class RoomListComponent implements OnInit {
       return volunteers;
     }, 0);
 
-    return volunteersTotal;   
+    return volunteersTotal;
+  }
+
+
+  public ngAfterViewChecked() {
+    var fixed_table_header = jQuery('.manage-rooms-fixed-header > thead > tr');
+    //console.log(fixed_table_header.html());
+
+    var real_table_header = jQuery('.manage-rooms-scroll-header > thead > tr');
+
+
+    var real_table_children = real_table_header.children();
+    var fixed_table_children = fixed_table_header.children();
+
+    real_table_children.width(function(i,val) {
+        // console.log(real_table_children.eq(i).width());
+        // return target_children.eq(i).width();
+        fixed_table_children.eq(i).width(real_table_children.eq(i).width());
+    });
+
+    real_table_header.css("opacity", "0");
+
+
+  //
+  //   if (!this.isTableHeaderCloned) {
+  //     var target = jQuery('.manage-rooms-table thead > tr');
+  //     var target_children = target.children();
+  //
+  //     var clone = target.clone(true);
+  //
+  //     clone.children().width(function(i,val) {
+  //         console.log(target_children.eq(i).width());
+  //         return target_children.eq(i).width();
+  //     });
+  //
+  //     clone.appendTo(fixed_container);
+  //     this.isTableHeaderCloned = true;
+  //   }
   }
 
 }
