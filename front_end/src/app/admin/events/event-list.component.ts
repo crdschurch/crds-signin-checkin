@@ -72,15 +72,11 @@ export class EventListComponent implements OnInit {
     this.configurationSiteId = config && config.CongregationId ? config.CongregationId : 1;
   }
 
-  public isSelected(s) {
-    console.log(this.selectedSiteId, s.CongregationId)
-  }
   public isReady(): boolean {
     return this.ready;
   }
 
   set selectedSiteId(siteId) {
-    console.log("set selectedSiteId", siteId)
     this.ready = false;
     this._selectedSiteId = siteId;
     this.apiService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this._selectedSiteId).subscribe(
