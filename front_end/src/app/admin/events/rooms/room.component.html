@@ -1,9 +1,12 @@
 <td [ngClass]="{'disabled': pending }"  class="hidden-print">
-  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
-    <div *ngFor="let ageGrade of ageRangeAndGrades();">
-      {{ ageGrade }}
-    </div>
-  </a>
+  <a (click)="isCollapsed = !isCollapsed" class="pointer text-primary" *ngIf="ageRangeAndGrades()[0] != 'Add'">View</a>
+  <div [collapse]="isCollapsed">
+    <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
+      <div *ngFor="let ageGrade of ageRangeAndGrades();">
+        {{ ageGrade }}
+      </div>
+    </a>
+  </div>
 </td>
 <td [ngClass]="{'disabled': pending }">
   {{room.RoomName}} <label class="tag tag-info" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</label>
