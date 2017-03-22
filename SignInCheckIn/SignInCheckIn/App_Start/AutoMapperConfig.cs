@@ -75,6 +75,12 @@ namespace SignInCheckIn
                 .ForMember(dest => dest.CheckinPhone, opts => opts.MapFrom(src => src.CheckinPhone));
             config.CreateMap<MpRoomDto, RoomDto>().ReverseMap();
             config.CreateMap<MpContactDto, ContactDto>().ReverseMap();
+            config.CreateMap<MpCongregationDto, CongregationDto>()
+                .ForMember(dest => dest.CongregationId, opts => opts.MapFrom(src => src.CongregationId))
+                .ForMember(dest => dest.CongregationName, opts => opts.MapFrom(src => src.CongregationName))
+                .ReverseMap()
+                .ForMember(dest => dest.CongregationId, opts => opts.MapFrom(src => src.CongregationId))
+                .ForMember(dest => dest.CongregationName, opts => opts.MapFrom(src => src.CongregationName));
         }
     }
 }
