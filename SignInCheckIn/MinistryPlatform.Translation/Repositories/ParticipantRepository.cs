@@ -57,9 +57,13 @@ namespace MinistryPlatform.Translation.Repositories
         {
             var parms = new Dictionary<string, object>
             {
-                {"EventId", eventId},
-                {"Search", search}
+                {"EventId", eventId}
             };
+
+            if (search != null)
+            {
+                parms.Add("Search", search);
+            }
 
             var results = _ministryPlatformRestRepository.UsingAuthenticationToken(token).GetFromStoredProc<JObject>("api_crds_Get_Manage_Children_data", parms);
 
