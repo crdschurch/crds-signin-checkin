@@ -224,6 +224,7 @@
     <Compile Include="Controllers\KioskController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
+    <Compile Include="Controllers\SiteController.cs" />
     <Compile Include="Exceptions\Models\ApiErrorDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -236,6 +237,7 @@
     <Compile Include="Models\DTO\NewChildDto.cs" />
     <Compile Include="Models\DTO\NewFamilyDto.cs" />
     <Compile Include="Models\DTO\NewParentDto.cs" />
+    <Compile Include="Models\DTO\CongregationDto.cs" />
     <Compile Include="Models\DTO\ParticipantDto.cs" />
     <Compile Include="Models\DTO\AgeGradeDto.cs" />
     <Compile Include="Models\DTO\EventDto.cs" />
@@ -258,6 +260,8 @@
     <Compile Include="Security\MPAuth.cs" />
     <Compile Include="Services\ChildCheckinService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
+    <Compile Include="Services\Interfaces\ISiteService.cs" />
+    <Compile Include="Services\SiteService.cs" />
     <Compile Include="Services\WebsocketService.cs" />
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\HelloWorldService.cs" />
@@ -328,6 +332,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Site\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Crossroads.Utilities\Crossroads.Utilities.csproj">
@@ -361,7 +366,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-	<DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
+    <DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Demo|AnyCPU'">
     <OutputPath>bin\</OutputPath>
@@ -371,7 +376,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-	<DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
+    <DocumentationFile>bin\SignInCheckIn.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Label="SlowCheetah">
     <SlowCheetahToolsPath>$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\SlowCheetah.2.5.14\tools\))</SlowCheetahToolsPath>

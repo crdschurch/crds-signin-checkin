@@ -29,7 +29,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var congregations = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpCongregationDto>($"Available_Online = true AND (End_Date IS NULL OR End_Date > '{DateTime.Now:yyyy-MM-dd H:mm:ss})", contactColumnList);
+                .Search<MpCongregationDto>($"Available_Online = 1 AND (End_Date IS NULL OR End_Date > '{DateTime.Now:yyyy-MM-dd H:mm:ss}')", contactColumnList);
 
             return congregations;
         }

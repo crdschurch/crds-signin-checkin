@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Crossroads.Web.Common.MinistryPlatform;
+using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
 {
+    [MpRestApiTable(Name = "Congregations")]
     public class MpCongregationDto
     {
         [JsonProperty(PropertyName = "Congregation_ID")]

@@ -2,24 +2,19 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
-using MinistryPlatform.Translation.Repositories.Interfaces;
-using SignInCheckIn.Exceptions.Models;
-using SignInCheckIn.Models.DTO;
-using SignInCheckIn.Security;
-using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
-using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Models.DTO;
+using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Controllers
 {
     public class SiteController : ApiController
     {
-        private readonly ISiteRepository _siteRepository;
+        private readonly ISiteService _siteService;
 
-        public SiteController(ISiteRepository siteRepository)
+        public SiteController(ISiteService siteService)
         {
-            _siteRepository = siteRepository;
+            _siteService = siteService;
         }
 
         [HttpGet]
@@ -28,7 +23,7 @@ namespace SignInCheckIn.Controllers
         [Route("sites")]
         public IHttpActionResult GetSites()
         {
-            return Ok(_siteRepository.GetAll());
+            return Ok(_siteService.GetAll());
         }
     }
 }
