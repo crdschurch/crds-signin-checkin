@@ -118,11 +118,6 @@ export class RoomComponent implements OnInit {
     }
   }
 
-  public toggleDropdown($event: MouseEvent): void {
-    $event.preventDefault();
-    $event.stopPropagation();
-  }
-
   isAdventureClub() {
     return Number(this.room.EventId) !== Number(this.mainEventId());
   }
