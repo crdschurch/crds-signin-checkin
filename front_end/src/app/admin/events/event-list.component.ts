@@ -81,7 +81,7 @@ export class EventListComponent implements OnInit {
     this._selectedSiteId = siteId;
     this.apiService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this._selectedSiteId).subscribe(
       events => {
-        this.events = events;
+        this.events = Event.fromJsons(events);
         this.ready = true;
       },
       error => { console.error(error); this.rootService.announceEvent('generalError'); }
