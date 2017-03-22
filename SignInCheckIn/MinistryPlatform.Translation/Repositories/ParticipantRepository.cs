@@ -61,7 +61,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"Search", search}
             };
 
-            var results = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Manage_Children_data", parms);
+            var results = _ministryPlatformRestRepository.UsingAuthenticationToken(token).GetFromStoredProc<JObject>("api_crds_Get_Manage_Children_data", parms);
 
             // This check indicates that no household was found
             if (results == null || !results.Any() || results.Count < 2)

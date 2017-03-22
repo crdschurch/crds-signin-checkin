@@ -165,7 +165,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 houseHoldResults
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("abcd");
+
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>())).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.GetFromStoredProc<JObject>(It.IsAny<string>(), It.IsAny<Dictionary<string, object>>())).Returns(spResult);
 
