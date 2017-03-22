@@ -58,7 +58,7 @@ export class ApiService {
                       let allCongregations = (<Congregation[]>res.json()).map(r => Congregation.fromJson(r));
                       // remove "I do not attend Crossroads" record and "Anywhere"
                       return allCongregations.filter(e => {
-                        return e.CongregationId != 2 && e.CongregationId != 11;
+                        return e.CongregationId !== 2 && e.CongregationId !== 15;
                       })
                     })
                     .catch(this.handleError);

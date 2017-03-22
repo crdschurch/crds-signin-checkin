@@ -10,9 +10,11 @@ import * as moment from 'moment';
   templateUrl: 'event-list.component.html'
 })
 export class EventListComponent implements OnInit {
+  private _selectedSiteId: number;
+  ready: boolean;
   events: Event[];
   allSites: Congregation[];
-  site: number;
+  configurationSiteId: number;
   currentWeekFilter: any;
   weekFilters: Timeframe[];
 
@@ -25,16 +27,11 @@ export class EventListComponent implements OnInit {
   }
 
   private getData() {
-    this.apiService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
-      events => {
-        this.events = events;
-      },
-      error => { console.error(error); this.rootService.announceEvent('generalError'); }
-    );
-
     this.apiService.getSites().subscribe(
       allSites => {
         this.allSites = allSites;
+        // set the initial site to the site from the machine config
+        this.selectedSiteId = this.configurationSiteId;
       },
       error => { console.error(error); this.rootService.announceEvent('generalError'); }
     );
@@ -70,23 +67,43 @@ export class EventListComponent implements OnInit {
     this.currentWeekFilter = this.weekFilters[0];
   }
 
-  private setupSite(config: MachineConfiguration) {
+  private setupSite(config: MachineConfiguration = null) {
     // default to Oakley (1) if setup cookie is not present or does not have a site id
-    this.site = config && config.CongregationId ? config.CongregationId : 1;
+    this.configurationSiteId = config && config.CongregationId ? config.CongregationId : 1;
   }
 
+  public isSelected(s) {
+    console.log(this.selectedSiteId, s.CongregationId)
+  }
   public isReady(): boolean {
-    return this.events !== undefined;
+    return this.ready;
   }
 
-  ngOnInit(): void {
+  set selectedSiteId(siteId) {
+    console.log("set selectedSiteId", siteId)
+    this.ready = false;
+    this._selectedSiteId = siteId;
+    this.apiService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this._selectedSiteId).subscribe(
+      events => {
+        this.events = events;
+        this.ready = true;
+      },
+      error => { console.error(error); this.rootService.announceEvent('generalError'); }
+    );
+  }
+
+  get selectedSiteId() {
+    return this._selectedSiteId;
+  }
+
+  ngOnInit() {
     this.createWeekFilters();
     this.setupService.getThisMachineConfiguration().subscribe((setupCookie) => {
       this.setupSite(setupCookie);
       this.getData();
     },
     (error) => {
-      this.setupSite(null);
+      this.setupSite();
       this.getData();
     });
   }
