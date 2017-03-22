@@ -212,6 +212,13 @@ a.btn-primary.active:not([href]):not([tabindex]) {
     height: 15px;
     width: 20px;
     vertical-align: baseline;
+  }
+
+  &.btn-primary {
+    fill: #fff;
+  }
+
+  &.btn-default {
     fill: #000;
   }
 }

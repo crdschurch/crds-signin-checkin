@@ -52,7 +52,7 @@
     <li class="list-inline-item">
       <strong>Site</strong> {{event?.EventSite}}
     </li>
-    <li class="list-inline-item">
+    <li class="list-inline-item hidden-xs-up">
       <strong>Event Type</strong> {{event?.EventType}}
     </li>
     <li class="list-inline-item">
@@ -62,7 +62,7 @@
       <strong>Event Time</strong> {{event?.EventStartDate | amDateFormat:'h:mma'}}
     </li>
   </ul>
-  <div class="btn-group btn-group-sm float-xl-right" role="group">
+  <div class="btn-group btn-group-sm float-xl-right hidden-xs-up" role="group">
     <!-- TODO -->
     <button type="button" class="btn btn-secondary" disabled>Previous Event</button>
     <button type="button" class="btn btn-secondary" disabled>Next Event</button>
