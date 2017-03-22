@@ -44,59 +44,12 @@
             </option>
           </select>
         </section>
-        <section class="sidebar-section my-1">
-          <label><strong>Site Filter</strong></label>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Florence
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Mason
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Oakley
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Oxford
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Uptown
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Westside
-            </label>
-          </div>
-        </section>
-        <section class="sidebar-section mb-1">
-          <label><strong>Event Filter</strong></label>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Childcare
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Service
-            </label>
-          </div>
+        <section class="sidebar-section site-filter">
+          <select class="form-control">
+            <option *ngFor="let site of allSites">
+              {{site.CongregationName}}
+            </option>
+          </select>
         </section>
       </div><!--col-sm-3 col-xs-12-->
     </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService, HttpClientService, RootService, SetupService } from '../../shared/services';
-import { MachineConfiguration, Event, Timeframe } from '../../shared/models';
+import { Congregation, MachineConfiguration, Event, Timeframe } from '../../shared/models';
 import { HeaderService } from '../header/header.service';
 import * as moment from 'moment';
 
@@ -11,6 +11,7 @@ import * as moment from 'moment';
 })
 export class EventListComponent implements OnInit {
   events: Event[];
+  allSites: Congregation[];
   site: number;
   currentWeekFilter: any;
   weekFilters: Timeframe[];
@@ -27,6 +28,13 @@ export class EventListComponent implements OnInit {
     this.apiService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this.site).subscribe(
       events => {
         this.events = events;
+      },
+      error => { console.error(error); this.rootService.announceEvent('generalError'); }
+    );
+
+    this.apiService.getSites().subscribe(
+      allSites => {
+        this.allSites = allSites;
       },
       error => { console.error(error); this.rootService.announceEvent('generalError'); }
     );

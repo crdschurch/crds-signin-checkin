@@ -5,7 +5,7 @@ import { RequestOptions, URLSearchParams } from '@angular/http';
 import * as moment from 'moment';
 import '../../rxjs-operators';
 import { HttpClientService, SetupService } from '.';
-import { Event, Group } from '../models';
+import { Congregation, Event, Group } from '../models';
 
 @Injectable()
 export class ApiService {
@@ -48,6 +48,19 @@ export class ApiService {
     const url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
     return this.http.get(url)
                     .map(res => { return (<Group[]>res.json()).map(r => Group.fromJson(r)); })
+                    .catch(this.handleError);
+  }
+
+  getSites() {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/sites`;
+    return this.http.get(url)
+                    .map(res => {
+                      let allCongregations = (<Congregation[]>res.json()).map(r => Congregation.fromJson(r));
+                      // remove "I do not attend Crossroads" record and "Anywhere"
+                      return allCongregations.filter(e => {
+                        return e.CongregationId != 2 && e.CongregationId != 11;
+                      })
+                    })
                     .catch(this.handleError);
   }
 
