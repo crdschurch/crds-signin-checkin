@@ -36,6 +36,19 @@ export class Event {
     return this.EventTypeId === Event.TYPE.ADVENTURE_CLUB;
   }
 
+  public type() {
+    return 'Bob';
+    // if (this.EventTypeId === Event.TYPE.ADVENTURE_CLUB;
+    // switch (this.EventTypeId) {
+    //   case 81:
+    //     return 'Midde School';
+    //   case 243:
+    //     return 'Childcare';
+    //   default:
+    //     return 'Service';
+    // }
+  }
+
   constructor() {
   }
 }

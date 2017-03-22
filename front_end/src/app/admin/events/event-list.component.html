@@ -24,7 +24,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let event of events">
-              <td>Service</td>
+              <td>{{event.type()}}</td>
               <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
               <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
               <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
