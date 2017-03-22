@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Http;
+using Crossroads.ClientApiKeys;
 
 namespace SignInCheckIn
 {
@@ -16,6 +17,7 @@ namespace SignInCheckIn
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             AutoMapperConfig.RegisterMappings();
+            DomainLockedClientApiKeyConfig.Register(GlobalConfiguration.Configuration);
         }
     }
 }
