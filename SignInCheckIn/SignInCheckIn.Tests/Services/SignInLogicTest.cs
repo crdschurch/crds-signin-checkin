@@ -948,6 +948,9 @@ namespace SignInCheckIn.Tests.Services
             var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
             _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
 
+            //mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
+            //_childSigninRepository.Setup(r => r.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(new )
+
             // Act
             var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
 
@@ -1626,6 +1629,19 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(1234, result[0].RoomId);
             Assert.AreEqual(5432, result[1].RoomId);
         }
+
+        [Test]
+        public void ItShouldSetTranslateEventPArticiValidParticipant()
+        {
+            // Arrange
+
+
+            // Act
+
+
+            // Assert
+        }
+
 
         // JPC - this test is mothballed for the moment. The intent was to test the SignInLogic class from end to end, using multiple participants, etc.
         // However, the call we make down to the participant repository, when inserting the event participants and getting back these objects, would have

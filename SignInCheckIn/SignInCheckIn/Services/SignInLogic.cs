@@ -37,7 +37,6 @@ namespace SignInCheckIn.Services
         }
 
         public List<ParticipantDto> SignInParticipants(ParticipantEventMapDto participantEventMapDto, List<MpEventDto> currentEvents)
-        //public List<MpEventParticipantDto> SignInParticipants(ParticipantEventMapDto participantEventMapDto, List<MpEventDto> currentEvents)
         {
             var mpEventParticipantList = new List<MpEventParticipantDto>();
 
@@ -48,9 +47,12 @@ namespace SignInCheckIn.Services
                 mpEventParticipantList.AddRange(SignInParticipant(participant, participantEventMapDto, currentEvents));
             }
 
+            // insert event participants here and get their event participant ids
+            mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
+
             var mappedParticipants = mpEventParticipantList.Select(Mapper.Map<ParticipantDto>).ToList();
+
             return mappedParticipants;
-            //return mpEventParticipantList;
         }
 
         public List<MpEventParticipantDto> SignInParticipant(ParticipantDto participant, ParticipantEventMapDto participantEventMapDto, List<MpEventDto> currentEvents)
@@ -89,10 +91,15 @@ namespace SignInCheckIn.Services
             // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
             // we are using this logic correctly - getting a rock vs. no sign in, so we may still need the
             // mp event participants to be created
-            if (participant.Selected == true && participant.AssignedRoomId != null && mpEventParticipantList.Any())
-            {
-                mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
-            }
+
+            // this conditional will need to be updated so that we save mp event participants regardless of the status of the
+            // participant...
+            //if (participant.Selected == true && participant.AssignedRoomId != null && mpEventParticipantList.Any())
+            //{
+            //    mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
+            //}
+
+            //mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
 
             return mpEventParticipantList;
         } 
@@ -170,7 +177,7 @@ namespace SignInCheckIn.Services
                 {
                     // if there is a not an eligible event room for the child for either event, add a default 
                     // event participant record so they get a rock
-                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null);
+                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.ErrorParticipationStatusId);
                     mpEventParticipantRecords.Add(mpEventParticipantDto);
                     continue;
                 }
@@ -178,7 +185,7 @@ namespace SignInCheckIn.Services
                 if (eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn))
                 {
                     // consider just passing down the event room?
-                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, eventRoom.EventId, eventRoom.RoomId);
+                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, eventRoom.EventId, eventRoom.RoomId, _applicationConfiguration.SignedInParticipationStatusId);
                     mpEventParticipantRecords.Add(mpEventParticipantDto);
                 }
                 else
@@ -187,13 +194,13 @@ namespace SignInCheckIn.Services
 
                     if (bumpedRoom != null)
                     {
-                        var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, bumpedRoom.RoomId);
+                        var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, bumpedRoom.RoomId, _applicationConfiguration.SignedInParticipationStatusId);
                         mpEventParticipantRecords.Add(mpEventParticipantDto);
                     }
                     // if they have no room assignment, add an unsignedin participant so that their label gets printed appropriately
                     else
                     {
-                        var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null);
+                        var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.CapacityParticipationStatusId);
                         mpEventParticipantRecords.Add(mpEventParticipantDto);
                     }
                 }
@@ -232,7 +239,7 @@ namespace SignInCheckIn.Services
             {
                 foreach (var room in signInRooms)
                 {
-                    mpEventParticipantRecords.Add(TranslateParticipantDtoToMpEventParticipantDto(participant, room.EventId, room.RoomId));
+                    mpEventParticipantRecords.Add(TranslateParticipantDtoToMpEventParticipantDto(participant, room.EventId, room.RoomId, _applicationConfiguration.SignedInParticipationStatusId));
                 }
 
                 // set the room ids on the participant here
@@ -246,8 +253,9 @@ namespace SignInCheckIn.Services
             }
             else
             {
-                // TODO: Make sure that passing 0 as an event id is appropriate
-                var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, 0, null);
+                // for AC signins, we will assume that we're not able to sign in because of capacity - this will be corrected in the audit section if there's actually
+                // an error on signing in
+                var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, 0, null, _applicationConfiguration.CapacityParticipationStatusId);
                 mpEventParticipantRecords.Add(mpEventParticipantDto);
             }
 
@@ -422,6 +430,11 @@ namespace SignInCheckIn.Services
             if (participant.GroupId == null)
             {
                 participant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {participant.Nickname} is not in a Kids Club Group (DOB: {participant.DateOfBirth.ToShortDateString() })";
+
+                foreach (var mpEventParticipantDto in mpEventParticipantDtos)
+                {
+                    mpEventParticipantDto.ParticipantStatusId = _applicationConfiguration.ErrorParticipationStatusId;
+                }
             }
 
             if (participant.AssignedRoomId == null && participant.GroupId != null)
@@ -435,6 +448,11 @@ namespace SignInCheckIn.Services
                     // they could not sign into
                     var group = participant.GroupId.HasValue ? _groupRepository.GetGroup(null, participant.GroupId.Value) : null;
                     participant.SignInErrorMessage = $"There are no {@group?.Name} rooms open for {participant.Nickname}";
+
+                    foreach (var mpEventParticipantDto in mpEventParticipantDtos)
+                    {
+                        mpEventParticipantDto.ParticipantStatusId = _applicationConfiguration.ErrorParticipationStatusId;
+                    }
                 }
             }
         }
@@ -447,13 +465,14 @@ namespace SignInCheckIn.Services
             return mpEventDto.EventStartDate >= offsetPeriod;
         }
 
-        private MpEventParticipantDto TranslateParticipantDtoToMpEventParticipantDto(ParticipantDto participant, int eventId, int? roomId)
+        // TODO: this will need to be updated so that we're setting the status based on the participant's ability to sign in, etc
+        private MpEventParticipantDto TranslateParticipantDtoToMpEventParticipantDto(ParticipantDto participant, int eventId, int? roomId, int participationStatusId)
         {
             MpEventParticipantDto mpEventParticipantDto = new MpEventParticipantDto
             {
                 EventId = eventId,
                 ParticipantId = participant.ParticipantId,
-                ParticipantStatusId = _applicationConfiguration.SignedInParticipationStatusId,
+                ParticipantStatusId = participationStatusId,
                 FirstName = participant.FirstName,
                 LastName = participant.LastName,
                 Nickname = participant.Nickname,
@@ -485,6 +504,7 @@ namespace SignInCheckIn.Services
             }
         }
 
+        // this needs to be updated to handle capacity or error sign in statuses, too...
         public void SyncInvalidSignins(List<MpEventParticipantDto> mpEventParticipantDtoList, ParticipantDto participantDto)
         {
             if (mpEventParticipantDtoList.Any(r => r.HasRoomAssignment == false))
