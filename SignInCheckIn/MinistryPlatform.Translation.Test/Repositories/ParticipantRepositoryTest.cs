@@ -67,12 +67,6 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var eventId = 1231;
 
-            var parms = new Dictionary<string, object>
-            {
-                {"EventId", eventId},
-                {"Search", null}
-            }; 
-
             var children = new List<MpEventParticipantDto>
             {
                 new MpEventParticipantDto
