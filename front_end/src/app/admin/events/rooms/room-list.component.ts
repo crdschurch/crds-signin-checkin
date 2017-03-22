@@ -47,7 +47,12 @@ export class RoomListComponent implements OnInit {
 
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
-        this.rooms = rooms;
+        // sort by KcSortOrder ascending, if null, put at end
+        this.rooms = rooms.sort((r1, r2) => {
+            return +(r1.KcSortOrder == null) - +(r2.KcSortOrder == null)
+              || +(r1.KcSortOrder > r2.KcSortOrder)
+              || -(r1.KcSortOrder < r2.KcSortOrder);
+        });
       },
       (error: any) => console.error(error)
     );
@@ -198,38 +203,16 @@ export class RoomListComponent implements OnInit {
 
   public ngAfterViewChecked() {
     var fixed_table_header = jQuery('.manage-rooms-fixed-header > thead > tr');
-    //console.log(fixed_table_header.html());
-
     var real_table_header = jQuery('.manage-rooms-scroll-header > thead > tr');
-
 
     var real_table_children = real_table_header.children();
     var fixed_table_children = fixed_table_header.children();
 
     real_table_children.width(function(i,val) {
-        // console.log(real_table_children.eq(i).width());
-        // return target_children.eq(i).width();
         fixed_table_children.eq(i).width(real_table_children.eq(i).width());
     });
 
     real_table_header.css("opacity", "0");
-
-
-  //
-  //   if (!this.isTableHeaderCloned) {
-  //     var target = jQuery('.manage-rooms-table thead > tr');
-  //     var target_children = target.children();
-  //
-  //     var clone = target.clone(true);
-  //
-  //     clone.children().width(function(i,val) {
-  //         console.log(target_children.eq(i).width());
-  //         return target_children.eq(i).width();
-  //     });
-  //
-  //     clone.appendTo(fixed_container);
-  //     this.isTableHeaderCloned = true;
-  //   }
   }
 
 }

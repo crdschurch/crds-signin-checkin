@@ -12,12 +12,14 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
+using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Tests.Services
 {
     public class RoomServiceTest
     {
         private Mock<IEventRepository> _eventRepository;
+        private Mock<IEventService> _eventService;
         private Mock<IRoomRepository> _roomRepository;
         private Mock<IAttributeRepository> _attributeRepository;
         private Mock<IGroupRepository> _groupRepository;
@@ -43,6 +45,7 @@ namespace SignInCheckIn.Tests.Services
             AutoMapperConfig.RegisterMappings();
 
             _eventRepository = new Mock<IEventRepository>();
+            _eventService = new Mock<IEventService>();
             _roomRepository = new Mock<IRoomRepository>();
             _attributeRepository = new Mock<IAttributeRepository>(MockBehavior.Strict);
             _groupRepository = new Mock<IGroupRepository>(MockBehavior.Strict);
@@ -68,9 +71,9 @@ namespace SignInCheckIn.Tests.Services
                     "[{'Attribute_ID':9020,'Attribute_Name':'0-1','Sort_Order':1000,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9021,'Attribute_Name':'1-2','Sort_Order':1,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9022,'Attribute_Name':'2-3','Sort_Order':2,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9023,'Attribute_Name':'3-4','Sort_Order':3,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9024,'Attribute_Name':'4-5','Sort_Order':4,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9025,'Attribute_Name':'5-6','Sort_Order':5,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9026,'Attribute_Name':'6-7','Sort_Order':6,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9027,'Attribute_Name':'7-8','Sort_Order':7,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9028,'Attribute_Name':'8-9','Sort_Order':8,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9029,'Attribute_Name':'9-10','Sort_Order':9,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9030,'Attribute_Name':'10-11','Sort_Order':10,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9031,'Attribute_Name':'11-12','Sort_Order':11,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'}]");
 
 
-            _fixture = new RoomService(_eventRepository.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object, _apiUserRepository.Object);
+            _fixture = new RoomService(_eventRepository.Object, _eventService.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object, _apiUserRepository.Object);
         }
-
+        
         [Test]
         public void ShouldGetEventRooms()
         {
@@ -259,6 +262,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(mocked => mocked.GetSubeventsForEvents(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(acEvents);
             _roomRepository.Setup(mocked => mocked.GetEventRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(acEventRoom);
             _roomRepository.Setup(mocked => mocked.CreateOrUpdateEventRoom("token", It.IsAny<MpEventRoomDto>())).Returns(newMpEventRoom);
+            _eventService.Setup(mocked => mocked.UpdateAdventureClubStatusIfNecessary(It.IsAny<MpEventDto>(), It.IsAny<string>()));
             var result = _fixture.CreateOrUpdateEventRoom("token", eventRoom);
             _roomRepository.VerifyAll();
 

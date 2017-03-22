@@ -21,6 +21,7 @@ export class Room {
   BumpingRulePriority: number;
   BumpingRuleTypeId: number;
   AdventureClub: boolean;
+  KcSortOrder: number;
 
   static fromJsons(jsons: any): Room[] {
     let rooms: Room[] = [];
@@ -48,6 +49,7 @@ export class Room {
     room.CheckedIn = json.CheckedIn;
     room.Label = json.Label;
     room.AdventureClub = json.AdventureClub;
+    room.KcSortOrder = json.KcSortOrder;
     room.BumpingRuleId = json.BumpingRuleId;
     room.BumpingRulePriority = json.BumpingRulePriority;
     room.BumpingRuleTypeId = json.BumpingRuleTypeId;

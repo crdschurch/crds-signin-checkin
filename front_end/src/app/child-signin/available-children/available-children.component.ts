@@ -187,7 +187,7 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  updateChildYearGradeGroup(guest: Guest, groupId: number) {
-   this._newGuestChild.YearGrade = groupId;
+   this._newGuestChild.YearGrade = +groupId;
  }
 
  openNewGuestModal(modal) {

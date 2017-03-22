@@ -204,6 +204,27 @@ export class ChannelService {
         this.hubConnection.stop();
     }
 
+    unsub(channelName: string) {
+      let channelSub = this.subjects.find((x: ChannelSubject) => {
+          return x.channel === channelName;
+      }) as ChannelSubject;
+      const index = this.subjects.findIndex((x: ChannelSubject) => {
+          return x.channel === channelName;
+      });
+      this.subjects.splice(index, 1);
+      channelSub.subject.unsubscribe();
+      console.log('Unsubscribed from', channelSub);
+      console.log('Subscribed channels:', this.subjects);
+    }
+
+    unsubAll(channelPrefix: string) {
+      // get all channels that match string
+      const allChannels = this.subjects.filter(x => x.channel.includes(channelPrefix));
+      for (let subscribedChannel of allChannels) {
+        this.unsub(subscribedChannel.channel);
+      }
+    }
+
     /**
      * Get an observable that will contain the data associated with a specific
      * channel
@@ -262,20 +283,12 @@ export class ChannelService {
       this.hubProxy.invoke('Subscribe', channel)
           .done(() => {
               console.log(`Successfully subscribed to ${channel} channel`);
+              console.log('Subscribed channels:', this.subjects);
           })
           .fail((error: any) => {
               channelSub.subject.error(error);
           });
     }
-
-    // Not quite sure how to handle this (if at all) since there could be
-    //  more than 1 caller subscribed to an observable we created
-    //
-    // unsubscribe(channel: string): Rx.Observable<any> {
-    //     this.observables = this.observables.filter((x: ChannelObservable) => {
-    //         return x.channel === channel;
-    //     });
-    // }
 
     /** publish provides a way for calles to emit events on any channel. In a
      * production app the server would ensure that only authorized clients can

@@ -43,8 +43,9 @@ export class ChildCheckinService {
         }
 
         return childrenAvailable;
-      }).
-      catch(this.handleError);
+      }).catch(e => {
+        return Observable.throw(e);
+      });
   }
 
   checkInChildren(child: Child, eventId: number) {

@@ -8,6 +8,9 @@ let fixture: RoomComponent;
 let channelServiceStub: any = {
   sub(): any {
     return Observable.of();
+  },
+  unsubAll(): any {
+    return Observable.of();
   }
 };
 let childCheckinServiceStub: any = {

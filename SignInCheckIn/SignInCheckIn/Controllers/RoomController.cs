@@ -6,7 +6,6 @@ using Crossroads.Utilities.Services.Interfaces;
 using Microsoft.AspNet.SignalR;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
-using SignInCheckIn.Hubs;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
@@ -17,14 +16,14 @@ namespace SignInCheckIn.Controllers
 {
     public class RoomController : MpAuth
     {
+        private readonly IWebsocketService _websocketService;
         private readonly IRoomService _roomService;
-        private readonly IHubContext _context;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public RoomController(IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
+            _websocketService = websocketService;
             _roomService = roomService;
-            _context = GlobalHost.ConnectionManager.GetHubContext<EventHub>();
             _applicationConfiguration = applicationConfiguration;
         }
 
@@ -107,11 +106,7 @@ namespace SignInCheckIn.Controllers
                     eventRoom.RoomId = roomId;
 
                     var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(token, eventRoom);
-
-                    PublishToChannel(_context, new ChannelEvent {
-                        ChannelName = $"{_applicationConfiguration.CheckinCapacityChannel}{eventId}{roomId}",
-                        Data = updatedEventRoom
-                    });
+                    _websocketService.PublishCheckinCapacity(eventId, roomId, updatedEventRoom);
 
                     return Ok(updatedEventRoom);
                 }
@@ -130,8 +125,8 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                var room = _roomService.GetEventRoom(eventId, roomId);
-                return Ok(room);
+                return Ok(_roomService.GetEventRoom(eventId, roomId, true));
+               
             }
             catch (Exception e)
             {

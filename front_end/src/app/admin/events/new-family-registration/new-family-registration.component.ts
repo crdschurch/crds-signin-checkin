@@ -101,6 +101,11 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   onSubmit(form: NgForm) {
+    // ensure all children have birthdates
+    // https://rally1.rallydev.com/#/27593764268d/detail/defect/100109967564
+    if (!this.family.allChildrenHaveBirthdays()) {
+      return;
+    }
     this.submitted = true;
     if (!form.pristine && form.valid) {
       this.processing = true;

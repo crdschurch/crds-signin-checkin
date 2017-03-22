@@ -36,6 +36,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Event_Rooms.Room_ID",
                 "Room_ID_Table.Room_Name",
                 "Room_ID_Table.Room_Number",
+                "Room_ID_Table.KC_Sort_Order",
                 "Event_Rooms.Allow_Checkin",
                 "Event_Rooms.Volunteers",
                 "Event_Rooms.Capacity",
@@ -48,7 +49,8 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Room_ID",
                 "Room_Name",
-                "Room_Number"
+                "Room_Number",
+                "KC_Sort_Order"
             };
 
             _bumpingRuleColumns = new List<string>
@@ -315,6 +317,12 @@ namespace MinistryPlatform.Translation.Repositories
 
             var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
             return result;
+        }
+
+        public List<MpEventRoomDto> GetEventRoomsByEventRoomIds(List<int> eventRoomsIds)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Room_ID IN ({string.Join(",", eventRoomsIds)})", _eventRoomColumns);
         }
     }
 }

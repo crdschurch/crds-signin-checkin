@@ -22,6 +22,14 @@ admin {
       padding-bottom: .25rem;
       line-height: 1.75;
       background: #e6e6ec;
+
+      @media print{
+        display: block;
+
+        .btn-group {
+          display: none;
+        }
+      }
     }
   }
 

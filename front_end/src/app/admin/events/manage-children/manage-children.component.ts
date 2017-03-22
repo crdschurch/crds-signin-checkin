@@ -13,7 +13,7 @@ import * as _ from 'lodash';
   providers: [ ],
 })
 export class ManageChildrenComponent implements OnInit {
-  children: Array<Child> = [];
+  private _children: Array<Child> = [];
   childrenByRoom: any;
   ready = false;
   searchString = '';
@@ -36,11 +36,6 @@ export class ManageChildrenComponent implements OnInit {
       this.adminService.getChildrenForEvent(+this.eventId).subscribe((resp) => {
         this.children = resp;
         this.ready = true;
-
-        this.childrenByRoom = _(this.children).groupBy(r => r.AssignedRoomName).value();
-        this.childrenByRoom = Object.keys(this.childrenByRoom).sort().map(k => this.childrenByRoom[k]);
-
-        console.log(this.childrenByRoom);
       });
     });
   }
@@ -93,6 +88,9 @@ export class ManageChildrenComponent implements OnInit {
 
     this.adminService.reverseSignin(+this.eventId, child.AssignedRoomId, child.EventParticipantId).subscribe((resp) => {
       this.children.splice(this.children.indexOf(child), 1);
+      // this needs to be here so that it runs through the children setter
+      // that groups the children
+      this.children = this.children;
       this.ready = true;
       this.rootService.announceEvent('reverseSigninSuccess');
     }, error => (this.handleError(error)));
@@ -116,12 +114,21 @@ export class ManageChildrenComponent implements OnInit {
     this.ready = false;
     this.adminService.getChildrenForEvent(+this.eventId, this.searchString).subscribe((resp) => {
       this.children = resp;
-
-      this.childrenByRoom = _(this.children).groupBy(r => r.AssignedRoomName).value();
-      this.childrenByRoom = Object.keys(this.childrenByRoom).sort().map(k => this.childrenByRoom[k]);
-
+      // this.childrenByRoom = _(this.children).groupBy(r => r.AssignedRoomName).value();
+      // this.childrenByRoom = Object.keys(this.childrenByRoom).sort().map(k => this.childrenByRoom[k]);
       this.ready = true;
     });
+  }
+
+  set children(unsortedChildren) {
+    this._children = unsortedChildren;
+    // now sort children by room and set it to this.childrenByRoom
+    let groupedChildren = _(this.children).groupBy(r => r.AssignedRoomName).value();
+    this.childrenByRoom = Object.keys(groupedChildren).sort().map(k => groupedChildren[k]);
+  }
+
+  get children(){
+    return this._children;
   }
 
   private handleError (error: any) {
