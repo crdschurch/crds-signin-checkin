@@ -376,9 +376,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
             var searchString = "bob";
-
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
-            _participantRepository.Setup(m => m.GetChildParticipantsByEvent(token, It.IsAny<List<int>>(), searchString)).Returns(children);
+            _participantRepository.Setup(m => m.GetChildParticipantsByEvent(token, It.IsAny<int>(), searchString)).Returns(children);
 
             var result =_fixture.GetListOfChildrenForEvent(token, eventId, searchString);
 

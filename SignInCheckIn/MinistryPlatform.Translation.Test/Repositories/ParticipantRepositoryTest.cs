@@ -8,6 +8,7 @@ using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace MinistryPlatform.Translation.Test.Repositories
@@ -64,33 +65,14 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             var token = "123abc";
 
-            var eventIds = new List<int>
-            {
-                1231
-            };
-
-            var columns = new List<string>
-            {
-                "Event_ID_Table.Event_ID",
-                "Event_Participant_ID",
-                "Participation_Status_ID_Table.Participation_Status_ID",
-                "Participant_ID_Table_Contact_ID_Table.First_Name",
-                "Participant_ID_Table_Contact_ID_Table.Last_Name",
-                "Participant_ID_Table_Contact_ID_Table.Nickname",
-                "Event_Participants.Call_Number",
-                "Room_ID_Table.Room_ID",
-                "Room_ID_Table.Room_Name",
-                "Time_In",
-                "Event_Participants.Checkin_Household_ID",
-                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
-            };
+            var eventId = 1231;
 
             var children = new List<MpEventParticipantDto>
             {
                 new MpEventParticipantDto
                 {
                     EventId = 1231,
-                    ParticipantId = 1,
+                    EventParticipantId = 1,
                     ParticipantStatusId = 1,
                     FirstName = "FirstName1",
                     LastName = "LastName1",
@@ -103,7 +85,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 new MpEventParticipantDto
                 {
                     EventId = 1231,
-                    ParticipantId = 2,
+                    EventParticipantId = 2,
                     ParticipantStatusId = 1,
                     FirstName = "FirstName2",
                     LastName = "LastName2",
@@ -141,16 +123,51 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(m => m.Search<MpEventParticipantDto>($"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL AND Event_Participants.Call_Number IS NOT NULL AND Event_Participants.Checkin_Household_ID IS NOT NULL", columns, null, false)).Returns(children);
-            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(1)).Returns(household1);
-            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(2)).Returns(household2);
+            var child1 = @"{'Event_ID': 1231, 'Event_Participant_ID': 1, 'Participant_status_ID': 1, 'First_Name': 'FirstName1', 'Last_Name': 'LastName1',
+                'Nickname': 'blahblah', 'Call_Number': '1123', 'Room_ID': 1, 'Room_Name': 'Room1', 'Time_In': '1/2/2003', 'Time_Confirmed': '1/2/2003', 'Checkin_Household_ID': 1}";
+            var child1JsonResult = JObject.Parse(child1);
 
-            var result = _fixture.GetChildParticipantsByEvent(token, eventIds);
+            var child2 = @"{'Event_ID': 1231, 'Event_Participant_ID': 2, 'Participant_status_ID': 1, 'First_Name': 'FirstName2', 'Last_Name': 'LastName2',
+                'Nickname': 'blahblah', 'Call_Number': '1124', 'Room_ID': 1, 'Room_Name': 'Room1', 'Time_In': '1/2/2003', 'Time_Confirmed': '1/2/2003', 'Checkin_Household_ID': 2}";
+            var child2JsonResult = JObject.Parse(child2);
+
+            var childrenResults = new List<JObject>
+            {
+                child1JsonResult,
+                child2JsonResult
+            };
+
+            var householdOne = @"{'Event_ID': 1231, 'Event_Participant_ID': 3, 'Household_ID': 1, 'First_Name': 'FirstName3', 'Last_Name': 'LastName3', 'NickName': 't'}";
+            var household1Result = JObject.Parse(householdOne);
+
+            var householdTwo = @"{'Event_ID': 1231, 'Event_Participant_ID': 4, 'Household_ID': 1, 'First_Name': 'FirstName4', 'Last_Name': 'LastName4', 'NickName': 't'}";
+            var household2Result = JObject.Parse(householdTwo);
+
+            var householdThree = @"{'Event_ID': 1231, 'Event_Participant_ID': 5, 'Household_ID': 2, 'First_Name': 'FirstName5', 'Last_Name': 'LastName5', 'NickName': 't'}";
+            var household3Result = JObject.Parse(householdThree);
+
+            var houseHoldResults = new List<JObject>
+            {
+                household1Result,
+                household2Result,
+                household3Result
+            };
+
+            var spResult = new List<List<JObject>>
+            {
+                childrenResults,
+                houseHoldResults
+            };
+
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>())).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(m => m.GetFromStoredProc<JObject>(It.IsAny<string>(), It.IsAny<Dictionary<string, object>>())).Returns(spResult);
+
+            var result = _fixture.GetChildParticipantsByEvent(token, eventId);
             _ministryPlatformRestRepository.VerifyAll();
 
-            Assert.AreEqual(result[0].ParticipantId, children[0].ParticipantId);
-            Assert.AreEqual(result[1].ParticipantId, children[1].ParticipantId);
+            Assert.AreEqual(result[0].EventParticipantId, children[0].EventParticipantId);
+            Assert.AreEqual(result[1].EventParticipantId, children[1].EventParticipantId);
             Assert.AreEqual(result[0].HeadsOfHousehold.Count, household1.Count);
             Assert.AreEqual(result[0].HeadsOfHousehold[0].FirstName, household1[0].FirstName);
             Assert.AreEqual(result[0].HeadsOfHousehold[1].FirstName, household1[1].FirstName);
