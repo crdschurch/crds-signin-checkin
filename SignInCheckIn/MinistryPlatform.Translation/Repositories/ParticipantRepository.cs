@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -52,60 +53,31 @@ namespace MinistryPlatform.Translation.Repositories
         }
 
         // this gets data we won't have with older participants
-        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, List<int> eventIds, string search = null)
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, int eventId, string search = null)
         {
-            var columnList = new List<string>
+            var parms = new Dictionary<string, object>
             {
-                "Event_ID_Table.Event_ID",
-                "Event_Participant_ID",
-                "Participation_Status_ID_Table.Participation_Status_ID",
-                "Participant_ID_Table_Contact_ID_Table.First_Name",
-                "Participant_ID_Table_Contact_ID_Table.Last_Name",
-                "Participant_ID_Table_Contact_ID_Table.Nickname",
-                "Event_Participants.Call_Number",
-                "Room_ID_Table.Room_ID",
-                "Room_ID_Table.Room_Name",
-                "Time_In",
-                "Event_Participants.Checkin_Household_ID",
-                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
+                {"EventId", eventId},
+                {"Search", search}
             };
 
-            var queryString =
-                $"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL AND Event_Participants.Call_Number IS NOT NULL AND Event_Participants.Checkin_Household_ID IS NOT NULL";
+            var results = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<JObject>("api_crds_Get_Manage_Children_data", parms);
 
-            // add in search criteria if exists
-            if (!string.IsNullOrEmpty(search) && search.Length > 0)
+            // This check indicates that no household was found
+            if (results == null || !results.Any() || results.Count < 2)
             {
-                int n;
-                bool isNumeric = int.TryParse(search, out n);
-                if (isNumeric)
-                {
-                    queryString += $" AND Event_Participants.Call_Number = {search}";
-                }
-                else
-                {
-                    queryString += " AND (";
-                    queryString += $"  Participant_ID_Table_Contact_ID_Table.First_Name LIKE '%{search}%'";
-                    queryString += $"  OR Participant_ID_Table_Contact_ID_Table.Last_Name LIKE '%{search}%'";
-                    queryString += $"  OR Participant_ID_Table_Contact_ID_Table.Nickname LIKE '%{search}%'";
-                    queryString += ")";
-                }
-
-
+                return new List<MpEventParticipantDto>();
             }
 
-            var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                Search<MpEventParticipantDto>(queryString, columnList);
+            var children = results[0].Select(r => r.ToObject<MpEventParticipantDto>()).ToList();
+            var headHouseholds = results[1].Select(r => r.ToObject<MpContactDto>()).ToList();
 
-            foreach (var child in childPartipantsForEvent)
+            foreach (var child in children)
             {
-                if (child.CheckinHouseholdId.HasValue)
-                {
-                    child.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(child.CheckinHouseholdId.Value);
-                }
+                child.HeadsOfHousehold = headHouseholds.Where(hoh => hoh.HouseholdId == child.CheckinHouseholdId).ToList();
             }
 
-            return childPartipantsForEvent;
+            return children;
         }
 
         public MpNewParticipantDto CreateParticipantWithContact(string authenticationToken, MpNewParticipantDto mpNewParticipantDto)
