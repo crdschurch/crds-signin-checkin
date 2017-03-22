@@ -45,7 +45,12 @@ export class RoomListComponent implements OnInit {
 
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
-        this.rooms = rooms;
+        // sort by KcSortOrder ascending, if null, put at end
+        this.rooms = rooms.sort((r1, r2) => {
+            return +(r1.KcSortOrder == null) - +(r2.KcSortOrder == null)
+              || +(r1.KcSortOrder > r2.KcSortOrder)
+              || -(r1.KcSortOrder < r2.KcSortOrder);
+        });
       },
       (error: any) => console.error(error)
     );
