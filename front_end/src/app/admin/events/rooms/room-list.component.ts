@@ -211,8 +211,6 @@ export class RoomListComponent implements OnInit {
     real_table_children.width(function(i,val) {
         fixed_table_children.eq(i).width(real_table_children.eq(i).width());
     });
-
-    real_table_header.css("opacity", "0");
   }
 
 }

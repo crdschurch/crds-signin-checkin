@@ -248,14 +248,22 @@ datepicker {
 }
 
 .manage-rooms-table-container {
-  height: 70vh;
-  overflow-y: scroll;
+  @media screen {
+    height: 70vh;
+    overflow-y: scroll;
+  }
 
   .manage-rooms-fixed-header {
     position: absolute;
     top: 0;
     background: white;
     z-index: 20;
+  }
+
+  .manage-rooms-scroll-header thead {
+    @media screen {
+      opacity: 0;
+    }
   }
 }
 
