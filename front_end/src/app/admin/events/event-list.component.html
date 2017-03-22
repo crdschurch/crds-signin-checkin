@@ -11,7 +11,7 @@
         <preloader></preloader>
       </div>
       <div class="col-md-9 col-sm-8 col-xs-12" *ngIf="isReady()">
-        <table class="table table-striped">
+        <table class="table table-striped" *ngIf="events">
           <thead>
             <tr>
               <th>Event Type</th>
@@ -23,18 +23,21 @@
             </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let event of events">
-            <td>Service</td>
-            <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
-            <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
-            <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
-            <td>{{event.EventSite}}</td>
-            <td class="text-xs-right">
-              <a routerLink="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
-            </td>
-          </tr>
+            <tr *ngFor="let event of events">
+              <td>Service</td>
+              <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
+              <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
+              <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
+              <td>{{event.EventSite}}</td>
+              <td class="text-xs-right">
+                <a routerLink="/admin/events/{{event.EventId}}/rooms" class="btn btn-primary btn-sm">View</a>
+              </td>
+            </tr>
           </tbody>
         </table>
+        <div class="text-xs-center py-2" *ngIf="!events || !events.length">
+          No Events
+        </div>
       </div>
       <div class="col-md-3 col-sm-4 col-xs-12">
         <section class="sidebar-section mb-2">
@@ -44,61 +47,14 @@
             </option>
           </select>
         </section>
-        <section class="sidebar-section my-1">
-          <label><strong>Site Filter</strong></label>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Florence
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Mason
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Oakley
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Oxford
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Uptown
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Westside
-            </label>
-          </div>
+        <section class="sidebar-section site-filter">
+          <select class="form-control" [(ngModel)]="selectedSiteId">
+            <option *ngFor="let s of allSites" value="{{s.CongregationId}}" [attr.selected]="selectedSiteId == s.CongregationId">
+              {{s.CongregationName}}
+            </option>
+          </select>
         </section>
-        <section class="sidebar-section mb-1">
-          <label><strong>Event Filter</strong></label>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Childcare
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" value="">
-              Service
-            </label>
-          </div>
-        </section>
-      </div><!--col-sm-3 col-xs-12-->
+      </div>
     </div>
   </div>
 </div>

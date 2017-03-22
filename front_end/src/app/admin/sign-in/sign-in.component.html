@@ -20,7 +20,7 @@
     <form #logInForm="ngForm" (ngSubmit)="onSubmit()">
       <div class='form-group'>
         <label for='username'>Email</label>
-        <input type='email' name='username' class='form-control' [(ngModel)]='user.username' #username="ngModel"  required/>
+        <input type='email' name='username' class='form-control' [(ngModel)]='user.username' #username="ngModel" autofocus required/>
         <div [hidden]="username.valid || username.pristine"
               class="alert alert-danger">
           Username is required
