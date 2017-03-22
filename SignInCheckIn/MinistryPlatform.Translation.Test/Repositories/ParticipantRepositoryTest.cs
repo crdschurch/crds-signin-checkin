@@ -154,7 +154,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var houseHoldResults = new List<JObject>
             {
-                household2Result,
+                household1Result,
                 household2Result,
                 household3Result
             };
