@@ -115,7 +115,6 @@ export class EventListComponent implements OnInit {
 
   set currentWeekFilter(weekFilter) {
     this.ready = false;
-    // this._currentWeekFilterId = weekFilter.id;
     this._currentWeekFilter = weekFilter;
     this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
       events => {

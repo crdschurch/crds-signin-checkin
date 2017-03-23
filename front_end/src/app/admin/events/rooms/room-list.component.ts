@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
 
@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 
 import { CanDeactivateGuard } from '../../../shared/guards';
 
-declare var jQuery:any;
+declare let jQuery;
 
 @Component({
   templateUrl: 'room-list.component.html',
@@ -22,7 +22,7 @@ declare var jQuery:any;
   providers: [ CanDeactivateGuard ]
 })
 
-export class RoomListComponent implements OnInit {
+export class RoomListComponent implements OnInit, AfterViewChecked {
   rooms: Room[];
   event: Event = null;
   eventId: string;
@@ -201,13 +201,13 @@ export class RoomListComponent implements OnInit {
 
 
   public ngAfterViewChecked() {
-    var fixed_table_header = jQuery('.manage-rooms-fixed-header > thead > tr');
-    var real_table_header = jQuery('.manage-rooms-scroll-header > thead > tr');
+    let fixed_table_header = jQuery('.manage-rooms-fixed-header > thead > tr');
+    let real_table_header = jQuery('.manage-rooms-scroll-header > thead > tr');
 
-    var real_table_children = real_table_header.children();
-    var fixed_table_children = fixed_table_header.children();
+    let real_table_children = real_table_header.children();
+    let fixed_table_children = fixed_table_header.children();
 
-    real_table_children.width(function(i,val) {
+    real_table_children.width(function(i, val) {
         fixed_table_children.eq(i).width(real_table_children.eq(i).width());
     });
   }
