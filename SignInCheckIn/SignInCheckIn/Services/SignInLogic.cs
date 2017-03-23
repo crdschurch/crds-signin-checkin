@@ -80,8 +80,6 @@ namespace SignInCheckIn.Services
             }
             else
             {
-                //mpEventParticipantList.AddRange(AssignParticipantToRoomsNonAc(eventRooms.Where(r => r.AllowSignIn == true).ToList(), 
-                //    eligibleEvents, participant));
                 mpEventParticipantList.AddRange(AssignParticipantToRoomsNonAc(eventRooms,
                     eligibleEvents, participant));
             }
@@ -94,15 +92,6 @@ namespace SignInCheckIn.Services
             // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
             // we are using this logic correctly - getting a rock vs. no sign in, so we may still need the
             // mp event participants to be created
-
-            // this conditional will need to be updated so that we save mp event participants regardless of the status of the
-            // participant...
-            //if (participant.Selected == true && participant.AssignedRoomId != null && mpEventParticipantList.Any())
-            //{
-            //    mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
-            //}
-
-            //mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
 
             return mpEventParticipantList;
         } 

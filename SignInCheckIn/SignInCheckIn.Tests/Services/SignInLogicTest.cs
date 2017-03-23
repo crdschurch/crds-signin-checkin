@@ -952,9 +952,6 @@ namespace SignInCheckIn.Tests.Services
             var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
             _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
 
-            //mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
-            //_childSigninRepository.Setup(r => r.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(new )
-
             // Act
             var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
 
