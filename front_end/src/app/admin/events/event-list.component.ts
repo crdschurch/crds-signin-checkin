@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ApiService, HttpClientService, RootService, SetupService } from '../../shared/services';
+import { ApiService, RootService, SetupService } from '../../shared/services';
 import { Congregation, MachineConfiguration, Event, Timeframe } from '../../shared/models';
-import { HeaderService } from '../header/header.service';
 import * as moment from 'moment';
 
 @Component({
@@ -19,14 +17,11 @@ export class EventListComponent implements OnInit {
   weekFilters: Timeframe[];
 
   constructor(private apiService: ApiService,
-              private headerService: HeaderService,
-              private httpClientService: HttpClientService,
-              private router: Router,
               private rootService: RootService,
               private setupService: SetupService) {
   }
 
-  private getData() {
+  getData() {
     this.apiService.getSites().subscribe(
       (allSites: Congregation[]) => {
         this.allSites = allSites.sort(function(a, b){
@@ -36,7 +31,7 @@ export class EventListComponent implements OnInit {
               return 1;
             }
             return 0;
-        })
+        });
         // set the initial site to the site from the machine config
         this.selectedSiteId = this.configurationSiteId;
       },
@@ -90,13 +85,15 @@ export class EventListComponent implements OnInit {
   set selectedSiteId(siteId) {
     this.ready = false;
     this._selectedSiteId = siteId;
-    this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
-      events => {
-        this.events = Event.fromJsons(events);
-        this.ready = true;
-      },
-      error => { console.error(error); this.rootService.announceEvent('generalError'); }
-    );
+    if (this._currentWeekFilter) {
+      this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
+        events => {
+          this.events = Event.fromJsons(events);
+          this.ready = true;
+        },
+        error => { console.error(error); this.rootService.announceEvent('generalError'); }
+      );
+    }
   }
 
   get currentWeekFilter() {
@@ -116,13 +113,15 @@ export class EventListComponent implements OnInit {
   set currentWeekFilter(weekFilter) {
     this.ready = false;
     this._currentWeekFilter = weekFilter;
-    this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
-      events => {
-        this.events = Event.fromJsons(events);
-        this.ready = true;
-      },
-      error => { console.error(error); this.rootService.announceEvent('generalError'); }
-    );
+    if (this._selectedSiteId) {
+      this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
+        events => {
+          this.events = Event.fromJsons(events);
+          this.ready = true;
+        },
+        error => { console.error(error); this.rootService.announceEvent('generalError'); }
+      );
+    }
   }
 
   ngOnInit() {
@@ -130,8 +129,7 @@ export class EventListComponent implements OnInit {
     this.setupService.getThisMachineConfiguration().subscribe((setupCookie) => {
       this.setupSite(setupCookie);
       this.getData();
-    },
-    (error) => {
+    }, (error) => {
       this.setupSite();
       this.getData();
     });
