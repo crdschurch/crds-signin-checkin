@@ -12,7 +12,6 @@ import * as moment from 'moment';
 export class EventListComponent implements OnInit {
   private _selectedSiteId: number;
   private _currentWeekFilter: any;
-  // private _currentWeekFilterId: number;
   ready: boolean;
   events: Event[];
   allSites: Congregation[];
