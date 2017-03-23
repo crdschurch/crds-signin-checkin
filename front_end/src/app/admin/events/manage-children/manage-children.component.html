@@ -40,6 +40,7 @@
               <th>Call Number</th>
               <th class="hidden-print">Room Assigned</th>
               <th class="hidden-print">Time Signed In</th>
+              <th class="hidden-print">Time Checked In</th>
               <th class="hidden-print">Guardians</th>
               <th class="hidden-print">Reverse Sign In</th>
               <th class="hidden-print">Label</th>
@@ -69,6 +70,9 @@
                   </td>
                   <td class="hidden-print">
                     {{child.TimeIn | amDateFormat:'h:mma'}}
+                  </td>
+                  <td class="hidden-print">
+                    {{child.TimeConfirmed | amDateFormat:'h:mma'}}
                   </td>
                   <td class="hidden-print">
                     {{parentAndPhoneNumbers(child)}}
