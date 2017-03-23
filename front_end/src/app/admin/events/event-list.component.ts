@@ -12,6 +12,7 @@ import * as moment from 'moment';
 export class EventListComponent implements OnInit {
   private _selectedSiteId: number;
   private _currentWeekFilter: any;
+  // private _currentWeekFilterId: number;
   ready: boolean;
   events: Event[];
   allSites: Congregation[];
@@ -63,7 +64,6 @@ export class EventListComponent implements OnInit {
 
   private createWeekFilters() {
     this.weekFilters = [];
-
     this.weekFilters.push(new Timeframe(this.getWeekObject(-3)));
     this.weekFilters.push(new Timeframe(this.getWeekObject(-2)));
     this.weekFilters.push(new Timeframe(this.getWeekObject(-1)));
@@ -71,8 +71,6 @@ export class EventListComponent implements OnInit {
     this.weekFilters.push(new Timeframe(this.getWeekObject(1)));
     this.weekFilters.push(new Timeframe(this.getWeekObject(2)));
     this.weekFilters.push(new Timeframe(this.getWeekObject(3)));
-
-    console.log(this.weekFilters)
     // default to current week
     this.currentWeekFilter = this.weekFilters[3];
   }
@@ -84,16 +82,6 @@ export class EventListComponent implements OnInit {
 
   public isReady(): boolean {
     return this.ready;
-  }
-
-  // isWeekFilterSelected(weekFilter) {
-  //   let isSame = this.currentWeekFilter.id === weekFilter.id
-  //   console.log(isSame, this.currentWeekFilter.id, weekFilter.id)
-  //   return isSame;
-  // }
-
-  changeWeek() {
-    console.log("cw")
   }
 
   get selectedSiteId() {
@@ -116,9 +104,19 @@ export class EventListComponent implements OnInit {
     return this._currentWeekFilter;
   }
 
+  get currentWeekFilterId() {
+    return this._currentWeekFilter.id;
+  }
+
+  set currentWeekFilterId(newWeekFilterId) {
+    this.currentWeekFilter = this.weekFilters.filter(wf => {
+      return +wf.id === +newWeekFilterId;
+    })[0]
+  }
+
   set currentWeekFilter(weekFilter) {
-    console.log("set currentWeekFilter")
     this.ready = false;
+    // this._currentWeekFilterId = weekFilter.id;
     this._currentWeekFilter = weekFilter;
     this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
       events => {
