@@ -111,7 +111,7 @@ export class EventListComponent implements OnInit {
   set currentWeekFilterId(newWeekFilterId) {
     this.currentWeekFilter = this.weekFilters.filter(wf => {
       return +wf.id === +newWeekFilterId;
-    })[0]
+    })[0];
   }
 
   set currentWeekFilter(weekFilter) {

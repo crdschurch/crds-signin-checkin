@@ -6,7 +6,6 @@ export class Timeframe {
   id: number;
 
   constructor(weekObject: any) {
-    console.log("timeframe")
     this.start = weekObject.start;
     this.end = weekObject.end;
     this.id = moment(this.start).unix();
