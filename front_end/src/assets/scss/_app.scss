@@ -114,16 +114,11 @@ body {
 
 .new-family-text {
   padding-top: 0;
-  font-size: 1rem;
+  font-size: 1.5rem;
+}
 
-  @include media-breakpoint-up(lg) {
-    padding-top: .45rem;
-  }
-
-  @include media-breakpoint-up(xl) {
-    padding-top: .45rem;
-    font-size: 1.25rem;
-  }
+.search-next-btn {
+  margin-top: 8px;
 }
 
 /***************************************************************************************
