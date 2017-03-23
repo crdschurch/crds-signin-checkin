@@ -29,6 +29,8 @@ namespace SignInCheckIn.Tests.Services
         private const int GradesAttributeTypeId = 104;
         private const int NurseryAgeAttributeId = 9014;
         private const int NurseryAgesAttributeTypeId = 105;
+        private const int CapacityParticipationStatusId = 6;
+        private const int ErrorParticipationStatusId = 7;
 
         private List<MpAttributeDto> _ageList;
         private List<MpAttributeDto> _gradeList;
@@ -56,6 +58,8 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgeAttributeId).Returns(NurseryAgeAttributeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgesAttributeTypeId).Returns(NurseryAgesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.CapacityParticipationStatusId).Returns(CapacityParticipationStatusId);
+            _applicationConfiguration.SetupGet(mocked => mocked.ErrorParticipationStatusId).Returns(ErrorParticipationStatusId);
 
             MpConfigDto earlyCheckInPeriodConfig = new MpConfigDto
             {
@@ -398,7 +402,7 @@ namespace SignInCheckIn.Tests.Services
             var result =_fixture.GetSignInEventRooms(groupId, eventIds);
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(3, result.Count);
         }
 
         private List<MpEventGroupDto> GetEventGroupsData()
@@ -1322,7 +1326,14 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             Assert.AreEqual(null, result[0].RoomId);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(null, result[1].RoomId);
+            Assert.AreEqual(null, result[2].RoomId);
+            Assert.AreEqual(null, result[3].RoomId);
+            Assert.AreEqual(7, result[0].ParticipantStatusId);
+            Assert.AreEqual(7, result[1].ParticipantStatusId);
+            Assert.AreEqual(7, result[2].ParticipantStatusId);
+            Assert.AreEqual(7, result[3].ParticipantStatusId);
+            Assert.AreEqual(4, result.Count);
         }
 
         [Test]
@@ -1425,7 +1436,14 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             Assert.AreEqual(null, result[0].RoomId);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(null, result[1].RoomId);
+            Assert.AreEqual(null, result[2].RoomId);
+            Assert.AreEqual(null, result[3].RoomId);
+            Assert.AreEqual(6, result[0].ParticipantStatusId);
+            Assert.AreEqual(6, result[1].ParticipantStatusId);
+            Assert.AreEqual(6, result[2].ParticipantStatusId);
+            Assert.AreEqual(6, result[3].ParticipantStatusId);
+            Assert.AreEqual(4, result.Count);
         }
 
         [Test]
@@ -1628,18 +1646,6 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             Assert.AreEqual(1234, result[0].RoomId);
             Assert.AreEqual(5432, result[1].RoomId);
-        }
-
-        [Test]
-        public void ItShouldSetTranslateEventPArticiValidParticipant()
-        {
-            // Arrange
-
-
-            // Act
-
-
-            // Assert
         }
 
 

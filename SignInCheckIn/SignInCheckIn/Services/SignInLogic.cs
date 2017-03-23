@@ -80,7 +80,10 @@ namespace SignInCheckIn.Services
             }
             else
             {
-                mpEventParticipantList.AddRange(AssignParticipantToRoomsNonAc(eventRooms, eligibleEvents, participant));
+                //mpEventParticipantList.AddRange(AssignParticipantToRoomsNonAc(eventRooms.Where(r => r.AllowSignIn == true).ToList(), 
+                //    eligibleEvents, participant));
+                mpEventParticipantList.AddRange(AssignParticipantToRoomsNonAc(eventRooms,
+                    eligibleEvents, participant));
             }
 
             SyncInvalidSignins(mpEventParticipantList, participant);
@@ -156,7 +159,7 @@ namespace SignInCheckIn.Services
             // return all event rooms which match up to groups on the events
             var eventGroups = _eventRepository.GetEventGroupsByGroupIdAndEventIds(groupId, eventIds);
             var eventRoomIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
-            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).Where(r => r.AllowSignIn).ToList();
+            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).ToList();
 
             return eventRooms;
         }
@@ -164,6 +167,9 @@ namespace SignInCheckIn.Services
         // set assignments for non-ac rooms here -- this is not picking up when a partici
         public List<MpEventParticipantDto> AssignParticipantToRoomsNonAc(List<MpEventRoomDto> eventRoomDtos, List<MpEventDto> eventDtos, ParticipantDto participant)
         {
+            // TODO: Make sure that we are now handling rooms that do not allow sign in down in this function - it's handled appropriate in the
+            // AC event signin now
+
             var mpEventParticipantRecords = new List<MpEventParticipantDto>();
 
             // sort the events in ascending time - want to start with the first service event for this
@@ -175,16 +181,22 @@ namespace SignInCheckIn.Services
                 var eventRoom = eventRoomDtos.FirstOrDefault(r => r.EventId == serviceEvent.EventId);
                 if (eventRoom == null)
                 {
-                    // if there is a not an eligible event room for the child for either event, add a default 
-                    // event participant record so they get a rock
+                    // if there is no room assigned for the group, set error status on participant
                     var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.ErrorParticipationStatusId);
+                    mpEventParticipantRecords.Add(mpEventParticipantDto);
+                    continue;
+                }
+
+                if (eventRoom.AllowSignIn == false)
+                {
+                    // if the room is closed, set capacity status on participant
+                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.CapacityParticipationStatusId);
                     mpEventParticipantRecords.Add(mpEventParticipantDto);
                     continue;
                 }
 
                 if (eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn))
                 {
-                    // consider just passing down the event room?
                     var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, eventRoom.EventId, eventRoom.RoomId, _applicationConfiguration.SignedInParticipationStatusId);
                     mpEventParticipantRecords.Add(mpEventParticipantDto);
                 }
@@ -230,8 +242,19 @@ namespace SignInCheckIn.Services
             var acEventDtos = eventDtos.Where(r => r.ParentEventId != null).OrderBy(r => r.EventStartDate).ToList();
             var serviceEventDtos = eventDtos.Where(r => r.ParentEventId == null).OrderBy(r => r.EventStartDate).ToList();
 
-            var acEventSignInDataItems = GetEligibleRoomsForEvents(acEventDtos, eventRoomDtos);
-            var serviceEventSignInDataItems = GetEligibleRoomsForEvents(serviceEventDtos, eventRoomDtos);
+            // first check to see if either event has no eligible rooms - we will set (data) error status
+            // at that point and return the participants
+            if (!eventRoomDtos.Any(rooms => acEventDtos.Select(s => s.EventId).Contains(rooms.EventId)) ||
+                !eventRoomDtos.Any(rooms => acEventDtos.Select(s => s.EventId).Contains(rooms.EventId)))
+            {
+                mpEventParticipantRecords.AddRange(eventDtos.Select(eventItem => TranslateParticipantDtoToMpEventParticipantDto
+                    (participant, eventItem.EventId, null, _applicationConfiguration.ErrorParticipationStatusId)));
+                return mpEventParticipantRecords;
+            }
+
+            // what data point could be used here to distinguish between capacity rooms and no rooms being available?
+                var acEventSignInDataItems = GetEligibleRoomsForEvents(acEventDtos, eventRoomDtos.Where(r => r.AllowSignIn == true).ToList());
+            var serviceEventSignInDataItems = GetEligibleRoomsForEvents(serviceEventDtos, eventRoomDtos.Where(r => r.AllowSignIn == true).ToList());
 
             var signInRooms = FinalizeAcRoomAssignments(acEventSignInDataItems, serviceEventSignInDataItems);
 
@@ -254,9 +277,13 @@ namespace SignInCheckIn.Services
             else
             {
                 // for AC signins, we will assume that we're not able to sign in because of capacity - this will be corrected in the audit section if there's actually
-                // an error on signing in
-                var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, 0, null, _applicationConfiguration.CapacityParticipationStatusId);
-                mpEventParticipantRecords.Add(mpEventParticipantDto);
+                // an error on signing in - note that we create an event participant record here for every event that could not be signed into, as 
+                // with AC, we don't know which event was the problem
+                foreach (var eventItem in eventDtos)
+                {
+                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, eventItem.EventId, null, _applicationConfiguration.CapacityParticipationStatusId);
+                    mpEventParticipantRecords.Add(mpEventParticipantDto);
+                }   
             }
 
             return mpEventParticipantRecords;
@@ -314,8 +341,6 @@ namespace SignInCheckIn.Services
             // do some logic here to figure out which one to sign into
             var returnEventRooms = new List<EventRoomSignInData>();
 
-            // if there is only one eligible room in the service event set, automatically assign it and add the
-            // ac room tied to the other event
             if (serviceEventRoomDtos.Count == 1 && acEventRoomDtos.Count == 2)
             {
                 returnEventRooms.Add(serviceEventRoomDtos.First());
@@ -344,6 +369,14 @@ namespace SignInCheckIn.Services
                 returnEventRooms.Add(serviceEventRoomDtos.First(r => r.EventId != acEventRoomDtos[0].ParentEventId));
                 returnEventRooms.Add(acEventRoomDtos.First(r => r.ParentEventId != returnEventRooms.First().EventId));
 
+                return returnEventRooms;
+            }
+
+            // if there is only one room in each set, make sure they belong to different events
+            if (serviceEventRoomDtos.Count == 1 && acEventRoomDtos.Count == 1 && (serviceEventRoomDtos[0].EventId != acEventRoomDtos[0].EventId))
+            {
+                returnEventRooms.Add(serviceEventRoomDtos[0]);
+                returnEventRooms.Add(acEventRoomDtos[0]);
                 return returnEventRooms;
             }
 
@@ -509,8 +542,22 @@ namespace SignInCheckIn.Services
         {
             if (mpEventParticipantDtoList.Any(r => r.HasRoomAssignment == false))
             {
+                // error participant status id takes precedence over capacity error status id
+                var participantStatusId = 0;
+
+                if (mpEventParticipantDtoList.Any(r => r.ParticipantStatusId == _applicationConfiguration.CapacityParticipationStatusId))
+                {
+                    participantStatusId = _applicationConfiguration.CapacityParticipationStatusId;
+                }
+
+                if (mpEventParticipantDtoList.Any(r => r.ParticipantStatusId == _applicationConfiguration.ErrorParticipationStatusId))
+                {
+                    participantStatusId = _applicationConfiguration.ErrorParticipationStatusId;
+                }
+
                 foreach (var subItem in mpEventParticipantDtoList.Where(r => r.ParticipantId == participantDto.ParticipantId))
                 {
+                    subItem.ParticipantStatusId = participantStatusId;
                     subItem.RoomId = null;
                 }
 
