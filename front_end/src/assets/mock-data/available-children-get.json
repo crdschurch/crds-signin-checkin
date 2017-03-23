@@ -1,0 +1,17 @@
+[{
+    'ParticipantId': 7557461,
+    'ContactId': '7665888',
+    'HouseholdId': '2169124',
+    'HouseholdPositionId': '2',
+    'FirstName': 'TestFirst1',
+    'LastName': 'TestLast1',
+    'DateOfBirth': '2012-10-15T00:00:00'
+}, {
+    'ParticipantId': 75897461,
+    'ContactId': '76658846',
+    'HouseholdId': '2169124',
+    'HouseholdPositionId': '2',
+    'FirstName': 'TestFirst2',
+    'LastName': 'TestLast2',
+    'DateOfBirth': '2012-10-15T00:00:00'
+}];

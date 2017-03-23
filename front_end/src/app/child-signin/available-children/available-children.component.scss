@@ -1,0 +1,16 @@
+@import '../../../assets/scss/_variables.scss';
+
+.modal {
+  a.btn-primary.active:not([href]):not([tabindex]) {
+    color: white!important;
+  }
+}
+
+.guest-datepicker .wrapper {
+  padding-left: 3px;
+  padding-right: 3px;
+  select {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}

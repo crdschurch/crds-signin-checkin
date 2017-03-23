@@ -1,0 +1,42 @@
+@import '../../../../assets/scss/_variables.scss';
+
+td {
+  input[type=number], input[type=text] {
+    $width: 50px;
+    width: $width;
+    // this is necessary for firefox
+    max-width: $width;
+    background: #fff;
+    -moz-appearance: textfield;
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    @media print {
+      padding: 0;
+      border: none;
+      text-align: right !important;
+      display: inline;
+    }
+  }
+  @media print {
+    .input-group {
+      display: block;
+      text-align: right;
+    }
+  }
+  &.disabled {
+    opacity: .3;
+  }
+  &.save-button {
+    width: 120px;
+  }
+}
+
+svg.brand-danger path {
+  fill: $brand-danger;
+}
+
+svg.brand-warning path {
+  fill: $brand-warning;
+}

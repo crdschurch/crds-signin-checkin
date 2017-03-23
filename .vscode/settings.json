@@ -1,0 +1,5 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "typescript.tsdk": "front_end/node_modules/typescript/lib",
+    "editor.tabSize": 2
+}

@@ -1,0 +1,17 @@
+@import '../../assets/scss/_variables.scss';
+@import '../../assets/scss/_bootstrap.scss';
+
+.child-checkin-wrapper {
+  background-color: #27475C;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.btn-primary {
+  background: $brand-primary;
+  color: #fff;
+}
+
+.call-number {
+  letter-spacing: .2em;
+}

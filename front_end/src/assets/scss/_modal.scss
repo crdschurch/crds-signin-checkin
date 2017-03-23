@@ -1,0 +1,16 @@
+.modal-dialog {
+  color: $gray-dark;
+
+  .close {
+    position: relative;
+    z-index: 1;
+  }
+
+  h3 {
+    line-height: 1.5;
+  }
+}
+
+.modal-header {
+  border-bottom: 0px;
+}

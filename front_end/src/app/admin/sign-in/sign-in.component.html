@@ -1,0 +1,49 @@
+<div class="alert alert-danger" role="alert" *ngIf="!success"><b>Error:</b> Sorry you do not have privileges</div>
+
+<nav class="navbar navbar-light bg-faded">
+  <a class="navbar-brand mr-2" [routerLink]="['/admin/dashboard']">
+    <svg class="admin-logo" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" fill-rule="evenodd">
+        <path d="M22.414 0C10.037 0 0 10.034 0 22.42 0 34.8 10.037 44.843 22.414 44.843c12.38 0 22.425-10.042 22.425-22.425C44.84 10.033 34.792 0 22.412 0zm-.08 27.03l-7.856 7.863-4.69-4.702 7.85-7.853L9.91 14.61l4.695-4.707 7.73 7.734 7.85-7.852 4.7 4.7-7.844 7.85 8.015 8.023-4.702 4.702-8.018-8.03z" fill="#B05C30"/>
+        <path fill="#FFF" d="M22.334 27.03l-7.856 7.863-4.69-4.702 7.85-7.853L9.91 14.61l4.695-4.707 7.73 7.734 7.85-7.852 4.7 4.7-7.844 7.85 8.015 8.023-4.702 4.702"/>
+      </g>
+    </svg>
+    <span>Check In</span>
+  </a>
+</nav>
+
+<div class='container'>
+  <div class="col-sm-6 offset-sm-3 col-xs-12">
+    <br>
+    <br>
+    <br>
+    <form #logInForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class='form-group'>
+        <label for='username'>Email</label>
+        <input type='email' name='username' class='form-control' [(ngModel)]='user.username' #username="ngModel"  required/>
+        <div [hidden]="username.valid || username.pristine"
+              class="alert alert-danger">
+          Username is required
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <label for='password'>Password</label>
+        <input type='password' name='password' class='form-control' [(ngModel)]='user.password' #password="ngModel" required/>
+        <div [hidden]="password.valid || password.pristine"
+              class="alert alert-danger">
+          Password is required
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-xs-6 col-form-label">
+          <a href="/" class="float-xs-left">Forgot Password?</a>
+        </div>
+        <div class="col-xs-6">
+          <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Sign In" loadingText="Signing In..." [loading]="processing"></loading-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

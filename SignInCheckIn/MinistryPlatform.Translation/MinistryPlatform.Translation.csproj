@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9CA5C91A-96E5-4968-B4CE-213B581B33F6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MinistryPlatform.Translation</RootNamespace>
+    <AssemblyName>MinistryPlatform.Translation</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Demo|AnyCPU'">
+    <OutputPath>bin\Demo\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Integration|AnyCPU'">
+    <OutputPath>bin\Integration\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Label="SlowCheetah">
+    <SlowCheetahToolsPath>$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\SlowCheetah.2.5.14\tools\))</SlowCheetahToolsPath>
+    <SlowCheetah_EnableImportFromNuGet Condition=" '$(SlowCheetah_EnableImportFromNuGet)'=='' ">true</SlowCheetah_EnableImportFromNuGet>
+    <SlowCheetah_NuGetImportPath Condition=" '$(SlowCheetah_NuGetImportPath)'=='' ">$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\Properties\SlowCheetah\SlowCheetah.Transforms.targets ))</SlowCheetah_NuGetImportPath>
+    <SlowCheetahTargets Condition=" '$(SlowCheetah_EnableImportFromNuGet)'=='true' and Exists('$(SlowCheetah_NuGetImportPath)') ">$(SlowCheetah_NuGetImportPath)</SlowCheetahTargets>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=5.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Crossroads.Web.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Crossroads.Web.Common.1.0.13\lib\net45\Crossroads.Web.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions\JsonUnmappedDataExtensions.cs" />
+    <Compile Include="Extensions\MpEventGroupDtoExtensions.cs" />
+    <Compile Include="Models\DTO\MpBumpingRoomsDto.cs" />
+    <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
+    <Compile Include="Models\DTO\MpConfigDto.cs" />
+    <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpGroupAttributeDto.cs" />
+    <Compile Include="Models\DTO\MpGroupParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpHouseholdDto.cs" />
+    <Compile Include="Models\DTO\MpHouseholdParticipantsDto.cs" />
+    <Compile Include="Models\DTO\MpNewParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpParticipantDto.cs" />
+    <Compile Include="Models\DTO\MpContactDto.cs" />
+    <Compile Include="Models\DTO\MpAttributeTypeDto.cs" />
+    <Compile Include="Models\DTO\MpAttributeDto.cs" />
+    <Compile Include="Models\DTO\MpBaseDto.cs" />
+    <Compile Include="Models\DTO\MpEventDto.cs" />
+    <Compile Include="Models\DTO\MpEventGroupDto.cs" />
+    <Compile Include="Models\DTO\MpEventRoomDto.cs" />
+    <Compile Include="Models\DTO\MpGroupDto.cs" />
+    <Compile Include="Models\DTO\MpKioskConfigDto.cs" />
+    <Compile Include="Models\DTO\MpPrinterMapDto.cs" />
+    <Compile Include="Models\DTO\MpRoomDto.cs" />
+    <Compile Include="Models\DTO\MpAgeRangeDto.cs" />
+    <Compile Include="Repositories\AttributeRepository.cs" />
+    <Compile Include="Repositories\ChildCheckinRepository.cs" />
+    <Compile Include="Repositories\ChildSigninRepository.cs" />
+    <Compile Include="Repositories\ConfigRepository.cs" />
+    <Compile Include="Repositories\ContactRepository.cs" />
+    <Compile Include="Repositories\EventRepository.cs" />
+    <Compile Include="Repositories\GroupLookupRepository.cs" />
+    <Compile Include="Repositories\GroupRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IAttributeRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IChildCheckinRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IChildSigninRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IConfigRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IContactRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IEventRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IGroupLookupRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IGroupRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IKioskRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IParticipantRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IRoomRepository.cs" />
+    <Compile Include="Repositories\KioskRepository.cs" />
+    <Compile Include="Repositories\ParticipantRepository.cs" />
+    <Compile Include="Repositories\RoomRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Crossroads.Utilities\Crossroads.Utilities.csproj">
+      <Project>{837bc104-f8ed-4c38-a441-d1f5dc1e0f44}</Project>
+      <Name>Crossroads.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Attributes\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
+  <Import Project="..\packages\Crossroads.Web.Common.1.0.13\build\Crossroads.Web.Common.targets" Condition="Exists('..\packages\Crossroads.Web.Common.1.0.13\build\Crossroads.Web.Common.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Crossroads.Web.Common.1.0.13\build\Crossroads.Web.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Crossroads.Web.Common.1.0.13\build\Crossroads.Web.Common.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,80 @@
+@import '../../../assets/scss/_bootstrap.scss';
+@import '../../../assets/scss/_variables.scss';
+
+.card {
+  color: $gray-dark;
+
+  &.unchecked {
+    box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.4);
+    border-color: $gray-dark;
+    opacity: .9;
+  }
+
+  a {
+    color: $brand-dkblue;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.round-plus {
+  background: $brand-primary;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: bold;
+  height: 1.75em;
+  width: 1.75em;
+  line-height: 1.75em;
+  text-align: center;
+  transition: background-color .3s ease-out;
+  display: block;
+  margin: 0 auto;
+
+  @include media-breakpoint-up(lg) {
+    float: left;
+    margin: 0;
+  }
+}
+
+.guest-title {
+  margin: 0;
+  padding: 1em 0 0 0;
+  text-align: center;
+
+  @include media-breakpoint-up(lg) {
+    padding: 0 0 0 1em;
+    line-height: 60px;
+    float: left;
+    text-align: left;
+  }
+}
+
+a:hover {
+  .round-plus {
+    background: darken( $brand-primary, 15% );
+  }
+}
+
+.eqWrap {
+	display: flex;
+  flex-wrap: wrap;
+  .card {
+  	width: 32%;
+  	margin: 1%;
+  }
+  .card:nth-of-type(3n) {
+  	margin-right: 0;
+  }
+  .card:nth-of-type(3n+1) {
+  	margin-left: 0;
+  }
+}
+
+label.card-block {
+  display: block;
+  cursor: pointer;
+  margin: 0;
+}

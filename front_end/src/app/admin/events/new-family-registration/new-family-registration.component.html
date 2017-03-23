@@ -1,0 +1,93 @@
+<header-event></header-event>
+
+<div class="wrapper new-family-registration">
+  <div class="container-fluid mb-3">
+    <div class="row">
+      <div class="col-sm-12 my-2">
+        <h3>New Family Registration</h3>
+      </div><!--/col-sm-12-->
+
+      <form (ngSubmit)="onSubmit(newFamilyRegistrationForm)" #newFamilyRegistrationForm="ngForm">
+        <div class="col-xs-12 mb-2">
+          <h4>Parent/Guardian Info</h4>
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="firstName" class="control-label">First Name</label>
+                <input type="text" class="form-control" [(ngModel)]="family.parent.FirstName" name="firstName" #firstName="ngModel"
+                  required>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="lastName" class="control-label">Last Name</label>
+                <input type="text" class="form-control" [(ngModel)]="family.parent.LastName" name="lastName" #lastName="ngModel"
+                  required>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="phoneNumber" class="control-label">Phone Number</label>
+                <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="family.parent.PhoneNumber" name="phoneNumber" #phoneName="ngModel"
+                  (blur)="onPhoneBlur($event, family.parent)" required>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="numberOfPossibleKids" class="control-label">Number of Children</label>
+                <select class="form-control" name="numberOfKids" [(ngModel)]="family.numberOfKids" (change)="updateNumberOfKids()">
+                  <option *ngFor="let num of numberOfKidsSelection" [attr.selected]="family.numberOfKids == num">{{num}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Child X -->
+        <div class="col-xs-12 mb-2" *ngFor="let child of family.children, let i = index;">
+          <h4>Child {{i + 1}}</h4>
+
+          <div class="row">
+
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="childFirstName{{i}}" class="control-label">First Name</label>
+                <input type="text" class="form-control" [(ngModel)]="child.FirstName" name="childFirstName{{i}}" required>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="childLastName{{i}}" class="control-label">Last Name</label>
+                <input type="text" class="form-control" [(ngModel)]="child.LastName" name="childLastName{{i}}" required>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required">
+                <label for="childBirthDate{{i}}" class="control-label">Birth Date</label>
+                <br/>
+                <input type="text" class="form-control" [(ngModel)]="child.DateOfBirthString" name="childDateOfBirth{{i}}" required [textMask]="{mask: maskDate}" placeholder="02/12/2008" (blur)="onDateBlur($event, child)" (keyup.enter)="onDateBlur($event, child)">
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-6" *ngIf="needGradeLevel(child)">
+              <div class="form-group required">
+                <label for="childGrade{{i}}" class="control-label">Year / Grade</label>
+                <select class="form-control" (change)="updateChildYearGradeGroup(child, $event.target.value)" required>
+                  <option value="">Select a Grade</option>
+                  <option>Has not started Kindergarten yet</option>
+                  <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}">{{ grade.Name }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12 mb-3">
+          <div class="float-sm-right">
+            <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Register & Sign In Children" loadingText="Signing In..." [loading]="processing"></loading-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

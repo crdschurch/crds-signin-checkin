@@ -1,0 +1,13 @@
+{
+    'EventRoomId': 4587206,
+    'RoomId': 185,
+    'EventId': 4525323,
+    'RoomName': 'Coffee Kiosk',
+    'RoomNumber': null,
+    'AllowSignIn': false,
+    'Volunteers': 38,
+    'Capacity': 13,
+    'SignedIn': 0,
+    'CheckedIn': 0,
+    'Label': null
+};

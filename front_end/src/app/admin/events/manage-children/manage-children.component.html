@@ -1,0 +1,88 @@
+<header-event></header-event>
+
+<div class="wrapper children">
+  <div class="container-fluid admin-content py-1">
+    <div class="row">
+      <div class="col-sm-6">
+        <h3 class="hidden-print">Manage Children</h3>
+        <h3 class="visible-print-block">Room Roster Report</h3>
+      </div>
+      <div class="col-sm-6 text-sm-right mb-1 hidden-print">
+        <button class="btn btn-default" onClick="window.print();">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" class="icon">
+            <path d="M8 2h16v4h-16v-4zM30 8h-28c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h6v8h16v-8h6c1.1 0 2-.9 2-2v-10c0-1.1-.9-2-2-2zm-26 6c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2zm18 14h-12v-10h12v10z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 mb-3 hidden-print">
+        <div class="input-group child-search-input">
+          <input #box type="text" class="form-control" placeholder="Child's First Name, Last Name, or Call Number" (keyup)="onSearchType(box.value)" (keyup.enter)="onSearch()">
+          <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
+            <span [hidden]="!box.value.length">&times;</span>
+          </span>
+          <button type="submit" class="btn btn-primary input-group-addon" (click)="onSearch()">Search</button>
+        </div>
+      </div>
+      <div class="col-xs-12" *ngIf="isReady()">
+          <strong>Total Children for All Rooms: {{children.length}}</strong>
+      </div>
+      <div class="col-xs-12">
+        <preloader *ngIf="!isReady()"></preloader>
+          <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No results found for "{{ searchString }}".</div>
+        <table class="table" *ngIf="isReady() && children?.length > 0">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th></th>
+              <th>Call Number</th>
+              <th class="hidden-print">Room Assigned</th>
+              <th class="hidden-print">Time Signed In</th>
+              <th class="hidden-print">Guardians</th>
+              <th class="hidden-print">Reverse Sign In</th>
+              <th class="hidden-print">Label</th>
+            </tr>
+          </thead>
+        <tbody *ngFor="let cbr of childrenByRoom" >
+              <tr>
+                <td colspan="9">
+                  <strong>{{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}</strong>
+                </td>
+              </tr>
+                <tr *ngFor="let child of cbr">
+                  <td>
+                    {{child.Nickname}}
+                  </td>
+                  <td>
+                    {{child.LastName}}
+                  </td>
+                  <td>
+                    <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
+                  </td>
+                  <td>
+                    {{child.CallNumber}}
+                  </td>
+                  <td class="hidden-print">
+                    {{child.AssignedRoomName}}
+                  </td>
+                  <td class="hidden-print">
+                    {{child.TimeIn | amDateFormat:'h:mma'}}
+                  </td>
+                  <td class="hidden-print">
+                    {{parentAndPhoneNumbers(child)}}
+                  </td>
+                  <td class="hidden-print">
+                    <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)" >Reverse</button>
+                  </td>
+                  <td class="hidden-print">
+                    <a class="btn btn-primary btn-sm" (click)="reprint(child)">Reprint</a>
+                  </td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

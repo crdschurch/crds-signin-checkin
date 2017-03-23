@@ -1,0 +1,106 @@
+.tgl{
+	display: none;
+	// add default box-sizing for this scope
+	&, &:after, &:before,
+	& *, & *:after, & *:before,
+	& + .tgl-btn{
+		box-sizing: border-box;
+		&::selection{
+			background: none;
+		}
+	}
+	+ .tgl-btn{
+		outline: 0;
+		width: 4.5em;
+		height: 2.25em;
+    margin: 0 0 0 10px;
+		position: relative;
+		cursor: pointer;
+    user-select: none;
+		&:after, &:before{
+			position: relative;
+			display: block;
+			content: "";
+			width: 50%;
+			height: 100%;
+		}
+		&:after{
+			left: 0;
+		}
+		&:before{
+			display: none;
+		}
+		span {
+			position: absolute;
+			top: .75em;
+			font-size: .75rem;
+			text-transform: uppercase;
+			color: white;
+
+			&.tgl-yes {
+				left: .7em;
+
+			}
+			&.tgl-no {
+				right: 1em;
+			}
+		}
+	}
+	&:checked{
+		+ .tgl-btn{
+			&:after{
+				left: 50%;
+			}
+		}
+	}
+}
+
+// themes
+.tgl-light{
+	+ .tgl-btn{
+		background: $gray-light;
+		border-radius: 2em;
+		padding: 2px;
+		transition: all .4s ease;
+		&:after{
+			border-radius: 50%;
+			background: #fff;
+			transition: all .2s ease;
+		}
+	}
+	&:checked{
+		+ .tgl-btn{
+			background: $brand-success;
+		}
+	}
+}
+.tgl-inline-label {
+  position: relative;
+  bottom: 0.85em;
+
+	@include media-breakpoint-up(xl) {
+		&.tgl-serving-label {
+  		font-size: 1.25rem;
+			vertical-align: text-top;
+		}
+	}
+}
+
+.serving-label {
+	widows: 100%;
+	height: 100%;
+}
+
+.card {
+  .tgl-light{
+  	+ .tgl-btn{
+  		background: $gray-light;
+    }
+
+		&:checked{
+			+ .tgl-btn{
+				background: $brand-success;
+			}
+		}
+  }
+}
