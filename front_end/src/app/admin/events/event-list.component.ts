@@ -11,11 +11,11 @@ import * as moment from 'moment';
 })
 export class EventListComponent implements OnInit {
   private _selectedSiteId: number;
+  private _currentWeekFilter: any;
   ready: boolean;
   events: Event[];
   allSites: Congregation[];
   configurationSiteId: number;
-  currentWeekFilter: any;
   weekFilters: Timeframe[];
 
   constructor(private apiService: ApiService,
@@ -28,8 +28,15 @@ export class EventListComponent implements OnInit {
 
   private getData() {
     this.apiService.getSites().subscribe(
-      allSites => {
-        this.allSites = allSites;
+      (allSites: Congregation[]) => {
+        this.allSites = allSites.sort(function(a, b){
+            if (a.CongregationName < b.CongregationName) {
+              return -1;
+            } else if (a.CongregationName > b.CongregationName) {
+              return 1;
+            }
+            return 0;
+        })
         // set the initial site to the site from the machine config
         this.selectedSiteId = this.configurationSiteId;
       },
@@ -49,22 +56,25 @@ export class EventListComponent implements OnInit {
 
     // add one day so it starts on monday rather than sunday
     return {
-        start: startDay.add(offset, 'weeks').startOf('week').add(1, 'day'),
-        end: endDay.add(offset, 'weeks').endOf('week').add(1, 'day')
+        start: startDay.add(offset, 'weeks').startOf('week').add(1, 'day').toDate(),
+        end: endDay.add(offset, 'weeks').endOf('week').add(1, 'day').toDate()
     };
   }
 
   private createWeekFilters() {
     this.weekFilters = [];
 
-    // current week
-    this.weekFilters.push(this.getWeekObject());
-    // next week
-    this.weekFilters.push(this.getWeekObject(1));
-    // two weeks from now
-    this.weekFilters.push(this.getWeekObject(2));
+    this.weekFilters.push(new Timeframe(this.getWeekObject(-3)));
+    this.weekFilters.push(new Timeframe(this.getWeekObject(-2)));
+    this.weekFilters.push(new Timeframe(this.getWeekObject(-1)));
+    this.weekFilters.push(new Timeframe(this.getWeekObject()));
+    this.weekFilters.push(new Timeframe(this.getWeekObject(1)));
+    this.weekFilters.push(new Timeframe(this.getWeekObject(2)));
+    this.weekFilters.push(new Timeframe(this.getWeekObject(3)));
+
+    console.log(this.weekFilters)
     // default to current week
-    this.currentWeekFilter = this.weekFilters[0];
+    this.currentWeekFilter = this.weekFilters[3];
   }
 
   private setupSite(config: MachineConfiguration = null) {
@@ -76,10 +86,24 @@ export class EventListComponent implements OnInit {
     return this.ready;
   }
 
+  // isWeekFilterSelected(weekFilter) {
+  //   let isSame = this.currentWeekFilter.id === weekFilter.id
+  //   console.log(isSame, this.currentWeekFilter.id, weekFilter.id)
+  //   return isSame;
+  // }
+
+  changeWeek() {
+    console.log("cw")
+  }
+
+  get selectedSiteId() {
+    return this._selectedSiteId;
+  }
+
   set selectedSiteId(siteId) {
     this.ready = false;
     this._selectedSiteId = siteId;
-    this.apiService.getEvents(this.currentWeekFilter.start, this.currentWeekFilter.end, this._selectedSiteId).subscribe(
+    this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
       events => {
         this.events = Event.fromJsons(events);
         this.ready = true;
@@ -88,8 +112,21 @@ export class EventListComponent implements OnInit {
     );
   }
 
-  get selectedSiteId() {
-    return this._selectedSiteId;
+  get currentWeekFilter() {
+    return this._currentWeekFilter;
+  }
+
+  set currentWeekFilter(weekFilter) {
+    console.log("set currentWeekFilter")
+    this.ready = false;
+    this._currentWeekFilter = weekFilter;
+    this.apiService.getEvents(this._currentWeekFilter.start, this._currentWeekFilter.end, this._selectedSiteId).subscribe(
+      events => {
+        this.events = Event.fromJsons(events);
+        this.ready = true;
+      },
+      error => { console.error(error); this.rootService.announceEvent('generalError'); }
+    );
   }
 
   ngOnInit() {
