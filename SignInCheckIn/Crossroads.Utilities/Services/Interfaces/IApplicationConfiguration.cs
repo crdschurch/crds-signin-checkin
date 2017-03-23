@@ -35,6 +35,8 @@ namespace Crossroads.Utilities.Services.Interfaces
         int SignedInParticipationStatusId { get; }
         int CheckedInParticipationStatusId { get; }
         int CancelledParticipationStatusId { get; }
+        int CapacityParticipationStatusId { get; }
+        int ErrorParticipationStatusId { get; }
         string MachineConfigDetails { get; }
 
         int GuestHouseholdId { get; set; }

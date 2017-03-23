@@ -32,6 +32,8 @@ namespace Crossroads.Utilities.Services
         public int SignedInParticipationStatusId { get; }
         public int CheckedInParticipationStatusId { get; }
         public int CancelledParticipationStatusId { get; }
+        public int CapacityParticipationStatusId { get; }
+        public int ErrorParticipationStatusId { get; }
         public string MachineConfigDetails { get; }
 
         public int GuestHouseholdId { get; set; }
@@ -302,6 +304,8 @@ namespace Crossroads.Utilities.Services
             SignedInParticipationStatusId = configurationWrapper.GetConfigIntValue("SignedInParticipationStatusId");
             CheckedInParticipationStatusId = configurationWrapper.GetConfigIntValue("CheckedInParticipationStatusId");
             CancelledParticipationStatusId = configurationWrapper.GetConfigIntValue("CancelledParticipationStatusId");
+            CapacityParticipationStatusId = configurationWrapper.GetConfigIntValue("CapacityParticipationStatusId");
+            ErrorParticipationStatusId = configurationWrapper.GetConfigIntValue("ErrorParticipationStatusId");
             MachineConfigDetails = configurationWrapper.GetConfigValue("MachineConfigDetails");
 
             GuestHouseholdId = configurationWrapper.GetConfigIntValue("GuestHouseholdId");
