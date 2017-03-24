@@ -1437,20 +1437,6 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, true);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         [Test]
         public void ShouldFilterNonRsvpedChildcareParticipants()
         {
