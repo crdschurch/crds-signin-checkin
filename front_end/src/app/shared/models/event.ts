@@ -39,7 +39,7 @@ export class Event {
   get type() {
     switch (this.EventTypeId) {
       case 81:
-        return 'Midde School';
+        return 'Student Ministry';
       case 243:
         return 'Childcare';
       default:
