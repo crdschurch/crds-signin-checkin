@@ -58,13 +58,11 @@ export class EventListComponent implements OnInit {
 
   private createWeekFilters() {
     this.weekFilters = [];
-    this.weekFilters.push(new Timeframe(this.getWeekObject(-3)));
-    this.weekFilters.push(new Timeframe(this.getWeekObject(-2)));
-    this.weekFilters.push(new Timeframe(this.getWeekObject(-1)));
-    this.weekFilters.push(new Timeframe(this.getWeekObject()));
-    this.weekFilters.push(new Timeframe(this.getWeekObject(1)));
-    this.weekFilters.push(new Timeframe(this.getWeekObject(2)));
-    this.weekFilters.push(new Timeframe(this.getWeekObject(3)));
+    // get past three weeks, current week, and next three weeks
+    const weeks = [-3, -2, -1, 0, 1, 2, 3];
+    for (let week of weeks) {
+        this.weekFilters.push(new Timeframe(this.getWeekObject(week)));
+    }
     // default to current week
     this.currentWeekFilter = this.weekFilters[3];
   }
