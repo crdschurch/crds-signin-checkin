@@ -66,6 +66,7 @@ namespace SignInCheckIn.Services
 
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto)
         {
+            // this will have to check if it's a childcare event
             var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
 
             var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
@@ -75,6 +76,20 @@ namespace SignInCheckIn.Services
                 throw new ApplicationException($"Could not locate household for phone number {phoneNumber}");
             }
 
+            // check the household participants here if this is a childcare search
+            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId)
+            {
+                // this may be an unwarranted assumption that there will only be one CC group - consider edge cases
+                var childcareEventGroup = _eventRepository.GetEventGroupsForEventByGroupTypeId(
+                    eventDto.EventId,
+                    _applicationConfiguration.ChildcareGroupTypeId).First();
+
+                var childcareGroupParticipants = _participantRepository.GetGroupParticipantsByParticipantAndGroupId(childcareEventGroup.GroupId,
+                                                                                                                    household.Participants.Select(r => r.ParticipantId).ToList());
+
+                household.Participants = household.Participants.Where(item => childcareGroupParticipants.Any(r => r.ParticipantId == item.ParticipantId)).ToList();
+            }
+            
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(household.Participants);
 
             var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(household.HouseholdId.Value));

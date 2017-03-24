@@ -287,5 +287,63 @@ namespace MinistryPlatform.Translation.Test.Repositories
             Assert.AreEqual(result[0].EventId, 1234567);
             Assert.AreEqual(result[0].ParticipantId, 4455544);
         }
+
+        [Test]
+        public void ShouldGetGroupParticipantsByParticipantAndGroupId()
+        {
+            // Arrange
+            var token = "123abc";
+
+            List<string> groupParticipantColumns = new List<string>
+            {
+                "Group_Participant_ID",
+                "Group_ID",
+                "Participant_ID",
+                "Group_Role_ID",
+                "Start_Date",
+                "Employee_Role",
+                "Auto_Promote"
+            };
+
+            var participantIds = new List<int>
+            {
+                123456,
+                234567,
+                345678
+            };
+
+            var groupId = 4455667;
+
+            var mpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                new MpGroupParticipantDto
+                {
+                    ParticipantId = 123456,
+                    GroupId = 4455667
+                },
+                new MpGroupParticipantDto
+                {
+                    ParticipantId = 234567,
+                    GroupId = 4455667
+                },
+                new MpGroupParticipantDto
+                {
+                    ParticipantId = 345678,
+                    GroupId = 4455667
+                }
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpGroupParticipantDto>(
+                $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) AND End_Date IS NULL", groupParticipantColumns, null, false)).Returns(mpGroupParticipantDtos);
+
+            // Act
+            var result = _fixture.GetGroupParticipantsByParticipantAndGroupId(groupId, participantIds);
+
+            // Assert
+            Assert.AreEqual(3, result.Count);
+            _ministryPlatformRestRepository.VerifyAll();
+        }
     }
 }
