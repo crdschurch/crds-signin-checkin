@@ -82,7 +82,7 @@ namespace SignInCheckIn.Services
                 // this may be an unwarranted assumption that there will only be one CC group - consider edge cases
                 var childcareEventGroup = _eventRepository.GetEventGroupsForEventByGroupTypeId(
                     eventDto.EventId,
-                    _applicationConfiguration.ChildcareEventTypeId).First();
+                    _applicationConfiguration.ChildcareGroupTypeId).First();
 
                 var childcareGroupParticipants = _participantRepository.GetGroupParticipantsByParticipantAndGroupId(childcareEventGroup.GroupId,
                                                                                                                     household.Participants.Select(r => r.ParticipantId).ToList());

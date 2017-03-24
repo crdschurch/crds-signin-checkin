@@ -336,7 +336,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpGroupParticipantDto>(
-                $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) AND End_Date IS NULL AND Participation_Status_ID IN (2, 3, 4)", groupParticipantColumns, null, false)).Returns(mpGroupParticipantDtos);
+                $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) AND End_Date IS NULL", groupParticipantColumns, null, false)).Returns(mpGroupParticipantDtos);
 
             // Act
             var result = _fixture.GetGroupParticipantsByParticipantAndGroupId(groupId, participantIds);

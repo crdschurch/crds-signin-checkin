@@ -133,7 +133,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>(
-                $"Event_ID = {eventId} AND Event_Group_ID_Table_Group_ID_Table.[Group_Type_ID] = {groupTypeId}", _eventGroupsColumns, null, false)).Returns(mpEventGroups);
+                $"Event_Groups.Event_ID = {eventId} AND Group_ID_Table.[Group_Type_ID] = {groupTypeId}", _eventGroupsColumns, null, false)).Returns(mpEventGroups);
 
             // Act
             var result = _fixture.GetEventGroupsForEventByGroupTypeId(eventId, groupTypeId);

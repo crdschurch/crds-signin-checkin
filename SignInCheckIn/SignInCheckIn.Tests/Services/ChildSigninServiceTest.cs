@@ -1467,7 +1467,7 @@ namespace SignInCheckIn.Tests.Services
             _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
-            _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, 243)).Returns(GetGroupsForChildcareEvent());
+            _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetGroupsForChildcareEvent());
 
             var mpHouseholdParticipants = GetMpHouseholdParticipants();
             var participantIds = mpHouseholdParticipants.Participants.Select(r => r.ParticipantId).ToList();
@@ -1498,7 +1498,7 @@ namespace SignInCheckIn.Tests.Services
             _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
-            _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, _applicationConfiguration.Object.ChildcareEventTypeId)).Returns(GetGroupsForChildcareEvent());
+            _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetGroupsForChildcareEvent());
 
             var mpHouseholdParticipants = GetMpHouseholdParticipants();
             var participantIds = mpHouseholdParticipants.Participants.Select(r => r.ParticipantId).ToList();

@@ -214,7 +214,7 @@ namespace MinistryPlatform.Translation.Repositories
             var mpGroupParticipantDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                  Search<MpGroupParticipantDto>(
                     $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) " +
-                    $"AND End_Date IS NULL AND Participation_Status_ID IN (2, 3, 4)", groupParticipantColumns);
+                    "AND End_Date IS NULL", groupParticipantColumns);
 
             return mpGroupParticipantDtos;
         }
