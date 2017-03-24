@@ -47,6 +47,9 @@ namespace Crossroads.Utilities.Services.Interfaces
         string CheckinParticipantsChannel { get; set; }
         string CheckinCapacityChannel { get; set; }
 
+        int ChildcareEventTypeId { get; }
+        int ChildcareGroupTypeId { get; }
+
         // groups for new families
         int KcJan0To1 { get; }
         int KcJan1To2 { get; }

@@ -112,5 +112,35 @@ namespace MinistryPlatform.Translation.Test.Repositories
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
         }
+
+        [Test]
+        public void ShouldGetEventGroupsByGroupTypeId()
+        {
+            // Arrange
+            var token = "123ABC";
+            var eventId = 1234567;
+            var groupTypeId = 27;
+
+            var mpEventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    EventId = eventId,
+                    GroupId = 2233445
+                }
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>(
+                $"Event_ID = {eventId} AND Event_Group_ID_Table_Group_ID_Table.[Group_Type_ID] = {groupTypeId}", _eventGroupsColumns, null, false)).Returns(mpEventGroups);
+
+            // Act
+            var result = _fixture.GetEventGroupsForEventByGroupTypeId(eventId, groupTypeId);
+
+            // Assert
+            Assert.AreEqual(1, result.Count);
+            _ministryPlatformRestRepository.VerifyAll();
+        }
     }
 }
