@@ -16,3 +16,11 @@
       }
   }
 }
+
+@media print {
+  section.print .print-room {
+    page-break-after: always;
+    display: block;
+    page-break-inside: avoid;
+  }
+}
