@@ -34,7 +34,16 @@
             <th></th>
           </tr>
         </thead>
-        <tbody *ngFor="let contact of contacts">
+        <tbody>
+          <tr *ngFor="let contact of contacts">
+            <th>{{contact.Nickname}}</th>
+            <th>{{contact.LatName}}</th>
+            <th>{{contact.Site}}</th>
+            <th>{{contact.Address}}</th>
+            <th>{{contact.HomePhone}}</th>
+            <th>{{contact.MobilePhone}}</th>
+            <th><a class="btn btn-primary btn-sm" routerLink="['/:id', contact.HouseholdId]'">View Child Details</a></th>
+          </tr>
         </tbody>
       </table>
     </div>
