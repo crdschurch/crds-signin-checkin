@@ -27,6 +27,8 @@ export class AvailableChildrenComponent implements OnInit {
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
   guestDOB: DateOfBirth = new DateOfBirth();
+  showGuestOption = true;
+  showServingOption = true;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
@@ -63,6 +65,7 @@ export class AvailableChildrenComponent implements OnInit {
        (result) => {
          this.isReady = true;
          this._eventParticipants = result;
+         this.setServingAndGuestDisplay();
        }, (err) => {
          this.isReady = true;
          this.rootService.announceEvent('generalError');
@@ -237,6 +240,13 @@ export class AvailableChildrenComponent implements OnInit {
 
  needGradeLevel(): boolean {
    return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+ }
+
+ setServingAndGuestDisplay() {
+   if (this.eventParticipants.CurrentEvent.EventTypeId === 243) {
+     this.showGuestOption = false;
+     this.showServingOption = false;
+   }
  }
 
 }

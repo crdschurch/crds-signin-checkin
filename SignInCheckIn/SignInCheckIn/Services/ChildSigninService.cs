@@ -77,7 +77,7 @@ namespace SignInCheckIn.Services
             }
 
             // check the household participants here if this is a childcare search
-            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId)
+            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId && household.Participants.Any())
             {
                 // this may be an unwarranted assumption that there will only be one CC group - consider edge cases
                 var childcareEventGroup = _eventRepository.GetEventGroupsForEventByGroupTypeId(
