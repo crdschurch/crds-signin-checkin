@@ -27,8 +27,8 @@ export class AvailableChildrenComponent implements OnInit {
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
   guestDOB: DateOfBirth = new DateOfBirth();
-  showGuestOption = true;
-  showServingOption = true;
+  showGuestOption = false;
+  showServingOption = false;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
@@ -243,9 +243,13 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  setServingAndGuestDisplay() {
+   debugger;
    if (this.eventParticipants.CurrentEvent.EventTypeId === 243) {
      this.showGuestOption = false;
      this.showServingOption = false;
+   } else {
+     this.showGuestOption = true;
+     this.showServingOption = true;
    }
  }
 
