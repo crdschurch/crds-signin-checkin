@@ -93,22 +93,24 @@
 
 <!-- this only display for printing -->
 <section class="print visible-print-block">
-  <div *ngFor="let cbr of childrenByRoom" class="print-room">
-    <br>
-    <em>{{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}</em><br>
+  <div *ngFor="let cbr of childrenByRoom" class="print-room container">
+
+    <p class="lead my-1">
+      {{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}
+    </p>
     <div class="row">
-      <span class="col-xs-3">First Name</span>
-      <span class="col-xs-3">Last Name</span>
-      <span class="col-xs-2">Call Number</span>
-      <span class="col-xs-2"></span>
+      <div class="col-xs-4">First Name</div>
+      <div class="col-xs-4">Last Name</div>
+      <div class="col-xs-2">Call #</div>
+      <div class="col-xs-2"></div>
     </div>
     <div *ngFor="let child of cbr" class="row">
-      <span class="col-xs-3">{{child.Nickname}}</span>
-      <span class="col-xs-3">{{child.LastName}}</span>
-      <span class="col-xs-2">{{child.CallNumber}}</span>
-      <span class="col-xs-2">
+      <div class="col-xs-4">{{child.Nickname}}</div>
+      <div class="col-xs-4">{{child.LastName}}</div>
+      <div class="col-xs-2">{{child.CallNumber}}</div>
+      <div class="col-xs-2">
         <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
-      </span>
+      </div>
     </div>
   </div>
   &nbsp;
