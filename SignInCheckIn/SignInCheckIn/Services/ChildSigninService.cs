@@ -69,14 +69,7 @@ namespace SignInCheckIn.Services
             // this will have to check if it's a childcare event
             var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
 
-            int? groupTypeId = null;
-
-            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId)
-            {
-                groupTypeId = _applicationConfiguration.ChildcareGroupTypeId;
-            }
-
-            var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, true, groupTypeId);
+            var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, true);
 
             if (!household.HouseholdId.HasValue && household.HouseholdId != 0)
             {
