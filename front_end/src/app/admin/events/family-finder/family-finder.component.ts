@@ -15,6 +15,7 @@ import { ApiService } from '../../../shared/services';
 export class FamilyFinderComponent implements OnInit {
   private eventId: string;
   private processing: boolean;
+  private search: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -25,11 +26,26 @@ export class FamilyFinderComponent implements OnInit {
   ngOnInit() {
     this.processing = false;
     this.eventId = this.route.snapshot.params['eventId'];
+    
+    this.apiService.getEvent(this.eventId).subscribe((event) => {
+      this.headerService.announceEvent(event);
+    }, error => console.error(error));
+  }
 
-   this.apiService.getEvent(this.eventId).subscribe((event) => {
-        this.headerService.announceEvent(event);
-      },
-      error => console.error(error)
-    );
+  setSearchValue(search) {
+    this.search = search;
+  }
+
+  onClearSearch(box) {
+    this.search = '';
+    box.value = '';
+    this.executeSearch();
+  }
+
+  onSearch() {
+    this.executeSearch();
+  }
+
+  private executeSearch() {
   }
 }

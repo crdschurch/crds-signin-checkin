@@ -1,6 +1,18 @@
-span.has-error {
-  color: #c9302c;
+.search-box {
+  input {
+      border-right: 0;
+      &:focus + .input-group-addon {
+        color: #55595c;
+        background-color: #fff;
+        border-color: #66afe9;
+        outline: none;
+      }
+  }
+  .input-group-addon {
+      border-left:0 solid transparent;
+      background:transparent;
+      &:hover {
+        cursor: pointer
+      }
+  }
 }
-input.has-error {
-  border-color: #c9302c;
-} 
