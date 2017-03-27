@@ -10,6 +10,7 @@ import { HeaderService } from '../../../header/header.service';
 })
 export class HouseholdComponent implements OnInit {
   private eventId: string;
+  private householdId: string;
   private processing: boolean;
 
   constructor( private apiService: ApiService,
@@ -19,6 +20,7 @@ export class HouseholdComponent implements OnInit {
  ngOnInit() {
    this.processing = false;
    this.eventId = this.route.snapshot.params['eventId'];
+   this.householdId = this.route.snapshot.params['householdId'];
 
    this.apiService.getEvent(this.eventId).subscribe((event) => {
      this.headerService.announceEvent(event);
