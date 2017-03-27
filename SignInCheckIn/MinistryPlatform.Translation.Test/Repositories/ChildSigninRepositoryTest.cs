@@ -107,6 +107,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             const string phoneNumber = "513-867-5309";
             const bool includeOtherHousehold = false;
+
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},
@@ -117,7 +118,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms))
                 .Returns(new List<List<MpParticipantDto>>());
 
-            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold);
+            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold, null);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
             Assert.IsNotNull(response);
@@ -130,6 +131,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             const string phoneNumber = "513-867-5309";
             const bool includeOtherHousehold = false;
+
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},
@@ -150,7 +152,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     new List<MpParticipantDto>()
                 });
 
-            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold);
+            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold, null);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
             Assert.IsNotNull(response);
@@ -164,6 +166,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             const string phoneNumber = "513-867-5309";
             const bool includeOtherHousehold = false;
+            int? groupTypeId = null;
+
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},
@@ -188,7 +192,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("token")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms)).Returns(repoResponse);
 
-            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold);
+            var response = _fixture.GetChildrenByPhoneNumber(phoneNumber, includeOtherHousehold, null);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
             Assert.IsNotNull(response);

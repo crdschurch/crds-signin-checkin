@@ -6,7 +6,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
     public interface IChildSigninRepository
     {
-        MpHouseholdParticipantsDto GetChildrenByPhoneNumber(string phoneNumber, bool includeOtherHousehold = true);
+        MpHouseholdParticipantsDto GetChildrenByPhoneNumber(string phoneNumber, bool includeOtherHousehold = true, int? groupTypeId = null);
 
         [Obsolete("This should not be used, and should eventually be removed.  It has been replaced by GetChildrenByPhoneNumber.")]
         List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, MpEventDto eventDto);
