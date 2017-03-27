@@ -156,6 +156,7 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpEventParticipantDto>(eventParticipantId, _eventParticipantColumns);
         }
 
+        // this returns only "valid" participants in the system - not ones that could not get in, or were reversed
         public List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -189,9 +190,33 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var eventParticipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                Search<MpEventParticipantDto>($"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL", columnList);
+                Search<MpEventParticipantDto>($"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in " +
+                                              $"({string.Join(",", participantIds)}) AND End_Date IS NULL AND Participation_Status_ID IN (2, 3, 4)", columnList);
 
             return eventParticipantsForEvent;
-        } 
+        }
+
+        public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantAndGroupId(int groupId, List<int> participantIds)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            List<string> groupParticipantColumns = new List<string>
+            {
+                "Group_Participant_ID",
+                "Group_ID",
+                "Participant_ID",
+                "Group_Role_ID",
+                "Start_Date",
+                "Employee_Role",
+                "Auto_Promote"
+            };
+
+            var mpGroupParticipantDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                 Search<MpGroupParticipantDto>(
+                    $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) " +
+                    "AND End_Date IS NULL", groupParticipantColumns);
+
+            return mpGroupParticipantDtos;
+        }
     }
 }

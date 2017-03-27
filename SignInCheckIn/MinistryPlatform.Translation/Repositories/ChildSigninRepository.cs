@@ -25,13 +25,18 @@ namespace MinistryPlatform.Translation.Repositories
             _applicationConfiguration = applicationConfiguration;
         }
 
-        public MpHouseholdParticipantsDto GetChildrenByPhoneNumber(string phoneNumber, bool includeOtherHousehold = true)
+        public MpHouseholdParticipantsDto GetChildrenByPhoneNumber(string phoneNumber, bool includeOtherHousehold = true, int? groupTypeId = null)
         {
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},
-                {"Include_Other_Household", includeOtherHousehold}
+                {"Include_Other_Household", includeOtherHousehold},
             };
+
+            if (groupTypeId != null)
+            {
+                parms.Add( "GroupTypeId", groupTypeId);
+            }
 
             var spResults =
                 _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
