@@ -24,14 +24,17 @@
         <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'rooms']" [routerLinkActive]="['active']">Manage Rooms</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'new-family-registration']" [routerLinkActive]="['active']">New Family Registration</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'children']" [routerLinkActive]="['active']">Manage Children</a>
       </li>
       <!-- <li class="nav-item">
         <a class="nav-link" [routerLink]="['/admin/reports']" [routerLinkActive]="['active']">Reports</a>
       </li> -->
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'new-family-registration']" [routerLinkActive]="['active']">New Family Registration</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/events',event.EventId,'family-finder']" [routerLinkActive]="['active']">Family Finder</a>
+      </li>
     </ul>
     <form class="form-inline float-lg-right">
       <ul class="nav navbar-nav">
