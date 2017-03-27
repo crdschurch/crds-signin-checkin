@@ -1,6 +1,6 @@
 <header-event></header-event>
 
-<div class="wrapper children">
+<div class="wrapper children hidden-print">
   <div class="container-fluid admin-content py-1">
     <div class="row">
       <div class="col-sm-6">
@@ -31,7 +31,7 @@
       <div class="col-xs-12">
         <preloader *ngIf="!isReady()"></preloader>
         <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No results found for "{{ searchString }}".</div>
-        <table class="table" *ngIf="isReady() && children?.length > 0">
+        <table class="table hidden-print" *ngIf="isReady() && children?.length > 0">
           <thead>
             <tr>
               <th>First Name</th>
@@ -90,3 +90,26 @@
     </div>
   </div>
 </div>
+
+<!-- this only display for printing -->
+<section class="print visible-print-block">
+  <div *ngFor="let cbr of childrenByRoom" class="print-room">
+    <br>
+    <em>{{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}</em><br>
+    <div class="row">
+      <span class="col-xs-3">First Name</span>
+      <span class="col-xs-3">Last Name</span>
+      <span class="col-xs-2">Call Number</span>
+      <span class="col-xs-2"></span>
+    </div>
+    <div *ngFor="let child of cbr" class="row">
+      <span class="col-xs-3">{{child.Nickname}}</span>
+      <span class="col-xs-3">{{child.LastName}}</span>
+      <span class="col-xs-2">{{child.CallNumber}}</span>
+      <span class="col-xs-2">
+        <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
+      </span>
+    </div>
+  </div>
+  &nbsp;
+</section>
