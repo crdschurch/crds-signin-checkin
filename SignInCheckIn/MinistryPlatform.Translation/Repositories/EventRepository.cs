@@ -109,6 +109,12 @@ namespace MinistryPlatform.Translation.Repositories
             return GetEventGroupsForEvent(eventIds);
         }
 
+        public List<MpEventGroupDto> GetEventGroupsForEventByGroupTypeId(int eventId, int groupTypeId)
+        {
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
+                .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId} AND Group_ID_Table.[Group_Type_ID] = {groupTypeId}", _eventGroupsColumns);
+        }
+
         public List<MpEventGroupDto> GetEventGroupsForEvent(List<int> eventIds)
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())

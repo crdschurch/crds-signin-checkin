@@ -107,6 +107,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             const string phoneNumber = "513-867-5309";
             const bool includeOtherHousehold = false;
+
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},
@@ -130,6 +131,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             const string phoneNumber = "513-867-5309";
             const bool includeOtherHousehold = false;
+
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},
@@ -164,6 +166,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             const string phoneNumber = "513-867-5309";
             const bool includeOtherHousehold = false;
+            int? groupTypeId = null;
+
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},

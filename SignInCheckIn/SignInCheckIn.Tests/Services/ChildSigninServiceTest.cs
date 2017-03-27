@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web.Http;
 using Crossroads.Utilities.Services.Interfaces;
+using FluentAssertions.Common;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -34,6 +35,9 @@ namespace SignInCheckIn.Tests.Services
         private Mock<ISignInLogic> _signInLogic;
 
         private ChildSigninService _fixture;
+
+        private static int ChildcareEventTypeId = 243;
+        private static int ChildcareGroupTypeId = 27;
 
         [SetUp]
         public void SetUp()
@@ -73,6 +77,9 @@ namespace SignInCheckIn.Tests.Services
 
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
+
+            _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareGroupTypeId);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
@@ -1430,6 +1437,182 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             Assert.AreEqual(participantEventMapDto.Participants[0].DuplicateSignIn, true);
+        }
+
+        [Test]
+        public void ShouldFilterNonRsvpedChildcareParticipants()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = _applicationConfiguration.Object.ChildcareEventTypeId
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetGroupsForChildcareEvent());
+
+            var mpHouseholdParticipants = GetMpHouseholdParticipants();
+            var participantIds = mpHouseholdParticipants.Participants.Select(r => r.ParticipantId).ToList();
+
+            _participantRepository.Setup(m => m.GetGroupParticipantsByParticipantAndGroupId(
+                13245, participantIds)).Returns(GetGroupParticipantsForChildcareEvent);
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto);
+
+            // Assert
+            Assert.AreEqual(1, result.Participants.Count);
+        }
+
+        [Test]
+        public void ShouldFilterNonRsvpedChildcareParticipantsNullEvent()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = _applicationConfiguration.Object.ChildcareEventTypeId
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetGroupsForChildcareEvent());
+
+            var mpHouseholdParticipants = GetMpHouseholdParticipants();
+            var participantIds = mpHouseholdParticipants.Participants.Select(r => r.ParticipantId).ToList();
+
+            _participantRepository.Setup(m => m.GetGroupParticipantsByParticipantAndGroupId(
+                13245, participantIds)).Returns(GetGroupParticipantsForChildcareEvent);
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto);
+
+            // Assert
+            Assert.AreEqual(1, result.Participants.Count);
+        }
+
+        [Test]
+        public void ShouldNotFilterKCParticipants()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = 20
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto);
+
+            // Assert
+            Assert.AreEqual(2, result.Participants.Count);
+        }
+
+        [Test]
+        public void ShouldNotFilterKCParticipantsNullEvent()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = 20
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto);
+
+            // Assert
+            Assert.AreEqual(2, result.Participants.Count);
+        }
+
+        private EventDto GetTestEvent(int siteId, int eventTypeId)
+        {
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventSiteId = siteId,
+                EventTypeId = eventTypeId
+            };
+
+            return eventDto;
+        }
+
+        private MpHouseholdParticipantsDto GetMpHouseholdParticipants()
+        {
+            var mpHouseholdParticipants = new MpHouseholdParticipantsDto
+            {
+                HouseholdId = 9988999
+            };
+
+            mpHouseholdParticipants.Participants = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 1122333
+                },
+                new MpParticipantDto
+                {
+                    ParticipantId = 2233444
+                }
+            };
+
+            return mpHouseholdParticipants;
+        }
+
+        private List<MpEventGroupDto> GetGroupsForChildcareEvent()
+        {
+            var mpEventGroupDtos = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    EventId = 1234567,
+                    GroupId = 13245
+                },
+                new MpEventGroupDto
+                {
+                    EventId = 1234567,
+                    GroupId = 25346,
+
+                }
+            };
+
+            return mpEventGroupDtos;
+        }
+
+        private List<MpGroupParticipantDto> GetGroupParticipantsForChildcareEvent()
+        {
+            var groupParticipants = new List<MpGroupParticipantDto>
+            {
+                new MpGroupParticipantDto
+                {
+                    GroupId = 12345,
+                    ParticipantId = 1122333
+                }
+            };
+
+            return groupParticipants;
         }
     }
 }

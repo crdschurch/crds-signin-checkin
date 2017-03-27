@@ -88,7 +88,8 @@ namespace MinistryPlatform.Translation.Repositories
             var updateObject = new Dictionary<string, object>
             {
                 { "Event_Participant_ID", eventParticipantId },
-                { "Participation_Status_ID", checkinStatusId }
+                { "Participation_Status_ID", checkinStatusId },
+                { "Time_Confirmed",  DateTime.Now},
             };
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).UpdateRecord("Event_Participants", eventParticipantId, updateObject);

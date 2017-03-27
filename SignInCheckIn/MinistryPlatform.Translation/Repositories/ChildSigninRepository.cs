@@ -30,7 +30,7 @@ namespace MinistryPlatform.Translation.Repositories
             var parms = new Dictionary<string, object>
             {
                 {"Phone_Number", phoneNumber},
-                {"Include_Other_Household", includeOtherHousehold}
+                {"Include_Other_Household", includeOtherHousehold},
             };
 
             var spResults =
