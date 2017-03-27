@@ -311,6 +311,14 @@ datepicker {
     font-size: .8rem;
   }
 
+  .table tbody td {
+    border: 1px solid #ccc;
+  }
+
+  .table thead th {
+    border-bottom: 1px solid #ccc;
+  }
+
   .text-print-right {
     text-align: right;
   }
