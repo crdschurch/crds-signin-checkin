@@ -69,7 +69,14 @@ namespace SignInCheckIn.Services
             // this will have to check if it's a childcare event
             var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
 
-            var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber);
+            int? groupTypeId = null;
+
+            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId)
+            {
+                groupTypeId = _applicationConfiguration.ChildcareGroupTypeId;
+            }
+
+            var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, true, groupTypeId);
 
             if (!household.HouseholdId.HasValue && household.HouseholdId != 0)
             {
@@ -77,7 +84,7 @@ namespace SignInCheckIn.Services
             }
 
             // check the household participants here if this is a childcare search
-            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId)
+            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId && household.Participants.Any())
             {
                 // this may be an unwarranted assumption that there will only be one CC group - consider edge cases
                 var childcareEventGroup = _eventRepository.GetEventGroupsForEventByGroupTypeId(
