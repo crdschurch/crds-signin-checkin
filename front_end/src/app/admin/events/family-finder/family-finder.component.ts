@@ -3,6 +3,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { Contact } from '../../../shared/models'
 import { AdminService } from '../../admin.service';
 import { HeaderService } from '../../header/header.service';
 import { ApiService } from '../../../shared/services';
@@ -15,7 +16,9 @@ import { ApiService } from '../../../shared/services';
 export class FamilyFinderComponent implements OnInit {
   private eventId: string;
   private processing: boolean;
+  private searched: boolean;
   private search: string;
+  private contacts: Array<Contact> = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -25,6 +28,7 @@ export class FamilyFinderComponent implements OnInit {
 
   ngOnInit() {
     this.processing = false;
+    this.searched = false;
     this.eventId = this.route.snapshot.params['eventId'];
     
     this.apiService.getEvent(this.eventId).subscribe((event) => {
@@ -47,5 +51,8 @@ export class FamilyFinderComponent implements OnInit {
   }
 
   private executeSearch() {
+    this.searched = true;
+    this.processing = true;
+
   }
 }

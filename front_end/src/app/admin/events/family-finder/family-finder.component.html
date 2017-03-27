@@ -18,5 +18,25 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-xs-12">
+      <preloader *ngIf="searched && processing"></preloader>
+      <div class="text-xs-center my-3" *ngIf="searched && !processing && contacts?.length === 0">No results found for "{{ search }}".</div>
+      <table class="table hidden-print col-xs-12" *ngIf="searched && !processing && contacts?.length > 0">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Site</th>
+            <th>Address</th>
+            <th>Home Phone</th>
+            <th>Mobile Phone</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let contact of contacts">
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
