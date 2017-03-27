@@ -7,16 +7,21 @@ const event = {
   'EventId': '92398420398',
 };
 let router;
+let apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
 let adminService = jasmine.createSpyObj('adminService', [, 'createNewFamily']);
-let route: ActivatedRoute = new ActivatedRoute();
+let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
+let route: ActivatedRoute;
+route = new ActivatedRoute();
 route.snapshot = new ActivatedRouteSnapshot();
 route.snapshot.params = { eventId: event.EventId };
 let fixture;
 
 describe('FamilyFinderComponent', () => {
   beforeEach(() => {
+    (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
+    (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
-    fixture = new FamilyFinderComponent(adminService, router);
+    fixture = new FamilyFinderComponent(route, apiService, headerService, adminService);
   });
   it('#ngOnInit', () => {
     fixture.ngOnInit();
