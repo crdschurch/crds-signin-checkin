@@ -22,7 +22,7 @@ export class HouseholdComponent implements OnInit {
                private headerService: HeaderService) {}
 
  ngOnInit() {
-   this.processing = false;
+   this.processing = true;
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
 
@@ -32,11 +32,31 @@ export class HouseholdComponent implements OnInit {
 
    this.adminService.getChildrenByHousehould(+this.eventId, +this.householdId).subscribe((children) => {
      this.children = children;
+     this.processing = false;
    }, error => console.error(error));
  }
 
  signIn() {
-   console.log('sign in')
+   console.log('sign in');
+   //  if (!this._eventParticipants.hasSelectedParticipants()) {
+   //    return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
+   //  }
+   //  this.isReady = false;
+   //  // remove unselected event participants
+   //  this._eventParticipants.removeUnselectedParticipants();
+   //  this.childSigninService.signInChildren(this._eventParticipants, this.numberEventsAttending).subscribe(
+   //    (response: EventParticipants) => {
+   //      this.isReady = true;
+   //      if (response && response.Participants && response.Participants.length > 0) {
+   //        this.router.navigate(['/child-signin/assignment']);
+   //      } else {
+   //        this.rootService.announceEvent('generalError');
+   //      }
+   //    }, (err) => {
+   //      this.isReady = true;
+   //      this.rootService.announceEvent('generalError');
+   //    }
+   //  );
  }
 
 }
