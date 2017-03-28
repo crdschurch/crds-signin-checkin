@@ -345,5 +345,65 @@ namespace MinistryPlatform.Translation.Test.Repositories
             Assert.AreEqual(3, result.Count);
             _ministryPlatformRestRepository.VerifyAll();
         }
+
+        [Test]
+        public void ShouldGetContactsForFindFamilies()
+        {
+            // Arrange
+            var token = "123abc";
+            var search = "dust";
+
+            var columns = new List<string>
+            {
+                "Contacts.Contact_ID",
+                "Contacts.Nickname",
+                "Contacts.First_Name",
+                "Contacts.Last_Name",
+                "Household_ID_Table.Household_ID",
+                "Household_ID_Table_Address_ID_Table.Address_Line_1",
+                "Household_ID_Table_Address_ID_Table.City",
+                "Household_ID_Table_Address_ID_Table.State/Region as State",
+                "Household_ID_Table_Address_ID_Table.Postal_Code",
+                "Household_ID_Table.Home_Phone",
+                "Contacts.Mobile_Phone",
+                "Household_ID_Table_Congregation_ID_Table.Congregation_Name"
+            };
+
+            var contacts = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    FirstName = "FirstName1",
+                    LastName = "LastName1",
+                    HouseholdId = 1
+                },
+                new MpContactDto
+                {
+                    FirstName = "FirstName2",
+                    LastName = "LastName2",
+                    HouseholdId = 2
+                }
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpContactDto>($"Contacts.[Last_Name] LIKE '%{search}%'", columns, null, false)).Returns(contacts);
+
+            // Act
+            var result = _fixture.GetFamiliesForSearch(token, search);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
+
+            Assert.AreEqual(2, result.Count);
+
+            Assert.AreEqual(result[0].FirstName, contacts[0].FirstName);
+            Assert.AreEqual(result[0].LastName, contacts[0].LastName);
+            Assert.AreEqual(result[0].HouseholdId, contacts[0].HouseholdId);
+
+            Assert.AreEqual(result[1].FirstName, contacts[1].FirstName);
+            Assert.AreEqual(result[1].LastName, contacts[1].LastName);
+            Assert.AreEqual(result[1].HouseholdId, contacts[1].HouseholdId);
+        }
     }
 }

@@ -18,5 +18,6 @@ namespace SignInCheckIn.Services.Interfaces
         List<EventDto> GetEventMaps(string token, int eventId);
         List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId, string search);
         void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token);
+        List<ContactDto> GetFamiliesForSearch(string token, string search);
     }
 }

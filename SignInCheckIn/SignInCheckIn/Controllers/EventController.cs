@@ -209,5 +209,23 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpGet]
+        [ResponseType(typeof(ParticipantDto))]
+        [VersionedRoute(template: "findFamily/{search:string}", minimumVersion: "1.0.0")]
+        [Route("findFamily/{search:string}")]
+        public IHttpActionResult FindFamilies([FromUri] string search)
+        {
+            try
+            {
+
+                return Authorized(token => Ok(_eventService.GetFamiliesForSearch(token, search)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting families for search {search}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }

@@ -39,5 +39,20 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Date_of_Birth")]
         public DateTime? DateOfBirth { get; set; }
+
+        [JsonProperty(PropertyName = "Address_Line_1")]
+        public string AddressLine1 { get; set; }
+
+        [JsonProperty(PropertyName = "City")]
+        public string City { get; set; }
+
+        [JsonProperty(PropertyName = "State")]
+        public string State { get; set; }
+
+        [JsonProperty(PropertyName = "Postal_Code")]
+        public string ZipCode { get; set; }
+        
+        [JsonProperty(PropertyName = "Congregation_Name")]
+        public string CongregationName { get; set; }
     }
 }
