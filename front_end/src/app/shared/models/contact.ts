@@ -7,7 +7,7 @@ export class Contact {
   Nickname: string;
   LastName: string;
   Address: string;
-  Site: string;
+  CongregationName: string;
 
  static fromJson(json: any): Contact {
     let c = new Contact();
