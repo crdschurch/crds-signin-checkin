@@ -1,10 +1,17 @@
 <header-event></header-event>
 
-this is household {{householdId}}
-
-<div class="eqWrap mt-2">
-  <div class="card ff" *ngFor="let kid of children" >
-    <child-signin [child]="kid">
-  </child-signin>
+<div class="container-fluid">
+  <div class="mt-2 clearfix">
+    <div class="card-wrapper col-xs-4" *ngFor="let kid of children">
+      <div class="card">
+        <child-signin-card [child]="kid">
+        </child-signin-card>
+      </div>
+    </div>
+  </div>
+  <div class="mt-2">
+    <a class="btn btn-primary btn-lg float-xs-right" (click)="signIn()">Sign In
+      <svg _ngcontent-ipr-31="" height="12" viewBox="0 0 9 12" width="9" xmlns="http://www.w3.org/2000/svg"><path _ngcontent-ipr-31="" d="M1.5 0l-1.4 1.4 4.6 4.6-4.6 4.6 1.4 1.4 6-6-6-6z"></path></svg>
+    </a>
   </div>
 </div>

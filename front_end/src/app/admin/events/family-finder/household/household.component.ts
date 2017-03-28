@@ -35,4 +35,8 @@ export class HouseholdComponent implements OnInit {
    }, error => console.error(error));
  }
 
+ signIn() {
+   console.log('sign in')
+ }
+
 }

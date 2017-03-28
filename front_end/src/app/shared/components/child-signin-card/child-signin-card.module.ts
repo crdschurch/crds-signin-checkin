@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { ChildSigninComponent } from './child-signin.component';
+import { ChildSigninCardComponent } from './child-signin-card.component';
 import { MomentModule } from 'angular2-moment';
 
 @NgModule({
   imports: [BrowserModule, CommonModule, FormsModule, MomentModule],
-  exports: [ChildSigninComponent],
-  declarations: [ChildSigninComponent],
+  exports: [ChildSigninCardComponent],
+  declarations: [ChildSigninCardComponent],
   providers: [],
 })
-export class ChildSigninModule { }
+export class ChildSigninCardModule { }
