@@ -44,7 +44,7 @@
               <td>{{contact.Address}}</td>
               <td>{{contact.HomePhone}}</td>
               <td>{{contact.MobilePhone}}</td>
-              <td><a class="btn btn-primary btn-sm" routerLink="['/:id', contact.HouseholdId]">View Child Details</a></td>
+              <td><a class="btn btn-primary btn-sm" [routerLink]="[contact.HouseholdId]">View Child Details</a></td>
             </tr>
           </tbody>
         </table>
