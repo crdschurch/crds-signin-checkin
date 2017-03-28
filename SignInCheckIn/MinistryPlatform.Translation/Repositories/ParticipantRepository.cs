@@ -218,5 +218,29 @@ namespace MinistryPlatform.Translation.Repositories
 
             return mpGroupParticipantDtos;
         }
+
+        public List<MpContactDto> GetFamiliesForSearch(string token, string search)
+        {
+            var columns = new List<string>
+            {
+                "Contacts.Contact_ID",
+                "Contacts.Nickname",
+                "Contacts.First_Name",
+                "Contacts.Last_Name",
+                "Household_ID_Table.Household_ID",
+                "Household_ID_Table_Address_ID_Table.Address_Line_1",
+                "Household_ID_Table_Address_ID_Table.City",
+                "Household_ID_Table_Address_ID_Table.[State/Region] as State",
+                "Household_ID_Table_Address_ID_Table.Postal_Code",
+                "Household_ID_Table.Home_Phone",
+                "Contacts.Mobile_Phone",
+                "Household_ID_Table_Congregation_ID_Table.Congregation_Name"
+            };
+
+            var contacts = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
+                 Search<MpContactDto>($"Contacts.[Last_Name] LIKE '%{search}%'", columns);
+
+            return contacts;
+        }
     }
 }

@@ -48,7 +48,6 @@ export class FamilyFinderComponent implements OnInit {
   }
 
   onSearch() {
-    console.log(this.executeSearch());
     this.executeSearch();
   }
 

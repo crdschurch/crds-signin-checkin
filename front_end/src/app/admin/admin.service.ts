@@ -79,23 +79,10 @@ export class AdminService {
     let url = `${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`;
     return this.http.get(url)
                     .map(res => {
-                      debugger
                       let x = (<Child[]>res.json().Participants).map(r => Child.fromJson(r));
                       return x;
                     })
                     .catch(this.handleError);
-    // let children = [new Child(), new Child(),new Child(), new Child(),new Child()];
-    // children[0].FirstName = 'bob';
-    // children[0].ContactId = 321;
-    // children[1].FirstName = 'sarah';
-    // children[1].ContactId = 689;
-    // children[2].FirstName = 'sarah';
-    // children[2].ContactId = 345;
-    // children[3].FirstName = 'sarah';
-    // children[3].ContactId = 645;
-    // children[4].FirstName = 'sarah';
-    // children[4].ContactId = 766;
-    // return Observable.of(children);
   }
 
   getUnassignedGroups(eventId: number) {
@@ -116,10 +103,11 @@ export class AdminService {
   }
 
   findFamilies(searchString: string): Observable<Array<Contact>> {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/findFamily/${searchString}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/findFamily?search=${searchString}`;
     return this.http.get(url)
                     .map(res => {
-                      let contacts = (<any[]>res.json()).map(res => Contact.fromJson(res));
+                      let contacts = (<any[]>res.json()).map(r => Contact.fromJson(r));
+
                       return contacts;
                     })
                     .catch(this.handleError);
