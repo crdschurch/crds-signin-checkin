@@ -22,7 +22,7 @@ export class HouseholdComponent implements OnInit {
                private headerService: HeaderService) {}
 
  ngOnInit() {
-   this.processing = false;
+   this.processing = true;
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
 
@@ -31,8 +31,8 @@ export class HouseholdComponent implements OnInit {
    }, error => console.error(error));
 
    this.adminService.getChildrenByHousehould(+this.eventId, +this.householdId).subscribe((children) => {
-     debugger
      this.children = children;
+     this.processing = false;
    }, error => console.error(error));
  }
 

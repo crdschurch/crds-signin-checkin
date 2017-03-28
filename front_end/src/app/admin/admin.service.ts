@@ -79,8 +79,7 @@ export class AdminService {
     let url = `${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`;
     return this.http.get(url)
                     .map(res => {
-                      let x = (<Child[]>res.json().Participants).map(r => Child.fromJson(r));
-                      return x;
+                      return(<Child[]>res.json().Participants).map(r => Child.fromJson(r));
                     })
                     .catch(this.handleError);
   }
