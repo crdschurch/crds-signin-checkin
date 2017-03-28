@@ -212,8 +212,8 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantDto))]
-        [VersionedRoute(template: "findFamily/{search:string}", minimumVersion: "1.0.0")]
-        [Route("findFamily/{search:string}")]
+        [VersionedRoute(template: "findFamily", minimumVersion: "1.0.0")]
+        [Route("findFamily")]
         public IHttpActionResult FindFamilies([FromUri] string search)
         {
             try
