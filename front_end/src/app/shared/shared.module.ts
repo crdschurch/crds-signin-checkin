@@ -11,7 +11,7 @@ import { ClosedRoomPipe } from './pipes/closedRoom.pipe'
 import { ApiService, LoginRedirectService } from './services';
 
 import { PreloaderModule } from './preloader';
-import { CrdsDatePickerModule, LoadingButtonModule, NumberPadModule } from './components';
+import { AvailableChildModule, CrdsDatePickerModule, LoadingButtonModule, NumberPadModule } from './components';
 import { CanActivateIfLoggedInGuard } from './guards';
 
 @NgModule({
@@ -35,6 +35,7 @@ import { CanActivateIfLoggedInGuard } from './guards';
     FormsModule,
     Ng2BootstrapModule,
     PreloaderModule,
+    AvailableChildModule,
     CrdsDatePickerModule,
     LoadingButtonModule,
     NumberPadModule
