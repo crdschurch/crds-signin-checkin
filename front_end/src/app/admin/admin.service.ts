@@ -112,7 +112,7 @@ export class AdminService {
   }
 
   findFamilies(searchString: string): Observable<Array<Contact>> {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/findFamily/${searchString}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/findFamily?search=${searchString}`;
     return this.http.get(url)
                     .map(res => {
                       let contacts = (<any[]>res.json()).map(r => Contact.fromJson(r));
