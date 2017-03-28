@@ -362,7 +362,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Household_ID_Table.Household_ID",
                 "Household_ID_Table_Address_ID_Table.Address_Line_1",
                 "Household_ID_Table_Address_ID_Table.City",
-                "Household_ID_Table_Address_ID_Table.State/Region as State",
+                "Household_ID_Table_Address_ID_Table.[State/Region] as State",
                 "Household_ID_Table_Address_ID_Table.Postal_Code",
                 "Household_ID_Table.Home_Phone",
                 "Contacts.Mobile_Phone",
