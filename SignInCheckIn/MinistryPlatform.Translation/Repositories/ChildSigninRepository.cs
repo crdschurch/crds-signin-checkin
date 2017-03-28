@@ -57,13 +57,12 @@ namespace MinistryPlatform.Translation.Repositories
             return result;
         }
 
-        [Obsolete("This should not be used, and should eventually be removed.  It has been replaced by GetChildrenByPhoneNumber.")]
-        public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, MpEventDto eventDto)
+        public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, int eventId)
         {
             if (householdId == null) return new List<MpParticipantDto>();
             var children = GetChildParticipantsByPrimaryHousehold(householdId);
             GetChildParticipantsByOtherHousehold(householdId, children);
-            var eventGroups = GetEventGroups(eventDto.EventId);
+            var eventGroups = GetEventGroups(eventId);
             children = GetOnlyKidsClubChildren(children, eventGroups);
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
