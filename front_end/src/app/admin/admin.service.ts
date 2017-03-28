@@ -80,7 +80,7 @@ export class AdminService {
     // return this.http.get(url)
     //                 .map(res => { return (<Child[]>res.json()).map(r => Child.fromJson(r)); })
     //                 .catch(this.handleError);
-    let children = [new Child(), new Child(),new Child(), new Child(),new Child()];
+    let children = [new Child(), new Child(), new Child(), new Child(), new Child()];
     children[0].FirstName = 'bob';
     children[0].ContactId = 321;
     children[1].FirstName = 'sarah';
