@@ -18,34 +18,37 @@
         </div>
       </div>
     </div>
+    <br/>
     <div class="row">
       <div class="col-xs-12">
       <preloader *ngIf="searched && processing"></preloader>
       <div class="text-xs-center my-3" *ngIf="searched && !processing && contacts?.length === 0">No results found for "{{ search }}".</div>
-      <table class="table hidden-print col-xs-12" *ngIf="searched && !processing && contacts?.length > 0">
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Site</th>
-            <th>Address</th>
-            <th>Home Phone</th>
-            <th>Mobile Phone</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let contact of contacts">
-            <th>{{contact.Nickname}}</th>
-            <th>{{contact.LatName}}</th>
-            <th>{{contact.Site}}</th>
-            <th>{{contact.Address}}</th>
-            <th>{{contact.HomePhone}}</th>
-            <th>{{contact.MobilePhone}}</th>
-            <th><a class="btn btn-primary btn-sm" routerLink="['/:id', contact.HouseholdId]'">View Child Details</a></th>
-          </tr>
-        </tbody>
-      </table>
+      <div>
+        <table class="table hidden-print col-xs-12" *ngIf="searched && !processing && contacts?.length > 0">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Site</th>
+              <th>Address</th>
+              <th>Home Phone</th>
+              <th>Mobile Phone</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let contact of contacts">
+              <td>{{contact.Nickname}}</td>
+              <td>{{contact.LatName}}</td>
+              <td>{{contact.Site}}</td>
+              <td>{{contact.Address}}</td>
+              <td>{{contact.HomePhone}}</td>
+              <td>{{contact.MobilePhone}}</td>
+              <td><a class="btn btn-primary btn-sm" routerLink="['/:id', contact.HouseholdId]">View Child Details</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
