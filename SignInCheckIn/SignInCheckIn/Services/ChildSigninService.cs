@@ -64,6 +64,26 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
+        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId)
+        {
+            var eventDto = _eventService.GetCurrentEventForSite(siteId);
+
+            var household = _childSigninRepository.GetChildrenByHouseholdId(householdId, eventDto.EventId);
+
+            var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(household);
+
+            var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId));
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Contacts = headsOfHousehold,
+                Participants = childrenDtos,
+                CurrentEvent = eventDto
+            };
+
+            return participantEventMapDto;
+        }
+
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto)
         {
             // this will have to check if it's a childcare event
