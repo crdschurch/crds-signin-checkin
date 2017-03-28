@@ -3,7 +3,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 
 import { SharedModule } from '../../../shared/shared.module';
 import { HeaderModule } from '../../header';
-import { AvailableChildModule } from '../../../shared/components/available-child/available-child.module';
+import { ChildSigninModule } from '../../../shared/components/child-signin';
 import { FamilyFinderComponent } from './family-finder.component';
 import { HouseholdComponent } from './household/household.component';
 import { familyFinderRouting } from './family-finder.routes';
@@ -15,7 +15,7 @@ import { familyFinderRouting } from './family-finder.routes';
   ],
   imports: [
     familyFinderRouting,
-    AvailableChildModule,
+    ChildSigninModule,
     HeaderModule,
     TextMaskModule,
     SharedModule

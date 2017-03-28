@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { AvailableChildComponent } from './available-child.component';
+import { ChildSigninComponent } from './child-signin.component';
 import { MomentModule } from 'angular2-moment';
 
 @NgModule({
   imports: [BrowserModule, CommonModule, FormsModule, MomentModule],
-  exports: [AvailableChildComponent],
-  declarations: [AvailableChildComponent],
+  exports: [ChildSigninComponent],
+  declarations: [ChildSigninComponent],
   providers: [],
 })
-export class AvailableChildModule { }
+export class ChildSigninModule { }
