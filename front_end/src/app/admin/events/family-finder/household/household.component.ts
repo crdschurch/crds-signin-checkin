@@ -31,12 +31,32 @@ export class HouseholdComponent implements OnInit {
    }, error => console.error(error));
 
    this.adminService.getChildrenByHousehould(+this.eventId, +this.householdId).subscribe((children) => {
+     debugger
      this.children = children;
    }, error => console.error(error));
  }
 
  signIn() {
-   console.log('sign in')
+   console.log('sign in');
+   //  if (!this._eventParticipants.hasSelectedParticipants()) {
+   //    return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
+   //  }
+   //  this.isReady = false;
+   //  // remove unselected event participants
+   //  this._eventParticipants.removeUnselectedParticipants();
+   //  this.childSigninService.signInChildren(this._eventParticipants, this.numberEventsAttending).subscribe(
+   //    (response: EventParticipants) => {
+   //      this.isReady = true;
+   //      if (response && response.Participants && response.Participants.length > 0) {
+   //        this.router.navigate(['/child-signin/assignment']);
+   //      } else {
+   //        this.rootService.announceEvent('generalError');
+   //      }
+   //    }, (err) => {
+   //      this.isReady = true;
+   //      this.rootService.announceEvent('generalError');
+   //    }
+   //  );
  }
 
 }
