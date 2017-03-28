@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'available-children',
   templateUrl: 'available-children.component.html',
-  styleUrls: [ '../scss/_cards.scss', '../scss/_buttons.scss', 'available-children.component.scss' ]
+  styleUrls: [ 'available-children.component.scss', '../scss/_cards.scss', '../scss/_buttons.scss', '../scss/_stepper.scss' ]
 })
 
 export class AvailableChildrenComponent implements OnInit {

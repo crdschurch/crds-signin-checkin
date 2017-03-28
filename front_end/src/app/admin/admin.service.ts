@@ -74,6 +74,26 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+
+  getChildrenByHousehould(eventId: number, householdId: number) {
+    let url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/household/${householdId}`;
+    // return this.http.get(url)
+    //                 .map(res => { return (<Child[]>res.json()).map(r => Child.fromJson(r)); })
+    //                 .catch(this.handleError);
+    let children = [new Child(), new Child(),new Child(), new Child(),new Child()];
+    children[0].FirstName = 'bob';
+    children[0].ContactId = 321;
+    children[1].FirstName = 'sarah';
+    children[1].ContactId = 689;
+    children[2].FirstName = 'sarah';
+    children[2].ContactId = 345;
+    children[3].FirstName = 'sarah';
+    children[3].ContactId = 645;
+    children[4].FirstName = 'sarah';
+    children[4].ContactId = 766;
+    return Observable.of(children);
+  }
+
   getUnassignedGroups(eventId: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/groups/unassigned`;
     return this.http.get(url)

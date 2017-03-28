@@ -30,8 +30,8 @@
       <div class="eqWrap mt-2">
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
         <div class="card" *ngFor="let kid of childrenAvailable()" >
-          <available-child [child]="kid">
-          </available-child>
+          <child-signin-card [child]="kid">
+        </child-signin-card>
         </div><!--/card-->
       </div><!--/eqWrap-->
 
