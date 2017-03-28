@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { Room, NewFamily, Child, Group } from '../shared/models';
+import { Room, NewFamily, Child, Group, Contact } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -109,6 +109,16 @@ export class AdminService {
   reverseSignin(eventId: number, roomId: number, eventParticipantId: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/signin/event/${eventId}/room/${roomId}/reverse/${eventParticipantId}`;
     return this.http.put(url, null).catch(this.handleError);
+  }
+
+  findFamilies(searchString: string): Observable<Array<Contact>> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/findFamily/${searchString}`;
+    return this.http.get(url)
+                    .map(res => { 
+                      let contacts = (<any[]>res.json()).map(res => Contact.fromJson(res));
+                      return contacts;
+                    })
+                    .catch(this.handleError);
   }
 
   private handleError (error: any) {
