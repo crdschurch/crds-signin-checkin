@@ -3,7 +3,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { Contact } from '../../../shared/models'
+import { Contact } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { HeaderService } from '../../header/header.service';
 import { ApiService } from '../../../shared/services';
@@ -30,7 +30,7 @@ export class FamilyFinderComponent implements OnInit {
     this.processing = false;
     this.searched = false;
     this.eventId = this.route.snapshot.params['eventId'];
-    
+
     this.apiService.getEvent(this.eventId).subscribe((event) => {
       this.headerService.announceEvent(event);
     }, error => console.error(error));
@@ -43,7 +43,8 @@ export class FamilyFinderComponent implements OnInit {
   onClearSearch(box) {
     this.search = '';
     box.value = '';
-    this.executeSearch();
+    this.contacts = [];
+    this.searched = false;
   }
 
   onSearch() {
@@ -54,5 +55,9 @@ export class FamilyFinderComponent implements OnInit {
     this.searched = true;
     this.processing = true;
 
+    this.adminService.findFamilies(this.search).subscribe((contacts: Array<Contact>) => {
+      this.contacts = contacts;
+      this.processing = false;
+    }, error => console.error(error));
   }
 }

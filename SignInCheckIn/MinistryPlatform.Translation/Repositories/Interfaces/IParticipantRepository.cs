@@ -16,5 +16,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpEventParticipantDto GetEventParticipantByEventParticipantId(string token, int eventParticipantId);
         List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds);
         List<MpGroupParticipantDto> GetGroupParticipantsByParticipantAndGroupId(int groupId, List<int> participantIds);
+        List<MpContactDto> GetFamiliesForSearch(string token, string search);
     }
 }
