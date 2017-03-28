@@ -149,7 +149,7 @@ describe('AdminService', () => {
       (<jasmine.Spy>responseObject.json).and.returnValue(contacts);
 
       let result = fixture.findFamilies('dustin');
-      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/findFamily/dustin`);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/findFamily?search=dustin`);
       expect(result).toBeDefined();
       expect(result).toEqual(jasmine.any(Observable));
       result.subscribe((c) => {
