@@ -6,7 +6,7 @@ import { AvailableChildComponent } from './available-child.component';
 import { MomentModule } from 'angular2-moment';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, MomentModule],
+  imports: [BrowserModule, CommonModule, FormsModule, MomentModule],
   exports: [AvailableChildComponent],
   declarations: [AvailableChildComponent],
   providers: [],
