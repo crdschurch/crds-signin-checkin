@@ -1583,6 +1583,29 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(2, result.Participants.Count);
         }
 
+        [Test]
+        public void ShouldNotFilterNewFamilyParticipants()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = 243
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto, true);
+
+            // Assert
+            Assert.AreEqual(2, result.Participants.Count);
+        }
+
         private EventDto GetTestEvent(int siteId, int eventTypeId)
         {
             var eventDto = new EventDto

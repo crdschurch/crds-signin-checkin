@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ApiService } from '../../../../shared/services';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ApiService, RootService } from '../../../../shared/services';
+import { ChildSigninService } from '../../../../child-signin/child-signin.service';
 import { AdminService } from '../../../admin.service';
-import { Child } from '../../../../shared/models';
+import { Child, EventParticipants } from '../../../../shared/models';
 import { HeaderService } from '../../../header/header.service';
 
 @Component({
@@ -14,11 +15,14 @@ export class HouseholdComponent implements OnInit {
   private eventId: number;
   private householdId: number;
   private processing: boolean;
-  children: Child[];
+  eventParticipants: EventParticipants;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
+               private childSigninService: ChildSigninService,
+               private rootService: RootService,
                private route: ActivatedRoute,
+               private router: Router,
                private headerService: HeaderService) {}
 
  ngOnInit() {
@@ -30,33 +34,33 @@ export class HouseholdComponent implements OnInit {
      this.headerService.announceEvent(event);
    }, error => console.error(error));
 
-   this.adminService.getChildrenByHousehould(+this.eventId, +this.householdId).subscribe((children) => {
-     this.children = children;
+   this.adminService.getChildrenByHousehold(+this.eventId, +this.householdId).subscribe((ep: EventParticipants) => {
+     this.eventParticipants = ep;
      this.processing = false;
    }, error => console.error(error));
  }
 
  signIn() {
-   console.log('sign in');
-   //  if (!this._eventParticipants.hasSelectedParticipants()) {
-   //    return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
-   //  }
-   //  this.isReady = false;
-   //  // remove unselected event participants
-   //  this._eventParticipants.removeUnselectedParticipants();
-   //  this.childSigninService.signInChildren(this._eventParticipants, this.numberEventsAttending).subscribe(
-   //    (response: EventParticipants) => {
-   //      this.isReady = true;
-   //      if (response && response.Participants && response.Participants.length > 0) {
-   //        this.router.navigate(['/child-signin/assignment']);
-   //      } else {
-   //        this.rootService.announceEvent('generalError');
-   //      }
-   //    }, (err) => {
-   //      this.isReady = true;
-   //      this.rootService.announceEvent('generalError');
-   //    }
-   //  );
+    if (!this.eventParticipants.hasSelectedParticipants()) {
+      return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
+    }
+    this.processing = true;
+    // remove unselected event participants
+    this.eventParticipants.removeUnselectedParticipants();
+    const numberEventsAttending = 1;
+    this.childSigninService.signInChildren(this.eventParticipants, numberEventsAttending).subscribe(
+      (response: EventParticipants) => {
+        this.processing = false;
+        if (response && response.Participants && response.Participants.length > 0) {
+          this.router.navigate([`/admin/events/${this.eventId}/family-finder`]);
+        } else {
+          this.rootService.announceEvent('generalError');
+        }
+      }, (err) => {
+        this.rootService.announceEvent('generalError');
+        this.processing = false;
+      }
+    );
  }
 
 }
