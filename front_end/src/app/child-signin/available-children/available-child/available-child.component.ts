@@ -5,7 +5,7 @@ import { Child, NewChild } from '../../../shared/models';
 @Component({
   selector: 'available-child',
   templateUrl: 'available-child.component.html',
-  styleUrls: ['../../scss/_cards.scss', '../../scss/_buttons.scss', ]
+  styleUrls: ['available-child.component.scss', '../../scss/_cards.scss', '../../scss/_buttons.scss', ]
 })
 
 export class AvailableChildComponent {

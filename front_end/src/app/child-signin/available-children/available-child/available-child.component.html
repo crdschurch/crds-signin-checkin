@@ -1,7 +1,6 @@
 <label class="card-block" attr.for='child-signin-{{child.uniqueIdentifier()}}'>
   <h4 class="card-title">
-    <span class="tag tag-primary" *ngIf="child.GuestSignin">guest</span>
-    <span>{{child.name()}}</span>
+    <span>{{child.name()}}</span><span class="tag tag-primary ml-1" *ngIf="child.GuestSignin">Guest</span>
   </h4>
   <p class="text-muted">DOB: {{child.DateOfBirth | amDateFormat: 'M-DD-YYYY'}}</p>
   <span class="tgl-inline-label">Sign In:</span>
