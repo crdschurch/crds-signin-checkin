@@ -5,7 +5,7 @@
     <div class="col-md-12">
 
       <div class="eqWrap">
-        <div class="card text-xs-center pointer">
+        <div class="card text-xs-center pointer" *ngIf="showGuestOption">
           <!-- <a routerLink="/child-signin/guest"> -->
           <a (click)="openNewGuestModal(addGuestModal)">
             <div class="card-block">
@@ -14,7 +14,7 @@
             </div>
           </a>
         </div>
-        <div class="card">
+        <div class="card" *ngIf="showServingOption">
           <label attr.for='isServing' class="text-xs-center pointer px-1 serving-label">
             <div class="serving-question-cont mt-2">
               <span class="tgl-inline-label tgl-serving-label">Are you serving today?</span>
