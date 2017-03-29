@@ -92,10 +92,26 @@
 </div>
 
 <!-- this only display for printing -->
-<section class="print visible-print-block">
+<section class="print-page visible-print-block">
   <div *ngFor="let cbr of childrenByRoom" class="print-room container">
+    <div class="mt-1">
+      <ul class="list-inline">
+        <li class="list-inline-item">
+          <strong>Site</strong> {{event?.EventSite}}
+        </li>
+        <li class="list-inline-item hidden-xs-up">
+          <strong>Event Type</strong> {{event?.EventType}}
+        </li>
+        <li class="list-inline-item">
+          <strong>Date</strong> {{event?.EventStartDate | amDateFormat :'dddd, MMMM Do'}}
+        </li>
+        <li class="list-inline-item">
+          <strong>Event Time</strong> {{event?.EventStartDate | amDateFormat:'h:mma'}}
+        </li>
+      </ul>
+    </div>
 
-    <p class="lead my-1">
+    <p class="lead mb-1">
       {{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}
     </p>
     <div class="row">
