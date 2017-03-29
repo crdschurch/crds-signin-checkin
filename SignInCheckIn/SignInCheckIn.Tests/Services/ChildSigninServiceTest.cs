@@ -118,7 +118,7 @@ namespace SignInCheckIn.Tests.Services
  
             var contactDtos = new List<MpContactDto>();
 
-            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true, null)).Returns(mpHouseholdAndParticipants);
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
@@ -144,7 +144,7 @@ namespace SignInCheckIn.Tests.Services
             var eventDto = new EventDto();
             var contactDtos = new List<MpContactDto>();
 
-            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true, null)).Returns(mpHouseholdAndParticipants);
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(primaryHouseholdId.Value)).Returns(contactDtos);
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
@@ -162,7 +162,7 @@ namespace SignInCheckIn.Tests.Services
 
             var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto();
 
-            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true, null)).Returns(mpHouseholdAndParticipants);
+            _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
             try
             {
                 _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
@@ -1452,7 +1452,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetMpHouseholdParticipants());
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
             _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetGroupsForChildcareEvent());
@@ -1483,7 +1483,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetMpHouseholdParticipants());
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
             _eventRepository.Setup(m => m.GetEventGroupsForEventByGroupTypeId(1234567, _applicationConfiguration.Object.ChildcareGroupTypeId)).Returns(GetGroupsForChildcareEvent());
@@ -1514,7 +1514,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true, null)).Returns(GetMpHouseholdParticipants());
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
             // Act
@@ -1537,11 +1537,34 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
-            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true, null)).Returns(GetMpHouseholdParticipants());
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
             // Act
             var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto);
+
+            // Assert
+            Assert.AreEqual(2, result.Participants.Count);
+        }
+
+        [Test]
+        public void ShouldNotFilterNewFamilyParticipants()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = 243
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto, true);
 
             // Assert
             Assert.AreEqual(2, result.Participants.Count);

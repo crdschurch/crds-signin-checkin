@@ -18,9 +18,17 @@
 }
 
 @media print {
-  section.print .print-room {
-    page-break-after: always;
-    display: block;
-    page-break-inside: avoid;
+  section.print-page {
+    .print-room {
+      page-break-before: always;
+
+      .row > div {
+        border: 1px solid #ccc;
+      }
+
+      &:first-child {
+        page-break-before: auto;
+      }
+    }
   }
 }

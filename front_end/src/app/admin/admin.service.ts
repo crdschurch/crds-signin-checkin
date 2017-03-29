@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -75,11 +75,15 @@ export class AdminService {
   }
 
 
-  getChildrenByHousehould(eventId: number, householdId: number) {
+  getChildrenByHousehold(eventId: number, householdId: number): Observable<EventParticipants> {
     let url = `${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`;
     return this.http.get(url)
                     .map(res => {
-                      return(<Child[]>res.json().Participants).map(r => Child.fromJson(r));
+                      let eventParticipants = EventParticipants.fromJson(res.json());
+                      if (eventParticipants.hasParticipants()) {
+                        eventParticipants.Participants.forEach(p => p.Selected = true);
+                      }
+                      return eventParticipants;
                     })
                     .catch(this.handleError);
   }
