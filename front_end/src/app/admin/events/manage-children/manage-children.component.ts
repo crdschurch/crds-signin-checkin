@@ -18,6 +18,7 @@ export class ManageChildrenComponent implements OnInit {
   ready = false;
   searchString = '';
   eventId: any;
+  event: any;
   totalChildrenInEvent: number;
 
   constructor(private route: ActivatedRoute,
@@ -31,6 +32,7 @@ export class ManageChildrenComponent implements OnInit {
   ngOnInit() {
     this.eventId = this.route.snapshot.params['eventId'];
     this.apiService.getEvent(this.eventId).subscribe((event: Event) => {
+      this.event = event;
       this.headerService.announceEvent(event);
 
       this.adminService.getChildrenForEvent(+this.eventId).subscribe((resp) => {
