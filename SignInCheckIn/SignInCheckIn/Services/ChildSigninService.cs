@@ -64,7 +64,7 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto)
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false)
         {
             // this will have to check if it's a childcare event
             var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
@@ -76,8 +76,9 @@ namespace SignInCheckIn.Services
                 throw new ApplicationException($"Could not locate household for phone number {phoneNumber}");
             }
 
-            // check the household participants here if this is a childcare search
-            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId && household.Participants.Any())
+            // check the household participants here if this is a childcare search - we do not do this check on a new family
+            // registration, as we don't require them to have an RSVP
+            if (eventDto.EventTypeId == _applicationConfiguration.ChildcareEventTypeId && household.Participants.Any() && newFamilyRegistration == false)
             {
                 // this may be an unwarranted assumption that there will only be one CC group - consider edge cases
                 var childcareEventGroup = _eventRepository.GetEventGroupsForEventByGroupTypeId(
@@ -421,16 +422,19 @@ namespace SignInCheckIn.Services
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
 
-            var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto);
+            var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto, true);
 
-            // mark all as Selected so all children will be signed in
-            participantEventMapDto.Participants.ForEach(p => p.Selected = true);
+            // mark all as selected so they get signed in, but guard against an exception with no participants
+            if (participantEventMapDto.Participants.Any())
+            {
+                participantEventMapDto.Participants.ForEach(p => p.Selected = true);
 
-            // sign them all into a room
-            participantEventMapDto = SigninParticipants(participantEventMapDto);
+                // sign them all into a room
+                participantEventMapDto = SigninParticipants(participantEventMapDto);
 
-            // print labels
-            PrintParticipants(participantEventMapDto, kioskIdentifier);
+                // print labels
+                PrintParticipants(participantEventMapDto, kioskIdentifier);
+            }
 
             return participantEventMapDto;
         }
