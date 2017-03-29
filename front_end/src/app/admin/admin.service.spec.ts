@@ -165,7 +165,6 @@ describe('AdminService', () => {
       eventParticipants.Participants = [new Child(), new Child()];
       eventParticipants.Participants[0].ParticipantId = 1;
       eventParticipants.Participants[1].ParticipantId = 3;
-      eventParticipants.CurrentEvent = new Event();
 
       (<jasmine.Spy>httpClientService.get).and.returnValue(response);
       (<jasmine.Spy>responseObject.json).and.returnValue(eventParticipants);

@@ -243,7 +243,6 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  setServingAndGuestDisplay() {
-   debugger;
    if (this.eventParticipants.CurrentEvent.EventTypeId === 243) {
      this.showGuestOption = false;
      this.showServingOption = false;
