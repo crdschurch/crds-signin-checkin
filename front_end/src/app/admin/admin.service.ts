@@ -75,7 +75,7 @@ export class AdminService {
   }
 
 
-  getChildrenByHousehold(eventId: number, householdId: number): Observable<EventParticipants> {
+  getChildrenByHousehold(householdId: number): Observable<EventParticipants> {
     let url = `${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`;
     return this.http.get(url)
                     .map(res => {
