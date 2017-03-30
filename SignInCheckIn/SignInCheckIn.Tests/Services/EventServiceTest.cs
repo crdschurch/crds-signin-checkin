@@ -400,7 +400,8 @@ namespace SignInCheckIn.Tests.Services
 
         [Test]
         public void ItShouldGetFamiliesBySearch()
-        {// Arrange
+        {
+            // Arrange
             var token = "123abc";
             var search = "dust";
 
