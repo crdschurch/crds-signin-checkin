@@ -420,7 +420,7 @@ namespace SignInCheckIn.Tests.Services
                     HouseholdId = 2
                 }
             };
-            
+
             _participantRepository.Setup(m => m.GetFamiliesForSearch(token, search)).Returns(contacts);
 
             var result = _fixture.GetFamiliesForSearch(token, search);
