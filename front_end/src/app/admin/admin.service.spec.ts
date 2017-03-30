@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -154,6 +154,28 @@ describe('AdminService', () => {
       expect(result).toEqual(jasmine.any(Observable));
       result.subscribe((c) => {
         expect(c[0].HouseholdId).toEqual(contacts[0]['HouseholdId']);
+      });
+    });
+  });
+
+  describe('#getChildrenByHousehold', () => {
+    it('should return children in household', () => {
+      const householdId = 4312;
+      let eventParticipants = new EventParticipants();
+      eventParticipants.Participants = [new Child(), new Child()];
+      eventParticipants.Participants[0].ParticipantId = 1;
+      eventParticipants.Participants[1].ParticipantId = 3;
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(eventParticipants);
+
+      let result = fixture.getChildrenByHousehold(householdId);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((r) => {
+        expect(r.Participants[0].ParticipantId).toEqual(eventParticipants.Participants[0].ParticipantId);
+        expect(r.Participants[1].ParticipantId).toEqual(eventParticipants.Participants[1].ParticipantId);
       });
     });
   });

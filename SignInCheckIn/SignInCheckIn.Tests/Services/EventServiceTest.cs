@@ -400,7 +400,8 @@ namespace SignInCheckIn.Tests.Services
 
         [Test]
         public void ItShouldGetFamiliesBySearch()
-        {// Arrange
+        {
+            // Arrange
             var token = "123abc";
             var search = "dust";
 
@@ -419,7 +420,7 @@ namespace SignInCheckIn.Tests.Services
                     HouseholdId = 2
                 }
             };
-            
+
             _participantRepository.Setup(m => m.GetFamiliesForSearch(token, search)).Returns(contacts);
 
             var result = _fixture.GetFamiliesForSearch(token, search);
@@ -435,7 +436,6 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(result[1].FirstName, contacts[1].FirstName);
             Assert.AreEqual(result[1].LastName, contacts[1].LastName);
             Assert.AreEqual(result[1].HouseholdId, contacts[1].HouseholdId);
-
         }
     }
 }
