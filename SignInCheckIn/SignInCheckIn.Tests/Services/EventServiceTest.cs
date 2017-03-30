@@ -436,7 +436,6 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(result[1].FirstName, contacts[1].FirstName);
             Assert.AreEqual(result[1].LastName, contacts[1].LastName);
             Assert.AreEqual(result[1].HouseholdId, contacts[1].HouseholdId);
-
         }
     }
 }
