@@ -37,6 +37,7 @@ export class FamilyFinderComponent implements OnInit {
   }
 
   setSearchValue(search) {
+    this.searched = false;
     this.search = search;
   }
 
