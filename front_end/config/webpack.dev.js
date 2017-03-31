@@ -8,6 +8,23 @@ const ENV = 'development';
 module.exports = webpackMerge(commonConfig, {
   devtool: 'cheap-module-eval-source-map',
 
+  module: {
+    preLoaders: [
+      {
+        test: /\.ts$/,
+        loader: 'tslint-loader',
+        exclude: [helpers.root('node_modules')]
+      }
+    ]
+  },
+
+  tslint: {
+    emitErrors: false,
+    failOnHint: false,
+    resourcePath: 'src'
+  },
+
+
   output: {
     path: helpers.root('dist'),
     publicPath: 'http://localhost:8080/',

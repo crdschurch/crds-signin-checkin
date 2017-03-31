@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
