@@ -34,7 +34,7 @@ export class HouseholdComponent implements OnInit {
      this.headerService.announceEvent(event);
    }, error => console.error(error));
 
-   this.adminService.getChildrenByHousehold(+this.eventId, +this.householdId).subscribe((ep: EventParticipants) => {
+   this.adminService.getChildrenByHousehold(+this.householdId).subscribe((ep: EventParticipants) => {
      this.eventParticipants = ep;
      this.processing = false;
    }, error => console.error(error));

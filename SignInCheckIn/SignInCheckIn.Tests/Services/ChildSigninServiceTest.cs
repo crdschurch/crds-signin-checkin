@@ -89,6 +89,42 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
+        public void ShouldGetChildrenAndEventByHouseholdId()
+        {
+            const int householdId = 654;
+            const int siteId = 16;
+            var eventDto = new EventDto()
+            {
+                EventId = 468
+            };
+            
+            var children = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 534
+                }
+            };
+            var headsOfHousehold = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    ContactId = 331
+                }
+            };
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
+            _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, eventDto.EventId)).Returns(children);
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(householdId)).Returns(headsOfHousehold);
+
+            var result = _fixture.GetChildrenAndEventByHouseholdId(householdId, siteId);
+
+            Assert.AreEqual(result.Contacts[0].ContactId, headsOfHousehold[0].ContactId);
+            Assert.AreEqual(result.Participants[0].ParticipantId, children[0].ParticipantId);
+            Assert.AreEqual(result.CurrentEvent.EventId, eventDto.EventId);
+
+        }
+
+        [Test]
         public void ShouldGetChildrenByPhoneNumber()
         {
             const int siteId = 1;
