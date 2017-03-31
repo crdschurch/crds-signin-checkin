@@ -8,9 +8,9 @@ import { HeaderService } from '../header/header.service';
   providers: [  ]
 })
 export class ReportsComponent {
-  private success: boolean = true;
+  private success = true;
   private user: any = { username: '', password: '' };
-  processing: boolean = false;
+  processing = false;
 
   constructor(private headerService: HeaderService) {
   }

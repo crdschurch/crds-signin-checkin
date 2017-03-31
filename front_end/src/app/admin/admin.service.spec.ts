@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -165,7 +165,8 @@ describe('AdminService', () => {
       eventParticipants.Participants = [new Child(), new Child()];
       eventParticipants.Participants[0].ParticipantId = 1;
       eventParticipants.Participants[1].ParticipantId = 3;
-
+      eventParticipants.CurrentEvent = new Event();
+      eventParticipants.CurrentEvent.EventId = 43224;
       (<jasmine.Spy>httpClientService.get).and.returnValue(response);
       (<jasmine.Spy>responseObject.json).and.returnValue(eventParticipants);
 

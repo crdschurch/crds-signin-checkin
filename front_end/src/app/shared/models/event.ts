@@ -46,7 +46,4 @@ export class Event {
         return 'Service';
     }
   }
-
-  constructor() {
-  }
 }

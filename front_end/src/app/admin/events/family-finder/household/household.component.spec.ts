@@ -23,7 +23,7 @@ eventParticipants['Participants'] = [new Child()];
 eventParticipants.Participants[0].ParticipantId = participantId;
 let fixture;
 
-fdescribe('HouseholdComponent', () => {
+describe('HouseholdComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getChildrenByHousehold)).and.returnValue(Observable.of(eventParticipants));
