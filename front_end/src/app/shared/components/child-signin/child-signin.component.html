@@ -1,0 +1,10 @@
+<label class="card-block" attr.for='child-signin-{{child.uniqueIdentifier()}}'>
+  <h4 class="card-title">
+    <span class="tag tag-primary" *ngIf="child.GuestSignin">guest</span>
+    <span>{{child.name()}}</span>
+  </h4>
+  <p class="text-muted">DOB: {{child.DateOfBirth | amDateFormat: 'M-DD-YYYY'}}</p>
+  <span class="tgl-inline-label">Sign In:</span>
+  <input class='tgl tgl-light' id='child-signin-{{child.uniqueIdentifier()}}' type='checkbox' [(ngModel)]='child.Selected'>
+  <label class='tgl-btn' attr.for='child-signin-{{child.uniqueIdentifier()}}' ><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+</label>

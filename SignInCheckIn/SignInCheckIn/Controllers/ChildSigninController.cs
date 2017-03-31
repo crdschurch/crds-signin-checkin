@@ -34,6 +34,35 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "signin/children/household/{householdId}", minimumVersion: "1.0.0")]
+        [Route("signin/children/household/{householdId}")]
+        public IHttpActionResult GetChildrenAndEventByHousehold(int householdId)
+        {
+            try
+            {
+                var siteId = 0;
+                if (Request.Headers.Contains("Crds-Site-Id"))
+                {
+                    siteId = int.Parse(Request.Headers.GetValues("Crds-Site-Id").First());
+                }
+
+                if (siteId == 0)
+                {
+                    throw new Exception("Site Id is Invalid");
+                }
+
+                var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, siteId);
+                return Ok(children);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Get Children", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(ParticipantEventMapDto))]
         [VersionedRoute(template: "signin/children/{phoneNumber}", minimumVersion: "1.0.0")]
         [Route("signin/children/{phoneNumber}")]
         public IHttpActionResult GetChildrenAndEvent(string phoneNumber)

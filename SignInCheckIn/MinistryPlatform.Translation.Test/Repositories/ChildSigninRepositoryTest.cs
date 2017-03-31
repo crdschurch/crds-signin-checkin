@@ -340,7 +340,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns, null, false)).Returns(children);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns, null, false)).Returns(mpEventGroupDtos);
 
-            var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId, eventDto);
+            var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId, eventDto.EventId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
             
@@ -468,7 +468,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Group_Participants", GetChildParticpantsByGroupFilter("12,13"), _groupChildParticipantColumns, null, false)).Returns(children);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_ID_Table.[Event_ID] = {eventDto.EventId}", _eventGroupColumns, null, false)).Returns(mpEventGroupDtos);
 
-            var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId, eventDto);
+            var result = _fixture.GetChildrenByHouseholdId(primaryHouseholdId, eventDto.EventId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
             
@@ -524,7 +524,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>
                 ("Group_Participants", It.IsAny<string>(), _groupChildParticipantColumns, null, false)).Returns(participants);
 
-            var result = _fixture.GetChildrenByHouseholdId(householdId, eventDto);
+            var result = _fixture.GetChildrenByHouseholdId(householdId, eventDto.EventId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
 

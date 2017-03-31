@@ -6,6 +6,8 @@ export class Contact {
   MobilePhone: string;
   Nickname: string;
   LastName: string;
+  Address: string;
+  CongregationName: string;
 
  static fromJson(json: any): Contact {
     let c = new Contact();

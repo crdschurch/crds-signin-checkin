@@ -64,7 +64,28 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
+        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId)
+        {
+            var eventDto = _eventService.GetCurrentEventForSite(siteId);
+
+            var household = _childSigninRepository.GetChildrenByHouseholdId(householdId, eventDto.EventId);
+
+            var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(household);
+
+            var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId));
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                Contacts = headsOfHousehold,
+                Participants = childrenDtos,
+                CurrentEvent = eventDto
+            };
+
+            return participantEventMapDto;
+        }
+
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false)
+
         {
             // this will have to check if it's a childcare event
             var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
@@ -90,7 +111,7 @@ namespace SignInCheckIn.Services
 
                 household.Participants = household.Participants.Where(item => childcareGroupParticipants.Any(r => r.ParticipantId == item.ParticipantId)).ToList();
             }
-            
+
             var childrenDtos = Mapper.Map<List<MpParticipantDto>, List<ParticipantDto>>(household.Participants);
 
             var headsOfHousehold = Mapper.Map<List<ContactDto>>(_contactRepository.GetHeadsOfHouseholdByHouseholdId(household.HouseholdId.Value));
@@ -142,7 +163,7 @@ namespace SignInCheckIn.Services
             // sort the participants, and use only the first participant in each group as the return print value thing
             var groupedParticipants = SetParticipantsPrintInformation(response.Participants, eventsForSignin);
             response.Participants = groupedParticipants.Select(r => r.First()).ToList();
-            
+
             // Add back those participants that didn't get a room assigned - this may be able to be removed
             // TODO: Verify this can be removed
             //response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
@@ -217,7 +238,7 @@ namespace SignInCheckIn.Services
                 {
                     eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.Nickname} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
                 }
-  
+
                 else if (!mpEventParticipant.HasRoomAssignment)
                 {
                     var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
@@ -367,8 +388,8 @@ namespace SignInCheckIn.Services
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
             {
                 // the AssignedRoom and AssignedSecondaryRoom are not necessarily the first and second
-                // chronologically. So if there are two events, lets get the event id's for each 
-                // (EventId and EventIdSecondary) and see if we should switch them around so they 
+                // chronologically. So if there are two events, lets get the event id's for each
+                // (EventId and EventIdSecondary) and see if we should switch them around so they
                 // print in order on the tag
                 var firstRoomName = participant.AssignedRoomName;
                 var secondRoomName = participant.AssignedSecondaryRoomName;

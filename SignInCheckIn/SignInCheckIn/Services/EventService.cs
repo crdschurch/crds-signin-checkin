@@ -208,5 +208,11 @@ namespace SignInCheckIn.Services
 
             return children;
         }
+
+        public List<ContactDto> GetFamiliesForSearch(string token, string search)
+        {
+            var result = _participantRepository.GetFamiliesForSearch(token, search);
+            return result.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
+        }
     }
 }
