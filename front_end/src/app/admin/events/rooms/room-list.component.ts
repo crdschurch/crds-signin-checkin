@@ -1,8 +1,7 @@
 
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
-
 
 import { Event, Room, Group } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
@@ -15,13 +14,15 @@ import * as _ from 'lodash';
 
 import { CanDeactivateGuard } from '../../../shared/guards';
 
+declare let jQuery;
+
 @Component({
   templateUrl: 'room-list.component.html',
   styleUrls: ['room-list.component.scss'],
   providers: [ CanDeactivateGuard ]
 })
 
-export class RoomListComponent implements OnInit {
+export class RoomListComponent implements OnInit, AfterViewChecked {
   rooms: Room[];
   event: Event = null;
   eventId: string;
@@ -45,7 +46,12 @@ export class RoomListComponent implements OnInit {
 
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
-        this.rooms = rooms;
+        // sort by KcSortOrder ascending, if null, put at end
+        this.rooms = rooms.sort((r1, r2) => {
+            return +(r1.KcSortOrder == null) - +(r2.KcSortOrder == null)
+              || +(r1.KcSortOrder > r2.KcSortOrder)
+              || -(r1.KcSortOrder < r2.KcSortOrder);
+        });
       },
       (error: any) => console.error(error)
     );
@@ -151,7 +157,7 @@ export class RoomListComponent implements OnInit {
       return checkedIn;
     }, 0);
 
-    return checkedInTotal;   
+    return checkedInTotal;
   }
 
   public getSignedInTotal() {
@@ -164,7 +170,7 @@ export class RoomListComponent implements OnInit {
       return signedIn;
     }, 0);
 
-    return signedInTotal;   
+    return signedInTotal;
   }
 
   public getCapacityTotal() {
@@ -177,7 +183,7 @@ export class RoomListComponent implements OnInit {
       return capacity;
     }, 0);
 
-    return capacityTotal;   
+    return capacityTotal;
   }
 
   public getVolunteersTotal() {
@@ -190,7 +196,20 @@ export class RoomListComponent implements OnInit {
       return volunteers;
     }, 0);
 
-    return volunteersTotal;   
+    return volunteersTotal;
+  }
+
+
+  public ngAfterViewChecked() {
+    let fixed_table_header = jQuery('.manage-rooms-fixed-header > thead > tr');
+    let real_table_header = jQuery('.manage-rooms-scroll-header > thead > tr');
+
+    let real_table_children = real_table_header.children();
+    let fixed_table_children = fixed_table_header.children();
+
+    real_table_children.width(function(i, val) {
+        fixed_table_children.eq(i).width(real_table_children.eq(i).width());
+    });
   }
 
 }

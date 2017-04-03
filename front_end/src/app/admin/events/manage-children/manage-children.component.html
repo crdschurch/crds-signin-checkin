@@ -1,6 +1,6 @@
 <header-event></header-event>
 
-<div class="wrapper children">
+<div class="wrapper children hidden-print">
   <div class="container-fluid admin-content py-1">
     <div class="row">
       <div class="col-sm-6">
@@ -26,12 +26,12 @@
         </div>
       </div>
       <div class="col-xs-12" *ngIf="isReady()">
-          <strong>Total Children for All Rooms: {{children.length}}</strong>
+        <strong>Total Children for All Rooms: {{children.length}}</strong>
       </div>
       <div class="col-xs-12">
         <preloader *ngIf="!isReady()"></preloader>
-          <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No results found for "{{ searchString }}".</div>
-        <table class="table" *ngIf="isReady() && children?.length > 0">
+        <div class="text-xs-center my-3" *ngIf="isReady() && children?.length === 0">No results found for "{{ searchString }}".</div>
+        <table class="table hidden-print" *ngIf="isReady() && children?.length > 0">
           <thead>
             <tr>
               <th>First Name</th>
@@ -40,49 +40,94 @@
               <th>Call Number</th>
               <th class="hidden-print">Room Assigned</th>
               <th class="hidden-print">Time Signed In</th>
+              <th class="hidden-print">Time Checked In</th>
               <th class="hidden-print">Guardians</th>
               <th class="hidden-print">Reverse Sign In</th>
               <th class="hidden-print">Label</th>
             </tr>
           </thead>
-        <tbody *ngFor="let cbr of childrenByRoom" >
-              <tr>
-                <td colspan="9">
-                  <strong>{{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}</strong>
-                </td>
-              </tr>
-                <tr *ngFor="let child of cbr">
-                  <td>
-                    {{child.Nickname}}
-                  </td>
-                  <td>
-                    {{child.LastName}}
-                  </td>
-                  <td>
-                    <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
-                  </td>
-                  <td>
-                    {{child.CallNumber}}
-                  </td>
-                  <td class="hidden-print">
-                    {{child.AssignedRoomName}}
-                  </td>
-                  <td class="hidden-print">
-                    {{child.TimeIn | amDateFormat:'h:mma'}}
-                  </td>
-                  <td class="hidden-print">
-                    {{parentAndPhoneNumbers(child)}}
-                  </td>
-                  <td class="hidden-print">
-                    <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)" >Reverse</button>
-                  </td>
-                  <td class="hidden-print">
-                    <a class="btn btn-primary btn-sm" (click)="reprint(child)">Reprint</a>
-                  </td>
-                </tr>
-            </tbody>
+          <tbody *ngFor="let cbr of childrenByRoom">
+            <tr>
+              <td colspan="9">
+                <strong>{{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}</strong>
+              </td>
+            </tr>
+            <tr *ngFor="let child of cbr">
+              <td>
+                {{child.Nickname}}
+              </td>
+              <td>
+                {{child.LastName}}
+              </td>
+              <td>
+                <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
+              </td>
+              <td>
+                {{child.CallNumber}}
+              </td>
+              <td class="hidden-print">
+                {{child.AssignedRoomName}}
+              </td>
+              <td class="hidden-print">
+                {{child.TimeIn | amDateFormat:'h:mma'}}
+              </td>
+              <td class="hidden-print">
+                {{child.TimeConfirmed | amDateFormat:'h:mma'}}
+              </td>
+              <td class="hidden-print">
+                {{parentAndPhoneNumbers(child)}}
+              </td>
+              <td class="hidden-print">
+                <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)">Reverse</button>
+              </td>
+              <td class="hidden-print">
+                <a class="btn btn-primary btn-sm" (click)="reprint(child)">Reprint</a>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+
+<!-- this only display for printing -->
+<section class="print-page visible-print-block">
+  <div *ngFor="let cbr of childrenByRoom" class="print-room container">
+    <div class="mt-1">
+      <ul class="list-inline">
+        <li class="list-inline-item">
+          <strong>Site</strong> {{event?.EventSite}}
+        </li>
+        <li class="list-inline-item hidden-xs-up">
+          <strong>Event Type</strong> {{event?.EventType}}
+        </li>
+        <li class="list-inline-item">
+          <strong>Date</strong> {{event?.EventStartDate | amDateFormat :'dddd, MMMM Do'}}
+        </li>
+        <li class="list-inline-item">
+          <strong>Event Time</strong> {{event?.EventStartDate | amDateFormat:'h:mma'}}
+        </li>
+      </ul>
+    </div>
+
+    <p class="lead mb-1">
+      {{cbr[0].AssignedRoomName}} - Total Assigned to Room: {{cbr.length}}
+    </p>
+    <div class="row">
+      <div class="col-xs-4">First Name</div>
+      <div class="col-xs-4">Last Name</div>
+      <div class="col-xs-2">Call #</div>
+      <div class="col-xs-2"></div>
+    </div>
+    <div *ngFor="let child of cbr" class="row">
+      <div class="col-xs-4">{{child.Nickname}}</div>
+      <div class="col-xs-4">{{child.LastName}}</div>
+      <div class="col-xs-2">{{child.CallNumber}}</div>
+      <div class="col-xs-2">
+        <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
+      </div>
+    </div>
+  </div>
+  &nbsp;
+</section>

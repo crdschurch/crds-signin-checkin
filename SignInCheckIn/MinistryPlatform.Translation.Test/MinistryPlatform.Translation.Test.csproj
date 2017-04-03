@@ -128,6 +128,7 @@
     <Compile Include="Repositories\AttributeRepositoryTest.cs" />
     <Compile Include="Repositories\EventRepositoryTest.cs" />
     <Compile Include="Repositories\GroupRepositoryTest.cs" />
+    <Compile Include="Repositories\SiteRepositoryTest.cs" />
     <Compile Include="Repositories\KioskRepositoryTest.cs" />
     <Compile Include="Repositories\ParticipantRepositoryTest.cs" />
     <Compile Include="Repositories\RoomRepositoryTest.cs" />

@@ -3,7 +3,7 @@
 import { Observable } from 'rxjs/Observable';
 import { ApiService } from '.';
 import { Response, ResponseOptions } from '@angular/http';
-import { Event, Group } from '../models';
+import { Congregation, Event, Group } from '../models';
 
 let fixture: ApiService;
 let httpClientServiceStub: any;
@@ -114,6 +114,28 @@ describe('ApiService', () => {
 
       fixture.getGradeGroups().subscribe((res) => {
         expect(res).toBeDefined();
+      });
+    });
+  });
+
+  describe('#getSites', () => {
+    let responseData = [new Congregation(), new Congregation()];
+    responseData[0].CongregationId = 222;
+    responseData[1].CongregationId = 333;
+    beforeEach(() => {
+      httpClientServiceStub = {
+        get() {
+          responseOptions = new ResponseOptions({ body: responseData });
+          return Observable.of(new Response(responseOptions));
+        }
+      };
+      fixture = new ApiService(httpClientServiceStub, setupServiceStub);
+    });
+    it('should successfully get all sites', () => {
+      let r = responseData;
+      fixture.getSites().subscribe((res: Response) => {
+        expect(res[0].CongregationId).toEqual(responseData[0].CongregationId);
+        expect(res[1].CongregationId).toEqual(responseData[1].CongregationId);
       });
     });
   });

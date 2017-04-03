@@ -32,6 +32,8 @@ namespace Crossroads.Utilities.Services
         public int SignedInParticipationStatusId { get; }
         public int CheckedInParticipationStatusId { get; }
         public int CancelledParticipationStatusId { get; }
+        public int CapacityParticipationStatusId { get; }
+        public int ErrorParticipationStatusId { get; }
         public string MachineConfigDetails { get; }
 
         public int GuestHouseholdId { get; set; }
@@ -41,6 +43,9 @@ namespace Crossroads.Utilities.Services
         public string ManageRoomsChannel { get; set; }
         public string CheckinParticipantsChannel { get; set; }
         public string CheckinCapacityChannel { get; set; }
+
+        public int ChildcareEventTypeId { get; }
+        public int ChildcareGroupTypeId { get; }
 
         public int KcJan0To1 { get; }
         public int KcJan1To2 { get; }
@@ -302,6 +307,8 @@ namespace Crossroads.Utilities.Services
             SignedInParticipationStatusId = configurationWrapper.GetConfigIntValue("SignedInParticipationStatusId");
             CheckedInParticipationStatusId = configurationWrapper.GetConfigIntValue("CheckedInParticipationStatusId");
             CancelledParticipationStatusId = configurationWrapper.GetConfigIntValue("CancelledParticipationStatusId");
+            CapacityParticipationStatusId = configurationWrapper.GetConfigIntValue("CapacityParticipationStatusId");
+            ErrorParticipationStatusId = configurationWrapper.GetConfigIntValue("ErrorParticipationStatusId");
             MachineConfigDetails = configurationWrapper.GetConfigValue("MachineConfigDetails");
 
             GuestHouseholdId = configurationWrapper.GetConfigIntValue("GuestHouseholdId");
@@ -311,6 +318,9 @@ namespace Crossroads.Utilities.Services
             ManageRoomsChannel = configurationWrapper.GetConfigValue("ManageRoomsChannel");
             CheckinParticipantsChannel = configurationWrapper.GetConfigValue("CheckinParticipantsChannel");
             CheckinCapacityChannel = configurationWrapper.GetConfigValue("CheckinCapacityChannel");
+
+            ChildcareEventTypeId = configurationWrapper.GetConfigIntValue("ChildcareEventTypeId");
+            ChildcareGroupTypeId = configurationWrapper.GetConfigIntValue("ChildcareGroupTypeId");
 
             // kc groups - January Birth Months
             KcJan0To1 = configurationWrapper.GetConfigIntValue("Jan_0-1");

@@ -376,9 +376,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
             var searchString = "bob";
-
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
-            _participantRepository.Setup(m => m.GetChildParticipantsByEvent(token, It.IsAny<List<int>>(), searchString)).Returns(children);
+            _participantRepository.Setup(m => m.GetChildParticipantsByEvent(token, It.IsAny<int>(), searchString)).Returns(children);
 
             var result =_fixture.GetListOfChildrenForEvent(token, eventId, searchString);
 
@@ -398,6 +396,46 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(result[1].HeadsOfHousehold.Count, children[1].HeadsOfHousehold.Count);
             Assert.AreEqual(result[1].HeadsOfHousehold[0].FirstName, children[1].HeadsOfHousehold[0].FirstName);
 
+        }
+
+        [Test]
+        public void ItShouldGetFamiliesBySearch()
+        {
+            // Arrange
+            var token = "123abc";
+            var search = "dust";
+
+            var contacts = new List<MpContactDto>
+            {
+                new MpContactDto
+                {
+                    FirstName = "FirstName1",
+                    LastName = "LastName1",
+                    HouseholdId = 1
+                },
+                new MpContactDto
+                {
+                    FirstName = "FirstName2",
+                    LastName = "LastName2",
+                    HouseholdId = 2
+                }
+            };
+
+            _participantRepository.Setup(m => m.GetFamiliesForSearch(token, search)).Returns(contacts);
+
+            var result = _fixture.GetFamiliesForSearch(token, search);
+
+            // Assert
+            _participantRepository.VerifyAll();
+
+            Assert.AreEqual(result.Count, 2);
+            Assert.AreEqual(result[0].FirstName, contacts[0].FirstName);
+            Assert.AreEqual(result[0].LastName, contacts[0].LastName);
+            Assert.AreEqual(result[0].HouseholdId, contacts[0].HouseholdId);
+
+            Assert.AreEqual(result[1].FirstName, contacts[1].FirstName);
+            Assert.AreEqual(result[1].LastName, contacts[1].LastName);
+            Assert.AreEqual(result[1].HouseholdId, contacts[1].HouseholdId);
         }
     }
 }

@@ -114,16 +114,11 @@ body {
 
 .new-family-text {
   padding-top: 0;
-  font-size: 1rem;
+  font-size: 1.5rem;
+}
 
-  @include media-breakpoint-up(lg) {
-    padding-top: .45rem;
-  }
-
-  @include media-breakpoint-up(xl) {
-    padding-top: .45rem;
-    font-size: 1.25rem;
-  }
+.search-next-btn {
+  margin-top: 8px;
 }
 
 /***************************************************************************************
@@ -212,6 +207,13 @@ a.btn-primary.active:not([href]):not([tabindex]) {
     height: 15px;
     width: 20px;
     vertical-align: baseline;
+  }
+
+  &.btn-primary {
+    fill: #fff;
+  }
+
+  &.btn-default {
     fill: #000;
   }
 }
@@ -247,6 +249,27 @@ datepicker {
   }
 }
 
+.manage-rooms-table-container {
+  @media screen {
+    height: 70vh;
+    overflow-y: scroll;
+  }
+
+  .manage-rooms-fixed-header {
+    position: absolute;
+    top: 0;
+    background: white;
+    z-index: 20;
+    width: auto;
+  }
+
+  .manage-rooms-scroll-header thead {
+    @media screen {
+      opacity: 0;
+    }
+  }
+}
+
 .manage-rooms-table {
   @include media-breakpoint-down(lg) {
     display: block;
@@ -279,5 +302,24 @@ datepicker {
   .tag.tag-info {
     margin-left: 5px;
     vertical-align: text-top;
+  }
+}
+
+@media print {
+  .table,
+  .table .form-control {
+    font-size: .8rem;
+  }
+
+  .table tbody td {
+    border: 1px solid #ccc;
+  }
+
+  .table thead th {
+    border-bottom: 1px solid #ccc;
+  }
+
+  .text-print-right {
+    text-align: right;
   }
 }

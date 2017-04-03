@@ -16,20 +16,10 @@ admin {
     }
 
     &.subnav {
-      // border-top: 1px solid #eceeef; // Replace with $gray-lighter
-      // border-bottom: 1px solid #eceeef; // Replace with $gray-lighter
       padding-top: .35rem;
       padding-bottom: .25rem;
       line-height: 1.75;
       background: #e6e6ec;
-
-      @media print{
-        display: block;
-
-        .btn-group {
-          display: none;
-        }
-      }
     }
   }
 

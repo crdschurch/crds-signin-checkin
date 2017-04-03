@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -52,60 +53,35 @@ namespace MinistryPlatform.Translation.Repositories
         }
 
         // this gets data we won't have with older participants
-        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, List<int> eventIds, string search = null)
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, int eventId, string search = null)
         {
-            var columnList = new List<string>
+            var parameters = new Dictionary<string, object>
             {
-                "Event_ID_Table.Event_ID",
-                "Event_Participant_ID",
-                "Participation_Status_ID_Table.Participation_Status_ID",
-                "Participant_ID_Table_Contact_ID_Table.First_Name",
-                "Participant_ID_Table_Contact_ID_Table.Last_Name",
-                "Participant_ID_Table_Contact_ID_Table.Nickname",
-                "Event_Participants.Call_Number",
-                "Room_ID_Table.Room_ID",
-                "Room_ID_Table.Room_Name",
-                "Time_In",
-                "Event_Participants.Checkin_Household_ID",
-                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.Household_ID"
+                {"EventId", eventId}
             };
 
-            var queryString =
-                $"Event_ID_Table.Event_ID in ({string.Join(",", eventIds)}) AND End_Date IS NULL AND Event_Participants.Call_Number IS NOT NULL AND Event_Participants.Checkin_Household_ID IS NOT NULL";
-
-            // add in search criteria if exists
-            if (!string.IsNullOrEmpty(search) && search.Length > 0)
+            if (search != null)
             {
-                int n;
-                bool isNumeric = int.TryParse(search, out n);
-                if (isNumeric)
-                {
-                    queryString += $" AND Event_Participants.Call_Number = {search}";
-                }
-                else
-                {
-                    queryString += " AND (";
-                    queryString += $"  Participant_ID_Table_Contact_ID_Table.First_Name LIKE '%{search}%'";
-                    queryString += $"  OR Participant_ID_Table_Contact_ID_Table.Last_Name LIKE '%{search}%'";
-                    queryString += $"  OR Participant_ID_Table_Contact_ID_Table.Nickname LIKE '%{search}%'";
-                    queryString += ")";
-                }
-
-
+                parameters.Add("Search", search);
             }
 
-            var childPartipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                Search<MpEventParticipantDto>(queryString, columnList);
+            var results = _ministryPlatformRestRepository.UsingAuthenticationToken(token).GetFromStoredProc<JObject>("api_crds_Get_Manage_Children_data", parameters);
 
-            foreach (var child in childPartipantsForEvent)
+            // This check indicates that no household was found
+            if (results == null || !results.Any() || results.Count < 2)
             {
-                if (child.CheckinHouseholdId.HasValue)
-                {
-                    child.HeadsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(child.CheckinHouseholdId.Value);
-                }
+                return new List<MpEventParticipantDto>();
             }
 
-            return childPartipantsForEvent;
+            var children = results[0].Select(r => r.ToObject<MpEventParticipantDto>()).ToList();
+            var headHouseholds = results[1].Select(r => r.ToObject<MpContactDto>()).ToList();
+
+            foreach (var child in children)
+            {
+                child.HeadsOfHousehold = headHouseholds.Where(hoh => hoh.HouseholdId == child.CheckinHouseholdId).ToList();
+            }
+
+            return children;
         }
 
         public MpNewParticipantDto CreateParticipantWithContact(string authenticationToken, MpNewParticipantDto mpNewParticipantDto)
@@ -180,6 +156,7 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpEventParticipantDto>(eventParticipantId, _eventParticipantColumns);
         }
 
+        // this returns only "valid" participants in the system - not ones that could not get in, or were reversed
         public List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -213,9 +190,57 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var eventParticipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                Search<MpEventParticipantDto>($"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL", columnList);
+                Search<MpEventParticipantDto>($"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in " +
+                                              $"({string.Join(",", participantIds)}) AND End_Date IS NULL AND Participation_Status_ID IN (2, 3, 4)", columnList);
 
             return eventParticipantsForEvent;
-        } 
+        }
+
+        public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantAndGroupId(int groupId, List<int> participantIds)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            List<string> groupParticipantColumns = new List<string>
+            {
+                "Group_Participant_ID",
+                "Group_ID",
+                "Participant_ID",
+                "Group_Role_ID",
+                "Start_Date",
+                "Employee_Role",
+                "Auto_Promote"
+            };
+
+            var mpGroupParticipantDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                 Search<MpGroupParticipantDto>(
+                    $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) " +
+                    "AND End_Date IS NULL", groupParticipantColumns);
+
+            return mpGroupParticipantDtos;
+        }
+
+        public List<MpContactDto> GetFamiliesForSearch(string token, string search)
+        {
+            var columns = new List<string>
+            {
+                "Contacts.Contact_ID",
+                "Contacts.Nickname",
+                "Contacts.First_Name",
+                "Contacts.Last_Name",
+                "Household_ID_Table.Household_ID",
+                "Household_ID_Table_Address_ID_Table.Address_Line_1",
+                "Household_ID_Table_Address_ID_Table.City",
+                "Household_ID_Table_Address_ID_Table.[State/Region] as State",
+                "Household_ID_Table_Address_ID_Table.Postal_Code",
+                "Household_ID_Table.Home_Phone",
+                "Contacts.Mobile_Phone",
+                "Household_ID_Table_Congregation_ID_Table.Congregation_Name"
+            };
+
+            var contacts = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
+                 Search<MpContactDto>($"Contacts.[Display_Name] LIKE '%{search}%' AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns);
+
+            return contacts;
+        }
     }
 }

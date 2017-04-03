@@ -22,13 +22,15 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IApiUserRepository> _apiUserRepository;
         private Mock<IConfigRepository> _configRepository;
         private Mock<IParticipantRepository> _participantRepository;
-        private Mock<IChildSigninRepository> _signinRepository;
+        private Mock<IChildSigninRepository> _childSigninRepository;
 
         private const int AgesAttributeTypeId = 102;
         private const int BirthMonthsAttributeTypeId = 103;
         private const int GradesAttributeTypeId = 104;
         private const int NurseryAgeAttributeId = 9014;
         private const int NurseryAgesAttributeTypeId = 105;
+        private const int CapacityParticipationStatusId = 6;
+        private const int ErrorParticipationStatusId = 7;
 
         private List<MpAttributeDto> _ageList;
         private List<MpAttributeDto> _gradeList;
@@ -50,12 +52,14 @@ namespace SignInCheckIn.Tests.Services
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
             _configRepository = new Mock<IConfigRepository>();
             _participantRepository = new Mock<IParticipantRepository>();
-            _signinRepository = new Mock<IChildSigninRepository>();
+            _childSigninRepository = new Mock<IChildSigninRepository>();
             _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgeAttributeId).Returns(NurseryAgeAttributeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgesAttributeTypeId).Returns(NurseryAgesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.CapacityParticipationStatusId).Returns(CapacityParticipationStatusId);
+            _applicationConfiguration.SetupGet(mocked => mocked.ErrorParticipationStatusId).Returns(ErrorParticipationStatusId);
 
             MpConfigDto earlyCheckInPeriodConfig = new MpConfigDto
             {
@@ -78,7 +82,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(lateCheckInPeriodConfig);
 
             _fixture = new SignInLogic(_eventRepository.Object, _applicationConfiguration.Object, _configRepository.Object,
-                _groupRepository.Object, _roomRepository.Object, _participantRepository.Object, _signinRepository.Object);
+                _groupRepository.Object, _roomRepository.Object, _participantRepository.Object, _childSigninRepository.Object);
         }
 
         [Test]
@@ -398,7 +402,7 @@ namespace SignInCheckIn.Tests.Services
             var result =_fixture.GetSignInEventRooms(groupId, eventIds);
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(3, result.Count);
         }
 
         private List<MpEventGroupDto> GetEventGroupsData()
@@ -454,7 +458,7 @@ namespace SignInCheckIn.Tests.Services
             return eventRooms;
         }
 
-        private ParticipantEventMapDto GetEventParticipantMapForAudit()
+        private ParticipantEventMapDto GetEventParticipantMapForAuditNoParticipantGroup()
         {
             var kioskEvent = new EventDto
             {
@@ -490,7 +494,35 @@ namespace SignInCheckIn.Tests.Services
             return participantEventMapDto;
         }
 
-        private List<MpEventParticipantDto> GetMpEventParticipantsForAudit()
+        private ParticipantEventMapDto GetEventParticipantMapForAuditNoOpenRoom()
+        {
+            var kioskEvent = new EventDto
+            {
+                EventId = 1234567
+            };
+
+            List<ParticipantDto> participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    DateOfBirth = new DateTime(2010, 01, 01),
+                    GroupId = 7766777,
+                    LastName = "NoOpenRoom",
+                    Nickname = "Jane",
+                    ParticipantId = 8765678
+                }
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = kioskEvent,
+                Participants = participantDtos
+            };
+
+            return participantEventMapDto;
+        }
+
+        private List<MpEventParticipantDto> GetMpEventParticipantsForAuditNoGroup()
         {
             var mpEventParticipantList = new List<MpEventParticipantDto>
             {
@@ -499,7 +531,16 @@ namespace SignInCheckIn.Tests.Services
                     GroupId = null,
                     ParticipantId = 9876789,
                     RoomId = null
-                },
+                }
+            };
+
+            return mpEventParticipantList;
+        }
+
+        private List<MpEventParticipantDto> GetMpEventParticipantsForAuditNoGroupRoom()
+        {
+            var mpEventParticipantList = new List<MpEventParticipantDto>
+            {
                 new MpEventParticipantDto
                 {
                     GroupId = 7766777,
@@ -512,11 +553,11 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldSetSigninErrorMessages()
+        public void ShouldSetSigninErrorMessagesNoGroup()
         {
             // Arrange
-            var participantEventMapDto = GetEventParticipantMapForAudit();
-            var mpEventParticipantEventList = GetMpEventParticipantsForAudit();
+            var participantEventMapDto = GetEventParticipantMapForAuditNoParticipantGroup();
+            var mpEventParticipantEventList = GetMpEventParticipantsForAuditNoGroup();
             var eligibleEvents = GetTestEventSet();
             var eligibleEventIds = eligibleEvents.Select(r => r.EventId).ToList();
 
@@ -524,11 +565,29 @@ namespace SignInCheckIn.Tests.Services
             _groupRepository.Setup(r => r.GetGroup(null, 7766777, false)).Returns(GetGroupForNoOpenRoomsCheck());
 
             // Act
-            _fixture.AuditSigninIssues(participantEventMapDto, mpEventParticipantEventList, eligibleEvents);
+            _fixture.AuditSigninIssues(participantEventMapDto, mpEventParticipantEventList, eligibleEvents, participantEventMapDto.Participants[0]);
 
             // Assert
             Assert.AreEqual("Age/Grade Group Not Assigned. Joe is not in a Kids Club Group (DOB: 1/1/2010)", participantEventMapDto.Participants[0].SignInErrorMessage);
-            Assert.AreEqual("There are no Kindergarten rooms open for Jane", participantEventMapDto.Participants[1].SignInErrorMessage);
+        }
+
+        [Test]
+        public void ShouldSetSigninErrorMessagesNoGroupRooms()
+        {
+            // Arrange
+            var participantEventMapDto = GetEventParticipantMapForAuditNoOpenRoom();
+            var mpEventParticipantEventList = GetMpEventParticipantsForAuditNoGroupRoom();
+            var eligibleEvents = GetTestEventSet();
+            var eligibleEventIds = eligibleEvents.Select(r => r.EventId).ToList();
+
+            _roomRepository.Setup(r => r.GetRoomsForEvent(eligibleEventIds, It.IsAny<int>())).Returns(GetClosedEventRooms);
+            _groupRepository.Setup(r => r.GetGroup(null, 7766777, false)).Returns(GetGroupForNoOpenRoomsCheck());
+
+            // Act
+            _fixture.AuditSigninIssues(participantEventMapDto, mpEventParticipantEventList, eligibleEvents, participantEventMapDto.Participants[0]);
+
+            // Assert
+            Assert.AreEqual("There are no Kindergarten rooms open for Jane", participantEventMapDto.Participants[0].SignInErrorMessage);
         }
 
         private List<MpEventRoomDto> GetClosedEventRooms()
@@ -799,5 +858,971 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(null, participant.AssignedSecondaryRoomId);
             Assert.AreEqual(string.Empty, participant.AssignedSecondaryRoomName);
         }
+
+        [Test]
+        public void ShouldSignInTwoYearOldToTwoNonAcEvents()
+        {
+            // Arrange
+            var twoYearOldBirthdate = System.DateTime.Now.AddYears(-1);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = twoYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId  = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 7654321,
+                    EventRoomId = 6778899,
+                    RoomId = 4321,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 8765432,
+                    EventRoomId = 5667788,
+                    RoomId = 5432,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(1234, result[0].RoomId);
+            Assert.AreEqual(2345, result[1].RoomId);
+        }
+
+        [Test]
+        public void ShouldSignInFourYearOldToOneServiceEventAndOneAcEvent()
+        {
+            // Arrange
+            var fourYearOldBirthdate = System.DateTime.Now.AddYears(-5);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = fourYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 7654321,
+                    EventRoomId = 6778899,
+                    RoomId = 4321,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 8765432,
+                    EventRoomId = 5667788,
+                    RoomId = 5432,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(1234, result[0].RoomId);
+            Assert.AreEqual(5432, result[1].RoomId);
+        }
+
+        [Test]
+        public void ShouldSignIntoAcWithAcAsFirstEventOnly()
+        {
+            // Arrange
+            var fourYearOldBirthdate = System.DateTime.Now.AddYears(-5);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = fourYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 7654321,
+                    EventRoomId = 6778899,
+                    RoomId = 4321,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(2345, result[0].RoomId);
+            Assert.AreEqual(4321, result[1].RoomId);
+        }
+
+        [Test]
+        public void ShouldSignIntoAcWithAcAsSecondEventOnly()
+        {
+            // Arrange
+            var fourYearOldBirthdate = System.DateTime.Now.AddYears(-5);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = fourYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 8765432,
+                    EventRoomId = 5667788,
+                    RoomId = 5432,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(1234, result[0].RoomId);
+            Assert.AreEqual(5432, result[1].RoomId);
+        }
+
+        [Test]
+        public void ShouldNotSignIntoAcWithNoAcRooms()
+        {
+            // Arrange
+            var fourYearOldBirthdate = System.DateTime.Now.AddYears(-5);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = fourYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            _roomRepository.Setup(r => r.GetRoomsForEvent(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(eventRooms);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(null, result[0].RoomId);
+            Assert.AreEqual(null, result[1].RoomId);
+            Assert.AreEqual(null, result[2].RoomId);
+            Assert.AreEqual(null, result[3].RoomId);
+            Assert.AreEqual(7, result[0].ParticipantStatusId);
+            Assert.AreEqual(7, result[1].ParticipantStatusId);
+            Assert.AreEqual(7, result[2].ParticipantStatusId);
+            Assert.AreEqual(7, result[3].ParticipantStatusId);
+            Assert.AreEqual(4, result.Count);
+        }
+
+        [Test]
+        public void ShouldNotSignIntoAcWithClosedAcRooms()
+        {
+            // Arrange
+            var fourYearOldBirthdate = System.DateTime.Now.AddYears(-5);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = fourYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = false,
+                    EventId = 7654321,
+                    EventRoomId = 6778899,
+                    RoomId = 4321,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = false,
+                    EventId = 8765432,
+                    EventRoomId = 5667788,
+                    RoomId = 5432,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            _roomRepository.Setup(r => r.GetRoomsForEvent(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(eventRooms);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(null, result[0].RoomId);
+            Assert.AreEqual(null, result[1].RoomId);
+            Assert.AreEqual(null, result[2].RoomId);
+            Assert.AreEqual(null, result[3].RoomId);
+            Assert.AreEqual(6, result[0].ParticipantStatusId);
+            Assert.AreEqual(6, result[1].ParticipantStatusId);
+            Assert.AreEqual(6, result[2].ParticipantStatusId);
+            Assert.AreEqual(6, result[3].ParticipantStatusId);
+            Assert.AreEqual(4, result.Count);
+        }
+
+        [Test]
+        public void ShouldSignIntoAcWithSecondClosedAcRoom()
+        {
+            // Arrange
+            var fourYearOldBirthdate = System.DateTime.Now.AddYears(-5);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = fourYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 7654321,
+                    EventRoomId = 6778899,
+                    RoomId = 4321,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = false,
+                    EventId = 8765432,
+                    EventRoomId = 5667788,
+                    RoomId = 5432,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(2345, result[0].RoomId);
+            Assert.AreEqual(4321, result[1].RoomId);
+        }
+
+        [Test]
+        public void ShouldSignIntoAcWithFirstClosedAcRoom()
+        {
+            // Arrange
+            var fourYearOldBirthdate = System.DateTime.Now.AddYears(-5);
+
+            var participant = new ParticipantDto
+            {
+                DateOfBirth = fourYearOldBirthdate,
+                ParticipantId = 5544555,
+                GroupId = 1234123
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                ServicesAttended = 2,
+                CurrentEvent = new EventDto
+                {
+                    EventSiteId = 8
+                },
+                // TODO: consider adding participant data to this list to test audit signin issues
+                Participants = new List<ParticipantDto>()
+            };
+
+            var eventGroups = new List<MpEventGroupDto>
+            {
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 9988776
+                },
+                new MpEventGroupDto
+                {
+                    GroupId = 1234123,
+                    RoomReservationId = 8877665
+                }
+            };
+
+            var eventRooms = new List<MpEventRoomDto>
+            {
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 1234567,
+                    EventRoomId = 9988776,
+                    RoomId = 1234,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = false,
+                    EventId = 7654321,
+                    EventRoomId = 6778899,
+                    RoomId = 4321,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 2345678,
+                    EventRoomId = 8877665,
+                    RoomId = 2345,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                },
+                new MpEventRoomDto
+                {
+                    AllowSignIn = true,
+                    EventId = 8765432,
+                    EventRoomId = 5667788,
+                    RoomId = 5432,
+                    Capacity = 10,
+                    SignedIn = 0,
+                    CheckedIn = 0
+                }
+            };
+
+            var eventList = GetTestEventSet();
+
+            // these mocked service calls are for the GetSignInEventRooms function
+            _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(participant.GroupId.GetValueOrDefault(), It.IsAny<List<int>>()))
+                .Returns(eventGroups);
+
+            // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+            // list of event group records, which would potentially limit what got returned, as opposed to a static list
+            var eventRoomsIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+            _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(eventRoomsIds)).Returns(eventRooms);
+
+            // Act
+            var result = _fixture.SignInParticipant(participant, participantEventMapDto, eventList);
+
+            // Assert
+            Assert.AreEqual(1234, result[0].RoomId);
+            Assert.AreEqual(5432, result[1].RoomId);
+        }
+
+
+        // JPC - this test is mothballed for the moment. The intent was to test the SignInLogic class from end to end, using multiple participants, etc.
+        // However, the call we make down to the participant repository, when inserting the event participants and getting back these objects, would have
+        // to be mocked for the specific data going in, as this would have to be defined multiple times in the test, once for each participant. The problem then
+        // is that we have date time data on the objet being inserted, which would also have to be set. I believe there's a way to do some logic via a 
+        // LINQ query on the mock params - using ItIs instead of ItIsAny - but I didn't pursue that, instead looking at how to use Moq callbacks to get the 
+        // data being passed to the mocked object. Either way, I think the unit tests we have in place around the signin logic now are solid enough that 
+        // getting this test to work correctly is probably of limited value
+
+        //[Test]
+        //public void ShouldSignInMixedParticipantsOneIntoAcOneNotIntoAc()
+        //{
+        //    // Arrange
+        //    var twoYearOldBirthdate = System.DateTime.Now.AddYears(-1);
+        //    var fourYearOldBirthdate = System.DateTime.Now.AddYears(-4);
+
+        //    var twoYearOldParticipant = new ParticipantDto
+        //    {
+        //        DateOfBirth = twoYearOldBirthdate,
+        //        ParticipantId = 6655666,
+        //        GroupId = 2345234,
+        //        DuplicateSignIn = false,
+        //        Selected = true
+        //    };
+
+        //    var fourYearOldParticipant = new ParticipantDto
+        //    {
+        //        DateOfBirth = fourYearOldBirthdate,
+        //        ParticipantId = 5544555,
+        //        GroupId = 1234123,
+        //        DuplicateSignIn = false,
+        //        Selected = true
+        //    };
+
+        //    var participantEventMapDto = new ParticipantEventMapDto
+        //    {
+        //        ServicesAttended = 2,
+        //        CurrentEvent = new EventDto
+        //        {
+        //            EventSiteId = 8
+        //        },
+        //        Participants = new List<ParticipantDto>
+        //        {
+        //            twoYearOldParticipant,
+        //            fourYearOldParticipant
+        //        }
+        //    };
+
+        //    var twoYearOldEventGroups = new List<MpEventGroupDto>
+        //    {
+        //        new MpEventGroupDto
+        //        {
+        //            GroupId = 2345234,
+        //            RoomReservationId = 1726354
+        //        },
+        //        new MpEventGroupDto
+        //        {
+        //            GroupId = 2345234,
+        //            RoomReservationId = 2837465
+        //        }
+        //    };
+
+        //    var twoYearOldEventRooms = new List<MpEventRoomDto>
+        //    {
+        //        new MpEventRoomDto
+        //        {
+        //            AllowSignIn = true,
+        //            EventId = 1234567,
+        //            EventRoomId = 1726354,
+        //            RoomId = 4567,
+        //            Capacity = 10,
+        //            SignedIn = 0,
+        //            CheckedIn = 0
+        //        },
+        //        new MpEventRoomDto
+        //        {
+        //            AllowSignIn = true,
+        //            EventId = 2345678,
+        //            EventRoomId = 2837465,
+        //            RoomId = 5678,
+        //            Capacity = 10,
+        //            SignedIn = 0,
+        //            CheckedIn = 0
+        //        }
+        //    };
+
+        //    var fourYearOldEventGroups = new List<MpEventGroupDto>
+        //    {
+        //        new MpEventGroupDto
+        //        {
+        //            GroupId = 1234123,
+        //            RoomReservationId = 9988776
+        //        },
+        //        new MpEventGroupDto
+        //        {
+        //            GroupId = 1234123,
+        //            RoomReservationId = 8877665
+        //        }
+        //    };
+
+        //    var fourYearOldEventRooms = new List<MpEventRoomDto>
+        //    {
+        //        new MpEventRoomDto
+        //        {
+        //            AllowSignIn = true,
+        //            EventId = 1234567,
+        //            EventRoomId = 9988776,
+        //            RoomId = 1234,
+        //            Capacity = 10,
+        //            SignedIn = 0,
+        //            CheckedIn = 0
+        //        },
+        //        new MpEventRoomDto
+        //        {
+        //            AllowSignIn = true,
+        //            EventId = 7654321,
+        //            EventRoomId = 6778899,
+        //            RoomId = 4321,
+        //            Capacity = 10,
+        //            SignedIn = 0,
+        //            CheckedIn = 0
+        //        },
+        //        new MpEventRoomDto
+        //        {
+        //            AllowSignIn = true,
+        //            EventId = 2345678,
+        //            EventRoomId = 8877665,
+        //            RoomId = 2345,
+        //            Capacity = 10,
+        //            SignedIn = 0,
+        //            CheckedIn = 0
+        //        },
+        //        new MpEventRoomDto
+        //        {
+        //            AllowSignIn = true,
+        //            EventId = 8765432,
+        //            EventRoomId = 5667788,
+        //            RoomId = 5432,
+        //            Capacity = 10,
+        //            SignedIn = 0,
+        //            CheckedIn = 0
+        //        }
+        //    };
+
+        //    var eventList = GetTestEventSet();
+
+        //    // these mocked service calls are for the GetSignInEventRooms function
+        //    _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(2345234, It.IsAny<List<int>>()))
+        //        .Returns(twoYearOldEventGroups);
+
+        //    _eventRepository.Setup(r => r.GetEventGroupsByGroupIdAndEventIds(1234123, It.IsAny<List<int>>()))
+        //        .Returns(fourYearOldEventGroups);
+
+        //    // this part of the test is a little sketchy - in the live code, we're passing down a list of room reservation ids from the
+        //    // list of event group records, which would potentially limit what got returned, as opposed to a static list
+        //    var twoYearOldEventRoomsIds = twoYearOldEventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+        //    _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(twoYearOldEventRoomsIds)).Returns(twoYearOldEventRooms);
+
+        //    var fourYearOldEventRoomsIds = fourYearOldEventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
+        //    _roomRepository.Setup(r => r.GetEventRoomsByEventRoomIds(fourYearOldEventRoomsIds)).Returns(fourYearOldEventRooms);
+
+        //    // this is mocked out here to avoid a null exception error in the audit signin code - if we want to run a whole test 
+        //    // and test the no room conditions as part of that test, we'll need to mock this with something more meaningful
+        //    _roomRepository.Setup(r => r.GetRoomsForEvent(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(new List<MpEventRoomDto>());
+
+        //    // this needs to have good data going in and coming out, as it will be used to build the participant list to get the test results
+        //    _childSigninRepository.Setup(r => r.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(new List<MpEventParticipantDto>());
+
+        //    // these two lines were approaches to try to make the test match the data correctly
+        //    _childSigninRepository.Setup(r => r.CreateEventParticipants(It.Is<List<MpEventParticipantDto>>(s => s.First().RoomId == 2))).Returns(new List<MpEventParticipantDto>());
+        //    _childSigninRepository.Setup(r => r.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Callback<List<MpEventParticipantDto>>(r => expectedResult = r);
+
+        //    // Act
+        //    var result = _fixture.SignInParticipants(participantEventMapDto, eventList);
+
+        //    //// Assert
+        //    //Assert.AreEqual(1234, result[0].RoomId);
+        //    //Assert.AreEqual(5432, result[1].RoomId);
+        //}
     }
 }
