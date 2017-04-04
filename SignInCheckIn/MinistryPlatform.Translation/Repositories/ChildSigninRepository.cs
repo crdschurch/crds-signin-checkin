@@ -59,6 +59,7 @@ namespace MinistryPlatform.Translation.Repositories
             GetChildParticipantsByOtherHousehold(householdId, children);
             var eventGroups = GetEventGroups(eventId);
             children = GetOnlyKidsClubChildren(children, eventGroups);
+            if (children.Count == 0) return new List<MpParticipantDto>();
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
@@ -162,6 +163,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         private List<MpParticipantDto> GetOnlyKidsClubChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
         {
+            if (children.Count == 0) return new List<MpParticipantDto>();
             var apiUserToken = _apiUserRepository.GetToken();
 
             var columnList = new List<string>
