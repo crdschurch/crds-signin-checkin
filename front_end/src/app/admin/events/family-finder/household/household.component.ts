@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, RootService } from '../../../../shared/services';
-import { ChildSigninService } from '../../../../child-signin/child-signin.service';
 import { AdminService } from '../../../admin.service';
 import { Child, EventParticipants } from '../../../../shared/models';
 import { HeaderService } from '../../../header/header.service';
@@ -19,7 +18,6 @@ export class HouseholdComponent implements OnInit {
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
-               private childSigninService: ChildSigninService,
                private rootService: RootService,
                private route: ActivatedRoute,
                private router: Router,
@@ -58,11 +56,12 @@ export class HouseholdComponent implements OnInit {
     // remove unselected event participants
     this.eventParticipants.removeUnselectedParticipants();
     const numberEventsAttending = 1;
-    this.childSigninService.signInChildren(this.eventParticipants, numberEventsAttending).subscribe(
+    this.adminService.findFamilySigninAndPrint(this.eventParticipants, numberEventsAttending).subscribe(
       (response: EventParticipants) => {
         this.processing = false;
         if (response && response.Participants && response.Participants.length > 0) {
           this.router.navigate([`/admin/events/${this.eventId}/family-finder`]);
+          this.rootService.announceEvent('echeckFamilyFinderSignedIn');
         } else {
           this.rootService.announceEvent('generalError');
         }

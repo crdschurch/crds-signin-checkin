@@ -105,6 +105,16 @@ export class AdminService {
     return this.http.put(url, null).catch(this.handleError);
   }
 
+  findFamilySigninAndPrint(eventParticipants, numberEventsAttending) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/familyfinder`;
+    eventParticipants.ServicesAttended = numberEventsAttending;
+    return this.http.post(url, eventParticipants)
+                    .map(res => {
+                      return EventParticipants.fromJson(res.json());
+                    })
+                    .catch(this.handleError);
+  }
+
   findFamilies(searchString: string): Observable<Array<Contact>> {
     const url = `${process.env.ECHECK_API_ENDPOINT}/findFamily?search=${searchString}`;
     return this.http.get(url)
