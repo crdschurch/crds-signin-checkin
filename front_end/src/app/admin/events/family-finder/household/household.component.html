@@ -2,7 +2,7 @@
 
 <div class="container-fluid">
   <preloader *ngIf="processing"></preloader>
-  <div *ngIf="eventParticipants && eventParticipants.length && !processing">
+  <div *ngIf="eventParticipants && eventParticipants.hasParticipants() && !processing">
     <div class="mt-2 clearfix">
       <div class="card-wrapper col-xs-4" *ngFor="let kid of eventParticipants.Participants">
         <div class="card">

@@ -36,7 +36,7 @@ export class HouseholdComponent implements OnInit {
 
    this.adminService.getChildrenByHousehold(+this.householdId).subscribe((ep: EventParticipants) => {
      this.eventParticipants = ep;
-     if (!this.eventParticipants.length) {
+     if (this.eventParticipants === undefined || !this.eventParticipants.hasParticipants()) {
        this.rootService.announceEvent('echeckFamilyFinderNoChildren');
      }
      this.processing = false;
