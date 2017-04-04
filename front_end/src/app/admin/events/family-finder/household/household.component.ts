@@ -58,11 +58,12 @@ export class HouseholdComponent implements OnInit {
     // remove unselected event participants
     this.eventParticipants.removeUnselectedParticipants();
     const numberEventsAttending = 1;
-    this.childSigninService.signInChildren(this.eventParticipants, numberEventsAttending).subscribe(
+    this.adminService.findFamilySigninAndPrint(this.eventParticipants, numberEventsAttending).subscribe(
       (response: EventParticipants) => {
         this.processing = false;
         if (response && response.Participants && response.Participants.length > 0) {
           this.router.navigate([`/admin/events/${this.eventId}/family-finder`]);
+          this.rootService.announceEvent('echeckFamilyFinderSignedIn');
         } else {
           this.rootService.announceEvent('generalError');
         }
