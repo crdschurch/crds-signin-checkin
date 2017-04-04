@@ -158,6 +158,24 @@ describe('AdminService', () => {
     });
   });
 
+  describe('#findFamilySigninAndPrint', () => {
+    it('should signin and print', () => {
+      let eventParticipants = new EventParticipants();
+      eventParticipants.Participants = [new Child(), new Child()];
+      eventParticipants.Participants[0].ParticipantId = 1;
+      eventParticipants.Participants[1].ParticipantId = 3;
+      eventParticipants.CurrentEvent = new Event();
+      eventParticipants.CurrentEvent.EventId = 43224;
+
+      (<jasmine.Spy>httpClientService.post).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(eventParticipants);
+
+      fixture.findFamilySigninAndPrint(eventParticipants, 1).subscribe((res) => {
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/familyfinder`, eventParticipants);
+      });
+    });
+  });
+
   describe('#getChildrenByHousehold', () => {
     it('should return children in household', () => {
       const householdId = 4312;

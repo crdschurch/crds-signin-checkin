@@ -7,8 +7,7 @@ const eventId = 4335;
 const householdId = 1231;
 const participantId = 6542;
 let apiService = jasmine.createSpyObj('apiService', ['getEvent']);
-let adminService = jasmine.createSpyObj('adminService', [, 'getChildrenByHousehold']);
-let childSigninService = jasmine.createSpyObj('childSigninService', ['signInChildren']);
+let adminService = jasmine.createSpyObj('adminService', [, 'getChildrenByHousehold', 'findFamilySigninAndPrint']);
 let rootService = jasmine.createSpyObj('rootService', ['']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let router = jasmine.createSpyObj<Router>('router', ['navigate']);
@@ -27,8 +26,7 @@ describe('HouseholdComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getChildrenByHousehold)).and.returnValue(Observable.of(eventParticipants));
-    fixture = new HouseholdComponent(apiService, adminService, childSigninService,
-      rootService, route, router, headerService);
+    fixture = new HouseholdComponent(apiService, adminService, rootService, route, router, headerService);
   });
 
   describe('#ngOnInit', () => {
@@ -44,12 +42,12 @@ describe('HouseholdComponent', () => {
       fixture.eventParticipants.Participants = [new Child(), new Child()];
       fixture.eventParticipants.Participants[0].Selected = false;
       fixture.eventParticipants.Participants[1].Selected = true;
-      (<jasmine.Spy>(childSigninService.signInChildren)).and.returnValue(Observable.of());
+      (<jasmine.Spy>(adminService.findFamilySigninAndPrint)).and.returnValue(Observable.of());
       fixture.signIn();
 
       // remove unselected participant to make sure it is not sent with call
       fixture.eventParticipants.Participants.splice(0, 1);
-      expect(childSigninService.signInChildren).toHaveBeenCalledWith(fixture.eventParticipants, 1);
+      expect(adminService.findFamilySigninAndPrint).toHaveBeenCalledWith(fixture.eventParticipants, 1);
     });
   });
 });
