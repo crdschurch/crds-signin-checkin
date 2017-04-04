@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, RootService } from '../../../../shared/services';
-import { ChildSigninService } from '../../../../child-signin/child-signin.service';
 import { AdminService } from '../../../admin.service';
 import { Child, EventParticipants } from '../../../../shared/models';
 import { HeaderService } from '../../../header/header.service';
@@ -19,7 +18,6 @@ export class HouseholdComponent implements OnInit {
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
-               private childSigninService: ChildSigninService,
                private rootService: RootService,
                private route: ActivatedRoute,
                private router: Router,
