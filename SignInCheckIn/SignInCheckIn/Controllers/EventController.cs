@@ -245,7 +245,7 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
-        /*
+
         [HttpPost]
         [ResponseType(typeof(ParticipantDto))]
         [VersionedRoute(template: "updateFamily", minimumVersion: "1.0.0")]
@@ -254,15 +254,17 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-
-                return Authorized(token => Ok(_eventService.GetFamiliesForSearch(token, search)));
+                return Authorized(token =>
+                {
+                    _eventService.UpdateHouseholdInformation(token, householdDto);
+                    return Ok();
+                });
             }
             catch (Exception e)
             {
-                var apiError = new ApiErrorDto($"Error updating family ID of {householdDto.HouseholdId}", e);
+                var apiError = new ApiErrorDto($"Error updating Household ID of {householdDto.HouseholdId}", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
-        */
     }
 }

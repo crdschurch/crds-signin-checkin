@@ -264,5 +264,24 @@ namespace MinistryPlatform.Translation.Repositories
 
             return household;
         }
+
+        public void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto)
+        {
+            var columns = new List<string>
+            {
+                "Household_ID_Table.[Household_ID]",
+                "Households.[Household_Name]",
+                "Household_ID_Table_Address_ID_Table.[Address_Line_1]",
+                "Address_ID_Table.[Address_Line_2]",
+                "Household_ID_Table_Address_ID_Table.[City]",
+                "Household_ID_Table_Address_ID_Table.[State/Region] as State",
+                "Household_ID_Table_Address_ID_Table.[Postal_Code]",
+                "Address_ID_Table.[County]",
+                "Address_ID_Table.[Country_Code]",
+                "Household_ID_Table.[Home_Phone]"
+            };
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
+        }
     }
 }

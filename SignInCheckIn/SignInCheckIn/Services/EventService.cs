@@ -220,5 +220,11 @@ namespace SignInCheckIn.Services
             var result = _participantRepository.GetHouseholdByHouseholdId(token, householdId);
             return Mapper.Map<MpHouseholdDto, HouseholdDto>(result);
         }
+
+        public void UpdateHouseholdInformation(string token, HouseholdDto householdDto)
+        {
+            var mpHouseholdDto = Mapper.Map<HouseholdDto, MpHouseholdDto>(householdDto);
+            _participantRepository.UpdateHouseholdInformation(token, mpHouseholdDto);
+        }
     }
 }

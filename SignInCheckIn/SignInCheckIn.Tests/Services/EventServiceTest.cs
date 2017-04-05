@@ -459,5 +459,25 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(result.HouseholdId, household.HouseholdId);
             Assert.AreEqual(result.HouseholdName, household.HouseholdName);
         }
+
+        [Test]
+        public void ItShouldUpdateHouseholdInformation()
+        {
+            // Arrange
+            var token = "123abc";
+
+            var householdDto = new HouseholdDto
+            {
+                HouseholdId = 123,
+                HouseholdName = "TestUser1"
+            };
+
+            _participantRepository.Setup(m => m.UpdateHouseholdInformation(token, It.IsAny<MpHouseholdDto>()));
+
+            _fixture.UpdateHouseholdInformation(token, householdDto);
+
+            // Assert
+            _participantRepository.VerifyAll();
+        }
     }
 }
