@@ -2,18 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, RootService } from '../../../../shared/services';
 import { AdminService } from '../../../admin.service';
-import { Child, EventParticipants } from '../../../../shared/models';
+import { Child, EventParticipants, Contact } from '../../../../shared/models';
 import { HeaderService } from '../../../header/header.service';
 
 @Component({
   selector: 'household',
   templateUrl: 'household.component.html',
-  styleUrls: ['household.component.scss']
+  styleUrls: ['household.component.scss', '../../../../child-signin/scss/_cards.scss']
 })
 export class HouseholdComponent implements OnInit {
   private eventId: number;
   private householdId: number;
   private processing: boolean;
+  private _newContact: Contact;
   eventParticipants: EventParticipants;
 
   constructor( private apiService: ApiService,
@@ -71,5 +72,19 @@ export class HouseholdComponent implements OnInit {
       }
     );
  }
+
+ openNewFamilyMemberModal(modal) {
+   this._newContact = new Contact();
+   modal.show();
+ }
+
+ get newContact() {
+   return this._newContact;
+ }
+
+ saveNewFamilyMember(modal) {
+   console.log('save modal')
+ }
+
 
 }
