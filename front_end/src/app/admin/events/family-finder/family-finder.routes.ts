@@ -8,7 +8,7 @@ import { HouseholdEditComponent } from './household/edit/household-edit.componen
 export const familyFinderRoutes: Routes = [
   { path: '', component: FamilyFinderComponent },
   { path: ':householdId', component: HouseholdComponent },
-  { path: ':householdId/edit', component: HouseholdComponent }
+  { path: ':householdId/edit', component: HouseholdEditComponent }
 ];
 
 export const familyFinderRouting: ModuleWithProviders = RouterModule.forChild(familyFinderRoutes);
