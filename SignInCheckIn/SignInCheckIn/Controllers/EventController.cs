@@ -232,7 +232,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(HouseholdDto))]
         [VersionedRoute(template: "getHouseholdByID/{householdId}", minimumVersion: "1.0.0")]
         [Route("getHouseholdByID/{householdId}")]
-        public IHttpActionResult getHouseholdById([FromUri] int householdId)
+        public IHttpActionResult GetHouseholdById([FromUri] int householdId)
         {
             try
             {

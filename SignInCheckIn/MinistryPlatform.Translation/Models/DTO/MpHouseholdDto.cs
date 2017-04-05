@@ -45,6 +45,6 @@ namespace MinistryPlatform.Translation.Models.DTO
         public string County { get; set; }
 
         [JsonProperty(PropertyName = "Country_Code")]
-        public string Country_Code { get; set; }
+        public string CountryCode { get; set; }
     }
 }
