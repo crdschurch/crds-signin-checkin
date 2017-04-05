@@ -7,7 +7,15 @@ export class Contact {
   Nickname: string;
   LastName: string;
   Address: string;
+  DateOfBirth: Date;
+  GenderId: number;
+  IsSpecialNeeds: boolean;
   CongregationName: string;
+
+  private GENDER = {
+    MALE: 1,
+    FEMALE: 2
+  };
 
  static fromJson(json: any): Contact {
     let c = new Contact();
