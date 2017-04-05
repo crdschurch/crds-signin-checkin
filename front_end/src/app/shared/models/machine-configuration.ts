@@ -6,7 +6,8 @@ export class MachineConfiguration {
   private KIOSK_TYPE = {
     SIGN_IN: 1,
     ROOM_CHECKIN: 2,
-    ADMIN: 3
+    ADMIN: 3,
+    MIDDLE_SCHOOL_SIGN_IN: 4
   };
 
   KioskConfigId: number;
@@ -44,7 +45,7 @@ export class MachineConfiguration {
   }
 
   public isTypeSignIn(): boolean {
-    return this.KioskTypeId === this.KIOSK_TYPE.SIGN_IN;
+    return (this.KioskTypeId === this.KIOSK_TYPE.SIGN_IN);
   }
 
   public isTypeRoomCheckin(): boolean {
@@ -53,6 +54,10 @@ export class MachineConfiguration {
 
   public isTypeAdmin(): boolean {
     return this.KioskTypeId === this.KIOSK_TYPE.ADMIN;
+  }
+
+  public isTypeMSSignIn(): boolean {
+    return (this.KioskTypeId === this.KIOSK_TYPE.MIDDLE_SCHOOL_SIGN_IN);
   }
 
   public kioskType(): string {

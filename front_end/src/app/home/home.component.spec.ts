@@ -69,6 +69,12 @@ describe('HomeComponent', () => {
       fixture.ngOnInit();
       expect(setupErrorRedirectSpy).toHaveBeenCalled();
     });
+
+    it('should redirect to child sign in when cookie is type = Middle School Sign In', () => {
+      thisMachineConfig = Observable.of(MachineConfiguration.fromJson({'MachineId': '123', 'KioskTypeId': 4}));
+      fixture.ngOnInit();
+      expect(childSigninRedirectSpy).toHaveBeenCalled();
+    });
   });
 
   describe('where there is not an invalid machine configuration cookie present', () => {
