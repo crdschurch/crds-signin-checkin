@@ -125,6 +125,7 @@ namespace SignInCheckIn.Controllers
 
                 var participants = _childSigninService.SigninParticipants(participantEventMapDto);
                 PublishSignedInParticipantsToRooms(participants);
+                participantEventMapDto.Participants = participants.Participants;
                 _childSigninService.PrintParticipants(participantEventMapDto, kioskIdentifier);
                 return Ok(participants);
             }
