@@ -6,6 +6,7 @@ export { DateOfBirth } from './date-of-birth';
 export { Event } from './event';
 export { EventParticipants } from './event-participants';
 export { Group } from './group';
+export { Household } from './household';
 export { MachineConfiguration } from './machine-configuration';
 export { Range } from './range';
 export { Room } from './room';

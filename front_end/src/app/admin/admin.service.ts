@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { EventParticipants, Room, NewFamily, Child, Group, Contact, Household } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -124,6 +124,18 @@ export class AdminService {
                       return contacts;
                     })
                     .catch(this.handleError);
+  }
+
+  getHouseholdInformation(householdId: number): Observable<Household> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`;
+    return this.http.get(url)
+                    .map(res => (<any>res.json()).map(res => Household.fromJson(res)))
+                    .catch(this.handleError);
+  }
+
+  updateHousehold(household: Household) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/updateFamily`;
+    return this.http.put(url, household).catch(this.handleError);
   }
 
   private handleError (error: any) {

@@ -1,33 +1,79 @@
 <header-event></header-event>
 
-
 <div class="wrapper new-family-registration">
   <div class="container-fluid mb-3">
-    <div class="row">
-      <div class="col-sm-12 my-2">
-        <h3>Household Info:</h3>
-      </div><!--/col-sm-12-->
+    <form (ngSubmit)="onSubmit(newFamilyRegistrationForm)" #newFamilyRegistrationForm="ngForm">
+      <div class="container mb-3">
 
-      <form (ngSubmit)="onSubmit(newFamilyRegistrationForm)" #newFamilyRegistrationForm="ngForm">
-        <div class="col-xs-12 mb-2">
-          <h4>Parent/Guardian Info</h4>
+        <div class="row">
+          <div class="col-sm-12 my-2">
+            <h3>Household Info: {{ household.HouseholdName }}</h3>
+          </div>
+        </div>
 
-          <div class="row">
-            <div class="col-xs-12 col-sm-6">
-              <div class="form-group required">
-                <label for="firstName" class="control-label">Street</label>
-                <input type="text" class="form-control" name="addressLine1" required>
-              </div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="firstName" class="control-label">Street</label>
+              <input type="text" class="form-control" name="addressLine1" required>
             </div>
-            <div class="col-xs-12 col-sm-6">
-              <div class="form-group required">
-                <label for="lastName" class="control-label">Street 2</label>
-                <input type="text" class="form-control"  name="addressLine2" required>
-              </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="lastName" class="control-label">Street 2</label>
+              <input type="text" class="form-control"  name="addressLine2" required>
             </div>
           </div>
         </div>
-      </form>
-    </div>
+
+        <div class="row">
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="firstName" class="control-label">City</label>
+              <input type="text" class="form-control" name="addressLine1" required>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="lastName" class="control-label">State</label>
+              <input type="text" class="form-control"  name="addressLine2" required>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="firstName" class="control-label">Zip</label>
+              <input type="text" class="form-control" name="addressLine1" required>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="lastName" class="control-label">County</label>
+              <input type="text" class="form-control"  name="addressLine2" required>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="firstName" class="control-label">Country</label>
+              <input type="text" class="form-control" name="addressLine1" required>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required">
+              <label for="lastName" class="control-label">Home Phone</label>
+              <input type="text" class="form-control"  name="addressLine2" required>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
   </div>
 </div>
