@@ -243,7 +243,7 @@ namespace MinistryPlatform.Translation.Repositories
             return contacts;
         }
 
-        public List<MpHouseholdDto> GetHouseholdByHouseholdID(string token, string householdID)
+        public MpHouseholdDto GetHouseholdByHouseholdId(string token, int householdID)
         {
             var columns = new List<string>
             {
@@ -260,7 +260,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var household = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                 Search<MpHouseholdDto>($"AND Household_ID_Table.[Household_ID] = {householdID}", columns);
+                 Get<MpHouseholdDto>(householdID, columns);
 
             return household;
         }

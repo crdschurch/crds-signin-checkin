@@ -227,5 +227,42 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpGet]
+        [ResponseType(typeof(HouseholdDto))]
+        [VersionedRoute(template: "getHouseholdByID/{householdId}", minimumVersion: "1.0.0")]
+        [Route("getHouseholdByID/{householdId}")]
+        public IHttpActionResult getHouseholdById([FromUri] int householdId)
+        {
+            try
+            {
+
+                return Authorized(token => Ok(_eventService.GetHouseholdByHouseholdId(token, householdId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error updating family ID of {householdId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+        /*
+        [HttpPost]
+        [ResponseType(typeof(ParticipantDto))]
+        [VersionedRoute(template: "updateFamily", minimumVersion: "1.0.0")]
+        [Route("updateFamily")]
+        public IHttpActionResult UpdateFamily(HouseholdDto householdDto)
+        {
+            try
+            {
+
+                return Authorized(token => Ok(_eventService.GetFamiliesForSearch(token, search)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error updating family ID of {householdDto.HouseholdId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+        */
     }
 }
