@@ -111,6 +111,33 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
+        [VersionedRoute(template: "signin/familyfinder", minimumVersion: "1.0.0")]
+        [Route("signin/familyfinder")]
+        public IHttpActionResult SigninFamilyFinder(ParticipantEventMapDto participantEventMapDto)
+        {
+            try
+            {
+                string kioskIdentifier = "";
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var participants = _childSigninService.SigninParticipants(participantEventMapDto);
+                PublishSignedInParticipantsToRooms(participants);
+                participantEventMapDto.Participants = participants.Participants;
+                _childSigninService.PrintParticipants(participantEventMapDto, kioskIdentifier);
+                return Ok(participants);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Sign In Participants", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(ParticipantEventMapDto))]
         [VersionedRoute(template: "signin/participants/print", minimumVersion: "1.0.0")]
         [Route("signin/participants/print")]
         public IHttpActionResult PrintParticipants(ParticipantEventMapDto participantEventMapDto)

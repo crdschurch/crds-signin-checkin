@@ -478,7 +478,6 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
         
         [Test]
-        [Obsolete("GetChildrenByHouseholdId is Obsolete")]
         public void TestGetChildrenByHouseholdIdWithNoPhone()
         {
             int? householdId = 1234567;
@@ -520,9 +519,6 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>
                 (It.IsAny<string>(), GetChildParticpantsByOtherHouseholdFilter(householdId.GetValueOrDefault()), _otherHouseChildParticipantColumns, null, false)).Returns(participants);
-
-            _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>
-                ("Group_Participants", It.IsAny<string>(), _groupChildParticipantColumns, null, false)).Returns(participants);
 
             var result = _fixture.GetChildrenByHouseholdId(householdId, eventDto.EventId);
             _apiUserRepository.VerifyAll();
