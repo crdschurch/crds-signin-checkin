@@ -6,8 +6,8 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['preloader.component.scss']
 })
 export class PreloaderComponent {
-  @Input() fullscreen: boolean = false;
-  @Input() overlay: boolean = false;
+  @Input() fullscreen = false;
+  @Input() overlay = false;
 
   constructor() {
   }

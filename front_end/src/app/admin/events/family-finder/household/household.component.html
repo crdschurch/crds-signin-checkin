@@ -1,0 +1,20 @@
+<header-event></header-event>
+
+<div class="container-fluid">
+  <preloader *ngIf="processing"></preloader>
+  <div *ngIf="eventParticipants && eventParticipants.hasParticipants() && !processing">
+    <div class="mt-2 clearfix">
+      <div class="card-wrapper col-xs-4" *ngFor="let kid of eventParticipants.Participants">
+        <div class="card">
+          <child-signin-card [child]="kid">
+          </child-signin-card>
+        </div>
+      </div>
+    </div>
+    <div class="mt-2" [hidden]="processing">
+      <a class="btn btn-primary btn-lg float-xs-right" (click)="signIn()">Sign In
+        <svg height="12" viewBox="0 0 9 12" width="9" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 0l-1.4 1.4 4.6 4.6-4.6 4.6 1.4 1.4 6-6-6-6z" /></svg>
+      </a>
+    </div>
+  </div>
+</div>

@@ -36,6 +36,14 @@ export class Event {
     return this.EventTypeId === Event.TYPE.ADVENTURE_CLUB;
   }
 
-  constructor() {
+  get type() {
+    switch (this.EventTypeId) {
+      case 81:
+        return 'Student Ministry';
+      case 243:
+        return 'Childcare';
+      default:
+        return 'Service';
+    }
   }
 }

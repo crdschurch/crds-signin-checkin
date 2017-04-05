@@ -1,4 +1,5 @@
 export { Child } from './child';
+export { Congregation } from './congregation';
 export { Contact } from './contact';
 export { ContentBlock } from './content-block';
 export { DateOfBirth } from './date-of-birth';

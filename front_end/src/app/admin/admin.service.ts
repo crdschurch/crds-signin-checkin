@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { Room, NewFamily, Child, Group } from '../shared/models';
+import { EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -74,6 +74,20 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+
+  getChildrenByHousehold(householdId: number): Observable<EventParticipants> {
+    let url = `${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`;
+    return this.http.get(url)
+                    .map(res => {
+                      let eventParticipants = EventParticipants.fromJson(res.json());
+                      if (eventParticipants.hasParticipants()) {
+                        eventParticipants.Participants.forEach(p => p.Selected = true);
+                      }
+                      return eventParticipants;
+                    })
+                    .catch(this.handleError);
+  }
+
   getUnassignedGroups(eventId: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/groups/unassigned`;
     return this.http.get(url)
@@ -91,8 +105,28 @@ export class AdminService {
     return this.http.put(url, null).catch(this.handleError);
   }
 
+  findFamilySigninAndPrint(eventParticipants, numberEventsAttending) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/familyfinder`;
+    eventParticipants.ServicesAttended = numberEventsAttending;
+    return this.http.post(url, eventParticipants)
+                    .map(res => {
+                      return EventParticipants.fromJson(res.json());
+                    })
+                    .catch(this.handleError);
+  }
+
+  findFamilies(searchString: string): Observable<Array<Contact>> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/findFamily?search=${searchString}`;
+    return this.http.get(url)
+                    .map(res => {
+                      let contacts = (<any[]>res.json()).map(r => Contact.fromJson(r));
+
+                      return contacts;
+                    })
+                    .catch(this.handleError);
+  }
+
   private handleError (error: any) {
-    console.error(error);
-    return Observable.throw(error || 'Server error');
+    return Observable.throw(error.json().error || error.json().errors[0] || 'Server error');
   }
 }

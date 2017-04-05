@@ -35,6 +35,8 @@ namespace Crossroads.Utilities.Services.Interfaces
         int SignedInParticipationStatusId { get; }
         int CheckedInParticipationStatusId { get; }
         int CancelledParticipationStatusId { get; }
+        int CapacityParticipationStatusId { get; }
+        int ErrorParticipationStatusId { get; }
         string MachineConfigDetails { get; }
 
         int GuestHouseholdId { get; set; }
@@ -44,6 +46,9 @@ namespace Crossroads.Utilities.Services.Interfaces
         string ManageRoomsChannel { get; set; }
         string CheckinParticipantsChannel { get; set; }
         string CheckinCapacityChannel { get; set; }
+
+        int ChildcareEventTypeId { get; }
+        int ChildcareGroupTypeId { get; }
 
         // groups for new families
         int KcJan0To1 { get; }

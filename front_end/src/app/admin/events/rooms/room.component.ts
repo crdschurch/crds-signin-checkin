@@ -24,6 +24,7 @@ export class RoomComponent implements OnInit {
   private eventId: any;
   public _dirty: boolean;
   private sobots: Number[] = [];
+  public isCollapsed = true;
 
   constructor(private route: ActivatedRoute, private adminService: AdminService,
     private rootService: RootService, private channelService: ChannelService,
@@ -126,6 +127,7 @@ export class RoomComponent implements OnInit {
 
     if (ageGrades.length === 0) {
       ageGrades = ['Add'];
+      this.isCollapsed = false;
     }
 
     return ageGrades;
@@ -172,5 +174,4 @@ export class RoomComponent implements OnInit {
       }
     );
   }
-  
 }

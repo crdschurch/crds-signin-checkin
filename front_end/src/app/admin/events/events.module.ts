@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { HeaderModule } from '../header';
 import { NewFamilyRegistrationModule } from './new-family-registration';
+import { FamilyFinderModule } from './family-finder';
 import { ManageChildrenComponent } from './manage-children/manage-children.component';
 import { EventImportComponent } from './import/event-import.component';
 import { EventListComponent } from './event-list.component';
@@ -37,6 +38,7 @@ import { CanDeactivateGuard } from '../../shared/guards';
     MomentModule,
     HeaderModule,
     NewFamilyRegistrationModule,
+    FamilyFinderModule,
     ReactiveFormsModule
   ],
   exports: [ ],

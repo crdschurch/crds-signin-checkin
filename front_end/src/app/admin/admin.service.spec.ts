@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Room, NewFamily, Child, Group } from '../shared/models';
+import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -101,28 +101,6 @@ describe('AdminService', () => {
     });
   });
 
-  describe('#getChildrenForEvent', () => {
-    it('should return list of children for the event', () => {
-      let children: Child[] = [
-        new Child(),
-        new Child()
-      ];
-      children[0].ContactId = 12345;
-      children[1].ContactId = 67890;
-
-      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
-      (<jasmine.Spy>responseObject.json).and.returnValue(children);
-
-      let result = fixture.getChildrenForEvent(231);
-      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/231/children`);
-      expect(result).toBeDefined();
-      expect(result).toEqual(jasmine.any(Observable));
-      result.subscribe((c) => {
-        expect(c[0].ContactId).toEqual(children[0].ContactId);
-      });
-    });
-  });
-
   describe('#getUnassignedGroups', () => {
     it('should return unassigned groups', () => {
       let group: Group[] = [
@@ -154,6 +132,69 @@ describe('AdminService', () => {
 
       fixture.reprint(participantEventId).subscribe((res) => {
         expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/participant/${participantEventId}/print`, {});
+      });
+    });
+  });
+
+  describe('#findFamilies', () => {
+    it('should return head of household contacts for the last name', () => {
+      let contacts: Contact[] = [
+        new Contact(),
+        new Contact()
+      ];
+      contacts[0].HouseholdId = 12;
+      contacts[1].HouseholdId = 1;
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(contacts);
+
+      let result = fixture.findFamilies('dustin');
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/findFamily?search=dustin`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((c) => {
+        expect(c[0].HouseholdId).toEqual(contacts[0]['HouseholdId']);
+      });
+    });
+  });
+
+  describe('#findFamilySigninAndPrint', () => {
+    it('should signin and print', () => {
+      let eventParticipants = new EventParticipants();
+      eventParticipants.Participants = [new Child(), new Child()];
+      eventParticipants.Participants[0].ParticipantId = 1;
+      eventParticipants.Participants[1].ParticipantId = 3;
+      eventParticipants.CurrentEvent = new Event();
+      eventParticipants.CurrentEvent.EventId = 43224;
+
+      (<jasmine.Spy>httpClientService.post).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(eventParticipants);
+
+      fixture.findFamilySigninAndPrint(eventParticipants, 1).subscribe((res) => {
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/familyfinder`, eventParticipants);
+      });
+    });
+  });
+
+  describe('#getChildrenByHousehold', () => {
+    it('should return children in household', () => {
+      const householdId = 4312;
+      let eventParticipants = new EventParticipants();
+      eventParticipants.Participants = [new Child(), new Child()];
+      eventParticipants.Participants[0].ParticipantId = 1;
+      eventParticipants.Participants[1].ParticipantId = 3;
+      eventParticipants.CurrentEvent = new Event();
+      eventParticipants.CurrentEvent.EventId = 43224;
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(eventParticipants);
+
+      let result = fixture.getChildrenByHousehold(householdId);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((r) => {
+        expect(r.Participants[0].ParticipantId).toEqual(eventParticipants.Participants[0].ParticipantId);
+        expect(r.Participants[1].ParticipantId).toEqual(eventParticipants.Participants[1].ParticipantId);
       });
     });
   });

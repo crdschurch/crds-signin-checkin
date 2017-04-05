@@ -9,9 +9,9 @@ import { LoginRedirectService } from '../../shared/services/login-redirect.servi
   providers: [ SignInService ]
 })
 export class SignInComponent {
-  private success: boolean = true;
+  private success = true;
   private user: any = { username: '', password: '' };
-  processing: boolean = false;
+  processing = false;
 
   constructor(private signInService: SignInService, private router: Router, private redirectService: LoginRedirectService) { }
 

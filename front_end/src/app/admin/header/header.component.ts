@@ -14,18 +14,18 @@ export class HeaderComponent {
   event: Event;
   private kioskDisplay: Array<string> = [];
   private loggedInDisplay: string;
-  private displayHelp: boolean = false;
+  private displayHelp = false;
 
-  private headerClicks: number = 0;
+  private headerClicks = 0;
   private firstClick;
   private lastClick;
 
-  public isCollapsed:boolean = true;
+  public isCollapsed = true;
 
-  public collapsed(event:any):void {
+  public collapsed(event) {
   }
 
-  public expanded(event:any):void {
+  public expanded(event) {
   }
 
   constructor(private headerService: HeaderService,

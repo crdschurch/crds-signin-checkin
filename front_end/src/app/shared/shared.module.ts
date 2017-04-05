@@ -7,7 +7,7 @@ import { PhoneNumberPipe } from './pipes/phoneNumber.pipe';
 import { OneBasedIndexPipe } from './pipes/one-based-index.pipe';
 import { MonthNamePipe } from './pipes/monthName.pipe';
 import { DashedPipe } from './pipes/dashed.pipe';
-import { ClosedRoomPipe } from './pipes/closedRoom.pipe'
+import { ClosedRoomPipe } from './pipes/closedRoom.pipe';
 import { ApiService, LoginRedirectService } from './services';
 
 import { PreloaderModule } from './preloader';

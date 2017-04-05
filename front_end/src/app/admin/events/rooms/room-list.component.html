@@ -60,58 +60,75 @@
 
     <div class="col-xs-12">
       <preloader *ngIf="!isReady()"></preloader>
-      <table class="table table-striped manage-rooms-table" *ngIf="isReady()">
-        <thead>
-          <tr>
-            <th class="hidden-print">Age Ranges</th>
-            <th>Room</th>
-            <th class="alert">&nbsp;</th> <!-- room alerts -->
-            <th class="hidden-print">Allow Sign In</th>
-            <th>Volunteers</th>
-            <th>Capacity</th>
-            <th class="text-xs-right">Signed In</th>
-            <th class="text-xs-right">Checked In</th>
-            <th class="text-xs-right">Room Ratio</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Tate - just replace 'hidden-print' in the ng-Class what the name of your new class is -->
-          <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" [ngClass]="{'alert-danger': someRoom.SignedIn > someRoom.CheckedIn}"
-              (notifyDirty)="onNotifyDirty($event)" (notifySaving)="onNotifySaving($event)" (updateRoomArray)="updateRooms($event)"
-              [room]="someRoom">
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr class="text-xs-right">
-            <td class="hidden-print">
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td class="hidden-print">
-            </td>
-            <td>
-              <strong>Total Volunteers:</strong> {{getVolunteersTotal()}}
-            </td>
-            <td>
-              <strong>Total Capacity: </strong> {{getCapacityTotal()}}
-            </td>
-            <td>
-              <strong>Kids Not Checked in:</strong>  {{getSignedInTotal()}}
-            </td>
-            <td>
-              <strong>Total Checked In: </strong> {{getCheckedInTotal()}}
-            </td>
-            <td class="hidden-print">
-            </td>
-            <td class="hidden-print">
-            </td>
-          </tr>
-        </tfoot>
-      </table>
 
+      <div class="manage-rooms-table-container">
+        <table class="table table-striped manage-rooms-table manage-rooms-fixed-header hidden-print">
+          <thead>
+            <tr>
+              <th class="hidden-print">Age Ranges</th>
+              <th>Room</th>
+              <th class="alert">&nbsp;</th> <!-- room alerts -->
+              <th class="hidden-print">Allow Sign In</th>
+              <th class="text-print-right">Volunteers</th>
+              <th class="text-print-right">Capacity</th>
+              <th class="text-xs-right">Signed In</th>
+              <th class="text-xs-right">Checked In</th>
+              <th class="text-xs-right">Room Ratio</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+        <table class="table table-striped manage-rooms-table manage-rooms-scroll-header" *ngIf="isReady()">
+          <thead>
+            <tr>
+              <th class="hidden-print">Age Ranges</th>
+              <th>Room</th>
+              <th class="alert">&nbsp;</th> <!-- room alerts -->
+              <th class="hidden-print">Allow Sign In</th>
+              <th class="text-print-right">Volunteers</th>
+              <th class="text-print-right">Capacity</th>
+              <th class="text-xs-right">Signed In</th>
+              <th class="text-xs-right">Checked In</th>
+              <th class="text-xs-right">Room Ratio</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room"
+                (notifyDirty)="onNotifyDirty($event)" (notifySaving)="onNotifySaving($event)" (updateRoomArray)="updateRooms($event)"
+                [room]="someRoom">
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="text-xs-right">
+              <td class="hidden-print">
+              </td>
+              <td>
+              </td>
+              <td>
+              </td>
+              <td class="hidden-print">
+              </td>
+              <td>
+                <strong>Total Volunteers:</strong> {{getVolunteersTotal()}}
+              </td>
+              <td>
+                <strong>Total Capacity: </strong> {{getCapacityTotal()}}
+              </td>
+              <td>
+                <strong>Kids Not Checked in:</strong>  {{getSignedInTotal()}}
+              </td>
+              <td>
+                <strong>Total Checked In: </strong> {{getCheckedInTotal()}}
+              </td>
+              <td class="hidden-print">
+              </td>
+              <td class="hidden-print">
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
   </div>
 </div>

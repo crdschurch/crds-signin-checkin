@@ -1,4 +1,6 @@
-﻿namespace SignInCheckIn.Models.DTO
+using System.Web.UI;
+
+namespace SignInCheckIn.Models.DTO
 {
     public class ContactDto
     {
@@ -17,5 +19,13 @@
         public string LastName { get; set; }
 
         public string FirstName { get; set; }
+
+        public string AddressLine1 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string ZipCode { get; set; }
+        public string Address => $"{AddressLine1}, {City} {State}, {ZipCode}";
+
+        public string CongregationName { get; set; }
     }
 }

@@ -8,6 +8,7 @@ import { EventImportComponent } from './import/event-import.component';
 import { EventResetComponent } from './reset/event-reset.component';
 import { ManageChildrenComponent } from './manage-children/manage-children.component';
 import { newFamilyRegistrationRoutes } from './new-family-registration/new-family-registration.routes';
+import { familyFinderRoutes } from './family-finder/family-finder.routes';
 import { CanDeactivateGuard } from '../../shared/guards';
 
 export const eventsRoutes: Routes = [
@@ -17,6 +18,7 @@ export const eventsRoutes: Routes = [
   { path: ':eventId/import', component: EventImportComponent },
   { path: ':eventId/children', component: ManageChildrenComponent },
   { path: ':eventId/reset', component: EventResetComponent },
-  { path: ':eventId/new-family-registration', children: [...newFamilyRegistrationRoutes]}
+  { path: ':eventId/new-family-registration', children: [...newFamilyRegistrationRoutes]},
+  { path: ':eventId/family-finder', children: [...familyFinderRoutes]}
 ];
 export const eventsRouting: ModuleWithProviders = RouterModule.forChild(eventsRoutes);

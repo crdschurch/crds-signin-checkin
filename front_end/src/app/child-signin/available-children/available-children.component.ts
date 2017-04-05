@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'available-children',
   templateUrl: 'available-children.component.html',
-  styleUrls: [ '../scss/_cards.scss', '../scss/_buttons.scss', 'available-children.component.scss' ]
+  styleUrls: [ 'available-children.component.scss', '../scss/_cards.scss', '../scss/_buttons.scss', '../scss/_stepper.scss' ]
 })
 
 export class AvailableChildrenComponent implements OnInit {
@@ -27,6 +27,8 @@ export class AvailableChildrenComponent implements OnInit {
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
   guestDOB: DateOfBirth = new DateOfBirth();
+  showGuestOption = false;
+  showServingOption = false;
 
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
@@ -63,6 +65,7 @@ export class AvailableChildrenComponent implements OnInit {
        (result) => {
          this.isReady = true;
          this._eventParticipants = result;
+         this.setServingAndGuestDisplay();
        }, (err) => {
          this.isReady = true;
          this.rootService.announceEvent('generalError');
@@ -237,6 +240,16 @@ export class AvailableChildrenComponent implements OnInit {
 
  needGradeLevel(): boolean {
    return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+ }
+
+ setServingAndGuestDisplay() {
+   if (this.eventParticipants.CurrentEvent.EventTypeId === 243) {
+     this.showGuestOption = false;
+     this.showServingOption = false;
+   } else {
+     this.showGuestOption = true;
+     this.showServingOption = true;
+   }
  }
 
 }

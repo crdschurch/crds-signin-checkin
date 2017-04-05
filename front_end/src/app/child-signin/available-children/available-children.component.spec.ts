@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService, RootService } from '../../shared/services';
 import { ChildSigninService } from '../child-signin.service';
 import { Observable } from 'rxjs/Observable';
-import { Child, DateOfBirth, Guest, EventParticipants } from '../../shared/models';
+import { Child, DateOfBirth, Guest, EventParticipants, Event } from '../../shared/models';
 
 
 import * as moment from 'moment';
@@ -120,6 +120,26 @@ describe('AvailableChildrenComponent', () => {
       fixture.saveNewGuest(fakeModal);
       expect(fixture.eventParticipants.Participants.length).toEqual(0);
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
+    });
+    it('should hide guest and serving for childcare event', () => {
+      let eventParticipants: EventParticipants = new EventParticipants();
+      let childcareEvent: Event = new Event();
+      childcareEvent.EventTypeId = 243; // childcare event
+      eventParticipants.CurrentEvent = childcareEvent;
+      fixture.eventParticipants = eventParticipants;
+      fixture.setServingAndGuestDisplay();
+      expect(fixture.showServingOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(false);
+    });
+    it('should show guest and serving for service event', () => {
+      let eventParticipants: EventParticipants = new EventParticipants();
+      let childcareEvent: Event = new Event();
+      childcareEvent.EventTypeId = 20; // non-childcare event id, these vary for service events
+      eventParticipants.CurrentEvent = childcareEvent;
+      fixture.eventParticipants = eventParticipants;
+      fixture.setServingAndGuestDisplay();
+      expect(fixture.showServingOption).toBe(true);
+      expect(fixture.showGuestOption).toBe(true);
     });
   });
 });

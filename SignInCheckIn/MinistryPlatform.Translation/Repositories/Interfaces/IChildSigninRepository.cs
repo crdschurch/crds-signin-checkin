@@ -9,7 +9,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpHouseholdParticipantsDto GetChildrenByPhoneNumber(string phoneNumber, bool includeOtherHousehold = true);
 
         [Obsolete("This should not be used, and should eventually be removed.  It has been replaced by GetChildrenByPhoneNumber.")]
-        List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, MpEventDto eventDto);
+        List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, int eventId);
 
         List<MpEventParticipantDto> CreateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos);
 
