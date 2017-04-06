@@ -148,7 +148,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary btn-lg" (click)="saveNewFamilyMember(newFamilyMemberModal)">Add</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="saveNewFamilyMember(newFamilyMemberModal)" [disabled]="processingAddFamilyMember">
+          <span *ngIf="!processingAddFamilyMember">Add</span>
+          <span *ngIf="processingAddFamilyMember">Adding...</span>
+        </button>
       </div>
     </div>
   </div>

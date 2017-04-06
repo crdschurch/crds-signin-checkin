@@ -126,6 +126,13 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  addFamilyMember(householdId: number, contact: Contact) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member`;
+    return this.http.post(url, contact)
+                    .map(res => {})
+                    .catch(this.handleError);
+  }
+
   private handleError (error: any) {
     return Observable.throw(error.json().error || error.json().errors[0] || 'Server error');
   }

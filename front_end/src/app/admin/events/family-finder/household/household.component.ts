@@ -16,6 +16,7 @@ export class HouseholdComponent implements OnInit {
   private eventId: number;
   private householdId: number;
   private processing: boolean;
+  private processingAddFamilyMember: boolean;
   private _newContact: Contact;
   private gradeGroups: Array<Group> = [];
   numberOfMonthsSelection: Array<number>;
@@ -32,7 +33,6 @@ export class HouseholdComponent implements OnInit {
                private headerService: HeaderService) {}
 
  ngOnInit() {
-   this.processing = true;
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
 
@@ -40,6 +40,13 @@ export class HouseholdComponent implements OnInit {
      this.headerService.announceEvent(event);
    }, error => console.error(error));
 
+   this.getChildren();
+   this.populateGradeGroups();
+   this.populateDatepicker();
+ }
+
+ private getChildren() {
+   this.processing = true;
    this.adminService.getChildrenByHousehold(+this.householdId).subscribe((ep: EventParticipants) => {
      this.eventParticipants = ep;
      if (this.eventParticipants === undefined || !this.eventParticipants.hasParticipants()) {
@@ -54,9 +61,6 @@ export class HouseholdComponent implements OnInit {
      }
      this.processing = false;
    });
-
-   this.populateGradeGroups();
-   this.populateDatepicker();
  }
 
  private populateDatepicker() {
@@ -151,6 +155,7 @@ export class HouseholdComponent implements OnInit {
  saveNewFamilyMember(modal) {
   //  console.log('save modal', this.newContact)
   try {
+    this.processingAddFamilyMember = true;
     this.newContact.FirstName.trim();
     this.newContact.LastName.trim();
   } finally {
@@ -165,10 +170,16 @@ export class HouseholdComponent implements OnInit {
       if (+this.newContact.YearGrade < 1) {
         this.newContact.YearGrade = undefined;
       }
-
-      console.log('make call to add to family')
-      console.log('repopulate children')
-      return modal.hide();
+      this.adminService.addFamilyMember(+this.householdId, this.newContact).subscribe(
+        (response: EventParticipants) => {
+          this.processingAddFamilyMember = false;
+          this.getChildren();
+          return modal.hide();
+        }, (err) => {
+          this.processingAddFamilyMember = false;
+          this.rootService.announceEvent('generalError');
+        }
+      );
     }
   }
  }
