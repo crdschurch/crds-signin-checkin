@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../../shared/services';
 import { HeaderService } from '../../../../header/header.service';
 import { AdminService } from '../../../../admin.service';
-import { Household } from '../../../../../shared/models'
+import { Household } from '../../../../../shared/models';
 
 @Component({
   selector: 'household-edit',
