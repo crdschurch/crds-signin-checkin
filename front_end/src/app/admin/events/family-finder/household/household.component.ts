@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, RootService } from '../../../../shared/services';
 import { AdminService } from '../../../admin.service';
-import { Child, EventParticipants, Contact } from '../../../../shared/models';
+import { DateOfBirth, Child, EventParticipants, Contact, Group } from '../../../../shared/models';
 import { HeaderService } from '../../../header/header.service';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'household',
@@ -15,7 +17,12 @@ export class HouseholdComponent implements OnInit {
   private householdId: number;
   private processing: boolean;
   private _newContact: Contact;
+  private gradeGroups: Array<Group> = [];
+  numberOfMonthsSelection: Array<number>;
+  numberOfDaysSelection: Array<number>;
+  yearsSelection: Array<number>;
   eventParticipants: EventParticipants;
+  guestDOB: DateOfBirth = new DateOfBirth();
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -47,6 +54,28 @@ export class HouseholdComponent implements OnInit {
      }
      this.processing = false;
    });
+
+   this.populateGradeGroups();
+   this.populateDatepicker();
+ }
+
+ private populateDatepicker() {
+   this.numberOfMonthsSelection = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
+   this.numberOfDaysSelection = Array.apply(null, {length: 31}).map(function (e, i) { return i + 1; }, Number);
+   this.yearsSelection = [];
+   let i = 0;
+   while (i <= 18) {
+     this.yearsSelection.push(moment().subtract(i, 'y').year());
+     i++;
+   }
+ }
+
+ private populateGradeGroups() {
+   this.apiService.getGradeGroups().subscribe((groups) => {
+       this.gradeGroups = groups;
+     },
+     error => console.error(error)
+   );
  }
 
  signIn() {
@@ -74,16 +103,74 @@ export class HouseholdComponent implements OnInit {
  }
 
  openNewFamilyMemberModal(modal) {
+   this.guestDOB = new DateOfBirth();
    this._newContact = new Contact();
+   this._newContact.IsSpecialNeeds = false;
+   this._newContact.GenderId = Contact.genderIdMale();
    modal.show();
+ }
+
+ get maleGenderId(): number {
+   return Contact.genderIdMale();
+ }
+
+ get femaleGenderId(): number {
+   return Contact.genderIdFemale();
  }
 
  get newContact() {
    return this._newContact;
  }
 
+ set newContact(newContact) {
+   this._newContact = newContact;
+ }
+
+ datePickerBlur() {
+   if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
+     this.newContact.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
+   }
+   let needGradeLevelValue = moment(this.newContact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+
+    if (needGradeLevelValue) {
+      this.newContact.YearGrade = -1;
+    } else {
+      this.newContact.YearGrade = 0;
+    }
+ }
+
+ needGradeLevel(): boolean {
+   return moment(this.newContact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y').add(1, 'd'));
+ }
+
+ updateContactYearGradeGroup(contact: Contact, groupId: number) {
+   contact.YearGrade = groupId;
+ }
+
+
  saveNewFamilyMember(modal) {
-   console.log('save modal')
+  //  console.log('save modal', this.newContact)
+  try {
+    this.newContact.FirstName.trim();
+    this.newContact.LastName.trim();
+  } finally {
+    if (!this.newContact.FirstName || !this.newContact.LastName) {
+      return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
+    } else if (!this.newContact.DateOfBirth || !moment(this.newContact.DateOfBirth).isValid()) {
+      return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
+    } else if (this.newContact.YearGrade === -1) {
+      return this.rootService.announceEvent('echeckNeedValidGradeSelection');
+    } else {
+
+      if (+this.newContact.YearGrade < 1) {
+        this.newContact.YearGrade = undefined;
+      }
+
+      console.log('make call to add to family')
+      console.log('repopulate children')
+      return modal.hide();
+    }
+  }
  }
 
 

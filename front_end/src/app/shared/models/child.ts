@@ -28,7 +28,6 @@ export class Child {
   TimeConfirmed: Date;
   HeadsOfHousehold: Array<Contact> = [];
 
-
   static fromJson(json: any): Child {
     let c = new Child();
     c.EventParticipantId = json.EventParticipantId;
