@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact, Household } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -196,6 +196,40 @@ describe('AdminService', () => {
         expect(r.Participants[0].ParticipantId).toEqual(eventParticipants.Participants[0].ParticipantId);
         expect(r.Participants[1].ParticipantId).toEqual(eventParticipants.Participants[1].ParticipantId);
       });
+    });
+  });
+
+  describe('#getHouseholdInformation', () => {
+    it('should return household', () => {
+      const householdId = 4312;
+      let household = new Household();
+      household.HouseholdId = 4312;
+      household.HouseholdName = 'test';
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(household);
+
+      let result = fixture.getHouseholdInformation(householdId);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((r) => {
+        expect(r.HouseholdId).toEqual(household.HouseholdId);
+        expect(r.HouseholdName).toEqual(household.HouseholdName);
+      });
+    });
+  });
+
+  describe('#updateHousehold', () => {
+    it('should return list of rooms imported', () => {
+      let household = new Household();
+
+      (<jasmine.Spy>httpClientService.put).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(undefined);
+
+      fixture.updateHousehold(household).subscribe((res) => {
+        expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/updateFamily`, household);
+      });
+
     });
   });
 
