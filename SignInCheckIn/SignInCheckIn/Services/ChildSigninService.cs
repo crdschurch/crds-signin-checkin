@@ -591,7 +591,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool isSpecialNeeds = false)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -609,6 +609,11 @@ namespace SignInCheckIn.Services
                     DateOfBirth = dateOfBirth
                 }
             };
+
+            if (isSpecialNeeds)
+            {
+                
+            }
 
             var newParticipant = _participantRepository.CreateParticipantWithContact(null, childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;

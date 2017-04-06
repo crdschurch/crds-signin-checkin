@@ -243,6 +243,47 @@ namespace SignInCheckIn.Controllers
             });
         }
 
+        [HttpPost]
+        [ResponseType(typeof(int))]
+        [VersionedRoute(template: "signin/family/member", minimumVersion: "1.0.0")]
+        [Route("signin/family/member")]
+        public IHttpActionResult AddNewFamilyMember(ContactDto newFamilyContactDto)
+        {
+            return Authorized(token =>
+            {
+                string kioskIdentifier;
+
+                // make sure kiosk is admin type and configured for printing
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    // must be kiosk type admin and have a printer set up
+                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    {
+                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    }
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                }
+
+                try
+                {
+                   var participants = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
+                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId);
+                   // PublishSignedInParticipantsToRooms(participants);
+                   return Ok();
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
         [VersionedRoute(template: "signin/event/{eventId}/room/{roomId}/reverse/{eventparticipantId}", minimumVersion: "1.0.0")]

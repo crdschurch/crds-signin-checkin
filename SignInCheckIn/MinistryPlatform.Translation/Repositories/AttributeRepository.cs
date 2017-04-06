@@ -37,5 +37,21 @@ namespace MinistryPlatform.Translation.Repositories
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken ?? _apiUserRepository.GetToken()).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
         }
+
+        public int CreateAttribute(MpAttributeDto attribute)
+        {
+            var token = _apiUserRepository.GetToken();
+            var attributeColumns = new Dictionary<string, object>
+                    {
+                        {"Attribute_Name", attribute.Name.ToLower()},
+                        {"Attribute_Category_ID", attribute.CategoryId},
+                        {"Attribute_Type_ID", attribute.AttributeTypeId},
+                        {"PreventMultipleSelection", attribute.PreventMultipleSelection},
+                        {"Sort_Order", attribute.SortOrder}
+                    };
+            
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(attribute, attributeColumns);
+        }
+
     }
 }
