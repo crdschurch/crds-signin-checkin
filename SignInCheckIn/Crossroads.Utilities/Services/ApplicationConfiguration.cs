@@ -15,6 +15,9 @@ namespace Crossroads.Utilities.Services
         public int KidsClubMinistryId { get; }
         public int KidsClubCongregationId { get; }
 
+        public int PersonalCharacteristicsAttributeTypeId { get; }
+        public int SpecialNeedsAttributeId { get; }
+
         public int HeadOfHouseholdId { get; }
         public int OtherAdultId { get; }
         public int AdultChildId { get; }
@@ -285,6 +288,8 @@ namespace Crossroads.Utilities.Services
             NurseryAgesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubNurseryAgesAttributeTypeId");
             NurseryAgeAttributeId = configurationWrapper.GetConfigIntValue("KidsClubNurseryAgeAttributeId");
 
+            PersonalCharacteristicsAttributeTypeId = configurationWrapper.GetConfigIntValue("PersonalCharacteristicsAttributeTypeId");
+            SpecialNeedsAttributeId = configurationWrapper.GetConfigIntValue("SpecialNeedsAttributeId");
 
             KidsClubGroupTypeId = configurationWrapper.GetConfigIntValue("KidsClubGroupTypeId");
             KidsClubMinistryId = configurationWrapper.GetConfigIntValue("KidsClubMinistryId");

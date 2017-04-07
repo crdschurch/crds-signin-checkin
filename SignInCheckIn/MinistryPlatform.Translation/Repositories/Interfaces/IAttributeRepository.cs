@@ -7,5 +7,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         List<MpAttributeDto> GetAttributesByAttributeTypeId(int attributeTypeId, string authenticationToken = null);
         List<MpAttributeDto> GetAttributesByAttributeTypeId(IEnumerable<int> attributeTypeIds, string authenticationToken = null);
+        MpAttributeDto CreateAttribute(MpAttributeDto attribute);
     }
 }
