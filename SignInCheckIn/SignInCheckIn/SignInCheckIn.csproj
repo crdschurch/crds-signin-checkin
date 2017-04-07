@@ -218,6 +218,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ChildCheckinController.cs" />
     <Compile Include="Controllers\ChildSigninController.cs" />
+    <Compile Include="Controllers\LookupController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\HelloWorldController.cs" />
     <Compile Include="Controllers\KioskController.cs" />
@@ -232,6 +233,8 @@
     <Compile Include="Hubs\EventHub.cs" />
     <Compile Include="Models\Authentication\Credentials.cs" />
     <Compile Include="Models\Authentication\LoginReturn.cs" />
+    <Compile Include="Models\DTO\CountryDto.cs" />
+    <Compile Include="Models\DTO\StateDto.cs" />
     <Compile Include="Models\DTO\HouseholdDto.cs" />
     <Compile Include="Models\DTO\ContactDto.cs" />
     <Compile Include="Models\DTO\NewChildDto.cs" />
@@ -260,6 +263,8 @@
     <Compile Include="Security\MPAuth.cs" />
     <Compile Include="Services\ChildCheckinService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
+    <Compile Include="Services\LookupService.cs" />
+    <Compile Include="Services\Interfaces\ILookupService.cs" />
     <Compile Include="Services\Interfaces\ISiteService.cs" />
     <Compile Include="Services\SiteService.cs" />
     <Compile Include="Services\WebsocketService.cs" />

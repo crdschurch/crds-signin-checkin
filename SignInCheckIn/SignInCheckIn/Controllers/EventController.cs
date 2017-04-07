@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
-using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;

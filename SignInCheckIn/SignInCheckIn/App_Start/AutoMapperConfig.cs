@@ -13,6 +13,8 @@ namespace SignInCheckIn
 
         private static void CreateMappings(IMapperConfigurationExpression config)
         {
+            config.CreateMap<MpStateDto, StateDto>().ReverseMap();
+            config.CreateMap<MpCountryDto, CountryDto>().ReverseMap();
             config.CreateMap<MpEventRoomDto, EventRoomDto>().ReverseMap();
             config.CreateMap<MpEventDto, EventDto>()
                 .ForMember(dest => dest.EventSite, opts => opts.MapFrom(src => src.CongregationName))
