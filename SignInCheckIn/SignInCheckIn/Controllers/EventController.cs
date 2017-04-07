@@ -266,5 +266,41 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpGet]
+        [ResponseType(typeof(HouseholdDto))]
+        [VersionedRoute(template: "geStates", minimumVersion: "1.0.0")]
+        [Route("geStates")]
+        public IHttpActionResult GeStates()
+        {
+            try
+            {
+
+                return Authorized(token => Ok());
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting states", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(HouseholdDto))]
+        [VersionedRoute(template: "getCountries", minimumVersion: "1.0.0")]
+        [Route("getCountries")]
+        public IHttpActionResult GetCountries()
+        {
+            try
+            {
+
+                return Authorized(token => Ok());
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting countries", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }
