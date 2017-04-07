@@ -2,7 +2,7 @@
 
 <div class="wrapper new-family-registration">
   <div class="container-fluid mb-3">
-    <form (ngSubmit)="onSubmit(newFamilyRegistrationForm)" #newFamilyRegistrationForm="ngForm">
+    <form (ngSubmit)="onSubmit(updateFamilyForm)" #updateFamilyForm="ngForm">
       <div class="container mb-3">
 
         <div class="row">
@@ -15,13 +15,13 @@
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="firstName" class="control-label">Street</label>
-              <input type="text" class="form-control" name="addressLine1" required>
+              <input type="text" class="form-control" name="addressLine1" [(ngModel)]="household.AddressLine1" #addressLine1="ngModel" required>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="lastName" class="control-label">Street 2</label>
-              <input type="text" class="form-control"  name="addressLine2" required>
+              <input type="text" class="form-control" name="addressLine2" [(ngModel)]="household.AddressLine2" #addressLine2="ngModel" required>
             </div>
           </div>
         </div>
@@ -30,13 +30,13 @@
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="firstName" class="control-label">City</label>
-              <input type="text" class="form-control" name="addressLine1" required>
+              <input type="text" class="form-control" name="city" [(ngModel)]="household.City" #city="ngModel" required>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="lastName" class="control-label">State</label>
-              <input type="text" class="form-control"  name="addressLine2" required>
+              <input type="text" class="form-control" name="state" [(ngModel)]="household.State" #state="ngModel" required>
             </div>
           </div>
         </div>
@@ -46,13 +46,13 @@
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="firstName" class="control-label">Zip</label>
-              <input type="text" class="form-control" name="addressLine1" required>
+              <input type="text" class="form-control" name="zipCode" [(ngModel)]="household.ZipCode" #zipCode="ngModel" required>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="lastName" class="control-label">County</label>
-              <input type="text" class="form-control"  name="addressLine2" required>
+              <input type="text" class="form-control" name="county" [(ngModel)]="household.County" #county="ngModel" required>
             </div>
           </div>
         </div>
@@ -62,13 +62,34 @@
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="firstName" class="control-label">Country</label>
-              <input type="text" class="form-control" name="addressLine1" required>
+              <input type="text" class="form-control" name="countryCode" [(ngModel)]="household.CountryCode" #countryCode="ngModel" required>
             </div>
           </div>
+        </div>
+
+        <div class="row">
+          &nbsp;
+        </div>
+
+        <div class="row">
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
-              <label for="lastName" class="control-label">Home Phone</label>
-              <input type="text" class="form-control"  name="addressLine2" required>
+              <label for="homePhone" class="control-label">Home Phone</label>
+              <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" name="homePhone"
+                [(ngModel)]="household.HomePhone" #homePhone="ngModel"
+                (blur)="onPhoneBlur($event, household)" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12 mb-3">
+            <div class="float-sm-left">
+              <a class="btn btn-default btn-sm" [routerLink]="['search']">Cancel</a>
+            </div>
+            <div class="float-sm-right">
+              <loading-button buttonType="submit" buttonClasses="btn btn-info float-xs-right save" normalText="Save and View Children" loadingText="Saving..." [loading]="processing"></loading-button>
+              <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Save" loadingText="Saving..." [loading]="processing"></loading-button>
             </div>
           </div>
         </div>
