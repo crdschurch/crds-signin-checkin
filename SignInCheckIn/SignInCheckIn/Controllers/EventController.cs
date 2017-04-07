@@ -245,8 +245,7 @@ namespace SignInCheckIn.Controllers
             }
         }
 
-        [HttpPost]
-        [ResponseType(typeof(ParticipantDto))]
+        [HttpPut]
         [VersionedRoute(template: "updateFamily", minimumVersion: "1.0.0")]
         [Route("updateFamily")]
         public IHttpActionResult UpdateFamily(HouseholdDto householdDto)
