@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
@@ -25,6 +26,7 @@ namespace SignInCheckIn.Services
         private readonly IParticipantRepository _participantRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IGroupLookupRepository _groupLookupRepository;
+        private readonly IAttributeRepository _attributeRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly ISignInLogic _signInLogic;
 
@@ -44,6 +46,7 @@ namespace SignInCheckIn.Services
                                   IGroupLookupRepository groupLookupRepository,
                                   IRoomRepository roomRepository,
                                   IConfigRepository configRepository,
+                                  IAttributeRepository attributeRepository,
                                   ISignInLogic signInLogic)
         {
             _childSigninRepository = childSigninRepository;
@@ -58,6 +61,7 @@ namespace SignInCheckIn.Services
             _applicationConfiguration = applicationConfiguration;
             _groupLookupRepository = groupLookupRepository;
             _roomRepository = roomRepository;
+            _attributeRepository = attributeRepository;
             _signInLogic = signInLogic;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
@@ -591,7 +595,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool isSpecialNeeds = false)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -610,14 +614,20 @@ namespace SignInCheckIn.Services
                 }
             };
 
-            if (isSpecialNeeds)
-            {
-                
-            }
-
             var newParticipant = _participantRepository.CreateParticipantWithContact(null, childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;
             newParticipant.GradeGroupAttributeId = gradeGroupId;
+
+            if (isSpecialNeeds == true)
+            {
+                var newSpecialNeedsAttribute = new MpContactAttributeDto()
+                {
+                    Contact_ID = newParticipant.Contact.ContactId,
+                    Attribute_ID = _applicationConfiguration.SpecialNeedsAttributeId
+
+                };
+                _attributeRepository.CreateContactAttribute(newSpecialNeedsAttribute);
+            }
 
             return newParticipant;
         }

@@ -272,7 +272,7 @@ namespace SignInCheckIn.Controllers
                 try
                 {
                    var participants = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
-                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId);
+                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, false);
                    // PublishSignedInParticipantsToRooms(participants);
                    return Ok();
                 }

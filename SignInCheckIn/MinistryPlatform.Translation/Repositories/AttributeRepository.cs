@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Crossroads.Web.Common.MinistryPlatform;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 
@@ -38,16 +39,13 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken ?? _apiUserRepository.GetToken()).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
         }
 
-        public MpAttributeDto CreateAttribute(MpAttributeDto attribute)
+        public MpContactAttributeDto CreateContactAttribute(MpContactAttributeDto attribute)
         {
             var token = _apiUserRepository.GetToken();
             var attributeColumns = new List<string>
                     {
-                        "Attribute_Name",
-                        "Attribute_Category_ID",
-                        "Attribute_Type_ID",
-                        "PreventMultipleSelection",
-                        "Sort_Order"
+                        "Contact_ID",
+                        "Attribute_ID"
                     };   
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(attribute, attributeColumns);
         }
