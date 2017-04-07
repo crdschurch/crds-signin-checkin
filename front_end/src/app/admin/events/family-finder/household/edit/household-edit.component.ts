@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 
 import { ApiService } from '../../../../../shared/services';
 import { HeaderService } from '../../../../header/header.service';
@@ -11,9 +12,10 @@ import { Household } from '../../../../../shared/models';
   templateUrl: 'household-edit.component.html'
 })
 export class HouseholdEditComponent implements OnInit {
+  private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
+  private processing: boolean;
   private eventId: number;
   private householdId: number;
-  private processing: boolean;
   private household: Household = new Household();
 
   constructor( private apiService: ApiService,
@@ -22,7 +24,7 @@ export class HouseholdEditComponent implements OnInit {
                private headerService: HeaderService) {}
 
  ngOnInit() {
-   this.processing = true;
+   this.processing = false;
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
 
@@ -34,4 +36,13 @@ export class HouseholdEditComponent implements OnInit {
       this.household = household;
    }, error => console.error(error));
  }
+
+  onPhoneBlur(e, household) {
+    try {
+      if (household.HomePhone.indexOf('_') > -1) {
+        e.target.value = '';
+        household.HomePhone = undefined;
+      }
+    } catch (e) { }
+  }
 }
