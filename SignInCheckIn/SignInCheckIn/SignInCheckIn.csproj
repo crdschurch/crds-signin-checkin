@@ -262,6 +262,8 @@
     <Compile Include="Security\MPAuth.cs" />
     <Compile Include="Services\ChildCheckinService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
+    <Compile Include="Services\LookupService.cs" />
+    <Compile Include="Services\Interfaces\ILookupService.cs" />
     <Compile Include="Services\Interfaces\ISiteService.cs" />
     <Compile Include="Services\SiteService.cs" />
     <Compile Include="Services\WebsocketService.cs" />
