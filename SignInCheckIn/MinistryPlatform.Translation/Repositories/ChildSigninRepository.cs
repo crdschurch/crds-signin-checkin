@@ -33,6 +33,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"Include_Other_Household", includeOtherHousehold},
             };
 
+            // JPC - would need to pass in the event ids here, or call a different proc
             var spResults =
                 _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
             var result = new MpHouseholdParticipantsDto();
@@ -54,12 +55,21 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, int eventId)
         {
-            if (householdId == null) return new List<MpParticipantDto>();
+            if (householdId == null)
+            {
+                return new List<MpParticipantDto>();
+            }
+                
             var children = GetChildParticipantsByPrimaryHousehold(householdId);
             GetChildParticipantsByOtherHousehold(householdId, children);
             var eventGroups = GetEventGroups(eventId);
             children = GetOnlyKidsClubChildren(children, eventGroups);
-            if (children.Count == 0) return new List<MpParticipantDto>();
+
+            if (children.Count == 0)
+            {
+                return new List<MpParticipantDto>();
+            }
+
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
@@ -249,6 +259,15 @@ namespace MinistryPlatform.Translation.Repositories
 
             var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
 	        return participants;
+        }
+
+        public MpHouseholdParticipantsDto GetChildrenByPhoneNumberAndGroupIds(string phoneNumber, List<int> groupIds, bool includeOtherHousehold = true)
+        {
+
+
+
+
+            return null;
         }
     }
 }
