@@ -14,7 +14,7 @@ export class HouseholdEditComponent implements OnInit {
   private eventId: number;
   private householdId: number;
   private processing: boolean;
-  private household: Household;
+  private household: Household = new Household();
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
