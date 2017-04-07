@@ -16,3 +16,5 @@ export { NewParent } from './new-parent';
 export { NewChild } from './new-child';
 export { NewFamily } from './new-family';
 export { Guest } from './guest';
+export { State } from './state';
+export { Country } from './country';
