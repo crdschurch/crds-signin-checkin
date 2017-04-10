@@ -14,7 +14,8 @@ import { Household, State, Country } from '../../../../../shared/models';
 export class HouseholdEditComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
   private loading: boolean;
-  private processing: boolean;
+  private processing1: boolean;
+  private processing2: boolean;
   private eventId: number;
   private householdId: number;
   private household: Household = new Household();
@@ -29,7 +30,8 @@ export class HouseholdEditComponent implements OnInit {
 
  ngOnInit() {
    this.loading = true;
-   this.processing = false;
+   this.processing1 = false;
+   this.processing2 = false;
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
 
@@ -70,26 +72,26 @@ export class HouseholdEditComponent implements OnInit {
 
   onSubmit(form: NgForm) {
     if (form.valid) {
-      this.processing = true;
+      this.processing1 = true;
       this.adminService.updateHousehold(this.household).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
-        this.processing = false;
+        this.processing1 = false;
       }, (error) => {
         this.rootService.announceEvent('generalError');
-        this.processing = false;
+        this.processing1 = false;
       });
     }
   }
 
   onSave(form: NgForm) {
     if (form.valid) {
-      this.processing = true;
+      this.processing2 = true;
       this.adminService.updateHousehold(this.household).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
-        this.processing = false;
+        this.processing2 = false;
       }, (error) => {
         this.rootService.announceEvent('generalError');
-        this.processing = false;
+        this.processing2 = false;
       });
     }
   }
