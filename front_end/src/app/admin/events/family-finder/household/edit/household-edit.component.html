@@ -16,13 +16,13 @@
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="firstName" class="control-label">Street</label>
-              <input type="text" class="form-control" name="addressLine1" [(ngModel)]="household.AddressId.AddressLine1" #addressLine1="ngModel" required>
+              <input type="text" class="form-control" name="addressLine1" [(ngModel)]="household.AddressLine1" #addressLine1="ngModel" required>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6">
             <div class="form-group">
               <label for="lastName" class="control-label">Street 2</label>
-              <input type="text" class="form-control" name="addressLine2" [(ngModel)]="household.AddressId.AddressLine2" #addressLine2="ngModel">
+              <input type="text" class="form-control" name="addressLine2" [(ngModel)]="household.AddressLine2" #addressLine2="ngModel">
             </div>
           </div>
         </div>
@@ -31,7 +31,7 @@
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="firstName" class="control-label">City</label>
-              <input type="text" class="form-control" name="city" [(ngModel)]="household.AddressId.City" #city="ngModel" required>
+              <input type="text" class="form-control" name="city" [(ngModel)]="household.City" #city="ngModel" required>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6">
@@ -39,7 +39,7 @@
               <label for="lastName" class="control-label">State</label>
               <select class="form-control" (change)="updateState($event.target.value)" required>
                 <option value="">Select a State</option>
-                <option *ngFor="let state of states;" value="{{state.StateAbbreviation}}" [selected]="state.StateAbbreviation === household.AddressId.State">{{ state.StateName }}</option>
+                <option *ngFor="let state of states;" value="{{state.StateAbbreviation}}" [selected]="state.StateAbbreviation === household.State">{{ state.StateName }}</option>
               </select>
             </div>
           </div>
@@ -50,13 +50,13 @@
           <div class="col-xs-12 col-sm-6">
             <div class="form-group required">
               <label for="firstName" class="control-label">Zip</label>
-              <input type="text" class="form-control" name="zipCode" [(ngModel)]="household.AddressId.ZipCode" #zipCode="ngModel" required>
+              <input type="text" class="form-control" name="zipCode" [(ngModel)]="household.ZipCode" #zipCode="ngModel" required>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6">
             <div class="form-group">
               <label for="lastName" class="control-label">County</label>
-              <input type="text" class="form-control" name="county" [(ngModel)]="household.AddressId.County" #county="ngModel">
+              <input type="text" class="form-control" name="county" [(ngModel)]="household.County" #county="ngModel">
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@
               <label for="firstName" class="control-label">Country</label>
               <select class="form-control" (change)="updateCountry($event.target.value)" required>
                 <option value="">Select a Country</option>
-                <option *ngFor="let country of countries;" value="{{country.Code3}}" [selected]="country.Code3 === household.AddressId.CountryCode">{{ country.Country }}</option>
+                <option *ngFor="let country of countries;" value="{{country.Code3}}" [selected]="country.Code3 === household.CountryCode">{{ country.Country }}</option>
               </select>            </div>
           </div>
         </div>
