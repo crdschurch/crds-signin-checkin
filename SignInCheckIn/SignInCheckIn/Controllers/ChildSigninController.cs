@@ -11,6 +11,7 @@ using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
+using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json.Linq;
 
 namespace SignInCheckIn.Controllers
@@ -272,10 +273,14 @@ namespace SignInCheckIn.Controllers
                 try
                 {
                    int gradeGroupId = 9033;
-                   var participants = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
+                   var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
                        newFamilyContactDto.DateOfBirth, gradeGroupId, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
-                   // PublishSignedInParticipantsToRooms(participants);
-                   return Ok();
+                    var newParticipants = new List<MpNewParticipantDto>()
+                    {
+                        participant
+                    };
+                    _childSigninService.CreateGroupParticipants(token, newParticipants);
+                    return Ok();
                 }
                 catch (Exception e)
                 {
