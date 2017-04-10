@@ -595,7 +595,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = 0)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -610,13 +610,22 @@ namespace SignInCheckIn.Services
                     HouseholdId = householdId,
                     HouseholdPositionId = householdPositionId,
                     Company = false,
-                    DateOfBirth = dateOfBirth
+                    DateOfBirth = dateOfBirth,
+                    GenderId = genderId.Value
                 }
             };
 
+            if (genderId.HasValue && genderId.Value > 0)
+            {
+                childNewParticipantDto.Contact.GenderId = genderId.Value;
+            }
+
             var newParticipant = _participantRepository.CreateParticipantWithContact(null, childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;
-            newParticipant.GradeGroupAttributeId = gradeGroupId;
+            if (gradeGroupId.HasValue && gradeGroupId > 0)
+            {
+                newParticipant.GradeGroupAttributeId = gradeGroupId;
+            }
 
             if (isSpecialNeeds == true)
             {

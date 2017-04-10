@@ -92,7 +92,8 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Participants.Participant_ID",
                 "Participants.Participant_Type_ID",
-                "Participants.Participant_Start_Date"
+                "Participants.Participant_Start_Date",
+                "Contact_ID_Table.[Contact_ID] AS [Participant_Contact_ID]"
             };
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
