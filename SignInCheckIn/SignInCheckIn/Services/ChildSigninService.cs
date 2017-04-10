@@ -84,13 +84,24 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
+        // mod this to include the lookup for MSM/HSM
         public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false)
-
         {
             // this will have to check if it's a childcare event
             var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
 
-            var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, true);
+            //if (new)
+            var eventSpecificGroupIds = GetGroupIdsByEventTypeId(eventDto.EventTypeId);
+            MpHouseholdParticipantsDto household;
+
+            if (eventSpecificGroupIds.Count == 0)
+            {
+                household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, true);
+            }
+            else
+            {
+                household = _childSigninRepository.GetChildrenByPhoneNumberAndGroupIds(phoneNumber, eventSpecificGroupIds, true);
+            }
 
             if (!household.HouseholdId.HasValue && household.HouseholdId != 0)
             {
@@ -128,6 +139,50 @@ namespace SignInCheckIn.Services
 
             return participantEventMapDto;
         }
+
+        // this is a super specific and hardcoded function - we may want to consider adding a table
+        // or some other form of lookup to handle this in the future - we could theoretically
+        // get the group ids by the event groups on an event, but this might be complicated by having
+        // groups we're not accounting for
+        private List<int> GetGroupIdsByEventTypeId(int eventTypeId)
+        {
+            if (eventTypeId == _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId)
+            {
+                return new List<int>
+                {
+                    _applicationConfiguration.MsmSixth,
+                    _applicationConfiguration.MsmSeventh,
+                    _applicationConfiguration.MsmEighth
+                };
+            }
+
+            if (eventTypeId == _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
+            {
+                return new List<int>
+                {
+                    _applicationConfiguration.HighSchoolNinth,
+                    _applicationConfiguration.HighSchoolTenth,
+                    _applicationConfiguration.HighSchoolEleventh,
+                    _applicationConfiguration.HighSchoolTwelfth
+                };
+            }
+
+            if (eventTypeId == _applicationConfiguration.BigEventTypeId)
+            {
+                return new List<int>
+                {
+                    _applicationConfiguration.MsmSixth,
+                    _applicationConfiguration.MsmSeventh,
+                    _applicationConfiguration.MsmEighth,
+                    _applicationConfiguration.HighSchoolNinth,
+                    _applicationConfiguration.HighSchoolTenth,
+                    _applicationConfiguration.HighSchoolEleventh,
+                    _applicationConfiguration.HighSchoolTwelfth
+                };
+            }
+
+            return new List<int>();
+        } 
 
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
