@@ -176,15 +176,18 @@ namespace SignInCheckIn.Services
                     continue;
                 }
 
-                if (eventRoom.AllowSignIn == false)
-                {
-                    // if the room is closed, set capacity status on participant
-                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.CapacityParticipationStatusId);
-                    mpEventParticipantRecords.Add(mpEventParticipantDto);
-                    continue;
-                }
+                //// JPC - this means we should drop directly into bumping rules if the room is closed -- left in place for reference in case
+                //// the old ways are determined to be best
+                //if (eventRoom.AllowSignIn == false)
+                //{
+                //    // if the room is closed, set capacity status on participant
+                //    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.CapacityParticipationStatusId);
+                //    mpEventParticipantRecords.Add(mpEventParticipantDto);
+                //    continue;
+                //}
 
-                if (eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn))
+                // run bumping rules on closed rooms now
+                if ((eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn)) && eventRoom.AllowSignIn == true)
                 {
                     var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, eventRoom.EventId, eventRoom.RoomId, _applicationConfiguration.SignedInParticipationStatusId);
                     mpEventParticipantRecords.Add(mpEventParticipantDto);
