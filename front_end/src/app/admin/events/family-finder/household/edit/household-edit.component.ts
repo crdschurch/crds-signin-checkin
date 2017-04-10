@@ -87,7 +87,7 @@ export class HouseholdEditComponent implements OnInit {
     if (form.valid) {
       this.processing = true;
       this.adminService.updateHousehold(this.household).subscribe((res) => {
-        this.rootService.announceEvent('echeckNewFamilyCreated');
+        this.rootService.announceEvent('echeckFamilyFinderHouseholdUpdateSuccessful');
         this.processing = false;
       }, (error) => {
         this.rootService.announceEvent('generalError');
