@@ -417,6 +417,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 "Households.[Household_ID]",
                 "Households.[Household_Name]",
+                "Household_Source_ID_Table.[Household_Source_ID]",
+                "Congregation_ID_Table.[Congregation_ID]",
                 "Address_ID_Table.[Address_Line_1]",
                 "Address_ID_Table.[Address_Line_2]",
                 "Address_ID_Table.[City]",
@@ -458,6 +460,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 "Households.[Household_ID]",
                 "Households.[Household_Name]",
+                "Household_Source_ID_Table.[Household_Source_ID]",
+                "Congregation_ID_Table.[Congregation_ID]",
                 "Address_ID_Table.[Address_Line_1]",
                 "Address_ID_Table.[Address_Line_2]",
                 "Address_ID_Table.[City]",
