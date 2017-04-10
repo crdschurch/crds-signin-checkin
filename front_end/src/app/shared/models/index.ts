@@ -18,4 +18,3 @@ export { NewFamily } from './new-family';
 export { Guest } from './guest';
 export { State } from './state';
 export { Country } from './country';
-export { Address } from './address';

@@ -61,11 +61,11 @@ export class HouseholdEditComponent implements OnInit {
   }
 
   updateState(newState) {
-    this.household.AddressId.State = newState;
+    this.household.State = newState;
   }
 
   updateCountry(newCountry) {
-    this.household.AddressId.CountryCode = newCountry;
+    this.household.CountryCode = newCountry;
   }
 
   onSubmit(form: NgForm) {
