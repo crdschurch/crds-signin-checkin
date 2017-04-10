@@ -39,7 +39,7 @@ namespace SignInCheckIn.Tests.Services
 
         private static int ChildcareEventTypeId = 243;
         private static int ChildcareGroupTypeId = 27;
-        private static int MiddleSchoolEventTypeId = 402;
+        private static int MiddleSchoolEventTypeId = 398;
 
         [SetUp]
         public void SetUp()

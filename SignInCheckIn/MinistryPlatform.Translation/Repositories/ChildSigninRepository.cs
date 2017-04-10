@@ -34,7 +34,6 @@ namespace MinistryPlatform.Translation.Repositories
                 {"Include_Other_Household", includeOtherHousehold},
             };
 
-            // JPC - would need to pass in the event ids here, or call a different proc
             var spResults =
                 _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
             var result = new MpHouseholdParticipantsDto();
@@ -271,7 +270,6 @@ namespace MinistryPlatform.Translation.Repositories
                 {"Include_Other_Household", includeOtherHousehold}
             };
 
-            // JPC - would need to pass in the event ids here, or call a different proc
             var spResults =
                 _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(MSMSigninSearchStoredProcName, parms);
             var result = new MpHouseholdParticipantsDto();
