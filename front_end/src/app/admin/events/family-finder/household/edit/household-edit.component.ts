@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
-import { ApiService } from '../../../../../shared/services';
+import { ApiService, RootService } from '../../../../../shared/services';
 import { HeaderService } from '../../../../header/header.service';
 import { AdminService } from '../../../../admin.service';
 import { Household, State, Country } from '../../../../../shared/models';
@@ -13,6 +13,7 @@ import { Household, State, Country } from '../../../../../shared/models';
 })
 export class HouseholdEditComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
+  private loading: boolean;
   private processing: boolean;
   private eventId: number;
   private householdId: number;
@@ -23,9 +24,11 @@ export class HouseholdEditComponent implements OnInit {
   constructor( private apiService: ApiService,
                private adminService: AdminService,
                private route: ActivatedRoute,
-               private headerService: HeaderService) {}
+               private headerService: HeaderService,
+               private rootService: RootService) {}
 
  ngOnInit() {
+   this.loading = true;
    this.processing = false;
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
@@ -42,6 +45,7 @@ export class HouseholdEditComponent implements OnInit {
 
         this.adminService.getHouseholdInformation(this.householdId).subscribe((household) => {
          this.household = household;
+         this.loading = false;
         }, error => console.error(error));
      }, error => console.error(error));
    }, error => console.error(error));
@@ -54,5 +58,39 @@ export class HouseholdEditComponent implements OnInit {
         household.HomePhone = undefined;
       }
     } catch (e) { }
+  }
+
+  updateState(newState) {
+    this.household.AddressId.State = newState;
+  }
+
+  updateCountry(newCountry) {
+    this.household.AddressId.CountryCode = newCountry;
+  }
+
+  onSubmit(form: NgForm) {
+    if (form.valid) {
+      this.processing = true;
+      this.adminService.updateHousehold(this.household).subscribe((res) => {
+        this.rootService.announceEvent('echeckNewFamilyCreated');
+        this.processing = false;
+      }, (error) => {
+        this.rootService.announceEvent('generalError');
+        this.processing = false;
+      });
+    }
+  }
+
+  onSave(form: NgForm) {
+    if (form.valid) {
+      this.processing = true;
+      this.adminService.updateHousehold(this.household).subscribe((res) => {
+        this.rootService.announceEvent('echeckNewFamilyCreated');
+        this.processing = false;
+      }, (error) => {
+        this.rootService.announceEvent('generalError');
+        this.processing = false;
+      });
+    }
   }
 }
