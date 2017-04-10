@@ -242,5 +242,58 @@ namespace MinistryPlatform.Translation.Repositories
 
             return contacts;
         }
+
+        public MpHouseholdDto GetHouseholdByHouseholdId(string token, int householdID)
+        {
+            var columns = new List<string>
+            {
+                "Households.[Household_ID]",
+                "Households.[Household_Name]",
+                "Household_Source_ID_Table.[Household_Source_ID]",
+                "Congregation_ID_Table.[Congregation_ID]",
+                "Address_ID_Table.[Address_ID]",
+                "Address_ID_Table.[Address_Line_1]",
+                "Address_ID_Table.[Address_Line_2]",
+                "Address_ID_Table.[City]",
+                "Address_ID_Table.[State/Region] as State",
+                "Address_ID_Table.[Postal_Code]",
+                "Address_ID_Table.[County]",
+                "Address_ID_Table.[Country_Code]",
+                "Households.[Home_Phone]"
+            };
+
+            var household = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
+                 Get<MpHouseholdDto>(householdID, columns);
+
+            return household;
+        }
+
+        public void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto)
+        {
+            var columns = new List<string>
+            {
+                "Households.[Household_ID]"
+            };
+
+            var columns2 = new List<string>
+            {
+                "Addresses.[Address_ID]"
+            };
+
+            var address = new MpAddressDto
+            {
+                AddressId = householdDto.AddressId,
+                AddressLine1 = householdDto.AddressLine1,
+                AddressLine2 = householdDto.AddressLine2,
+                City = householdDto.City,
+                State = householdDto.State,
+                ZipCode = householdDto.ZipCode,
+                County = householdDto.County,
+                CountryCode = householdDto.CountryCode,
+            };
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, columns2);
+        }
     }
 }

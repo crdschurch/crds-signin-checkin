@@ -214,5 +214,17 @@ namespace SignInCheckIn.Services
             var result = _participantRepository.GetFamiliesForSearch(token, search);
             return result.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
         }
+
+        public HouseholdDto GetHouseholdByHouseholdId(string token, int householdId)
+        {
+            var result = _participantRepository.GetHouseholdByHouseholdId(token, householdId);
+            return Mapper.Map<MpHouseholdDto, HouseholdDto>(result);
+        }
+
+        public void UpdateHouseholdInformation(string token, HouseholdDto householdDto)
+        {
+            var mpHouseholdDto = Mapper.Map<HouseholdDto, MpHouseholdDto>(householdDto);
+            _participantRepository.UpdateHouseholdInformation(token, mpHouseholdDto);
+        }
     }
 }

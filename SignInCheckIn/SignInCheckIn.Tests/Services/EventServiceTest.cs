@@ -437,5 +437,47 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(result[1].LastName, contacts[1].LastName);
             Assert.AreEqual(result[1].HouseholdId, contacts[1].HouseholdId);
         }
+
+        [Test]
+        public void ItShouldGetHouseholdByHouseholdId()
+        {
+            // Arrange
+            var token = "123abc";
+            var householdId = 123;
+
+            var household = new MpHouseholdDto()
+            {
+                HouseholdId = 123,
+                HouseholdName = "Test"
+            };
+
+            _participantRepository.Setup(m => m.GetHouseholdByHouseholdId(token, householdId)).Returns(household);
+
+            var result = _fixture.GetHouseholdByHouseholdId(token, householdId);
+
+            // Assert
+            Assert.AreEqual(result.HouseholdId, household.HouseholdId);
+            Assert.AreEqual(result.HouseholdName, household.HouseholdName);
+        }
+
+        [Test]
+        public void ItShouldUpdateHouseholdInformation()
+        {
+            // Arrange
+            var token = "123abc";
+
+            var householdDto = new HouseholdDto
+            {
+                HouseholdId = 123,
+                HouseholdName = "TestUser1"
+            };
+
+            _participantRepository.Setup(m => m.UpdateHouseholdInformation(token, It.IsAny<MpHouseholdDto>()));
+
+            _fixture.UpdateHouseholdInformation(token, householdDto);
+
+            // Assert
+            _participantRepository.VerifyAll();
+        }
     }
 }
