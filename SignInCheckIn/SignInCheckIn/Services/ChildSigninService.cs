@@ -91,7 +91,7 @@ namespace SignInCheckIn.Services
             var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
 
             //if (new)
-            var eventSpecificGroupIds = GetGroupIdsByEventTypeId(existingEventDto.EventTypeId);
+            var eventSpecificGroupIds = GetGroupIdsByEventTypeId(eventDto.EventTypeId);
             MpHouseholdParticipantsDto household;
 
             if (eventSpecificGroupIds.Count == 0)

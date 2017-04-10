@@ -15,6 +15,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApplicationConfiguration _applicationConfiguration;
 
         private const string ChildSigninSearchStoredProcName = "api_crds_Child_Signin_Search";
+        private const string MSMSigninSearchStoredProcName = "api_crds_Groups_Signin_Search";
 
         public ChildSigninRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository,
@@ -263,11 +264,31 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpHouseholdParticipantsDto GetChildrenByPhoneNumberAndGroupIds(string phoneNumber, List<int> groupIds, bool includeOtherHousehold = true)
         {
+            var parms = new Dictionary<string, object>
+            {
+                {"Phone_Number", phoneNumber},
+                {"GroupIds", string.Join(",", groupIds.Select(x => x)) },
+                {"Include_Other_Household", includeOtherHousehold}
+            };
 
+            // JPC - would need to pass in the event ids here, or call a different proc
+            var spResults =
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(MSMSigninSearchStoredProcName, parms);
+            var result = new MpHouseholdParticipantsDto();
 
+            // This check indicates that no household was found
+            if (spResults == null || !spResults.Any() || spResults.Count < 2)
+            {
+                return result;
+            }
 
+            // The first result is the household ID for the given phone number
+            result.HouseholdId = spResults[0] != null && spResults[0].Any() ? spResults[0].First().HouseholdId : (int?)null;
 
-            return null;
+            // The second result is the list of kids
+            result.Participants = spResults[1];
+
+            return result;
         }
     }
 }
