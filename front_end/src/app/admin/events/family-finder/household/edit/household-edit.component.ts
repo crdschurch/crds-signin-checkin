@@ -70,10 +70,10 @@ export class HouseholdEditComponent implements OnInit {
   }
 
   onSave(form: NgForm) {
-    if (form.valid) {
+    if (form.valid && form.dirty) {
       this.processing = true;
       this.adminService.updateHousehold(this.household).subscribe((res) => {
-        this.rootService.announceEvent('echeckNewFamilyCreated');
+        this.rootService.announceEvent('echeckFamilyFinderHouseholdUpdateSuccessful');
         this.processing = false;
         this.router.navigate(['/admin/events', this.eventId, 'family-finder', this.householdId]);
       }, (error) => {
@@ -84,7 +84,7 @@ export class HouseholdEditComponent implements OnInit {
   }
 
   onSubmit(form: NgForm) {
-    if (form.valid) {
+    if (form.valid && form.dirty) {
       this.processing = true;
       this.adminService.updateHousehold(this.household).subscribe((res) => {
         this.rootService.announceEvent('echeckFamilyFinderHouseholdUpdateSuccessful');

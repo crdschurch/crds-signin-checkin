@@ -53,8 +53,9 @@ describe('HouseholdComponent', () => {
 
   describe('#onSubmit', () => {
     it('should submit data', () => {
-      let form = jasmine.createSpyObj('form', ['valid']);
+      let form = jasmine.createSpyObj('form', ['valid', 'dirty']);
       (<jasmine.Spy>(form.valid)).and.returnValue(true);
+      (<jasmine.Spy>(form.dirty)).and.returnValue(true);
       fixture.onSubmit(form);
       expect(fixture.adminService.updateHousehold).toHaveBeenCalledWith(fixture.household);
     });
@@ -62,8 +63,9 @@ describe('HouseholdComponent', () => {
 
   describe('#onSave', () => {
     it('should save data', () => {
-      let form = jasmine.createSpyObj('form', ['valid']);
+      let form = jasmine.createSpyObj('form', ['valid', 'dirty']);
       (<jasmine.Spy>(form.valid)).and.returnValue(true);
+      (<jasmine.Spy>(form.dirty)).and.returnValue(true);
       fixture.onSave(form);
       expect(fixture.adminService.updateHousehold).toHaveBeenCalledWith(fixture.household);
     });
