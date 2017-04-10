@@ -464,7 +464,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var columns2 = new List<string>
             {
-                "Address_ID_Table.[Address_ID]"
+                "Addresses.[Address_ID]"
             };
 
             var mpUpdatedHouseholdDto = new MpHouseholdDto

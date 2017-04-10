@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MinistryPlatform.Translation.Models.DTO
 {
-    [MpRestApiTable(Name = "Address")]
+    [MpRestApiTable(Name = "Addresses")]
     public class MpAddressDto
     {
         [JsonProperty(PropertyName = "Address_ID")]
