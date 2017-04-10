@@ -6,7 +6,14 @@ export class Household {
   HouseholdName: string;
   CongregationId: number;
   HouseholdSourceId: number;
-  AddressId: Address;
+  AddressId: number;
+  AddressLine1: string;
+  AddressLine2: string;
+  City: string;
+  State: string;
+  ZipCode: string;
+  County: string;
+  CountryCode: string;
 
  static fromJson(json: any): Household {
     let h = new Household();
