@@ -271,8 +271,9 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
+                   int gradeGroupId = 9033;
                    var participants = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
-                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
+                       newFamilyContactDto.DateOfBirth, gradeGroupId, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
                    // PublishSignedInParticipantsToRooms(participants);
                    return Ok();
                 }

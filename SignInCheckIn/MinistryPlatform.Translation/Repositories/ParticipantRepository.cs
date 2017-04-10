@@ -84,9 +84,9 @@ namespace MinistryPlatform.Translation.Repositories
             return children;
         }
 
-        public MpNewParticipantDto CreateParticipantWithContact(string authenticationToken, MpNewParticipantDto mpNewParticipantDto)
+        public MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = _apiUserRepository.GetToken();
 
             List<string> participantColumns = new List<string>
             {
@@ -95,6 +95,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Participants.Participant_Start_Date",
                 "Contact_ID_Table.[Contact_ID] AS [Participant_Contact_ID]"
             };
+
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
         }
