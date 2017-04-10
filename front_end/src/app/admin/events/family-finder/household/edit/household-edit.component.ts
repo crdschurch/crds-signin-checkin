@@ -14,8 +14,7 @@ import { Household, State, Country } from '../../../../../shared/models';
 export class HouseholdEditComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
   private loading: boolean;
-  private processing1: boolean;
-  private processing2: boolean;
+  private processing: boolean;
   private eventId: number;
   private householdId: number;
   private household: Household = new Household();
@@ -26,12 +25,12 @@ export class HouseholdEditComponent implements OnInit {
                private adminService: AdminService,
                private route: ActivatedRoute,
                private headerService: HeaderService,
-               private rootService: RootService) {}
+               private rootService: RootService,
+               private router: Router) {}
 
  ngOnInit() {
    this.loading = true;
-   this.processing1 = false;
-   this.processing2 = false;
+   this.processing = false;
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
 
@@ -70,28 +69,29 @@ export class HouseholdEditComponent implements OnInit {
     this.household.CountryCode = newCountry;
   }
 
-  onSubmit(form: NgForm) {
+  onSave(form: NgForm) {
     if (form.valid) {
-      this.processing1 = true;
+      this.processing = true;
       this.adminService.updateHousehold(this.household).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
-        this.processing1 = false;
+        this.processing = false;
+        this.router.navigate(['/admin/events', this.eventId, 'family-finder', this.householdId]);
       }, (error) => {
         this.rootService.announceEvent('generalError');
-        this.processing1 = false;
+        this.processing = false;
       });
     }
   }
 
-  onSave(form: NgForm) {
+  onSubmit(form: NgForm) {
     if (form.valid) {
-      this.processing2 = true;
+      this.processing = true;
       this.adminService.updateHousehold(this.household).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
-        this.processing2 = false;
+        this.processing = false;
       }, (error) => {
         this.rootService.announceEvent('generalError');
-        this.processing2 = false;
+        this.processing = false;
       });
     }
   }

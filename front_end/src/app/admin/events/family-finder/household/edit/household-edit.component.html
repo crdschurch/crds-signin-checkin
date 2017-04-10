@@ -91,11 +91,11 @@
         <div class="row">
           <div class="col-xs-12 mb-3">
             <div class="float-sm-left">
-              <a class="btn btn-default btn-sm" [routerLink]="['search']">Cancel</a>
+              <button type="button" class="btn btn-default btn-sm" [disabled]="processing" [routerLink]="['/admin/events', eventId, 'family-finder']">Cancel</button>
             </div>
             <div class="float-sm-right">
-              <loading-button buttonType="submit" buttonClasses="btn btn-info float-xs-right save" normalText="Save and View Children" loadingText="Saving..." [loading]="processing1"></loading-button>
-              <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Save" loadingText="Saving..." [loading]="processing2"></loading-button>
+              <button type="button" class="btn btn-info float-xs-right" [disabled]="processing" (click)="onSave(updateFamilyForm)">Save and View Children</button>
+              <button type="submit" style="margin-right: 8px;" class="btn btn-primary float-xs-right" [disabled]="processing" >Save</button>
             </div>
           </div>
         </div>

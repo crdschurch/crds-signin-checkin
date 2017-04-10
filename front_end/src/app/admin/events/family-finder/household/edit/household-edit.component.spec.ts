@@ -8,7 +8,7 @@ const householdId = 1231;
 const participantId = 6542;
 
 let apiService = jasmine.createSpyObj('apiService', ['getEvent']);
-let adminService = jasmine.createSpyObj('adminService', ['getHouseholdInformation', 'getStates', 'getCountries']);
+let adminService = jasmine.createSpyObj('adminService', ['getHouseholdInformation', 'getStates', 'getCountries', 'updateHousehold']);
 let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let router = jasmine.createSpyObj<Router>('router', ['navigate']);
@@ -36,9 +36,10 @@ describe('HouseholdComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getHouseholdInformation)).and.returnValue(Observable.of(household));
+    (<jasmine.Spy>(adminService.updateHousehold)).and.returnValue(Observable.of(household));
     (<jasmine.Spy>(adminService.getStates)).and.returnValue(Observable.of(states));
     (<jasmine.Spy>(adminService.getCountries)).and.returnValue(Observable.of(countries));
-    fixture = new HouseholdEditComponent(apiService, adminService, route, headerService, rootService);
+    fixture = new HouseholdEditComponent(apiService, adminService, route, headerService, rootService, router);
   });
 
   describe('#ngOnInit', () => {
@@ -47,6 +48,24 @@ describe('HouseholdComponent', () => {
       expect(fixture.household.HouseholdName).toEqual(household.HouseholdName);
       expect(fixture.states[0].StateId).toEqual(states[0].StateId);
       expect(fixture.countries[0].CountryId).toEqual(countries[0].CountryId);
+    });
+  });
+
+  describe('#onSubmit', () => {
+    it('should submit data', () => {
+      let form = jasmine.createSpyObj('form', ['valid']);
+      (<jasmine.Spy>(form.valid)).and.returnValue(true);
+      fixture.onSubmit(form);
+      expect(fixture.adminService.updateHousehold).toHaveBeenCalledWith(fixture.household);
+    });
+  });
+
+  describe('#onSave', () => {
+    it('should save data', () => {
+      let form = jasmine.createSpyObj('form', ['valid']);
+      (<jasmine.Spy>(form.valid)).and.returnValue(true);
+      fixture.onSave(form);
+      expect(fixture.adminService.updateHousehold).toHaveBeenCalledWith(fixture.household);
     });
   });
 });
