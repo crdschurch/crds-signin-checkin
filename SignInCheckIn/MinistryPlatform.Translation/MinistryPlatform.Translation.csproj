@@ -100,7 +100,6 @@
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
     <Compile Include="Models\DTO\MpCountyDto.cs" />
-    <Compile Include="Models\DTO\MpAddressDto.cs" />
     <Compile Include="Models\DTO\MpStateDto.cs" />
     <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
     <Compile Include="Models\DTO\MpGroupAttributeDto.cs" />
