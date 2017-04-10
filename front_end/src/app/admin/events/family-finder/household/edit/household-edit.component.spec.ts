@@ -9,6 +9,7 @@ const participantId = 6542;
 
 let apiService = jasmine.createSpyObj('apiService', ['getEvent']);
 let adminService = jasmine.createSpyObj('adminService', ['getHouseholdInformation', 'getStates', 'getCountries']);
+let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let router = jasmine.createSpyObj<Router>('router', ['navigate']);
 let route: ActivatedRoute = new ActivatedRoute();
@@ -37,7 +38,7 @@ describe('HouseholdComponent', () => {
     (<jasmine.Spy>(adminService.getHouseholdInformation)).and.returnValue(Observable.of(household));
     (<jasmine.Spy>(adminService.getStates)).and.returnValue(Observable.of(states));
     (<jasmine.Spy>(adminService.getCountries)).and.returnValue(Observable.of(countries));
-    fixture = new HouseholdEditComponent(apiService, adminService, route, headerService);
+    fixture = new HouseholdEditComponent(apiService, adminService, route, headerService, rootService);
   });
 
   describe('#ngOnInit', () => {
