@@ -46,7 +46,14 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id or Event Id is required");
                 }
 
-                var children = _childCheckinService.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventId);
+                string kioskId = "";
+
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskId = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var children = _childCheckinService.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventId, kioskId);
                 return Ok(children);
             }
             catch (Exception e)
