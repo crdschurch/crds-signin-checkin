@@ -550,7 +550,7 @@ namespace SignInCheckIn.Services
             };
 
             // parentNewParticipantDto.Contact.DateOfBirth = null;
-            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto);
+            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
 
             // Step 3 create the children contacts
             List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
