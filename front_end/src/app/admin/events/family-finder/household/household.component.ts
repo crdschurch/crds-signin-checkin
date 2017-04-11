@@ -111,6 +111,7 @@ export class HouseholdComponent implements OnInit {
    this._newContact = new Contact();
    this._newContact.IsSpecialNeeds = false;
    this._newContact.GenderId = Contact.genderIdMale();
+   this._newContact.HouseholdId = +this.householdId;
    modal.show();
  }
 
@@ -170,7 +171,7 @@ export class HouseholdComponent implements OnInit {
       if (+this.newContact.YearGrade < 1) {
         this.newContact.YearGrade = undefined;
       }
-      this.adminService.addFamilyMember(+this.householdId, this.newContact).subscribe(
+      this.adminService.addFamilyMember(this.newContact).subscribe(
         (response: EventParticipants) => {
           this.processingAddFamilyMember = false;
           this.getChildren();
