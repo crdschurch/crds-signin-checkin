@@ -109,8 +109,6 @@ export class HouseholdComponent implements OnInit {
  openNewFamilyMemberModal(modal) {
    this.guestDOB = new DateOfBirth();
    this._newContact = new Contact();
-   this._newContact.IsSpecialNeeds = false;
-   this._newContact.GenderId = Contact.genderIdMale();
    this._newContact.HouseholdId = +this.householdId;
    modal.show();
  }
@@ -154,20 +152,27 @@ export class HouseholdComponent implements OnInit {
 
 
  saveNewFamilyMember(modal) {
-  //  console.log('save modal', this.newContact)
   try {
     this.processingAddFamilyMember = true;
     this.newContact.FirstName.trim();
     this.newContact.LastName.trim();
   } finally {
     if (!this.newContact.FirstName || !this.newContact.LastName) {
+      this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
     } else if (!this.newContact.DateOfBirth || !moment(this.newContact.DateOfBirth).isValid()) {
+      this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
     } else if (this.newContact.YearGrade === -1) {
+      this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedValidGradeSelection');
+    } else if (this.newContact.GenderId !== Contact.genderIdMale() && this.newContact.GenderId !== Contact.genderIdFemale()) {
+      this.processingAddFamilyMember = false;
+      return this.rootService.announceEvent('echeckNeedValidGenderSelection');
+    } else if (this.newContact.IsSpecialNeeds === undefined) {
+      this.processingAddFamilyMember = false;
+      return this.rootService.announceEvent('echeckNeedSpecialNeedsSelection');
     } else {
-
       if (+this.newContact.YearGrade < 1) {
         this.newContact.YearGrade = undefined;
       }
