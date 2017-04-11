@@ -7,8 +7,8 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IChildSigninService
     {
-        ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId);
-        ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false);
+        ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId, string kioskId);
+        ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false, string kioskId = "");
         ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto);
         ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier, string token);
         ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier);

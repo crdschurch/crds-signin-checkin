@@ -16,16 +16,18 @@ namespace SignInCheckIn.Services
         private readonly IRoomRepository _roomRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IParticipantRepository _participantRepository;
+        private readonly IKioskRepository _kioskRepository;
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
 
         public EventService(IEventRepository eventRepository, IConfigRepository configRepository, IRoomRepository roomRepository,
-            IApplicationConfiguration applicationConfiguration, IParticipantRepository participantRepository)
+            IApplicationConfiguration applicationConfiguration, IParticipantRepository participantRepository, IKioskRepository kioskRepository)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _applicationConfiguration = applicationConfiguration;
             _participantRepository = participantRepository;
+            _kioskRepository = kioskRepository;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -46,14 +48,40 @@ namespace SignInCheckIn.Services
             return Mapper.Map<EventDto>(_eventRepository.GetEventById(eventId));
         }
 
-        public EventDto GetCurrentEventForSite(int siteId)
+        public EventDto GetCurrentEventForSite(int siteId, string kioskId = "")
         {
+            // load the kiosk id here...
+            List<int> eventTypeIds = new List<int>(); // = new List<int>();
+
+            var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId));
+
+            if (kioskConfig.KioskTypeId == _applicationConfiguration.StudentMinistryKioskTypeId)
+            {
+                eventTypeIds = new List<int>
+                {
+                    _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                    _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                    _applicationConfiguration.BigEventTypeId
+                };
+            }
+
             // look between midnights on the current day
             var eventOffsetStartString = DateTime.Now.ToShortDateString();
             var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
             var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
 
-            var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
+            List<MpEventDto> currentEvents;
+
+            if (!eventTypeIds.Any())
+            {
+                currentEvents =
+                    _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
+            }
+            else
+            {
+                currentEvents =
+                    _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId, false, eventTypeIds).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
+            }
 
             if (!currentEvents.Any())
             {

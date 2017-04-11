@@ -30,6 +30,8 @@ namespace Crossroads.Utilities.Services
         public int StudentMinistryGradesSixToEightEventTypeId { get; }
         public int StudentMinistryGradesNineToTwelveEventTypeId { get; }
 
+        public int StudentMinistryKioskTypeId { get; }
+
         public int BumpingRoomTypePriorityId { get; }
         public int BumpingRoomTypeVacancyId { get; }
 
@@ -317,6 +319,8 @@ namespace Crossroads.Utilities.Services
             BigEventTypeId = configurationWrapper.GetConfigIntValue("BigEventTypeId");
             StudentMinistryGradesSixToEightEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesSixToEightEventTypeId");
             StudentMinistryGradesNineToTwelveEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesNineToTwelveEventTypeId");
+
+            StudentMinistryKioskTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryKioskTypeId");
 
             BumpingRoomTypePriorityId = configurationWrapper.GetConfigIntValue("BumpingRoomTypePriorityId");
             BumpingRoomTypeVacancyId = configurationWrapper.GetConfigIntValue("BumpingRoomTypeVacancyId");

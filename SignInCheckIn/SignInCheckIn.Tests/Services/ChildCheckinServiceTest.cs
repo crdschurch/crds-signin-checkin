@@ -43,6 +43,7 @@ namespace SignInCheckIn.Tests.Services
         {
             var siteId = 1;
             var roomId = 321;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var eventDto = new EventDto
             {
@@ -85,11 +86,11 @@ namespace SignInCheckIn.Tests.Services
                 RoomId = roomId
             }; 
 
-            _eventService.Setup(m => m.GetCurrentEventForSite(It.IsAny<int>())).Returns(eventDto);
+            _eventService.Setup(m => m.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
-            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, null);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, null, kioskId);
             _childCheckinRepository.VerifyAll();
 
             // Assert
@@ -104,6 +105,7 @@ namespace SignInCheckIn.Tests.Services
         {
             var siteId = 1;
             var roomId = 321;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var eventDto = new EventDto
             {
@@ -150,7 +152,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
-            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId, kioskId);
             _childCheckinRepository.VerifyAll();
 
             // Assert
@@ -165,6 +167,7 @@ namespace SignInCheckIn.Tests.Services
         {
             var siteId = 1;
             var roomId = 321;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var eventDto = new EventDto
             {
@@ -211,7 +214,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
-            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId, kioskId);
             _childCheckinRepository.VerifyAll();
 
             // Assert
@@ -226,6 +229,7 @@ namespace SignInCheckIn.Tests.Services
         {
             var siteId = 1;
             var roomId = 321;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var eventDto = new EventDto
             {
@@ -272,7 +276,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
-            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId, kioskId);
             _childCheckinRepository.VerifyAll();
 
             // Assert
@@ -287,6 +291,7 @@ namespace SignInCheckIn.Tests.Services
         {
             var siteId = 1;
             var roomId = 321;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var eventDto = new EventDto
             {
@@ -333,7 +338,7 @@ namespace SignInCheckIn.Tests.Services
             _eventRepository.Setup(m => m.GetSubeventsForEvents(It.IsAny<List<int>>(), null)).Returns(subEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomDto);
             _childCheckinRepository.Setup(m => m.GetChildrenByEventAndRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(mpParticipantsDto);
-            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId);
+            var result = _fixture.GetChildrenForCurrentEventAndRoom(roomId, siteId, eventDto.EventId, kioskId);
             _childCheckinRepository.VerifyAll();
 
             // Assert
