@@ -15,6 +15,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApplicationConfiguration _applicationConfiguration;
 
         private const string ChildSigninSearchStoredProcName = "api_crds_Child_Signin_Search";
+        private const string MSMSigninSearchStoredProcName = "api_crds_Groups_Signin_Search";
 
         public ChildSigninRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository,
@@ -54,12 +55,21 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpParticipantDto> GetChildrenByHouseholdId(int? householdId, int eventId)
         {
-            if (householdId == null) return new List<MpParticipantDto>();
+            if (householdId == null)
+            {
+                return new List<MpParticipantDto>();
+            }
+                
             var children = GetChildParticipantsByPrimaryHousehold(householdId);
             GetChildParticipantsByOtherHousehold(householdId, children);
             var eventGroups = GetEventGroups(eventId);
             children = GetOnlyKidsClubChildren(children, eventGroups);
-            if (children.Count == 0) return new List<MpParticipantDto>();
+
+            if (children.Count == 0)
+            {
+                return new List<MpParticipantDto>();
+            }
+
             return children.Distinct(new MpParticipantDtoComparer()).ToList();
         }
 
@@ -249,6 +259,34 @@ namespace MinistryPlatform.Translation.Repositories
 
             var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
 	        return participants;
+        }
+
+        public MpHouseholdParticipantsDto GetChildrenByPhoneNumberAndGroupIds(string phoneNumber, List<int> groupIds, bool includeOtherHousehold = true)
+        {
+            var parms = new Dictionary<string, object>
+            {
+                {"Phone_Number", phoneNumber},
+                {"GroupIds", string.Join(",", groupIds.Select(x => x)) },
+                {"Include_Other_Household", includeOtherHousehold}
+            };
+
+            var spResults =
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(MSMSigninSearchStoredProcName, parms);
+            var result = new MpHouseholdParticipantsDto();
+
+            // This check indicates that no household was found
+            if (spResults == null || !spResults.Any() || spResults.Count < 2)
+            {
+                return result;
+            }
+
+            // The first result is the household ID for the given phone number
+            result.HouseholdId = spResults[0] != null && spResults[0].Any() ? spResults[0].First().HouseholdId : (int?)null;
+
+            // The second result is the list of kids
+            result.Participants = spResults[1];
+
+            return result;
         }
     }
 }

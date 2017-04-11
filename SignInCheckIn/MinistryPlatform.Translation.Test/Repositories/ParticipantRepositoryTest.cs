@@ -407,5 +407,94 @@ namespace MinistryPlatform.Translation.Test.Repositories
             Assert.AreEqual(result[1].LastName, contacts[1].LastName);
             Assert.AreEqual(result[1].HouseholdId, contacts[1].HouseholdId);
         }
+
+        [Test]
+        public void ShouldGetHousholdById()
+        {
+            // Arrange
+            var token = "123abc";
+            var householdId = 1234;
+
+            var columns = new List<string>
+            {
+                "Households.[Household_ID]",
+                "Households.[Household_Name]",
+                "Household_Source_ID_Table.[Household_Source_ID]",
+                "Congregation_ID_Table.[Congregation_ID]",
+                "Address_ID_Table.[Address_ID]",
+                "Address_ID_Table.[Address_Line_1]",
+                "Address_ID_Table.[Address_Line_2]",
+                "Address_ID_Table.[City]",
+                "Address_ID_Table.[State/Region] as State",
+                "Address_ID_Table.[Postal_Code]",
+                "Address_ID_Table.[County]",
+                "Address_ID_Table.[Country_Code]",
+                "Households.[Home_Phone]"
+            };
+
+            var household = new MpHouseholdDto
+            {
+                HouseholdId = 1234,
+                HouseholdName = "Dust"
+                
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpHouseholdDto>(householdId, columns)).Returns(household);
+
+            // Act
+            var result = _fixture.GetHouseholdByHouseholdId(token, householdId);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
+
+            Assert.AreEqual(result.HouseholdId, household.HouseholdId);
+            Assert.AreEqual(result.HouseholdName, household.HouseholdName);
+        }
+
+        [Test]
+        public void ItShouldUpdateHousehold()
+        {
+            // Arrange
+            string token = "123abc";
+
+            List<string> columns = new List<string>
+            {
+                "Households.[Household_ID]"
+            };
+
+            var columns2 = new List<string>
+            {
+                "Addresses.[Address_ID]"
+            };
+
+            var mpUpdatedHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdId = 123,
+                HouseholdName= "Test1",
+                AddressId = 123
+            };
+
+            var returnHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdId = 123
+            };
+
+            var returnAddressDto = new MpAddressDto
+            {
+                AddressId = 123
+            };
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(m => m.Update(mpUpdatedHouseholdDto, columns)).Returns(returnHouseholdDto);
+            _ministryPlatformRestRepository.Setup(m => m.Update(It.IsAny<MpAddressDto>(), columns2)).Returns(returnAddressDto);
+
+            // Act
+            _fixture.UpdateHouseholdInformation(token, mpUpdatedHouseholdDto);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
+        }
     }
 }

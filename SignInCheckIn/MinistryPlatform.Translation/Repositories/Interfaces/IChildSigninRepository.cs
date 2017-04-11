@@ -15,5 +15,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         [Obsolete("This should not be used, and should eventually be removed.  It was only needed when calling GetChildrenByHouseholdId, which is Obsolete.")]
         int? GetHouseholdIdByPhoneNumber(string phoneNumber);
+
+        MpHouseholdParticipantsDto GetChildrenByPhoneNumberAndGroupIds(string phoneNumber, List<int> groupIds, bool includeOtherHousehold = true);
     }
 }
