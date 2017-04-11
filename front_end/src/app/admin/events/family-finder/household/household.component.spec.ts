@@ -6,8 +6,8 @@ import { EventParticipants, Child } from '../../../../shared/models';
 const eventId = 4335;
 const householdId = 1231;
 const participantId = 6542;
-let apiService = jasmine.createSpyObj('apiService', ['getEvent']);
-let adminService = jasmine.createSpyObj('adminService', [, 'getChildrenByHousehold', 'findFamilySigninAndPrint']);
+let apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
+let adminService = jasmine.createSpyObj('adminService', ['getChildrenByHousehold', 'findFamilySigninAndPrint']);
 let rootService = jasmine.createSpyObj('rootService', ['']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let router = jasmine.createSpyObj<Router>('router', ['navigate']);
@@ -31,6 +31,7 @@ describe('HouseholdComponent', () => {
 
   describe('#ngOnInit', () => {
     it('should initialize data', () => {
+      (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
       fixture.ngOnInit();
       expect(fixture.eventParticipants.Participants[0].ParticipantId).toEqual(eventParticipants.Participants[0].ParticipantId);
     });

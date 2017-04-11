@@ -154,7 +154,7 @@ export class AdminService {
   getCountries(): Observable<Array<Country>> {
     const url = `${process.env.ECHECK_API_ENDPOINT}/getCountries`;
     return this.http.get(url)
-                    .map((res) => (<any[]>res.json()).map(c => Country.fromJson(c)))
+                    .map((res) => (<any[]>res.json()).map(c => Country.fromJson(c)));
 
   }
 
