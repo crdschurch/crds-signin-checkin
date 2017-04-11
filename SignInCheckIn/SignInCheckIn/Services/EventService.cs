@@ -51,7 +51,7 @@ namespace SignInCheckIn.Services
         public EventDto GetCurrentEventForSite(int siteId, string kioskId = "")
         {
             // load the kiosk id here...
-            List<int> eventTypeIds = new List<int>(); // = new List<int>();
+            List<int> eventTypeIds = new List<int>();
 
             var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId));
 
