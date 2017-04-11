@@ -180,6 +180,7 @@ export class HouseholdComponent implements OnInit {
         (response: EventParticipants) => {
           this.processingAddFamilyMember = false;
           this.getChildren();
+          this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
           return modal.hide();
         }, (err) => {
           this.processingAddFamilyMember = false;

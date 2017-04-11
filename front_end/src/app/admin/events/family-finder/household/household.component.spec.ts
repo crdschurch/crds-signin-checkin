@@ -96,7 +96,7 @@ describe('HouseholdComponent', () => {
         let c = fixture.saveNewFamilyMember(fakeModal);
         expect(this.processingAddFamilyMember).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninAddGuestFormInvalid');
-        // expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
       });
       it('shows error if bad DOB', () => {
         let invalidContact: Contact = new Contact();
@@ -112,7 +112,7 @@ describe('HouseholdComponent', () => {
         let c = fixture.saveNewFamilyMember(fakeModal);
         expect(this.processingAddFamilyMember).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
-        // expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
       });
       it('shows error if invalid no valid dob', () => {
         let invalidContact: Contact = new Contact();
@@ -124,7 +124,7 @@ describe('HouseholdComponent', () => {
         let c = fixture.saveNewFamilyMember(fakeModal);
         expect(this.processingAddFamilyMember).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
-        // expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
       });
       it('shows error if invalid no valid group selected', () => {
         let invalidContact: Contact = new Contact();
@@ -140,7 +140,7 @@ describe('HouseholdComponent', () => {
         let c = fixture.saveNewFamilyMember(fakeModal);
         expect(this.processingAddFamilyMember).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedValidGradeSelection');
-        // expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
       });
       it('shows error if no gender selected', () => {
         let invalidContact: Contact = new Contact();
@@ -157,7 +157,7 @@ describe('HouseholdComponent', () => {
         let c = fixture.saveNewFamilyMember(fakeModal);
         expect(this.processingAddFamilyMember).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedValidGenderSelection');
-        // expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
       });
       it('shows error if no special needs selected', () => {
         let invalidContact: Contact = new Contact();
@@ -174,7 +174,7 @@ describe('HouseholdComponent', () => {
         let c = fixture.saveNewFamilyMember(fakeModal);
         expect(this.processingAddFamilyMember).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedSpecialNeedsSelection');
-        // expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
       });
     });
   });
