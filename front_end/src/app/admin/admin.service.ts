@@ -129,7 +129,8 @@ export class AdminService {
   addFamilyMember(contact: Contact) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member`;
     return this.http.post(url, contact)
-                    .map(res => {});
+                    .map(res => {})
+                    .catch(this.handleError);
   }
 
   getHouseholdInformation(householdId: number): Observable<Household> {
@@ -154,8 +155,8 @@ export class AdminService {
   getCountries(): Observable<Array<Country>> {
     const url = `${process.env.ECHECK_API_ENDPOINT}/getCountries`;
     return this.http.get(url)
-                    .map((res) => (<any[]>res.json()).map(c => Country.fromJson(c)));
-
+                    .map((res) => (<any[]>res.json()).map(c => Country.fromJson(c)))
+                    .catch(this.handleError);
   }
 
   private handleError (error: any) {
