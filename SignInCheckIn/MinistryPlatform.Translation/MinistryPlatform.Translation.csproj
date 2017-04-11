@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="Extensions\JsonUnmappedDataExtensions.cs" />
     <Compile Include="Extensions\MpEventGroupDtoExtensions.cs" />
+    <Compile Include="Models\DTO\MpContactAttributeDto.cs" />
     <Compile Include="Models\DTO\MpCongregationDto.cs" />
     <Compile Include="Models\DTO\MpBumpingRoomsDto.cs" />
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />

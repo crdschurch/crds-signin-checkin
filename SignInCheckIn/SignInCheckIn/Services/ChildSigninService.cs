@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
@@ -25,6 +26,7 @@ namespace SignInCheckIn.Services
         private readonly IParticipantRepository _participantRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IGroupLookupRepository _groupLookupRepository;
+        private readonly IAttributeRepository _attributeRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly ISignInLogic _signInLogic;
 
@@ -44,6 +46,7 @@ namespace SignInCheckIn.Services
                                   IGroupLookupRepository groupLookupRepository,
                                   IRoomRepository roomRepository,
                                   IConfigRepository configRepository,
+                                  IAttributeRepository attributeRepository,
                                   ISignInLogic signInLogic)
         {
             _childSigninRepository = childSigninRepository;
@@ -58,6 +61,7 @@ namespace SignInCheckIn.Services
             _applicationConfiguration = applicationConfiguration;
             _groupLookupRepository = groupLookupRepository;
             _roomRepository = roomRepository;
+            _attributeRepository = attributeRepository;
             _signInLogic = signInLogic;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
@@ -546,7 +550,7 @@ namespace SignInCheckIn.Services
             };
 
             // parentNewParticipantDto.Contact.DateOfBirth = null;
-            _participantRepository.CreateParticipantWithContact(token, parentNewParticipantDto);
+            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
 
             // Step 3 create the children contacts
             List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
@@ -646,7 +650,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = 0)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -661,13 +665,33 @@ namespace SignInCheckIn.Services
                     HouseholdId = householdId,
                     HouseholdPositionId = householdPositionId,
                     Company = false,
-                    DateOfBirth = dateOfBirth
+                    DateOfBirth = dateOfBirth,
+                    GenderId = genderId.Value
                 }
             };
 
-            var newParticipant = _participantRepository.CreateParticipantWithContact(null, childNewParticipantDto);
+            if (genderId.HasValue && genderId.Value > 0)
+            {
+                childNewParticipantDto.Contact.GenderId = genderId.Value;
+            }
+
+            if (gradeGroupId.HasValue && gradeGroupId > 0)
+            {
+                childNewParticipantDto.GradeGroupAttributeId = gradeGroupId;
+            }
+            var newParticipant = _participantRepository.CreateParticipantWithContact(childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;
-            newParticipant.GradeGroupAttributeId = gradeGroupId;
+
+            if (isSpecialNeeds == true)
+            {
+                var newSpecialNeedsAttribute = new MpContactAttributeDto()
+                {
+                    Contact_ID = newParticipant.ContactId.Value,
+                    Attribute_ID = _applicationConfiguration.SpecialNeedsAttributeId,
+                    Start_Date = DateTime.Now
+                };
+                _attributeRepository.CreateContactAttribute(newSpecialNeedsAttribute);
+            }
 
             return newParticipant;
         }

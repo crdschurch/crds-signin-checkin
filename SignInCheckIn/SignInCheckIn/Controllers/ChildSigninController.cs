@@ -11,6 +11,7 @@ using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
+using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json.Linq;
 
 namespace SignInCheckIn.Controllers
@@ -247,6 +248,51 @@ namespace SignInCheckIn.Controllers
                     var participants = _childSigninService.CreateNewFamily(token, newFamilyDto, kioskIdentifier);
 
                     PublishSignedInParticipantsToRooms(participants);
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(int))]
+        [VersionedRoute(template: "signin/family/member", minimumVersion: "1.0.0")]
+        [Route("signin/family/member")]
+        public IHttpActionResult AddNewFamilyMember(ContactDto newFamilyContactDto)
+        {
+            return Authorized(token =>
+            {
+                string kioskIdentifier;
+
+                // make sure kiosk is admin type and configured for printing
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    // must be kiosk type admin and have a printer set up
+                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    {
+                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    }
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                }
+
+                try
+                {
+                   var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
+                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
+                    var newParticipants = new List<MpNewParticipantDto>()
+                    {
+                        participant
+                    };
+                    _childSigninService.CreateGroupParticipants(token, newParticipants);
                     return Ok();
                 }
                 catch (Exception e)

@@ -18,6 +18,8 @@ namespace Crossroads.Utilities.Services.Interfaces
         int KidsClubMinistryId { get; }
         int KidsClubCongregationId { get; }
 
+        int SpecialNeedsAttributeId { get; }
+
         int HeadOfHouseholdId { get; }
         int OtherAdultId { get; }
         int AdultChildId { get; }
