@@ -4,8 +4,6 @@ import { ApiService, RootService } from '../../shared/services';
 import { ChildSigninService } from '../child-signin.service';
 import { Observable } from 'rxjs/Observable';
 import { Child, DateOfBirth, Guest, EventParticipants, Event } from '../../shared/models';
-
-
 import * as moment from 'moment';
 
 let fixture: AvailableChildrenComponent;
@@ -91,7 +89,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.guestDOB = new DateOfBirth();
       fixture.guestDOB.month = 4;
       fixture.guestDOB.day = 4;
-      fixture.guestDOB.year = 2016;
+      fixture.guestDOB.year = moment().subtract(1, 'year').year();
       // ui event after you pick a date
       fixture.datePickerBlur();
       fixture.saveNewGuest(fakeModal);
@@ -114,7 +112,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.guestDOB = new DateOfBirth();
       fixture.guestDOB.month = 2;
       fixture.guestDOB.day = 30;
-      fixture.guestDOB.year = 2015;
+      fixture.guestDOB.year = moment().subtract(2, 'year').year();
       // ui event after you pick a date
       fixture.datePickerBlur();
       fixture.saveNewGuest(fakeModal);
