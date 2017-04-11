@@ -6,4 +6,6 @@ export class Constants {
   static ManageRoomsChannel = 'ManageRoomsChannel';
   static CheckinParticipantsChannel = 'CheckinParticipantsChannel';
   static CheckinCapacityChannel = 'CheckinCapacityChannel';
+
+  static KidsClubEventType = 84;
 }

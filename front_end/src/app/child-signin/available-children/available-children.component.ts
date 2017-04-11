@@ -4,6 +4,7 @@ import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
 import { ApiService, RootService } from '../../shared/services';
 import { DateOfBirth, EventParticipants, Guest, Group } from '../../shared/models';
+import { Constants } from '../../shared/constants';
 
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -243,12 +244,12 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  setServingAndGuestDisplay() {
-   if (this.eventParticipants.CurrentEvent.EventTypeId === 243) {
-     this.showGuestOption = false;
-     this.showServingOption = false;
-   } else {
+   if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.KidsClubEventType) {
      this.showGuestOption = true;
      this.showServingOption = true;
+   } else {
+     this.showGuestOption = false;
+     this.showServingOption = false;
    }
  }
 
