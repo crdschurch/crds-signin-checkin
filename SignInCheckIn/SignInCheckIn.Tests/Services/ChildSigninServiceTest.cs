@@ -1009,7 +1009,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantId = participantId
             };
 
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), It.IsAny<string>())).Returns(mpNewParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), null)).Returns(mpNewParticipantDto);
 
             _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
 
