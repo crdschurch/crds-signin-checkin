@@ -185,7 +185,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 "Participants.Participant_ID",
                 "Participants.Participant_Type_ID",
-                "Participants.Participant_Start_Date"
+                "Participants.Participant_Start_Date",
+                "Contact_ID_Table.[Contact_ID] AS [Participant_Contact_ID]"
             };
 
             var mpNewParticipantDto = new MpNewParticipantDto
@@ -200,7 +201,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
             // Act
-            _fixture.CreateParticipantWithContact(token, mpNewParticipantDto);
+            _fixture.CreateParticipantWithContact(mpNewParticipantDto);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
@@ -216,7 +217,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 "Participants.Participant_ID",
                 "Participants.Participant_Type_ID",
-                "Participants.Participant_Start_Date"
+                "Participants.Participant_Start_Date",
+                "Contact_ID_Table.[Contact_ID] AS [Participant_Contact_ID]"
             };
 
             MpNewParticipantDto mpNewParticipantDto = new MpNewParticipantDto
@@ -244,7 +246,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
             // Act
-            var result = _fixture.CreateParticipantWithContact(token, mpNewParticipantDto);
+            var result = _fixture.CreateParticipantWithContact(mpNewParticipantDto);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();

@@ -16,6 +16,9 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "Household_Position_ID")]
         public int HouseholdPositionId { get; set; }
 
+        [JsonProperty(PropertyName = "Gender_ID")]
+        public int GenderId { get; set; }
+
         [JsonProperty(PropertyName = "Home_Phone")]
         public string HomePhone { get; set; }
 

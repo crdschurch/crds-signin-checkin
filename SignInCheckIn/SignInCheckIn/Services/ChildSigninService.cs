@@ -495,7 +495,7 @@ namespace SignInCheckIn.Services
             };
 
             // parentNewParticipantDto.Contact.DateOfBirth = null;
-            _participantRepository.CreateParticipantWithContact(token, parentNewParticipantDto);
+            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto);
 
             // Step 3 create the children contacts
             List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
@@ -595,7 +595,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = 0)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -610,21 +610,31 @@ namespace SignInCheckIn.Services
                     HouseholdId = householdId,
                     HouseholdPositionId = householdPositionId,
                     Company = false,
-                    DateOfBirth = dateOfBirth
+                    DateOfBirth = dateOfBirth,
+                    GenderId = genderId.Value
                 }
             };
 
-            var newParticipant = _participantRepository.CreateParticipantWithContact(null, childNewParticipantDto);
+            if (genderId.HasValue && genderId.Value > 0)
+            {
+                childNewParticipantDto.Contact.GenderId = genderId.Value;
+            }
+
+            if (gradeGroupId.HasValue && gradeGroupId > 0)
+            {
+                childNewParticipantDto.GradeGroupAttributeId = gradeGroupId;
+                childNewParticipantDto.GroupId = gradeGroupId;
+            }
+            var newParticipant = _participantRepository.CreateParticipantWithContact(childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;
-            newParticipant.GradeGroupAttributeId = gradeGroupId;
 
             if (isSpecialNeeds == true)
             {
                 var newSpecialNeedsAttribute = new MpContactAttributeDto()
                 {
-                    Contact_ID = newParticipant.Contact.ContactId,
-                    Attribute_ID = _applicationConfiguration.SpecialNeedsAttributeId
-
+                    Contact_ID = newParticipant.ContactId.Value,
+                    Attribute_ID = _applicationConfiguration.SpecialNeedsAttributeId,
+                    Start_Date = DateTime.Now
                 };
                 _attributeRepository.CreateContactAttribute(newSpecialNeedsAttribute);
             }
