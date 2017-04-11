@@ -244,12 +244,13 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  setServingAndGuestDisplay() {
-   if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.KidsClubEventType) {
-     this.showGuestOption = true;
-     this.showServingOption = true;
-   } else {
+   if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry6through8 ||
+        this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry9through12) {
      this.showGuestOption = false;
      this.showServingOption = false;
+   } else {
+     this.showGuestOption = true;
+     this.showServingOption = true;
    }
  }
 

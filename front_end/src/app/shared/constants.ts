@@ -7,5 +7,6 @@ export class Constants {
   static CheckinParticipantsChannel = 'CheckinParticipantsChannel';
   static CheckinCapacityChannel = 'CheckinCapacityChannel';
 
-  static KidsClubEventType = 84;
+  static StudentMinistry6through8 = 402;
+  static StudentMinistry9through12 = 403;
 }
