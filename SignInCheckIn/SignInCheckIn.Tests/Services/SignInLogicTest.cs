@@ -95,7 +95,7 @@ namespace SignInCheckIn.Tests.Services
 
             var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
 
-            _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
+            _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true, It.IsAny<List<int>>())).Returns(GetTestEventSet());
 
             // Act
             var result = _fixture.EvaluateSignInEvents(siteId, underThreeSignIn, adventureClubSignIn, GetTestEventSet());
@@ -115,7 +115,7 @@ namespace SignInCheckIn.Tests.Services
 
             var signInTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 00, 00);
 
-            _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true)).Returns(GetTestEventSet());
+            _eventRepository.Setup(r => r.GetEvents(signInTime, signInTime, 1, true, It.IsAny<List<int>>())).Returns(GetTestEventSet());
 
             // Act
             var result = _fixture.EvaluateSignInEvents(siteId, adventureClubSignIn, underThreeSignIn, GetTestEventSet());

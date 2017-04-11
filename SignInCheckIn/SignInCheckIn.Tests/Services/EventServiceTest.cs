@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Crossroads.Utilities.Services.Interfaces;
 using FluentAssertions;
@@ -19,6 +20,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IRoomRepository> _roomRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguation;
         private Mock<IParticipantRepository> _participantRepository;
+        private Mock<IKioskRepository> _kioskRepository;
 
         private EventService _fixture;
 
@@ -32,6 +34,7 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository = new Mock<IRoomRepository>(MockBehavior.Strict);
             _applicationConfiguation = new Mock<IApplicationConfiguration>(MockBehavior.Strict);
             _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
+            _kioskRepository = new Mock<IKioskRepository>();
 
             var mpConfigDtoEarly = new MpConfigDto
             {
@@ -52,8 +55,13 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
             _applicationConfiguation.Setup(ac => ac.AdventureClubEventTypeId).Returns(20);
+            _applicationConfiguation.Setup(ac => ac.StudentMinistryKioskTypeId).Returns(4);
+            _applicationConfiguation.Setup(ac => ac.StudentMinistryGradesSixToEightEventTypeId).Returns(398);
+            _applicationConfiguation.Setup(ac => ac.StudentMinistryGradesNineToTwelveEventTypeId).Returns(399);
+            _applicationConfiguation.Setup(ac => ac.BigEventTypeId).Returns(369);
 
-            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object, _participantRepository.Object);
+            _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object, _participantRepository.Object,
+                _kioskRepository.Object);
         }
 
         [Test]
@@ -76,7 +84,7 @@ namespace SignInCheckIn.Tests.Services
             var start = new DateTime(2016, 10, 9);
             var end = new DateTime(2016, 10, 12);
             const int site = 1;
-            _eventRepository.Setup(m => m.GetEvents(start, end, site, false)).Returns(mpEventDtos);
+            _eventRepository.Setup(m => m.GetEvents(start, end, site, false, It.IsAny<List<int>>())).Returns(mpEventDtos);
 
             // Act
             var result = _fixture.GetCheckinEvents(start, end, site);
@@ -107,6 +115,13 @@ namespace SignInCheckIn.Tests.Services
         public void TestGetCurrentEventForSite()
         {
             const int siteId = 1;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
+            var kioskConfig = new MpKioskConfigDto
+            {
+                KioskTypeId = 4
+            };
+
             var events = new List<MpEventDto>
             {
                 new MpEventDto
@@ -124,8 +139,10 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId, false)).Returns(events);
-            var result = _fixture.GetCurrentEventForSite(siteId);
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId))).Returns(kioskConfig);
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId, false, It.IsAny<List<int>>())).Returns(events);
+            var result = _fixture.GetCurrentEventForSite(siteId, kioskId);
             _eventRepository.VerifyAll();
 
             Assert.AreEqual(result.EventId, events[0].EventId);

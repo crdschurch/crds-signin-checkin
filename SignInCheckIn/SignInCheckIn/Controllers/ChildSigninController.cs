@@ -52,7 +52,14 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id is Invalid");
                 }
 
-                var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, siteId);
+                string kioskId = "";
+
+                if (Request.Headers.Contains("KioskId"))
+                {
+                    kioskId = Request.Headers.GetValues("KioskId").First();
+                }
+
+                var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, siteId, kioskId);
                 return Ok(children);
             }
             catch (Exception e)
@@ -81,7 +88,14 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id is Invalid");
                 }
 
-                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
+                string kioskId = "";
+
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskId = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null, false, kioskId);
                 return Ok(children);
             }
             catch (Exception e)

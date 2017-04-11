@@ -68,9 +68,9 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId)
+        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId, string kioskId)
         {
-            var eventDto = _eventService.GetCurrentEventForSite(siteId);
+            var eventDto = _eventService.GetCurrentEventForSite(siteId, kioskId);
 
             var household = _childSigninRepository.GetChildrenByHouseholdId(householdId, eventDto.EventId);
 
@@ -89,10 +89,10 @@ namespace SignInCheckIn.Services
         }
 
         // mod this to include the lookup for MSM/HSM
-        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false)
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false, string kioskId = "")
         {
             // this will have to check if it's a childcare event
-            var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
+            var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId, kioskId);
 
             //if (new)
             var eventSpecificGroupIds = GetGroupIdsByEventTypeId(eventDto.EventTypeId);
