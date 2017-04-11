@@ -895,7 +895,7 @@ namespace SignInCheckIn.Tests.Services
             MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
 
             // Act
             var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
@@ -937,7 +937,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantId = participantId
             };
 
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
 
             _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
 
@@ -1007,7 +1007,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantId = participantId
             };
 
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
 
             _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
 
