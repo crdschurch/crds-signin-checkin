@@ -272,9 +272,8 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                   int gradeGroupId = 9033;
                    var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
-                       newFamilyContactDto.DateOfBirth, gradeGroupId, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
+                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
                     var newParticipants = new List<MpNewParticipantDto>()
                     {
                         participant

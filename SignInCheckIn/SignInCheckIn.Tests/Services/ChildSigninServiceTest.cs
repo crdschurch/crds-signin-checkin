@@ -33,6 +33,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IGroupLookupRepository> _groupLookupRepository;
         private Mock<IRoomRepository> _roomRepository;
         private Mock<IConfigRepository> _configRepository;
+        private Mock<IAttributeRepository> _attributeRepository;
         private Mock<ISignInLogic> _signInLogic;
 
         private ChildSigninService _fixture;
@@ -59,6 +60,7 @@ namespace SignInCheckIn.Tests.Services
             _groupLookupRepository = new Mock<IGroupLookupRepository>();
             _roomRepository = new Mock<IRoomRepository>();
             _configRepository = new Mock<IConfigRepository>();
+            _attributeRepository = new Mock<IAttributeRepository>();
             _signInLogic = new Mock<ISignInLogic>();
 
             var mpConfigDtoEarly = new MpConfigDto
@@ -88,7 +90,7 @@ namespace SignInCheckIn.Tests.Services
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
                 _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object,
-                _configRepository.Object, _signInLogic.Object);
+                _configRepository.Object, _attributeRepository.Object, _signInLogic.Object);
         }
 
         [Test]
