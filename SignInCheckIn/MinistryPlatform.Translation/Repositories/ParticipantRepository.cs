@@ -84,9 +84,9 @@ namespace MinistryPlatform.Translation.Repositories
             return children;
         }
 
-        public MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto)
+        public MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto, string userToken = null)
         {
-            var token = _apiUserRepository.GetToken();
+            var token = userToken ?? _apiUserRepository.GetToken();
 
             List<string> participantColumns = new List<string>
             {
