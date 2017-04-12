@@ -442,6 +442,14 @@ namespace SignInCheckIn.Services
                 throw new Exception("Printer Map Id Not Set For Kisok " + kioskConfig.KioskConfigId);
             }
 
+
+            if (participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.BigEventTypeId ||
+                participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId ||
+                participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
+            {
+                return null;
+            }
+
             var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => $"{c.Nickname} {c.LastName}").ToArray());
 
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
