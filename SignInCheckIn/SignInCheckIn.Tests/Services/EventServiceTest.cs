@@ -84,7 +84,7 @@ namespace SignInCheckIn.Tests.Services
             var start = new DateTime(2016, 10, 9);
             var end = new DateTime(2016, 10, 12);
             const int site = 1;
-            _eventRepository.Setup(m => m.GetEvents(start, end, site, false, It.IsAny<List<int>>())).Returns(mpEventDtos);
+            _eventRepository.Setup(m => m.GetEvents(start, end, site, false, It.IsAny<List<int>>(), true)).Returns(mpEventDtos);
 
             // Act
             var result = _fixture.GetCheckinEvents(start, end, site);
@@ -141,7 +141,7 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId))).Returns(kioskConfig);
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId, false, It.IsAny<List<int>>())).Returns(events);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId, false, It.IsAny<List<int>>(), false)).Returns(events);
             var result = _fixture.GetCurrentEventForSite(siteId, kioskId);
             _eventRepository.VerifyAll();
 
