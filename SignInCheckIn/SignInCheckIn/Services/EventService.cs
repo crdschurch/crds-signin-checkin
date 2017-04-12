@@ -51,18 +51,23 @@ namespace SignInCheckIn.Services
         public EventDto GetCurrentEventForSite(int siteId, string kioskId = "")
         {
             // load the kiosk id here...
-            List<int> eventTypeIds = new List<int>();
-
             var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId));
+
+            List<int> msmEventTypeIds = new List<int>
+            {
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                _applicationConfiguration.BigEventTypeId
+            };
+
+            bool excludeIds = true;
+
+            // this is hacky, but is probably the best solution, given that KC events currently do not have a fixed event
+            // type id - we assume that unless we're looking for a specific event id, we want to exclude these event ids
 
             if (kioskConfig.KioskTypeId == _applicationConfiguration.StudentMinistryKioskTypeId)
             {
-                eventTypeIds = new List<int>
-                {
-                    _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
-                    _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
-                    _applicationConfiguration.BigEventTypeId
-                };
+                excludeIds = false;
             }
 
             // look between midnights on the current day
@@ -70,18 +75,8 @@ namespace SignInCheckIn.Services
             var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
             var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
 
-            List<MpEventDto> currentEvents;
-
-            if (!eventTypeIds.Any())
-            {
-                currentEvents =
-                    _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
-            }
-            else
-            {
-                currentEvents =
-                    _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId, false, eventTypeIds).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
-            }
+            var currentEvents =
+                    _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId, false, msmEventTypeIds, excludeIds).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
 
             if (!currentEvents.Any())
             {
