@@ -77,11 +77,11 @@ namespace MinistryPlatform.Translation.Repositories
             var queryString =
                 $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}";
 
-            if (excludeIds == true)
+            if (excludeIds == true && eventTypeIds != null)
             {
                 queryString += $" AND Events.[Event_Type_ID] NOT IN ({string.Join(",", eventTypeIds)})";
             }
-            else
+            else if (eventTypeIds != null)
             {
                 queryString += $" AND Events.[Event_Type_ID] IN ({string.Join(",", eventTypeIds)})";
             }
