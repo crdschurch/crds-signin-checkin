@@ -442,6 +442,14 @@ namespace SignInCheckIn.Services
                 throw new Exception("Printer Map Id Not Set For Kisok " + kioskConfig.KioskConfigId);
             }
 
+
+            if (participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.BigEventTypeId ||
+                participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId ||
+                participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
+            {
+                return null;
+            }
+
             var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => $"{c.Nickname} {c.LastName}").ToArray());
 
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
@@ -650,7 +658,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = 0)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = null)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -665,8 +673,7 @@ namespace SignInCheckIn.Services
                     HouseholdId = householdId,
                     HouseholdPositionId = householdPositionId,
                     Company = false,
-                    DateOfBirth = dateOfBirth,
-                    GenderId = genderId.Value
+                    DateOfBirth = dateOfBirth
                 }
             };
 
