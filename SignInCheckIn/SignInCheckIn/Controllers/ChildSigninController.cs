@@ -54,9 +54,9 @@ namespace SignInCheckIn.Controllers
 
                 string kioskId = "";
 
-                if (Request.Headers.Contains("KioskId"))
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
                 {
-                    kioskId = Request.Headers.GetValues("KioskId").First();
+                    kioskId = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
                 }
 
                 var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, siteId, kioskId);
