@@ -284,7 +284,7 @@ namespace MinistryPlatform.Translation.Repositories
 
             var address = new MpAddressDto
             {
-                AddressId = householdDto.AddressId,
+                AddressId = householdDto.AddressId.Value,
                 AddressLine1 = householdDto.AddressLine1,
                 AddressLine2 = householdDto.AddressLine2,
                 City = householdDto.City,

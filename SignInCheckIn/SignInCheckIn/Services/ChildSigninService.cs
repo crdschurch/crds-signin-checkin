@@ -658,7 +658,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = 0)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = null)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -673,8 +673,7 @@ namespace SignInCheckIn.Services
                     HouseholdId = householdId,
                     HouseholdPositionId = householdPositionId,
                     Company = false,
-                    DateOfBirth = dateOfBirth,
-                    GenderId = genderId.Value
+                    DateOfBirth = dateOfBirth
                 }
             };
 
