@@ -22,6 +22,7 @@ namespace SignInCheckIn.Services
         private readonly IGroupRepository _groupRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IApiUserRepository _apiUserRepository;
+        private readonly IKioskRepository _kioskRepository;
 
         public RoomService(IEventRepository eventRepository,
                            IEventService eventService,
@@ -29,7 +30,8 @@ namespace SignInCheckIn.Services
                            IAttributeRepository attributeRepository,
                            IGroupRepository groupRepository,
                            IApplicationConfiguration applicationConfiguration,
-                           IApiUserRepository apiUserRepository)
+                           IApiUserRepository apiUserRepository,
+                           IKioskRepository kioskRepository)
         {
             _eventRepository = eventRepository;
             _eventService = eventService;
@@ -38,6 +40,7 @@ namespace SignInCheckIn.Services
             _groupRepository = groupRepository;
             _applicationConfiguration = applicationConfiguration;
             _apiUserRepository = apiUserRepository;
+            _kioskRepository = kioskRepository;
         }
 
         public List<EventRoomDto> GetLocationRoomsByEventId(string authenticationToken, int eventId)
@@ -297,9 +300,35 @@ namespace SignInCheckIn.Services
             return eventRoom;
         }
 
-        public List<AgeGradeDto> GetGradeAttributes(string authenticationToken)
+        public List<AgeGradeDto> GetGradeAttributes(string authenticationToken, int siteId, string kioskId, int? eventId = null)
         {
-            var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken);
+            // this will have to check if it's a childcare event
+            var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId));
+            var eventDto = eventId == null ? _eventService.GetCurrentEventForSite(siteId, kioskId) : _eventService.GetEvent(eventId.Value);
+            var grades = new List<MpAttributeDto>();
+
+            // If Admin Kiosk or a Kids Club Event add these grades
+            if (kioskConfig.KioskTypeId == _applicationConfiguration.AdminKioskTypeId || (eventDto.EventTypeId != _applicationConfiguration.BigEventTypeId &&
+                eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId &&
+                eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId))
+            {
+                grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId, authenticationToken));
+            }
+
+            // If Admin Kiosk or Big Event or 6 - 8th grade event
+            if (kioskConfig.KioskTypeId == _applicationConfiguration.AdminKioskTypeId || eventDto.EventTypeId == _applicationConfiguration.BigEventTypeId ||
+                eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId)
+            {
+                grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId, authenticationToken));
+            }
+
+            // If Admin Kiosk or Big Event or 9 - 12th grade event
+            if (kioskConfig.KioskTypeId == _applicationConfiguration.AdminKioskTypeId || eventDto.EventTypeId == _applicationConfiguration.BigEventTypeId ||
+                eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
+            {
+                grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId, authenticationToken));
+            }
+
             return GetGradesAndCurrentSelection(grades, new List<MpEventGroupDto>(), 0).ToList();
         }
 
