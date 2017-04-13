@@ -319,14 +319,14 @@ namespace SignInCheckIn.Services
             if (kioskConfig.KioskTypeId == _applicationConfiguration.AdminKioskTypeId || eventDto.EventTypeId == _applicationConfiguration.BigEventTypeId ||
                 eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId)
             {
-                grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId, authenticationToken));
+                grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.SMMiddleSchoolGradesAttributeTypeId, authenticationToken));
             }
 
             // If Admin Kiosk or Big Event or 9 - 12th grade event
             if (kioskConfig.KioskTypeId == _applicationConfiguration.AdminKioskTypeId || eventDto.EventTypeId == _applicationConfiguration.BigEventTypeId ||
                 eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
             {
-                grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId, authenticationToken));
+                grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.SMHighSchoolGradesAttributeTypeId, authenticationToken));
             }
 
             return GetGradesAndCurrentSelection(grades, new List<MpEventGroupDto>(), 0).ToList();
@@ -428,7 +428,7 @@ namespace SignInCheckIn.Services
         private static IEnumerable<AgeGradeDto> GetGradesAndCurrentSelection(IEnumerable<MpAttributeDto> grades, List<MpEventGroupDto> eventGroups, int maxSort)
         {
             var response = new List<AgeGradeDto>();
-            grades = grades.Where(r => r.Id != 9038 && r.Id != 9039);
+            grades = grades.Where(r => r.Id != 9039);
             grades.OrderBy(g => g.SortOrder).ToList().ForEach(g =>
             {
                 response.Add(new AgeGradeDto
