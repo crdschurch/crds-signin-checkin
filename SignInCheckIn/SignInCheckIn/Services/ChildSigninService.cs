@@ -141,6 +141,22 @@ namespace SignInCheckIn.Services
             participantEventMapDto.HouseholdPhoneNumber = phoneNumber;
             participantEventMapDto.HouseholdId = household.HouseholdId.GetValueOrDefault();
 
+            var msmEventTypes = new List<int>
+            {
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                _applicationConfiguration.BigEventTypeId
+            };
+
+            if (msmEventTypes.Contains(eventDto.EventTypeId))
+            {
+                participantEventMapDto.KioskTypeId = 4;
+            }
+            else
+            {
+                participantEventMapDto.KioskTypeId = 1;
+            }
+
             return participantEventMapDto;
         }
 
@@ -197,7 +213,7 @@ namespace SignInCheckIn.Services
             }
 
             // check the current and next event set to make sure they're not signed in to one of those events already
-            var eventsForSignin = GetEventsForSignin(participantEventMapDto);
+            var eventsForSignin = GetEventsForSignin(participantEventMapDto, participantEventMapDto.KioskTypeId);
             CheckForDuplicateSignIns(eventsForSignin, participantEventMapDto);
 
             // this needs to be a list of participants, not a list of event participants - the automapping
@@ -598,12 +614,45 @@ namespace SignInCheckIn.Services
 
         // this will pull the current event set and next event set for the site - logic to determine which
         // events to sign into now lives in the signin logic class
-        public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)
+
+        // this can potentially pull back 2 to 4 events, representing the current service/ac and future ac/service event set,
+        // or sm events - we need to determine if it's either a sm event or kc event they're trying to sign into...
+
+        // solution here might be to pass down the event type on the PEM Dto and use that in the get events function
+        public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto, int kioskTypeId)
         {
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
-            var dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true)
+            List<MpEventDto> dailyEvents;
+            bool excludeIds = false;
+
+            if (kioskTypeId == 1)
+            {
+                excludeIds = true;
+            }
+
+            var msmEventTypes = new List<int>
+            {
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                _applicationConfiguration.BigEventTypeId
+            };
+
+            dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, excludeIds)
                 .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
+
+            //if (participantEventMapDto.KioskTypeId == 1)
+            //{
+            //    dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true)
+            //    .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
+            //}
+            //else
+            //{
+                
+
+            //    dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, false)
+            //    .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
+            //} 
 
             var eligibleEvents = new List<MpEventDto>();
 

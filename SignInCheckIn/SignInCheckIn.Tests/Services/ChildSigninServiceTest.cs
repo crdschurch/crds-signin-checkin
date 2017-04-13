@@ -309,7 +309,7 @@ namespace SignInCheckIn.Tests.Services
                 currentMpServiceEventDto
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), true)).Returns(eventDtosBySite);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), false)).Returns(eventDtosBySite);
 
             var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
@@ -577,7 +577,7 @@ namespace SignInCheckIn.Tests.Services
                 currentMpServiceEventDto
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), true)).Returns(eventDtosBySite);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), false)).Returns(eventDtosBySite);
 
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
             _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
