@@ -1,7 +1,28 @@
 <header-event></header-event>
 
+
 <div class="wrapper rooms">
   <div class="container-fluid admin-content py-1">
+
+    <!-- Event info for printed report -->
+    <div class="mt-1 visible-print-block">
+      <ul class="list-inline">
+        <li class="list-inline-item">
+          <strong>Site</strong> {{event?.EventSite}}
+        </li>
+        <li class="list-inline-item hidden-xs-up">
+          <strong>Event Type</strong> {{event?.EventType}}
+        </li>
+        <li class="list-inline-item">
+          <strong>Date</strong> {{event?.EventStartDate | amDateFormat :'dddd, MMMM Do'}}
+        </li>
+        <li class="list-inline-item">
+          <strong>Event Time</strong> {{event?.EventStartDate | amDateFormat:'h:mma'}}
+        </li>
+      </ul>
+    </div>
+
+
     <div class="row">
       <div class="col-lg-3">
         <h3 class="hidden-print">Manage Rooms</h3>
