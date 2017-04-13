@@ -120,7 +120,7 @@ describe('AvailableChildrenComponent', () => {
       expect(fixture.eventParticipants.Participants.length).toEqual(0);
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
     });
-    it('should hide guest and serving for childcare event', () => {
+    it('should hide guest and serving for big event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
       let childcareEvent: Event = new Event();
       childcareEvent.EventTypeId = Constants.BigEventType;
@@ -130,7 +130,7 @@ describe('AvailableChildrenComponent', () => {
       expect(fixture.showServingOption).toBe(false);
       expect(fixture.showGuestOption).toBe(false);
     });
-    it('should hide guest and serving for childcare event', () => {
+    it('should hide guest and serving for SM 6-8 event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
       let childcareEvent: Event = new Event();
       childcareEvent.EventTypeId = Constants.StudentMinistry6through8EventType;
@@ -140,7 +140,7 @@ describe('AvailableChildrenComponent', () => {
       expect(fixture.showServingOption).toBe(false);
       expect(fixture.showGuestOption).toBe(false);
     });
-    it('should hide guest and serving for childcare event', () => {
+    it('should hide guest and serving for SM 9-12 event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
       let childcareEvent: Event = new Event();
       childcareEvent.EventTypeId = Constants.StudentMinistry9through12EventType;
@@ -150,7 +150,17 @@ describe('AvailableChildrenComponent', () => {
       expect(fixture.showServingOption).toBe(false);
       expect(fixture.showGuestOption).toBe(false);
     });
-    it('should show guest and serving for service event', () => {
+    it('should show guest and serving for KC event', () => {
+      let eventParticipants: EventParticipants = new EventParticipants();
+      let childcareEvent: Event = new Event();
+      childcareEvent.EventTypeId = Constants.ChildCareEventType;
+      eventParticipants.CurrentEvent = childcareEvent;
+      fixture.eventParticipants = eventParticipants;
+      fixture.setServingAndGuestDisplay();
+      expect(fixture.showServingOption).toBe(true);
+      expect(fixture.showGuestOption).toBe(true);
+    });
+    it('should show guest and serving for KC event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
       let childcareEvent: Event = new Event();
       childcareEvent.EventTypeId = Constants.StudentMinistry9through12EventType + 10;
