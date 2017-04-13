@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,15 +26,27 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IGroupRepository> _groupRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IApiUserRepository> _apiUserRepository;
+        private Mock<IKioskRepository> _kioskRepository;
 
         private const int AgesAttributeTypeId = 102;
         private const int BirthMonthsAttributeTypeId = 103;
         private const int GradesAttributeTypeId = 104;
+        private const int SMMiddleSchoolGradesAttributeTypeId = 107;
+        private const int SMHighSchoolGradesAttributeTypeId = 108;
         private const int NurseryAgeAttributeId = 9014;
         private const int NurseryAgesAttributeTypeId = 105;
 
+        private const int NonAdminKioskTypeId = 22;
+        private const int AdminKioskTypeId = 12;
+        private const int KCEventTypeId = 12;
+        private const int BigEventTypeId = 22;
+        private const int StudentMinistryGradesSixToEightEventTypeId = 32;
+        private const int StudentMinistryGradesNineToTwelveEventTypeId = 42;
+
         private List<MpAttributeDto> _ageList;
         private List<MpAttributeDto> _gradeList;
+        private List<MpAttributeDto> _sm68GradeList;
+        private List<MpAttributeDto> _sm912GradeList;
         private List<MpAttributeDto> _birthMonthList;
         private List<MpAttributeDto> _nurseryMonthList;
 
@@ -51,18 +64,32 @@ namespace SignInCheckIn.Tests.Services
             _groupRepository = new Mock<IGroupRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
+            _kioskRepository = new Mock<IKioskRepository>(MockBehavior.Strict);
             _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.SMMiddleSchoolGradesAttributeTypeId).Returns(SMMiddleSchoolGradesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.SMHighSchoolGradesAttributeTypeId).Returns(SMHighSchoolGradesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgeAttributeId).Returns(NurseryAgeAttributeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgesAttributeTypeId).Returns(NurseryAgesAttributeTypeId);
+            _applicationConfiguration.Setup(mocked => mocked.AdminKioskTypeId).Returns(AdminKioskTypeId);
+            _applicationConfiguration.Setup(mocked => mocked.BigEventTypeId).Returns(BigEventTypeId);
+            _applicationConfiguration.Setup(mocked => mocked.StudentMinistryGradesSixToEightEventTypeId).Returns(StudentMinistryGradesSixToEightEventTypeId);
+            _applicationConfiguration.Setup(mocked => mocked.StudentMinistryGradesNineToTwelveEventTypeId).Returns(StudentMinistryGradesNineToTwelveEventTypeId);
 
             _ageList =
                 JsonConvert.DeserializeObject<List<MpAttributeDto>>(
                     "[{'Attribute_ID':9014,'Attribute_Name':'Nursery','Sort_Order':1000,'Attribute_Type_ID':102,'Attribute_Type':'KC eCheck Age'},{'Attribute_ID':9015,'Attribute_Name':'First Year','Sort_Order':1,'Attribute_Type_ID':102,'Attribute_Type':'KC eCheck Age'},{'Attribute_ID':9016,'Attribute_Name':'Second Year','Sort_Order':2,'Attribute_Type_ID':102,'Attribute_Type':'KC eCheck Age'},{'Attribute_ID':9017,'Attribute_Name':'Third Year','Sort_Order':3,'Attribute_Type_ID':102,'Attribute_Type':'KC eCheck Age'},{'Attribute_ID':9018,'Attribute_Name':'Fourth Year','Sort_Order':4,'Attribute_Type_ID':102,'Attribute_Type':'KC eCheck Age'},{'Attribute_ID':9019,'Attribute_Name':'Fifth Year','Sort_Order':5,'Attribute_Type_ID':102,'Attribute_Type':'KC eCheck Age'}]");
             _gradeList =
                 JsonConvert.DeserializeObject<List<MpAttributeDto>>(
-                    "[{'Attribute_ID':9032,'Attribute_Name':'Kindergarten','Sort_Order':1000,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9033,'Attribute_Name':'First Grade','Sort_Order':1,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9034,'Attribute_Name':'Second Grade','Sort_Order':2,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9035,'Attribute_Name':'Third Grade','Sort_Order':3,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9036,'Attribute_Name':'Fourth Grade','Sort_Order':4,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9037,'Attribute_Name':'Fifth Grade','Sort_Order':5,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9038,'Attribute_Name':'Sixth Grade','Sort_Order':6,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9039,'Attribute_Name':'CSM','Sort_Order':7,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'}]");
+                    "[{'Attribute_ID':9032,'Attribute_Name':'Kindergarten','Sort_Order':1000,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9033,'Attribute_Name':'First Grade','Sort_Order':1,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9034,'Attribute_Name':'Second Grade','Sort_Order':2,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9035,'Attribute_Name':'Third Grade','Sort_Order':3,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9036,'Attribute_Name':'Fourth Grade','Sort_Order':4,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9037,'Attribute_Name':'Fifth Grade','Sort_Order':5,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'},{'Attribute_ID':9039,'Attribute_Name':'CSM','Sort_Order':7,'Attribute_Type_ID':104,'Attribute_Type':'KC eCheck Grade'}]");
+            _sm68GradeList =
+                JsonConvert.DeserializeObject<List<MpAttributeDto>>(
+                    "[{'Attribute_ID':9038,'Attribute_Name':'Sixth Grade','Sort_Order':6,'Attribute_Type_ID':107,'Attribute_Type':'SM Middle School Checkin Grade'},{'Attribute_ID':9042,'Attribute_Name':'Seventh Grade','Sort_Order':8,'Attribute_Type_ID':107,'Attribute_Type':'SM Middle School Checkin Grade'},{'Attribute_ID':9043,'Attribute_Name':'Eighth Grade','Sort_Order':9,'Attribute_Type_ID':107,'Attribute_Type':'SM Middle School Checkin Grade'}]");
+            _sm912GradeList =
+                JsonConvert.DeserializeObject<List<MpAttributeDto>>(
+                    "[{'Attribute_ID':9044,'Attribute_Name':'Ninth Grade','Sort_Order':10,'Attribute_Type_ID':108,'Attribute_Type':'SM High School Checkin Grade'},{'Attribute_ID':9045,'Attribute_Name':'Tenth Grade','Sort_Order':11,'Attribute_Type_ID':108,'Attribute_Type':'SM High School Checkin Grade'},{'Attribute_ID':9046,'Attribute_Name':'Eleventh Grade','Sort_Order':12,'Attribute_Type_ID':108,'Attribute_Type':'SM High School Checkin Grade'},{'Attribute_ID':9047,'Attribute_Name':'Twelfth Grade','Sort_Order':12,'Attribute_Type_ID':108,'Attribute_Type':'SM High School Checkin Grade'}]");
+
             _birthMonthList =
                 JsonConvert.DeserializeObject<List<MpAttributeDto>>(
                     "[{'Attribute_ID':9002,'Attribute_Name':'January','Sort_Order':1000,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9003,'Attribute_Name':'February','Sort_Order':1,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9004,'Attribute_Name':'March','Sort_Order':2,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9005,'Attribute_Name':'April','Sort_Order':3,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9006,'Attribute_Name':'May','Sort_Order':4,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9007,'Attribute_Name':'June','Sort_Order':5,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9008,'Attribute_Name':'July','Sort_Order':6,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9009,'Attribute_Name':'August','Sort_Order':7,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9010,'Attribute_Name':'September','Sort_Order':8,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9011,'Attribute_Name':'October','Sort_Order':9,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9012,'Attribute_Name':'November','Sort_Order':10,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'},{'Attribute_ID':9013,'Attribute_Name':'December','Sort_Order':11,'Attribute_Type_ID':103,'Attribute_Type':'KC eCheck Birth Month'}]");
@@ -71,7 +98,7 @@ namespace SignInCheckIn.Tests.Services
                     "[{'Attribute_ID':9020,'Attribute_Name':'0-1','Sort_Order':1000,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9021,'Attribute_Name':'1-2','Sort_Order':1,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9022,'Attribute_Name':'2-3','Sort_Order':2,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9023,'Attribute_Name':'3-4','Sort_Order':3,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9024,'Attribute_Name':'4-5','Sort_Order':4,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9025,'Attribute_Name':'5-6','Sort_Order':5,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9026,'Attribute_Name':'6-7','Sort_Order':6,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9027,'Attribute_Name':'7-8','Sort_Order':7,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9028,'Attribute_Name':'8-9','Sort_Order':8,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9029,'Attribute_Name':'9-10','Sort_Order':9,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9030,'Attribute_Name':'10-11','Sort_Order':10,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'},{'Attribute_ID':9031,'Attribute_Name':'11-12','Sort_Order':11,'Attribute_Type_ID':105,'Attribute_Type':'KC eCheck Nursery Month'}]");
 
 
-            _fixture = new RoomService(_eventRepository.Object, _eventService.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object, _apiUserRepository.Object);
+            _fixture = new RoomService(_eventRepository.Object, _eventService.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object, _apiUserRepository.Object, _kioskRepository.Object);
         }
         
         [Test]
@@ -966,15 +993,158 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void TestGetGradeAttributes()
+        public void TestGetGradeAttributeForAdminKiosks()
         {
             const string token = "token 123";
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            
-            var result = _fixture.GetGradeAttributes(token);
+            var siteId = 1;
+
+            var kiosk = new MpKioskConfigDto
+            {
+                KioskTypeId = AdminKioskTypeId,
+                KioskDescription = "Admin",
+                KioskName = "Admin"
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1,
+                EventTypeId = KCEventTypeId,
+            };
+
+            _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
+            _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+
+            var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
-            Assert.IsTrue(result.Count == 6);
+            Assert.AreEqual(result.Count, 13);
             Assert.AreEqual(_gradeList[1].Id, result[0].Id);
+        }
+
+        [Test]
+        public void TestGetGradeAttributeForKCEvent()
+        {
+            const string token = "token 123";
+            var siteId = 1;
+
+            var kiosk = new MpKioskConfigDto
+            {
+                KioskTypeId = NonAdminKioskTypeId,
+                KioskDescription = "NonAdmin",
+                KioskName = "NonAdmin"
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1,
+                EventTypeId = KCEventTypeId,
+            };
+
+            _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
+            _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+
+            var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
+            result.Should().NotBeNull();
+            Assert.AreEqual(result.Count, 6);
+            Assert.AreEqual(_gradeList[1].Id, result[0].Id);
+        }
+
+        [Test]
+        public void TestGetGradeAttributeFor6through8Event()
+        {
+            const string token = "token 123";
+            var siteId = 1;
+
+            var kiosk = new MpKioskConfigDto
+            {
+                KioskTypeId = NonAdminKioskTypeId,
+                KioskDescription = "NonAdmin",
+                KioskName = "NonAdmin"
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1,
+                EventTypeId = StudentMinistryGradesSixToEightEventTypeId,
+            };
+
+            _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
+            _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+
+            var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
+            result.Should().NotBeNull();
+            Assert.AreEqual(result.Count, 3);
+            Assert.AreEqual(_sm68GradeList[0].Id, result[0].Id);
+        }
+
+        [Test]
+        public void TestGetGradeAttributeFor9through12Event()
+        {
+            const string token = "token 123";
+            var siteId = 1;
+
+            var kiosk = new MpKioskConfigDto
+            {
+                KioskTypeId = NonAdminKioskTypeId,
+                KioskDescription = "NonAdmin",
+                KioskName = "NonAdmin"
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1,
+                EventTypeId = StudentMinistryGradesNineToTwelveEventTypeId,
+            };
+
+            _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
+            _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+
+            var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
+            result.Should().NotBeNull();
+            Assert.AreEqual(result.Count, 4);
+            Assert.AreEqual(_sm912GradeList[0].Id, result[0].Id);
+        }
+
+        [Test]
+        public void TestGetGradeAttributeForBigEvent()
+        {
+            const string token = "token 123";
+            var siteId = 1;
+
+            var kiosk = new MpKioskConfigDto
+            {
+                KioskTypeId = NonAdminKioskTypeId,
+                KioskDescription = "NonAdmin",
+                KioskName = "NonAdmin"
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1,
+                EventTypeId = BigEventTypeId,
+            };
+
+            _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
+            _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+
+            var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
+            result.Should().NotBeNull();
+            Assert.AreEqual(result.Count, 7);
+            Assert.AreEqual(_sm68GradeList[0].Id, result[0].Id);
         }
     }
 }

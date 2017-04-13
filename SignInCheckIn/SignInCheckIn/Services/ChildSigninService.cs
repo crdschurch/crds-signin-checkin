@@ -686,8 +686,14 @@ namespace SignInCheckIn.Services
             {
                 childNewParticipantDto.GradeGroupAttributeId = gradeGroupId;
             }
+
             var newParticipant = _participantRepository.CreateParticipantWithContact(childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;
+
+            if (gradeGroupId.HasValue && gradeGroupId > 0)
+            {
+                newParticipant.GradeGroupAttributeId = gradeGroupId;
+            }
 
             if (isSpecialNeeds == true)
             {
