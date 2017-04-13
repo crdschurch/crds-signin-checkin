@@ -18,7 +18,7 @@ export class HouseholdComponent implements OnInit {
   private _editMode: boolean;
   private processing: boolean;
   private processingAddFamilyMember: boolean;
-  private _newContact: Contact;
+  private _contact: Contact;
   private gradeGroups: Array<Group> = [];
   numberOfMonthsSelection: Array<number>;
   numberOfDaysSelection: Array<number>;
@@ -87,8 +87,8 @@ export class HouseholdComponent implements OnInit {
  }
 
  get editMode() {
-   if (this.newContact) {
-     return this.newContact.ContactId;
+   if (this.contact) {
+     return this.contact.ContactId;
    }
  }
 
@@ -119,14 +119,14 @@ export class HouseholdComponent implements OnInit {
  openNewFamilyMemberModal(modal, existingContact: Contact) {
    console.log("ec", existingContact)
    if (existingContact) {
-     this.newContact = Contact.fromJson(existingContact);
+     this.contact = Contact.fromJson(existingContact);
      this.guestDOB = new DateOfBirth(moment(existingContact.DateOfBirth).month() + 1,
       moment(existingContact.DateOfBirth).date(), moment(existingContact.DateOfBirth).year());
       console.log(this.guestDOB)
    } else {
      this.guestDOB = new DateOfBirth();
-     this.newContact = new Contact();
-     this.newContact.HouseholdId = +this.householdId;
+     this.contact = new Contact();
+     this.contact.HouseholdId = +this.householdId;
    }
    modal.show();
  }
@@ -139,29 +139,29 @@ export class HouseholdComponent implements OnInit {
    return Contact.genderIdFemale();
  }
 
- get newContact() {
-   return this._newContact;
+ get contact() {
+   return this._contact;
  }
 
- set newContact(newContact) {
-   this._newContact = newContact;
+ set contact(contact) {
+   this._contact = contact;
  }
 
  datePickerBlur() {
    if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
-     this.newContact.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
+     this.contact.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
    }
-   let needGradeLevelValue = moment(this.newContact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+   let needGradeLevelValue = moment(this.contact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
 
     if (needGradeLevelValue) {
-      this.newContact.YearGrade = -1;
+      this.contact.YearGrade = -1;
     } else {
-      this.newContact.YearGrade = 0;
+      this.contact.YearGrade = 0;
     }
  }
 
  needGradeLevel(): boolean {
-   return moment(this.newContact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y').add(1, 'd'));
+   return moment(this.contact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y').add(1, 'd'));
  }
 
  updateContactYearGradeGroup(contact: Contact, groupId: number) {
@@ -172,42 +172,45 @@ export class HouseholdComponent implements OnInit {
  saveNewFamilyMember(modal) {
   try {
     this.processingAddFamilyMember = true;
-    this.newContact.Nickname.trim();
-    this.newContact.LastName.trim();
+    this.contact.Nickname.trim();
+    this.contact.LastName.trim();
+    this.contact.FirstName = this.contact.Nickname;
+    this.contact.DisplayName = `${this.contact.LastName}, ${this.contact.Nickname}`;
   } finally {
-    if (!this.newContact.Nickname || !this.newContact.LastName) {
+    if (!this.contact.Nickname || !this.contact.LastName) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
-    } else if (!this.newContact.DateOfBirth || !moment(this.newContact.DateOfBirth).isValid()) {
+    } else if (!this.contact.DateOfBirth || !moment(this.contact.DateOfBirth).isValid()) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
-    } else if (this.newContact.YearGrade === -1) {
+    } else if (this.contact.YearGrade === -1) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedValidGradeSelection');
-    } else if (this.newContact.GenderId !== Contact.genderIdMale() && this.newContact.GenderId !== Contact.genderIdFemale()) {
+    } else if (this.contact.GenderId !== Contact.genderIdMale() && this.contact.GenderId !== Contact.genderIdFemale()) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedValidGenderSelection');
-    } else if (!this.newContact.ContactId && this.newContact.IsSpecialNeeds === undefined) {
+    } else if (!this.contact.ContactId && this.contact.IsSpecialNeeds === undefined) {
       // only check this for new contacts
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedSpecialNeedsSelection');
     } else {
-      if (+this.newContact.YearGrade < 1) {
-        this.newContact.YearGrade = undefined;
+      if (+this.contact.YearGrade < 1) {
+        this.contact.YearGrade = undefined;
       }
-      this.newContact.DisplayName = `${this.newContact.LastName}, ${this.newContact.Nickname}`;
-      if (this.newContact.ContactId) {
-        this.adminService.updateFamilyMember(this.newContact).subscribe(
+      if (this.contact.ContactId) {
+        this.adminService.updateFamilyMember(this.contact).subscribe(
           (response: EventParticipants) => {
             this.announceSuccess(modal);
+            this.rootService.announceEvent('echeckEditFamilyMemberSuccess');
           }, (err) => {
             this.announceError();
           }
         );
       } else {
-        this.adminService.addFamilyMember(this.newContact).subscribe(
+        this.adminService.addFamilyMember(this.contact).subscribe(
           (response: EventParticipants) => {
             this.announceSuccess(modal);
+            this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
           }, (err) => {
             this.announceError();
           }
@@ -220,7 +223,6 @@ export class HouseholdComponent implements OnInit {
  announceSuccess(modal) {
    this.processingAddFamilyMember = false;
    this.getChildren();
-   this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
    return modal.hide();
  }
 
