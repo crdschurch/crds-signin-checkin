@@ -128,7 +128,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.eventParticipants = eventParticipants;
       fixture.setServingAndGuestDisplay();
       expect(fixture.showServingOption).toBe(false);
-      expect(fixture.showGuestOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(true);
     });
     it('should hide guest and serving for SM 6-8 event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
@@ -138,7 +138,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.eventParticipants = eventParticipants;
       fixture.setServingAndGuestDisplay();
       expect(fixture.showServingOption).toBe(false);
-      expect(fixture.showGuestOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(true);
     });
     it('should hide guest and serving for SM 9-12 event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
@@ -148,17 +148,17 @@ describe('AvailableChildrenComponent', () => {
       fixture.eventParticipants = eventParticipants;
       fixture.setServingAndGuestDisplay();
       expect(fixture.showServingOption).toBe(false);
-      expect(fixture.showGuestOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(true);
     });
-    it('should show guest and serving for KC event', () => {
+    it('should show guest and serving for Child Care event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
       let childcareEvent: Event = new Event();
       childcareEvent.EventTypeId = Constants.ChildCareEventType;
       eventParticipants.CurrentEvent = childcareEvent;
       fixture.eventParticipants = eventParticipants;
       fixture.setServingAndGuestDisplay();
-      expect(fixture.showServingOption).toBe(true);
-      expect(fixture.showGuestOption).toBe(true);
+      expect(fixture.showServingOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(false);
     });
     it('should show guest and serving for KC event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();

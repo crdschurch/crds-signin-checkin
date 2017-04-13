@@ -245,11 +245,11 @@ export class AvailableChildrenComponent implements OnInit {
 
  setServingAndGuestDisplay() {
    if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.BigEventType ||
-        this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry6through8EventType||
+        this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry6through8EventType ||
         this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry9through12EventType) {
      this.showGuestOption = true;
      this.showServingOption = false;
-   } else if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.ChildCareEventType){
+   } else if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.ChildCareEventType) {
      this.showGuestOption = false;
      this.showServingOption = false;
    } else {
