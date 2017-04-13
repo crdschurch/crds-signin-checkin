@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { EventParticipants, Room, NewFamily, Child, Group, Contact, Household, State, Country } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -123,6 +123,39 @@ export class AdminService {
 
                       return contacts;
                     })
+                    .catch(this.handleError);
+  }
+
+  addFamilyMember(contact: Contact) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member`;
+    return this.http.post(url, contact)
+                    .map(res => {})
+                    .catch(this.handleError);
+  }
+
+  getHouseholdInformation(householdId: number): Observable<Household> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`;
+    return this.http.get(url)
+                    .map((res) => Household.fromJson(res.json()))
+                    .catch(this.handleError);
+  }
+
+  updateHousehold(household: Household) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/updateFamily`;
+    return this.http.put(url, household).catch(this.handleError);
+  }
+
+  getStates(): Observable<Array<State>> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/getStates`;
+    return this.http.get(url)
+                    .map((res) => (<any[]>res.json()).map(s => State.fromJson(s)))
+                    .catch(this.handleError);
+  }
+
+  getCountries(): Observable<Array<Country>> {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/getCountries`;
+    return this.http.get(url)
+                    .map((res) => (<any[]>res.json()).map(c => Country.fromJson(c)))
                     .catch(this.handleError);
   }
 

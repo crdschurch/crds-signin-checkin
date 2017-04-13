@@ -44,7 +44,10 @@
               <td>{{contact.Address}}</td>
               <td>{{contact.HomePhone}}</td>
               <td>{{contact.MobilePhone}}</td>
-              <td><a class="btn btn-primary btn-sm" [routerLink]="[contact.HouseholdId]">View Child Details</a></td>
+              <td>
+                <a class="btn btn-primary btn-sm" [routerLink]="[contact.HouseholdId, 'edit']">Edit</a>
+                <a class="btn btn-primary btn-sm" [routerLink]="[contact.HouseholdId]">Sign In</a>
+              </td>
             </tr>
           </tbody>
         </table>

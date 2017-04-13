@@ -6,12 +6,14 @@ import { HeaderModule } from '../../header';
 import { ChildSigninCardModule } from '../../../shared/components/child-signin-card';
 import { FamilyFinderComponent } from './family-finder.component';
 import { HouseholdComponent } from './household/household.component';
+import { HouseholdEditComponent } from './household/edit/household-edit.component';
 import { familyFinderRouting } from './family-finder.routes';
 
 @NgModule({
   declarations: [
     FamilyFinderComponent,
-    HouseholdComponent
+    HouseholdComponent,
+    HouseholdEditComponent
   ],
   imports: [
     familyFinderRouting,

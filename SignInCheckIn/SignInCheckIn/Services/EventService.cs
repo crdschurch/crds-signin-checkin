@@ -16,16 +16,18 @@ namespace SignInCheckIn.Services
         private readonly IRoomRepository _roomRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IParticipantRepository _participantRepository;
+        private readonly IKioskRepository _kioskRepository;
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
 
         public EventService(IEventRepository eventRepository, IConfigRepository configRepository, IRoomRepository roomRepository,
-            IApplicationConfiguration applicationConfiguration, IParticipantRepository participantRepository)
+            IApplicationConfiguration applicationConfiguration, IParticipantRepository participantRepository, IKioskRepository kioskRepository)
         {
             _eventRepository = eventRepository;
             _roomRepository = roomRepository;
             _applicationConfiguration = applicationConfiguration;
             _participantRepository = participantRepository;
+            _kioskRepository = kioskRepository;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -46,14 +48,35 @@ namespace SignInCheckIn.Services
             return Mapper.Map<EventDto>(_eventRepository.GetEventById(eventId));
         }
 
-        public EventDto GetCurrentEventForSite(int siteId)
+        public EventDto GetCurrentEventForSite(int siteId, string kioskId = "")
         {
+            // load the kiosk id here...
+            var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId));
+
+            List<int> msmEventTypeIds = new List<int>
+            {
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                _applicationConfiguration.BigEventTypeId
+            };
+
+            bool excludeIds = true;
+
+            // this is hacky, but is probably the best solution, given that KC events currently do not have a fixed event
+            // type id - we assume that unless we're looking for a specific event id, we want to exclude these event ids
+
+            if (kioskConfig.KioskTypeId == _applicationConfiguration.StudentMinistryKioskTypeId)
+            {
+                excludeIds = false;
+            }
+
             // look between midnights on the current day
             var eventOffsetStartString = DateTime.Now.ToShortDateString();
             var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
             var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
 
-            var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
+            var currentEvents =
+                    _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId, false, msmEventTypeIds, excludeIds).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
 
             if (!currentEvents.Any())
             {
@@ -213,6 +236,18 @@ namespace SignInCheckIn.Services
         {
             var result = _participantRepository.GetFamiliesForSearch(token, search);
             return result.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
+        }
+
+        public HouseholdDto GetHouseholdByHouseholdId(string token, int householdId)
+        {
+            var result = _participantRepository.GetHouseholdByHouseholdId(token, householdId);
+            return Mapper.Map<MpHouseholdDto, HouseholdDto>(result);
+        }
+
+        public void UpdateHouseholdInformation(string token, HouseholdDto householdDto)
+        {
+            var mpHouseholdDto = Mapper.Map<HouseholdDto, MpHouseholdDto>(householdDto);
+            _participantRepository.UpdateHouseholdInformation(token, mpHouseholdDto);
         }
     }
 }

@@ -9,6 +9,7 @@ using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.Models.DTO;
@@ -32,12 +33,15 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IGroupLookupRepository> _groupLookupRepository;
         private Mock<IRoomRepository> _roomRepository;
         private Mock<IConfigRepository> _configRepository;
+        private Mock<IAttributeRepository> _attributeRepository;
         private Mock<ISignInLogic> _signInLogic;
 
         private ChildSigninService _fixture;
 
         private static int ChildcareEventTypeId = 243;
         private static int ChildcareGroupTypeId = 27;
+        private static int MiddleSchoolEventTypeId = 398;
+        private static int KidsClublEventTypeId = 410;
 
         [SetUp]
         public void SetUp()
@@ -57,6 +61,7 @@ namespace SignInCheckIn.Tests.Services
             _groupLookupRepository = new Mock<IGroupLookupRepository>();
             _roomRepository = new Mock<IRoomRepository>();
             _configRepository = new Mock<IConfigRepository>();
+            _attributeRepository = new Mock<IAttributeRepository>();
             _signInLogic = new Mock<ISignInLogic>();
 
             var mpConfigDtoEarly = new MpConfigDto
@@ -80,12 +85,15 @@ namespace SignInCheckIn.Tests.Services
 
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareEventTypeId);
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareGroupTypeId);
+            _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesSixToEightEventTypeId).Returns(MiddleSchoolEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesNineToTwelveEventTypeId).Returns(MiddleSchoolEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.BigEventTypeId).Returns(MiddleSchoolEventTypeId);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
                 _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object,
-                _configRepository.Object, _signInLogic.Object);
+                _configRepository.Object, _attributeRepository.Object, _signInLogic.Object);
         }
 
         [Test]
@@ -93,7 +101,9 @@ namespace SignInCheckIn.Tests.Services
         {
             const int householdId = 654;
             const int siteId = 16;
-            var eventDto = new EventDto()
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
+                  var eventDto = new EventDto()
             {
                 EventId = 468
             };
@@ -112,11 +122,11 @@ namespace SignInCheckIn.Tests.Services
                     ContactId = 331
                 }
             };
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(eventDto);
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, eventDto.EventId)).Returns(children);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(householdId)).Returns(headsOfHousehold);
 
-            var result = _fixture.GetChildrenAndEventByHouseholdId(householdId, siteId);
+            var result = _fixture.GetChildrenAndEventByHouseholdId(householdId, siteId, kioskId);
 
             Assert.AreEqual(result.Contacts[0].ContactId, headsOfHousehold[0].ContactId);
             Assert.AreEqual(result.Participants[0].ParticipantId, children[0].ParticipantId);
@@ -130,8 +140,12 @@ namespace SignInCheckIn.Tests.Services
             const int siteId = 1;
             const string phoneNumber = "812-812-8877";
             int? primaryHouseholdId = 123;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
-            var eventDto = new EventDto();
+            var eventDto = new EventDto
+            {
+                EventTypeId = 1
+            };
 
             var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto
             {
@@ -156,8 +170,8 @@ namespace SignInCheckIn.Tests.Services
 
             _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(It.IsAny<int>())).Returns(contactDtos);
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
-            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(eventDto);
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto);
             _childSigninRepository.VerifyAll();
 
             // Assert
@@ -172,18 +186,24 @@ namespace SignInCheckIn.Tests.Services
             const int siteId = 1;
             const string phoneNumber = "812-812-8877";
             int? primaryHouseholdId = 123;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var mpHouseholdAndParticipants = new MpHouseholdParticipantsDto
             {
                 HouseholdId = primaryHouseholdId.GetValueOrDefault(),
             };
-            var eventDto = new EventDto();
+
+            var eventDto = new EventDto
+            {
+                EventTypeId = 1
+            };
+
             var contactDtos = new List<MpContactDto>();
 
             _childSigninRepository.Setup(mocked => mocked.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(mpHouseholdAndParticipants);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(primaryHouseholdId.Value)).Returns(contactDtos);
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(eventDto);
-            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(eventDto);
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto);
             _childSigninRepository.VerifyAll();
 
             // Assert
@@ -292,7 +312,7 @@ namespace SignInCheckIn.Tests.Services
                 currentMpServiceEventDto
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), true)).Returns(eventDtosBySite);
 
             var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
@@ -456,7 +476,7 @@ namespace SignInCheckIn.Tests.Services
                 currentMpServiceEventDto
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), true)).Returns(eventDtosBySite);
 
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
             _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
@@ -560,7 +580,7 @@ namespace SignInCheckIn.Tests.Services
                 currentMpServiceEventDto
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true)).Returns(eventDtosBySite);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), true)).Returns(eventDtosBySite);
 
             _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(1);
             _eventRepository.Setup(m => m.GetSubeventByParentEventId(eventDto.EventId, 1)).Returns((MpEventDto)null);
@@ -634,7 +654,8 @@ namespace SignInCheckIn.Tests.Services
 
             var eventDto = new EventDto
             {
-                EventTitle = "test event"
+                EventTitle = "test event",
+                EventTypeId = ChildcareEventTypeId
             };
 
             var participantEventMapDto = new ParticipantEventMapDto();
@@ -654,6 +675,72 @@ namespace SignInCheckIn.Tests.Services
             _kioskRepository.VerifyAll();
             _pdfEditor.VerifyAll();
             _printingService.VerifyAll();
+        }
+
+        [Test]
+        public void ShouldNotPrintLabelsForAllParticipants()
+        {
+            // Arrange
+            var kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
+
+            var mpKioskConfigDto = new MpKioskConfigDto
+            {
+                KioskIdentifier = kioskId,
+                CongregationId = 1,
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+
+            var mpPrinterMapDto = new MpPrinterMapDto
+            {
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
+
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    AssignedRoomId = 1234567,
+                    AssignedRoomName = "TestRoom",
+                    AssignedSecondaryRoomId = 2345678,
+                    AssignedSecondaryRoomName = "TestSecondaryRoom",
+                    ParticipantId = 111,
+                    Selected = true,
+                    CallNumber = "1234"
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventTypeId = MiddleSchoolEventTypeId
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto();
+            participantEventMapDto.Participants = participantDtos;
+            participantEventMapDto.Contacts = contactDtos;
+            participantEventMapDto.CurrentEvent = eventDto;
+
+            // Act
+            var result = _fixture.PrintParticipants(participantEventMapDto, kioskId.ToString());
+
+            // Assert
+            _kioskRepository.VerifyAll();
+            Assert.Null(result);
         }
 
         [Test]
@@ -804,7 +891,8 @@ namespace SignInCheckIn.Tests.Services
 
             var eventDto = new EventDto
             {
-                EventTitle = "test event"
+                EventTitle = "test event",
+                EventTypeId = ChildcareEventTypeId
             };
 
             var participantEventMapDto = new ParticipantEventMapDto
@@ -884,7 +972,7 @@ namespace SignInCheckIn.Tests.Services
             MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(newParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), It.IsAny<string>())).Returns(newParticipantDto);
 
             // Act
             var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
@@ -926,7 +1014,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantId = participantId
             };
 
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), It.IsAny<string>())).Returns(mpNewParticipantDto);
 
             _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
 
@@ -996,7 +1084,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantId = participantId
             };
 
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<string>(), It.IsAny<MpNewParticipantDto>())).Returns(mpNewParticipantDto);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), null)).Returns(mpNewParticipantDto);
 
             _groupLookupRepository.Setup(m => m.GetGroupId(new DateTime(2008, 10, 10), null)).Returns(groupId);
 
@@ -1124,7 +1212,8 @@ namespace SignInCheckIn.Tests.Services
             var currentEvent = new EventDto
             {
                 EventId = 123,
-                EventTitle = "this test"
+                EventTitle = "this test",
+                EventTypeId = ChildcareEventTypeId
             };
 
             var mpKioskConfigDto = new MpKioskConfigDto
@@ -1481,13 +1570,15 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
             var eventDto = new EventDto
             {
                 EventId = 1234567,
                 EventTypeId = _applicationConfiguration.Object.ChildcareEventTypeId
             };
 
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
             _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
@@ -1512,13 +1603,15 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
             var eventDto = new EventDto
             {
                 EventId = 1234567,
                 EventTypeId = _applicationConfiguration.Object.ChildcareEventTypeId
             };
 
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
             _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
@@ -1543,13 +1636,15 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
             var eventDto = new EventDto
             {
                 EventId = 1234567,
                 EventTypeId = 20
             };
 
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
             _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
@@ -1566,13 +1661,15 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
             var eventDto = new EventDto
             {
                 EventId = 1234567,
                 EventTypeId = 20
             };
 
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
             _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
@@ -1589,13 +1686,15 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
             var eventDto = new EventDto
             {
                 EventId = 1234567,
                 EventTypeId = 243
             };
 
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
             _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumber(phoneNumber, true)).Returns(GetMpHouseholdParticipants());
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
 
@@ -1604,6 +1703,118 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             Assert.AreEqual(2, result.Participants.Count);
+        }
+
+        [Test]
+        public void ShouldReturnMiddleSchoolParticipants()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var kioskTypeId = 4; // MSM kiosk type
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
+            var msmGroupsIds = new List<int>
+            {
+                173931,
+                173932,
+                173933
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = _applicationConfiguration.Object.StudentMinistryGradesSixToEightEventTypeId
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumberAndGroupIds(phoneNumber, It.IsAny<List<int>>(), true)).Returns(GetMpHouseholdParticipantsForMSMEvent());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto, true);
+
+            // Assert
+            Assert.AreEqual(1, result.Participants.Count(r => msmGroupsIds.Contains(r.GroupId.GetValueOrDefault())));
+            Assert.AreEqual(0, result.Participants.Count(r => !msmGroupsIds.Contains(r.GroupId.GetValueOrDefault())));
+        }
+
+        [Test]
+        public void ShouldReturnHighSchoolParticipants()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var kioskTypeId = 4; // MSM kiosk type
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
+            var hsmGroupsIds = new List<int>
+            {
+                173927,
+                173928,
+                173929,
+                173930
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = _applicationConfiguration.Object.StudentMinistryGradesSixToEightEventTypeId
+            };
+
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumberAndGroupIds(phoneNumber, It.IsAny<List<int>>(), true)).Returns(GetMpHouseholdParticipantsForHSMEvent());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto, true);
+
+            // Assert
+            Assert.AreEqual(1, result.Participants.Count(r => hsmGroupsIds.Contains(r.GroupId.GetValueOrDefault())));
+            Assert.AreEqual(0, result.Participants.Count(r => !hsmGroupsIds.Contains(r.GroupId.GetValueOrDefault())));
+        }
+
+        [Test]
+        public void ShouldReturnMiddleAndHighSchoolParticipants()
+        {
+            // Arrange
+            var phoneNumber = "555-555-5555";
+            var siteId = 8;
+            var kioskTypeId = 4; // MSM kiosk type
+            const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
+
+            var mpKioskConfig = new MpKioskConfigDto
+            {
+                KioskTypeId = 4
+            };
+
+            var bigGroupsIds = new List<int>
+            {
+                173927,
+                173928,
+                173929,
+                173930,
+                173931,
+                173932,
+                173933
+            };
+
+            var eventDto = new EventDto
+            {
+                EventId = 1234567,
+                EventTypeId = _applicationConfiguration.Object.StudentMinistryGradesSixToEightEventTypeId
+            };
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId))).Returns(mpKioskConfig);
+            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(GetTestEvent(siteId, _applicationConfiguration.Object.ChildcareEventTypeId));
+            _childSigninRepository.Setup(m => m.GetChildrenByPhoneNumberAndGroupIds(phoneNumber, It.IsAny<List<int>>(), true)).Returns(GetMpHouseholdParticipantsForBigEvent());
+            _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(9988999)).Returns(new List<MpContactDto>());
+
+            // Act
+            var result = _fixture.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, eventDto, true);
+
+            // Assert
+            Assert.AreEqual(2, result.Participants.Count(r => bigGroupsIds.Contains(r.GroupId.GetValueOrDefault())));
+            Assert.AreEqual(0, result.Participants.Count(r => !bigGroupsIds.Contains(r.GroupId.GetValueOrDefault())));
         }
 
         private EventDto GetTestEvent(int siteId, int eventTypeId)
@@ -1634,6 +1845,76 @@ namespace SignInCheckIn.Tests.Services
                 new MpParticipantDto
                 {
                     ParticipantId = 2233444
+                }
+            };
+
+            return mpHouseholdParticipants;
+        }
+
+        private MpHouseholdParticipantsDto GetMpHouseholdParticipantsForMSMEvent()
+        {
+            var mpHouseholdParticipants = new MpHouseholdParticipantsDto
+            {
+                HouseholdId = 9988999
+            };
+
+            mpHouseholdParticipants.Participants = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 2233444,
+                    GroupId = 173931,
+                    FirstName = "Jimmy",
+                    LastName = "Sixthgrade"
+                }
+            };
+
+            return mpHouseholdParticipants;
+        }
+
+        private MpHouseholdParticipantsDto GetMpHouseholdParticipantsForHSMEvent()
+        {
+            var mpHouseholdParticipants = new MpHouseholdParticipantsDto
+            {
+                HouseholdId = 9988999
+            };
+
+            mpHouseholdParticipants.Participants = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 2233444,
+                    GroupId = 173928,
+                    FirstName = "Bobby",
+                    LastName = "EleventhGrade"
+                }
+            };
+
+            return mpHouseholdParticipants;
+        }
+
+        private MpHouseholdParticipantsDto GetMpHouseholdParticipantsForBigEvent()
+        {
+            var mpHouseholdParticipants = new MpHouseholdParticipantsDto
+            {
+                HouseholdId = 9988999
+            };
+
+            mpHouseholdParticipants.Participants = new List<MpParticipantDto>
+            {
+                new MpParticipantDto
+                {
+                    ParticipantId = 2233444,
+                    GroupId = 173928,
+                    FirstName = "Bobby",
+                    LastName = "EleventhGrade"
+                },
+                new MpParticipantDto
+                {
+                    ParticipantId = 1122333,
+                    GroupId = 173932,
+                    FirstName = "Jimmy",
+                    LastName = "SixthGrade"
                 }
             };
 

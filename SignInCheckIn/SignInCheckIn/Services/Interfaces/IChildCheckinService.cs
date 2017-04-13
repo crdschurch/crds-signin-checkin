@@ -6,7 +6,7 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IChildCheckinService
     {
-        ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId);
+        ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId, string kioskId = "");
         List<ParticipantDto> GetChildrenForCurrentEventAndRoom(int roomId, int eventId);
         ParticipantDto CheckinChildrenForCurrentEventAndRoom(ParticipantDto eventParticipant);
         ParticipantDto GetEventParticipantByCallNumber(int eventId, int callNumber, int roomId, bool? excludeThisRoom = false);

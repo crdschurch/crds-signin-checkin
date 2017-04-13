@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Printing.Utilities.Models;
@@ -25,6 +26,7 @@ namespace SignInCheckIn.Services
         private readonly IParticipantRepository _participantRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IGroupLookupRepository _groupLookupRepository;
+        private readonly IAttributeRepository _attributeRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly ISignInLogic _signInLogic;
 
@@ -44,6 +46,7 @@ namespace SignInCheckIn.Services
                                   IGroupLookupRepository groupLookupRepository,
                                   IRoomRepository roomRepository,
                                   IConfigRepository configRepository,
+                                  IAttributeRepository attributeRepository,
                                   ISignInLogic signInLogic)
         {
             _childSigninRepository = childSigninRepository;
@@ -58,15 +61,16 @@ namespace SignInCheckIn.Services
             _applicationConfiguration = applicationConfiguration;
             _groupLookupRepository = groupLookupRepository;
             _roomRepository = roomRepository;
+            _attributeRepository = attributeRepository;
             _signInLogic = signInLogic;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId)
+        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId, string kioskId)
         {
-            var eventDto = _eventService.GetCurrentEventForSite(siteId);
+            var eventDto = _eventService.GetCurrentEventForSite(siteId, kioskId);
 
             var household = _childSigninRepository.GetChildrenByHouseholdId(householdId, eventDto.EventId);
 
@@ -84,13 +88,24 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false)
-
+        // mod this to include the lookup for MSM/HSM
+        public ParticipantEventMapDto GetChildrenAndEventByPhoneNumber(string phoneNumber, int siteId, EventDto existingEventDto, bool newFamilyRegistration = false, string kioskId = "")
         {
             // this will have to check if it's a childcare event
-            var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId);
+            var eventDto = existingEventDto ?? _eventService.GetCurrentEventForSite(siteId, kioskId);
 
-            var household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, true);
+            //if (new)
+            var eventSpecificGroupIds = GetGroupIdsByEventTypeId(eventDto.EventTypeId);
+            MpHouseholdParticipantsDto household;
+
+            if (eventSpecificGroupIds.Count == 0)
+            {
+                household = _childSigninRepository.GetChildrenByPhoneNumber(phoneNumber, true);
+            }
+            else
+            {
+                household = _childSigninRepository.GetChildrenByPhoneNumberAndGroupIds(phoneNumber, eventSpecificGroupIds, true);
+            }
 
             if (!household.HouseholdId.HasValue && household.HouseholdId != 0)
             {
@@ -128,6 +143,50 @@ namespace SignInCheckIn.Services
 
             return participantEventMapDto;
         }
+
+        // this is a super specific and hardcoded function - we may want to consider adding a table
+        // or some other form of lookup to handle this in the future - we could theoretically
+        // get the group ids by the event groups on an event, but this might be complicated by having
+        // groups we're not accounting for
+        private List<int> GetGroupIdsByEventTypeId(int eventTypeId)
+        {
+            if (eventTypeId == _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId)
+            {
+                return new List<int>
+                {
+                    _applicationConfiguration.MsmSixth,
+                    _applicationConfiguration.MsmSeventh,
+                    _applicationConfiguration.MsmEighth
+                };
+            }
+
+            if (eventTypeId == _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
+            {
+                return new List<int>
+                {
+                    _applicationConfiguration.HighSchoolNinth,
+                    _applicationConfiguration.HighSchoolTenth,
+                    _applicationConfiguration.HighSchoolEleventh,
+                    _applicationConfiguration.HighSchoolTwelfth
+                };
+            }
+
+            if (eventTypeId == _applicationConfiguration.BigEventTypeId)
+            {
+                return new List<int>
+                {
+                    _applicationConfiguration.MsmSixth,
+                    _applicationConfiguration.MsmSeventh,
+                    _applicationConfiguration.MsmEighth,
+                    _applicationConfiguration.HighSchoolNinth,
+                    _applicationConfiguration.HighSchoolTenth,
+                    _applicationConfiguration.HighSchoolEleventh,
+                    _applicationConfiguration.HighSchoolTwelfth
+                };
+            }
+
+            return new List<int>();
+        } 
 
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
@@ -383,6 +442,14 @@ namespace SignInCheckIn.Services
                 throw new Exception("Printer Map Id Not Set For Kisok " + kioskConfig.KioskConfigId);
             }
 
+
+            if (participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.BigEventTypeId ||
+                participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId ||
+                participantEventMapDto.CurrentEvent.EventTypeId == _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
+            {
+                return null;
+            }
+
             var headsOfHousehold = string.Join(", ", participantEventMapDto.Contacts.Select(c => $"{c.Nickname} {c.LastName}").ToArray());
 
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.Selected))
@@ -491,7 +558,7 @@ namespace SignInCheckIn.Services
             };
 
             // parentNewParticipantDto.Contact.DateOfBirth = null;
-            _participantRepository.CreateParticipantWithContact(token, parentNewParticipantDto);
+            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
 
             // Step 3 create the children contacts
             List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
@@ -591,7 +658,7 @@ namespace SignInCheckIn.Services
         }
 
         public MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName,
-            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId)
+            DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = null)
         {
             MpNewParticipantDto childNewParticipantDto = new MpNewParticipantDto
             {
@@ -610,9 +677,28 @@ namespace SignInCheckIn.Services
                 }
             };
 
-            var newParticipant = _participantRepository.CreateParticipantWithContact(null, childNewParticipantDto);
+            if (genderId.HasValue && genderId.Value > 0)
+            {
+                childNewParticipantDto.Contact.GenderId = genderId.Value;
+            }
+
+            if (gradeGroupId.HasValue && gradeGroupId > 0)
+            {
+                childNewParticipantDto.GradeGroupAttributeId = gradeGroupId;
+            }
+            var newParticipant = _participantRepository.CreateParticipantWithContact(childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;
-            newParticipant.GradeGroupAttributeId = gradeGroupId;
+
+            if (isSpecialNeeds == true)
+            {
+                var newSpecialNeedsAttribute = new MpContactAttributeDto()
+                {
+                    Contact_ID = newParticipant.ContactId.Value,
+                    Attribute_ID = _applicationConfiguration.SpecialNeedsAttributeId,
+                    Start_Date = DateTime.Now
+                };
+                _attributeRepository.CreateContactAttribute(newSpecialNeedsAttribute);
+            }
 
             return newParticipant;
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Crossroads.Web.Common.MinistryPlatform;
 using FluentAssertions;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -107,6 +108,32 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.VerifyAll();
 
             result.Should().BeSameAs(attrs);
+        }
+
+        [Test]
+        public void TestCreateContactAttribute()
+        {
+            const string token = "456";
+            var attributeColumns = new List<string>
+            {
+                "Contact_ID",
+                "Attribute_ID"
+            };
+            var contractAttributeDto = new MpContactAttributeDto()
+            {
+                Attribute_ID = 33,
+                Contact_ID = 44
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(m => m.Create(contractAttributeDto, attributeColumns)).Returns(contractAttributeDto);
+
+            var result = _fixture.CreateContactAttribute(contractAttributeDto);
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
+
+            result.Should().BeSameAs(contractAttributeDto);
         }
     }
 }

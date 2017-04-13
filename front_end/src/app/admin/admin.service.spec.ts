@@ -3,7 +3,7 @@
 import { AdminService } from './admin.service';
 import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
-import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact } from '../shared/models';
+import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact, Household, State, Country } from '../shared/models';
 import { Observable } from 'rxjs';
 
 describe('AdminService', () => {
@@ -195,6 +195,86 @@ describe('AdminService', () => {
       result.subscribe((r) => {
         expect(r.Participants[0].ParticipantId).toEqual(eventParticipants.Participants[0].ParticipantId);
         expect(r.Participants[1].ParticipantId).toEqual(eventParticipants.Participants[1].ParticipantId);
+      });
+    });
+  });
+
+  describe('#getHouseholdInformation', () => {
+    it('should return household', () => {
+      const householdId = 4312;
+      let household = new Household();
+      household.HouseholdId = 4312;
+      household.HouseholdName = 'test';
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(household);
+
+      let result = fixture.getHouseholdInformation(householdId);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((r) => {
+        expect(r.HouseholdId).toEqual(household.HouseholdId);
+        expect(r.HouseholdName).toEqual(household.HouseholdName);
+      });
+    });
+  });
+
+  describe('#updateHousehold', () => {
+    it('should return list of rooms imported', () => {
+      let household = new Household();
+
+      (<jasmine.Spy>httpClientService.put).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(undefined);
+
+      fixture.updateHousehold(household).subscribe((res) => {
+        expect(httpClientService.put).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/updateFamily`, household);
+      });
+
+    });
+  });
+
+  describe('#getStates', () => {
+    it('should return list of states', () => {
+      let states = new Array<State>();
+      states.push(new State());
+      states[0].StateId = 4312;
+      states[0].StateName = 'Kentucky';
+      states[0].StateAbbreviation = 'KY';
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(states);
+
+      let result = fixture.getStates();
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/getStates`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((r) => {
+        expect(r[0].StateId).toEqual(states[0].StateId);
+        expect(r[0].StateName).toEqual(states[0].StateName);
+        expect(r[0].StateAbbreviation).toEqual(states[0].StateAbbreviation);
+      });
+    });
+  });
+
+  describe('#getCountries', () => {
+    it('should return list of countries', () => {
+      let countries = new Array<Country>();
+      countries.push(new Country());
+      countries[0].CountryId = 4312;
+      countries[0].Country = 'United States of America';
+      countries[0].Code3 = 'USA';
+
+      (<jasmine.Spy>httpClientService.get).and.returnValue(response);
+      (<jasmine.Spy>responseObject.json).and.returnValue(countries);
+
+      let result = fixture.getCountries();
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/getCountries`);
+      expect(result).toBeDefined();
+      expect(result).toEqual(jasmine.any(Observable));
+      result.subscribe((r) => {
+        expect(r[0].CountryId).toEqual(countries[0].CountryId);
+        expect(r[0].Country).toEqual(countries[0].Country);
+        expect(r[0].Code3).toEqual(countries[0].Code3);
       });
     });
   });

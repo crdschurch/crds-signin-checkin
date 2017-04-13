@@ -15,6 +15,8 @@ namespace Crossroads.Utilities.Services
         public int KidsClubMinistryId { get; }
         public int KidsClubCongregationId { get; }
 
+        public int SpecialNeedsAttributeId { get; }
+
         public int HeadOfHouseholdId { get; }
         public int OtherAdultId { get; }
         public int AdultChildId { get; }
@@ -24,7 +26,13 @@ namespace Crossroads.Utilities.Services
         public int KidsClubRegistrationSourceId { get; }
         public int AttendeeParticipantType { get; }
         public int GroupRoleMemberId { get; }
+
         public int AdventureClubEventTypeId { get; }
+        public int BigEventTypeId { get; } // Grades 6 to 12 combined
+        public int StudentMinistryGradesSixToEightEventTypeId { get; }
+        public int StudentMinistryGradesNineToTwelveEventTypeId { get; }
+
+        public int StudentMinistryKioskTypeId { get; }
 
         public int BumpingRoomTypePriorityId { get; }
         public int BumpingRoomTypeVacancyId { get; }
@@ -277,6 +285,15 @@ namespace Crossroads.Utilities.Services
         public int KcFourthGrade { get; }
         public int KcFifthGrade { get; }
 
+        // middle school and high school
+        public int MsmSixth { get; }
+        public int MsmSeventh { get; }
+        public int MsmEighth { get; }
+        public int HighSchoolNinth { get; }
+        public int HighSchoolTenth { get; }
+        public int HighSchoolEleventh { get; }
+        public int HighSchoolTwelfth { get; }
+
         public ApplicationConfiguration(IConfigurationWrapper configurationWrapper)
         {
             AgesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubAgesAttributeTypeId");
@@ -285,6 +302,7 @@ namespace Crossroads.Utilities.Services
             NurseryAgesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubNurseryAgesAttributeTypeId");
             NurseryAgeAttributeId = configurationWrapper.GetConfigIntValue("KidsClubNurseryAgeAttributeId");
 
+            SpecialNeedsAttributeId = configurationWrapper.GetConfigIntValue("SpecialNeedsAttributeId");
 
             KidsClubGroupTypeId = configurationWrapper.GetConfigIntValue("KidsClubGroupTypeId");
             KidsClubMinistryId = configurationWrapper.GetConfigIntValue("KidsClubMinistryId");
@@ -299,7 +317,13 @@ namespace Crossroads.Utilities.Services
             KidsClubRegistrationSourceId = configurationWrapper.GetConfigIntValue("KidsClubRegistrationSourceId");
             AttendeeParticipantType = configurationWrapper.GetConfigIntValue("AttendeeParticipantType");
             GroupRoleMemberId = configurationWrapper.GetConfigIntValue("GroupRoleMemberId");
+
             AdventureClubEventTypeId = configurationWrapper.GetConfigIntValue("AdventureClubEventTypeId");
+            BigEventTypeId = configurationWrapper.GetConfigIntValue("BigEventTypeId");
+            StudentMinistryGradesSixToEightEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesSixToEightEventTypeId");
+            StudentMinistryGradesNineToTwelveEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesNineToTwelveEventTypeId");
+
+            StudentMinistryKioskTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryKioskTypeId");
 
             BumpingRoomTypePriorityId = configurationWrapper.GetConfigIntValue("BumpingRoomTypePriorityId");
             BumpingRoomTypeVacancyId = configurationWrapper.GetConfigIntValue("BumpingRoomTypeVacancyId");
@@ -567,6 +591,15 @@ namespace Crossroads.Utilities.Services
             KcThirdGrade = configurationWrapper.GetConfigIntValue("KcThird");
             KcFourthGrade = configurationWrapper.GetConfigIntValue("KcFourth");
             KcFifthGrade = configurationWrapper.GetConfigIntValue("KcFifth");
+
+            // middle school and high school
+            MsmSixth = configurationWrapper.GetConfigIntValue("MsmSixth");
+            MsmSeventh = configurationWrapper.GetConfigIntValue("MsmSeventh");
+            MsmEighth = configurationWrapper.GetConfigIntValue("MsmEighth");
+            HighSchoolNinth = configurationWrapper.GetConfigIntValue("HighSchoolNinth");
+            HighSchoolTenth = configurationWrapper.GetConfigIntValue("HighSchoolTenth");
+            HighSchoolEleventh = configurationWrapper.GetConfigIntValue("HighSchoolEleventh");
+            HighSchoolTwelfth = configurationWrapper.GetConfigIntValue("HighSchoolTwelfth");
         }
     }
 }
