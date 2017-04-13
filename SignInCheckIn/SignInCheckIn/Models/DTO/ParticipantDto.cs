@@ -19,6 +19,8 @@ namespace SignInCheckIn.Models.DTO
         public string Nickname { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool Selected { get; set; } = false;
+        public bool IsSpecialNeeds { get; set; } = false;
+        public int? GenderId { get; set; }
         public int ParticipationStatusId { get; set; }
         public int? AssignedRoomId { get; set; }
         public string AssignedRoomName { get; set; }
