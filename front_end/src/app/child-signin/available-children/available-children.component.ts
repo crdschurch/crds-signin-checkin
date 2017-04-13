@@ -93,7 +93,11 @@ export class AvailableChildrenComponent implements OnInit {
      (response: EventParticipants) => {
        this.isReady = true;
        if (response && response.Participants && response.Participants.length > 0) {
-         this.router.navigate(['/child-signin/assignment']);
+         if (this.eventParticipants.CurrentEvent.isStudentMinistry) {
+          this.router.navigate(['/child-signin/search']);
+         } else {
+          this.router.navigate(['/child-signin/assignment']);
+         }
        } else {
          this.rootService.announceEvent('generalError');
        }
