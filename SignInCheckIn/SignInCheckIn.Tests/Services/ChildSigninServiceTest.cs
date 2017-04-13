@@ -41,6 +41,7 @@ namespace SignInCheckIn.Tests.Services
         private static int ChildcareEventTypeId = 243;
         private static int ChildcareGroupTypeId = 27;
         private static int MiddleSchoolEventTypeId = 398;
+        private static int KidsClublEventTypeId = 410;
 
         [SetUp]
         public void SetUp()
@@ -85,6 +86,8 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareEventTypeId);
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareGroupTypeId);
             _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesSixToEightEventTypeId).Returns(MiddleSchoolEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesNineToTwelveEventTypeId).Returns(MiddleSchoolEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.BigEventTypeId).Returns(MiddleSchoolEventTypeId);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
@@ -651,7 +654,8 @@ namespace SignInCheckIn.Tests.Services
 
             var eventDto = new EventDto
             {
-                EventTitle = "test event"
+                EventTitle = "test event",
+                EventTypeId = ChildcareEventTypeId
             };
 
             var participantEventMapDto = new ParticipantEventMapDto();
@@ -671,6 +675,72 @@ namespace SignInCheckIn.Tests.Services
             _kioskRepository.VerifyAll();
             _pdfEditor.VerifyAll();
             _printingService.VerifyAll();
+        }
+
+        [Test]
+        public void ShouldNotPrintLabelsForAllParticipants()
+        {
+            // Arrange
+            var kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
+
+            var mpKioskConfigDto = new MpKioskConfigDto
+            {
+                KioskIdentifier = kioskId,
+                CongregationId = 1,
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+
+            var mpPrinterMapDto = new MpPrinterMapDto
+            {
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
+
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    AssignedRoomId = 1234567,
+                    AssignedRoomName = "TestRoom",
+                    AssignedSecondaryRoomId = 2345678,
+                    AssignedSecondaryRoomName = "TestSecondaryRoom",
+                    ParticipantId = 111,
+                    Selected = true,
+                    CallNumber = "1234"
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventTypeId = MiddleSchoolEventTypeId
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto();
+            participantEventMapDto.Participants = participantDtos;
+            participantEventMapDto.Contacts = contactDtos;
+            participantEventMapDto.CurrentEvent = eventDto;
+
+            // Act
+            var result = _fixture.PrintParticipants(participantEventMapDto, kioskId.ToString());
+
+            // Assert
+            _kioskRepository.VerifyAll();
+            Assert.Null(result);
         }
 
         [Test]
@@ -821,7 +891,8 @@ namespace SignInCheckIn.Tests.Services
 
             var eventDto = new EventDto
             {
-                EventTitle = "test event"
+                EventTitle = "test event",
+                EventTypeId = ChildcareEventTypeId
             };
 
             var participantEventMapDto = new ParticipantEventMapDto
@@ -1141,7 +1212,8 @@ namespace SignInCheckIn.Tests.Services
             var currentEvent = new EventDto
             {
                 EventId = 123,
-                EventTitle = "this test"
+                EventTitle = "this test",
+                EventTypeId = ChildcareEventTypeId
             };
 
             var mpKioskConfigDto = new MpKioskConfigDto

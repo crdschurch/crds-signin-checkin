@@ -13,7 +13,7 @@ namespace SignInCheckIn.Services.Interfaces
         EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom);
         List<EventRoomDto> GetAvailableRooms(string token, int roomId, int eventId);
         List<EventRoomDto> UpdateAvailableRooms(string authenticationToken, int roomId, int locationId, List<EventRoomDto> eventRoomDtos);
-        List<AgeGradeDto> GetGradeAttributes(string authenticationToken);
+        List<AgeGradeDto> GetGradeAttributes(string authenticationToken, int siteId, string kioskId, int? eventId = null);
         List<MpGroupDto> GetEventUnassignedGroups(string authenticationToken, int eventId);
         EventRoomDto CreateOrUpdateAdventureClubRoom(string authenticationToken, EventRoomDto eventRoom);
         EventRoomDto GetEventRoom(int eventId, int roomId);

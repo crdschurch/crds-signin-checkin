@@ -22,7 +22,7 @@ namespace MinistryPlatform.Translation.Models.DTO
         public int HouseholdSourceId { get; set; }
 
         [JsonProperty(PropertyName = "Address_ID")]
-        public int AddressId { get; set; }
+        public int? AddressId { get; set; }
 
         [JsonProperty(PropertyName = "Address_Line_1")]
         public string AddressLine1 { get; set; }
