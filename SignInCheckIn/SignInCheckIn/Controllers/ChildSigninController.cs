@@ -337,16 +337,18 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
+                    //var newParticipants = new List<MpNewParticipantDto>()
+                    //{
+                    //    newFamilyContactDto
+                    //};
 
                     _contactRepository.Update(Mapper.Map<ContactDto, MpContactDto>(newFamilyContactDto), token);
-                    _participantRepository.Update(Mapper.Map<ContactDto, MpParticipantDto>(newFamilyContactDto), token);
-                    // newFamilyContactDto.ContactId, newFamilyContactDto.Nickname, newFamilyContactDto.LastName, newFamilyContactDto.DateOfBirth, newFamilyContactDto.GenderId
-                    // newFamilyContactDto.YearGrade
+                    _childSigninService.UpdateGradeGroupParticipant(token, 7593713, newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, true);
                     return Ok();
                 }
                 catch (Exception e)
                 {
-                    var apiError = new ApiErrorDto("Create new family error: ", e);
+                    var apiError = new ApiErrorDto("Update family member error: ", e);
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });
