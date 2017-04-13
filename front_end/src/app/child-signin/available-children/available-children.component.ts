@@ -245,7 +245,7 @@ export class AvailableChildrenComponent implements OnInit {
 
  setServingAndGuestDisplay() {
    if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.BigEventType ||
-        this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry6through8EventType||
+        this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry6through8EventType ||
         this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry9through12EventType) {
      this.showGuestOption = false;
      this.showServingOption = false;

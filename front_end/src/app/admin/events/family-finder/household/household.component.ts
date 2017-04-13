@@ -15,6 +15,7 @@ import * as moment from 'moment';
 export class HouseholdComponent implements OnInit {
   private eventId: number;
   private householdId: number;
+  private _editMode: boolean;
   private processing: boolean;
   private processingAddFamilyMember: boolean;
   private _newContact: Contact;
@@ -47,13 +48,16 @@ export class HouseholdComponent implements OnInit {
 
  private getChildren() {
    this.processing = true;
+   console.log("getchildren")
    this.adminService.getChildrenByHousehold(+this.householdId).subscribe((ep: EventParticipants) => {
+     console.log("1")
      this.eventParticipants = ep;
      if (this.eventParticipants === undefined || !this.eventParticipants.hasParticipants()) {
        this.rootService.announceEvent('echeckFamilyFinderNoChildren');
      }
      this.processing = false;
    }, (err) => {
+     console.log("2")
      if (err === 'No current events for site') {
        this.rootService.announceEvent('noCurrentEvent');
      } else {
@@ -82,6 +86,12 @@ export class HouseholdComponent implements OnInit {
    );
  }
 
+ get editMode() {
+   if (this.newContact) {
+     return this.newContact.ContactId;
+   }
+ }
+
  signIn() {
     if (!this.eventParticipants.hasSelectedParticipants()) {
       return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
@@ -106,10 +116,18 @@ export class HouseholdComponent implements OnInit {
     );
  }
 
- openNewFamilyMemberModal(modal) {
-   this.guestDOB = new DateOfBirth();
-   this._newContact = new Contact();
-   this._newContact.HouseholdId = +this.householdId;
+ openNewFamilyMemberModal(modal, existingContact: Contact) {
+   console.log("ec", existingContact)
+   if (existingContact) {
+     this.newContact = Contact.fromJson(existingContact);
+     this.guestDOB = new DateOfBirth(moment(existingContact.DateOfBirth).month() + 1,
+      moment(existingContact.DateOfBirth).date(), moment(existingContact.DateOfBirth).year());
+      console.log(this.guestDOB)
+   } else {
+     this.guestDOB = new DateOfBirth();
+     this.newContact = new Contact();
+     this.newContact.HouseholdId = +this.householdId;
+   }
    modal.show();
  }
 
@@ -154,10 +172,10 @@ export class HouseholdComponent implements OnInit {
  saveNewFamilyMember(modal) {
   try {
     this.processingAddFamilyMember = true;
-    this.newContact.FirstName.trim();
+    this.newContact.Nickname.trim();
     this.newContact.LastName.trim();
   } finally {
-    if (!this.newContact.FirstName || !this.newContact.LastName) {
+    if (!this.newContact.Nickname || !this.newContact.LastName) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
     } else if (!this.newContact.DateOfBirth || !moment(this.newContact.DateOfBirth).isValid()) {
@@ -169,27 +187,46 @@ export class HouseholdComponent implements OnInit {
     } else if (this.newContact.GenderId !== Contact.genderIdMale() && this.newContact.GenderId !== Contact.genderIdFemale()) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedValidGenderSelection');
-    } else if (this.newContact.IsSpecialNeeds === undefined) {
+    } else if (!this.newContact.ContactId && this.newContact.IsSpecialNeeds === undefined) {
+      // only check this for new contacts
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedSpecialNeedsSelection');
     } else {
       if (+this.newContact.YearGrade < 1) {
         this.newContact.YearGrade = undefined;
       }
-      this.adminService.addFamilyMember(this.newContact).subscribe(
-        (response: EventParticipants) => {
-          this.processingAddFamilyMember = false;
-          this.getChildren();
-          this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
-          return modal.hide();
-        }, (err) => {
-          this.processingAddFamilyMember = false;
-          this.rootService.announceEvent('generalError');
-        }
-      );
+      this.newContact.DisplayName = `${this.newContact.LastName}, ${this.newContact.Nickname}`;
+      if (this.newContact.ContactId) {
+        this.adminService.updateFamilyMember(this.newContact).subscribe(
+          (response: EventParticipants) => {
+            this.announceSuccess(modal);
+          }, (err) => {
+            this.announceError();
+          }
+        );
+      } else {
+        this.adminService.addFamilyMember(this.newContact).subscribe(
+          (response: EventParticipants) => {
+            this.announceSuccess(modal);
+          }, (err) => {
+            this.announceError();
+          }
+        );
+      }
     }
   }
  }
 
+ announceSuccess(modal) {
+   this.processingAddFamilyMember = false;
+   this.getChildren();
+   this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
+   return modal.hide();
+ }
+
+ announceError() {
+   this.processingAddFamilyMember = false;
+   this.rootService.announceEvent('generalError');
+ }
 
 }
