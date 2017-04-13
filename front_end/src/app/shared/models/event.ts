@@ -1,3 +1,5 @@
+import { Constants } from '../constants';
+
 export class Event {
   static TYPE = {
     ADVENTURE_CLUB: 20
@@ -36,17 +38,26 @@ export class Event {
     return this.EventTypeId === Event.TYPE.ADVENTURE_CLUB;
   }
 
+  get isStudentMinistry() {
+    return this.EventTypeId === Constants.BigEventType || this.EventTypeId === Constants.StudentMinistry6through8EventType ||
+      this.EventTypeId === Constants.StudentMinistry9through12EventType;
+  }
+
+  get isChildCare() {
+    return this.EventTypeId === Constants.ChildCareEventType;
+  }
+
   get type() {
     switch (this.EventTypeId) {
-      case 81:
+      case Constants.StudentMinistry:
         return 'Student Ministry';
-      case 243:
+      case Constants.ChildCareEventType:
         return 'Childcare';
-      case 369:
+      case Constants.BigEventType:
         return 'Student Ministry';
-      case 402:
+      case Constants.StudentMinistry6through8EventType:
         return 'Student Ministry';
-      case 403:
+      case Constants.StudentMinistry9through12EventType:
         return 'Student Ministry';
       default:
         return 'Service';
