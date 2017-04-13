@@ -84,6 +84,7 @@ namespace SignInCheckIn
                 .ReverseMap()
                 .ForMember(dest => dest.CongregationId, opts => opts.MapFrom(src => src.CongregationId))
                 .ForMember(dest => dest.CongregationName, opts => opts.MapFrom(src => src.CongregationName));
+            config.CreateMap<MpGroupParticipantDto, MpParticipantDto>().ReverseMap();
         }
     }
 }

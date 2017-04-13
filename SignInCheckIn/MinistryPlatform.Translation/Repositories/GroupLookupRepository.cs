@@ -13,6 +13,30 @@ namespace MinistryPlatform.Translation.Repositories
             _applicationConfiguration = applicationConfiguration;
         }
 
+        public int GetGradeAttributeId(int gradeGroupId)
+        {
+            if (gradeGroupId != null)
+            {
+                switch (gradeGroupId)
+                {
+                    case 173938:
+                        return 9033;
+                    case 173937:
+                        return 9034;
+                    case 173936:
+                        return 9035;
+                    case 173935:
+                        return 9036;
+                    case 173934:
+                        return 9037;
+                    default:
+                        // if no match, assume kindergarten?
+                        return 9032;
+                }
+            }
+            return 0;
+        }
+
         public int GetGroupId(DateTime birthDate, int? gradeGroupAttributeId)
         {
             var timeDifference = System.DateTime.Now - birthDate;
