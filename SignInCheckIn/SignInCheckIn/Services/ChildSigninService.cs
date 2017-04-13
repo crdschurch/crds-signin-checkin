@@ -624,12 +624,7 @@ namespace SignInCheckIn.Services
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
             List<MpEventDto> dailyEvents;
-            bool excludeIds = false;
-
-            if (kioskTypeId == 1)
-            {
-                excludeIds = true;
-            }
+            bool excludeIds = kioskTypeId == 1;
 
             var msmEventTypes = new List<int>
             {
