@@ -42,6 +42,12 @@ export class Event {
         return 'Student Ministry';
       case 243:
         return 'Childcare';
+      case 369:
+        return 'Student Ministry';
+      case 402:
+        return 'Student Ministry';
+      case 403:
+        return 'Student Ministry';
       default:
         return 'Service';
     }
