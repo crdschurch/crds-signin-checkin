@@ -8,5 +8,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         List<MpContactDto> GetHeadsOfHouseholdByHouseholdId(int householdId);
         MpHouseholdDto CreateHousehold(string token, MpHouseholdDto mpHouseholdDto);
+        MpContactDto Update(MpContactDto contactDto, string token);
     }
 }

@@ -118,6 +118,11 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpGroupParticipantDtos, groupParticipantColumns);
         }
 
+        public void UpdateParticipant(List<MpEventParticipantDto> mpEventParticipantDtos)
+        {
+            
+        }
+
         public void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
         {
             var apiUserToken = _apiUserRepository.GetToken();
@@ -296,6 +301,20 @@ namespace MinistryPlatform.Translation.Repositories
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, columns2);
+        }
+
+        public MpParticipantDto Update(MpParticipantDto contactDto, string token)
+        {
+            //List<string> columnList = new List<string>
+            //{
+            //    "Contacts.[Last_Name]",
+            //    "Contacts.[Nickname]",
+            //    "Contacts.[Date_of_Birth]",
+            //    "Gender_ID_Table.[Gender_ID]"
+            //};
+
+            //return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpParticipantDto>(contactDto, columnList);
+            return new MpParticipantDto();
         }
     }
 }
