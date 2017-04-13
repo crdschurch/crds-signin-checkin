@@ -7,6 +7,7 @@ export class EventParticipants {
   HouseholdId: number;
   HouseholdPhoneNumber: string;
   ServicesAttended: number;
+  KioskTypeId: number;
 
   static fromJson(json: any): EventParticipants {
     if (!json) {
@@ -18,6 +19,7 @@ export class EventParticipants {
     eventParticipants.ServicesAttended = json.ServicesAttended;
     eventParticipants.HouseholdId = json.HouseholdId;
     eventParticipants.HouseholdPhoneNumber = json.HouseholdPhoneNumber;
+    eventParticipants.KioskTypeId = json.KioskTypeId;
     eventParticipants.Participants = [];
     for (let p of json.Participants) {
       eventParticipants.Participants.push(Child.fromJson(p));
