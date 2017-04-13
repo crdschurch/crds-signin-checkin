@@ -317,14 +317,14 @@ namespace SignInCheckIn.Services
 
             // If Admin Kiosk or Big Event or 6 - 8th grade event
             if (kioskConfig.KioskTypeId == _applicationConfiguration.AdminKioskTypeId || eventDto.EventTypeId == _applicationConfiguration.BigEventTypeId ||
-                eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId)
+                eventDto.EventTypeId == _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId)
             {
                 grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.SMMiddleSchoolGradesAttributeTypeId, authenticationToken));
             }
 
             // If Admin Kiosk or Big Event or 9 - 12th grade event
             if (kioskConfig.KioskTypeId == _applicationConfiguration.AdminKioskTypeId || eventDto.EventTypeId == _applicationConfiguration.BigEventTypeId ||
-                eventDto.EventTypeId != _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
+                eventDto.EventTypeId == _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId)
             {
                 grades.AddRange(_attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.SMHighSchoolGradesAttributeTypeId, authenticationToken));
             }
