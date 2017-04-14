@@ -336,7 +336,7 @@ namespace SignInCheckIn.Controllers
                 try
                 {
                     _contactRepository.Update(Mapper.Map<ContactDto, MpContactDto>(newFamilyContactDto), token);
-                    _childSigninService.UpdateGradeGroupParticipant(token, 7593828, newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, true);
+                    _childSigninService.UpdateGradeGroupParticipant(token, newFamilyContactDto.ParticipantId, newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, true);
                     return Ok();
                 }
                 catch (Exception e)

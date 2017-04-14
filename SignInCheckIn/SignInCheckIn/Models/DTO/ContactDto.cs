@@ -7,6 +7,8 @@ namespace SignInCheckIn.Models.DTO
     {
         public int ContactId { get; set; }
 
+        public int ParticipantId { get; set; }
+
         public int HouseholdId { get; set; }
 
         public int HouseholdPositionId { get; set; }

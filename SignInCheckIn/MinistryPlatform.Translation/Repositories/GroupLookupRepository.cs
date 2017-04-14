@@ -29,6 +29,20 @@ namespace MinistryPlatform.Translation.Repositories
                         return 9036;
                     case 173934:
                         return 9037;
+                    case 173933:
+                        return 9038;
+                    case 173932:
+                        return 9042;
+                    case 173931:
+                        return 9043;
+                    case 173930:
+                        return 9044;
+                    case 173929:
+                        return 9045;
+                    case 173928:
+                        return 9046;
+                    case 173927:
+                        return 9047;
                     default:
                         // if no match, assume kindergarten?
                         return 9032;
