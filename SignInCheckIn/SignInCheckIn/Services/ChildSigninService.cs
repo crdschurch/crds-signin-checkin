@@ -653,7 +653,6 @@ namespace SignInCheckIn.Services
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
             List<MpEventDto> dailyEvents;
-            bool excludeIds = kioskTypeId == 1;
 
             var msmEventTypes = new List<int>
             {
@@ -662,21 +661,11 @@ namespace SignInCheckIn.Services
                 _applicationConfiguration.BigEventTypeId
             };
 
+            // if admin type or event being signed into is not MSM, then we should exclude MSM event typse
+            bool excludeIds = (kioskTypeId == 1 || !msmEventTypes.Contains(participantEventMapDto.CurrentEvent.EventTypeId));
+
             dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, excludeIds)
                 .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
-
-            //if (participantEventMapDto.KioskTypeId == 1)
-            //{
-            //    dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true)
-            //    .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
-            //}
-            //else
-            //{
-                
-
-            //    dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, false)
-            //    .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
-            //} 
 
             var eligibleEvents = new List<MpEventDto>();
 
