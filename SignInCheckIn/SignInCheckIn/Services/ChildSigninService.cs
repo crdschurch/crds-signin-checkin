@@ -596,6 +596,26 @@ namespace SignInCheckIn.Services
             return _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
 
+        public MpGroupParticipantDto UpdateGradeGroupParticipant(string token, int participantId, DateTime dob, int gradeAttributeId, bool removeExisting)
+        {
+            var groupParticipantDto = new MpGroupParticipantDto
+            {
+                GroupId = _groupLookupRepository.GetGroupId(dob, gradeAttributeId),
+                ParticipantId = participantId,
+                GroupRoleId = _applicationConfiguration.GroupRoleMemberId,
+                StartDate = DateTime.Now,
+                EmployeeRole = false,
+                AutoPromote = true
+            };
+            var list = new List<MpGroupParticipantDto>();
+            list.Add(groupParticipantDto);
+            //if (removeExisting)
+            //{
+            //    _participantRepository.DeleteAgeGradeGroupParticipants(token, 7593713, _groupLookupRepository.GetGroupId(dob, gradeAttributeId));
+            //}
+            return _participantRepository.CreateGroupParticipants(token, list)[0];
+        }
+
         // this will pull the current event set and next event set for the site - logic to determine which
         // events to sign into now lives in the signin logic class
         public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)

@@ -19,5 +19,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpContactDto> GetFamiliesForSearch(string token, string search);
         MpHouseholdDto GetHouseholdByHouseholdId(string token, int householdId);
         void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto);
+        void DeleteAgeGradeGroupParticipants(string authenticationToken, int participantId, int groupId);
     }
 }

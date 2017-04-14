@@ -27,6 +27,8 @@ namespace SignInCheckIn.Models.DTO
 
         public string FirstName { get; set; }
 
+        public string DisplayName { get; set; }
+
         public DateTime DateOfBirth { get; set; }
 
         public string AddressLine1 { get; set; }
