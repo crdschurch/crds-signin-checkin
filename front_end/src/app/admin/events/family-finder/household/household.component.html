@@ -3,19 +3,6 @@
 <preloader *ngIf="processing"></preloader>
 <div class="container mt-3 pb-3 mb-3" *ngIf="!processing">
   <div class="row">
-    <div class="col-sm-12 text-sm-right">
-      <a [routerLink]="['/admin/events', eventId, 'family-finder']" class="back">
-        <span class="icon">
-          <svg height="20px" version="1.1" viewBox="0 0 16 16" width="20px" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g fill="none" fill-rule="evenodd" id="Icons with numbers" stroke="none" stroke-width="1"><g id="Group" transform="translate(-96.000000, -144.000000)">
-              <path d="M103,150 L109,150 L109,154 L103,154 L103,156 L98,152 L103,148 L103,150 L103,150 Z M112,152 C112,147.5 108.5,144 104,144 C99.5,144 96,147.5 96,152 C96,156.5 99.5,160 104,160 C108.5,160 112,156.5 112,152 L112,152 Z M112,152" id="Shape"/>
-            </g>
-          </g>
-          </svg>
-        </span>
-        Back to Family Finder
-      </a>
-    </div>
     <div class="col-md-12">
       <div class="eqWrap">
         <div class="card xl text-xs-center pointer">
@@ -32,7 +19,7 @@
       <div *ngIf="eventParticipants && eventParticipants.hasParticipants()">
         <div class="eqWrap mt-2">
           <div class="card" *ngFor="let kid of eventParticipants.Participants">
-            <div class="text-xs-right m-1">
+            <div class="text-xs-right mt-1 mr-1">
               <a class="pull-xs-right pointer" (click)="openNewFamilyMemberModal(newFamilyMemberModal, kid)">Edit</a>
             </div>
             <div>
@@ -42,9 +29,16 @@
           </div>
         </div>
         <footer class="eqWrap mt-2">
-          <a class="btn btn-primary btn-lg float-xs-right" (click)="signIn()">Sign In
-            <svg height="12" viewBox="0 0 9 12" width="9" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 0l-1.4 1.4 4.6 4.6-4.6 4.6 1.4 1.4 6-6-6-6z" /></svg>
-          </a>
+          <div class="col-sm-6">
+            <a class="btn btn-secondary float-xs-left" [routerLink]="['/admin/events', eventId, 'family-finder']">
+              Back
+            </a>
+          </div>
+          <div class="col-sm-6">
+            <a class="btn btn-primary float-xs-right" (click)="signIn()">Sign In Children
+              <svg height="12" viewBox="0 0 9 12" width="9" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 0l-1.4 1.4 4.6 4.6-4.6 4.6 1.4 1.4 6-6-6-6z" /></svg>
+            </a>
+          </div>
         </footer>
       </div>
     </div>
@@ -168,7 +162,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary btn-lg" (click)="saveNewFamilyMember(newFamilyMemberModal)" [disabled]="processingAddFamilyMember">
+        <button type="button" class="btn btn-primary" (click)="saveNewFamilyMember(newFamilyMemberModal)" [disabled]="processingAddFamilyMember">
           <span *ngIf="!editMode">
             <span *ngIf="!processingAddFamilyMember">Add</span>
             <span *ngIf="processingAddFamilyMember">Adding...</span>
