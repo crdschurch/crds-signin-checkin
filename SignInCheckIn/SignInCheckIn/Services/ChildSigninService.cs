@@ -635,8 +635,6 @@ namespace SignInCheckIn.Services
             list.Add(groupParticipantDto);
             if (removeExisting)
             {
-                // var participantGroups = _groupRepository.GetGroupsForParticipantId(participantId).Where(r => r
-                // _participantRepository.DeleteAgeGradeGroupParticipants(token, participantId, _groupLookupRepository.GetGroupId(dob, gradeAttributeId));
                 var ageGradeGroupParticipants = _participantRepository.GetGroupParticipantsByParticipantId(participantId).Where(gp => gp.GroupTypeId == 4).ToList();
                 _participantRepository.DeleteGroupParticipants(token, ageGradeGroupParticipants);
             }
