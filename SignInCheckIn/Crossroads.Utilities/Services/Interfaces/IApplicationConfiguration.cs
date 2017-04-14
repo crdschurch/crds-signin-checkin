@@ -38,6 +38,7 @@ namespace Crossroads.Utilities.Services.Interfaces
         int StudentMinistryGradesSixToEightEventTypeId { get; }
         int StudentMinistryGradesNineToTwelveEventTypeId { get; }
 
+        int CheckinKioskTypeId { get; }
         int AdminKioskTypeId { get; }
         int StudentMinistryKioskTypeId { get; }
 

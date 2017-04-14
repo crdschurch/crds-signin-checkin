@@ -34,6 +34,7 @@ namespace Crossroads.Utilities.Services
         public int StudentMinistryGradesSixToEightEventTypeId { get; }
         public int StudentMinistryGradesNineToTwelveEventTypeId { get; }
 
+        public int CheckinKioskTypeId { get; }
         public int AdminKioskTypeId { get; }
         public int StudentMinistryKioskTypeId { get; }
 
@@ -328,6 +329,7 @@ namespace Crossroads.Utilities.Services
             StudentMinistryGradesSixToEightEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesSixToEightEventTypeId");
             StudentMinistryGradesNineToTwelveEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesNineToTwelveEventTypeId");
 
+            CheckinKioskTypeId = configurationWrapper.GetConfigIntValue("CheckinKioskTypeId");
             AdminKioskTypeId = configurationWrapper.GetConfigIntValue("AdminKioskTypeId");
             StudentMinistryKioskTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryKioskTypeId");
 

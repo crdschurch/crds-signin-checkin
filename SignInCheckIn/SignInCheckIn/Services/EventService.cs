@@ -33,16 +33,27 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
-        public List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site)
+        public List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site, string kioskId)
         {
-            // make sure not to filter sm events
+            // filter events we don't want to show on the checkin kiosk
+            var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId));
+
+            List<int> excludeEventTypeIds = new List<int>();
+
+            if (kioskConfig.KioskTypeId == _applicationConfiguration.CheckinKioskTypeId)
+            {
+                excludeEventTypeIds.Add(_applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId);
+                excludeEventTypeIds.Add(_applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId);
+                excludeEventTypeIds.Add(_applicationConfiguration.BigEventTypeId);
+            }
+
             var events = Mapper.Map<List<MpEventDto>, List<EventDto>>(_eventRepository.GetEvents(startDate, endDate, site));
 
             foreach (var eventDto in events)
             {
                 eventDto.IsCurrentEvent = CheckEventTimeValidity(eventDto);
             }
-            return events;
+            return events.Where(r => !excludeEventTypeIds.Contains(r.EventTypeId)).ToList();
         }
 
         public EventDto GetEvent(int eventId)

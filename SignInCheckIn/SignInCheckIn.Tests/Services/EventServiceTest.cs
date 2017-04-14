@@ -22,6 +22,12 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IParticipantRepository> _participantRepository;
         private Mock<IKioskRepository> _kioskRepository;
 
+        private const int CheckinKioskTypeId = 2;
+        private const int StudentMinistrySignInKioskTypeId = 4;
+        private const int BigEventTypeId = 369;
+        private const int MiddleSchoolSmEventTypeId = 402;
+        private const int HighSchoolSmEventTypeId = 403;
+
         private EventService _fixture;
 
         [SetUp]
@@ -55,10 +61,11 @@ namespace SignInCheckIn.Tests.Services
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
             _applicationConfiguation.Setup(ac => ac.AdventureClubEventTypeId).Returns(20);
-            _applicationConfiguation.Setup(ac => ac.StudentMinistryKioskTypeId).Returns(4);
-            _applicationConfiguation.Setup(ac => ac.StudentMinistryGradesSixToEightEventTypeId).Returns(398);
-            _applicationConfiguation.Setup(ac => ac.StudentMinistryGradesNineToTwelveEventTypeId).Returns(399);
-            _applicationConfiguation.Setup(ac => ac.BigEventTypeId).Returns(369);
+            _applicationConfiguation.Setup(ac => ac.CheckinKioskTypeId).Returns(CheckinKioskTypeId);
+            _applicationConfiguation.Setup(ac => ac.StudentMinistryKioskTypeId).Returns(StudentMinistrySignInKioskTypeId);
+            _applicationConfiguation.Setup(ac => ac.StudentMinistryGradesSixToEightEventTypeId).Returns(MiddleSchoolSmEventTypeId);
+            _applicationConfiguation.Setup(ac => ac.StudentMinistryGradesNineToTwelveEventTypeId).Returns(HighSchoolSmEventTypeId);
+            _applicationConfiguation.Setup(ac => ac.BigEventTypeId).Returns(BigEventTypeId);
 
             _fixture = new EventService(_eventRepository.Object, _configRepository.Object, _roomRepository.Object, _applicationConfiguation.Object, _participantRepository.Object,
                 _kioskRepository.Object);
@@ -68,6 +75,11 @@ namespace SignInCheckIn.Tests.Services
         public void ShouldGetEvents()
         {
             // Arrange
+            var kioskConfig = new MpKioskConfigDto
+            {
+                KioskTypeId = 1
+            };
+
             var mpEventDtos = new List<MpEventDto>();
 
             var testMpEventDto = new MpEventDto
@@ -84,16 +96,79 @@ namespace SignInCheckIn.Tests.Services
             var start = new DateTime(2016, 10, 9);
             var end = new DateTime(2016, 10, 12);
             const int site = 1;
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kioskConfig);
             _eventRepository.Setup(m => m.GetEvents(start, end, site, false, It.IsAny<List<int>>(), true)).Returns(mpEventDtos);
 
             // Act
-            var result = _fixture.GetCheckinEvents(start, end, site);
+            var result = _fixture.GetCheckinEvents(start, end, site, Guid.NewGuid().ToString());
             _eventRepository.VerifyAll();
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Oakley", result[0].EventSite);
             Assert.AreEqual(1234567, result[0].EventId);
+        }
+
+        [Test]
+        public void ShouldOnlyGetEventsEligibleForCheckin()
+        {
+            // Arrange
+            var kioskConfig = new MpKioskConfigDto
+            {
+                KioskTypeId = 2
+            };
+
+            var mpEventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 1234567,
+                    EventTitle = "Test Event",
+                    EventType = "Oakley Service",
+                    EventTypeId = 123
+                },
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 2345678,
+                    EventTitle = "Test Big Event",
+                    EventType = "Big Event (MSM and HSM Combined)",
+                    EventTypeId = 369
+                },
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 3456789,
+                    EventTitle = "Test MSM Event",
+                    EventType = "Student Ministry 6 to 8",
+                    EventTypeId = 402
+                },
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 4567890,
+                    EventTitle = "Test HSM Event",
+                    EventType = "Student Ministry 9 to 12",
+                    EventTypeId = 403
+                }
+            };
+
+            var start = new DateTime(2016, 10, 9);
+            var end = new DateTime(2016, 10, 12);
+            const int site = 1;
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kioskConfig);
+            _eventRepository.Setup(m => m.GetEvents(start, end, site, false, It.IsAny<List<int>>(), true)).Returns(mpEventDtos);
+
+            // Act
+            var result = _fixture.GetCheckinEvents(start, end, site, Guid.NewGuid().ToString());
+
+            // Assert
+            Assert.AreEqual(1, result.Count);
         }
 
         [Test]

@@ -7,7 +7,7 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IEventService
     {
-        List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site);
+        List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site, string kioskId);
 
         EventDto GetEvent(int eventId);
         EventDto GetCurrentEventForSite(int siteId, string kioskId);
