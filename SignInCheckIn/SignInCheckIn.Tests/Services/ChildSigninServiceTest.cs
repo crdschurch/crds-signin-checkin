@@ -312,7 +312,7 @@ namespace SignInCheckIn.Tests.Services
                 currentMpServiceEventDto
             };
 
-            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), false)).Returns(eventDtosBySite);
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), true, It.IsAny<List<int>>(), true)).Returns(eventDtosBySite);
 
             var participantEventMapDto = new ParticipantEventMapDto();
             participantEventMapDto.Participants = participantDtos;
