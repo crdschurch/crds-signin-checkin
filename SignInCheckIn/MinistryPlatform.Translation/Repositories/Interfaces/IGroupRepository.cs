@@ -9,6 +9,5 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpGroupDto> GetGroups(string authenticationToken, IEnumerable<int> groupIds, bool includeAttributes = false);
         List<MpGroupDto> GetGroupsByAttribute(string authenticationToken, IEnumerable<MpAttributeDto> attributes, bool includeAttributes = false);
         List<MpGroupDto> GetGroupsForParticipantId(int participantId);
-        // List<MpGroupDto> UpdateGradeGroup(int participantId);
     }
 }
