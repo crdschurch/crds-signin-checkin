@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
 using SignInCheckIn.Exceptions.Models;
@@ -33,7 +34,13 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                var eventList = _eventService.GetCheckinEvents(startDate, endDate, site);
+                string kioskIdentifier = "";
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var eventList = _eventService.GetCheckinEvents(startDate, endDate, site, kioskIdentifier);
                 return Ok(eventList);
             }
             catch (Exception e)
