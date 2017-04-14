@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Crossroads.Utilities.Services.Interfaces;
@@ -78,11 +79,29 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(List<RoomDto>))]
         [VersionedRoute(template: "grade-groups", minimumVersion: "1.0.0")]
         [Route("grade-groups")]
-        public IHttpActionResult GetGradeGroups()
+        public IHttpActionResult GetGradeGroups([FromUri] int? eventId = null)
         {
             try
             {
-                var roomList = _roomService.GetGradeAttributes(null);
+                var siteId = 0;
+                if (Request.Headers.Contains("Crds-Site-Id"))
+                {
+                    siteId = int.Parse(Request.Headers.GetValues("Crds-Site-Id").First());
+                }
+
+                if (siteId == 0)
+                {
+                    throw new Exception("Site Id is Invalid");
+                }
+
+                string kioskId = "";
+
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskId = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var roomList = _roomService.GetGradeAttributes(null, siteId, kioskId, eventId);
                 return Ok(roomList);
             }
             catch (Exception e)

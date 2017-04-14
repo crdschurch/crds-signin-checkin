@@ -10,5 +10,6 @@ namespace SignInCheckIn.Models.DTO
         public int ServicesAttended { get; set; }
         public int HouseholdId { get; set; }
         public string HouseholdPhoneNumber { get; set; }
+        public int KioskTypeId { get; set; }
     }
 }

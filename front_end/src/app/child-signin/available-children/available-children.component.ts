@@ -93,7 +93,11 @@ export class AvailableChildrenComponent implements OnInit {
      (response: EventParticipants) => {
        this.isReady = true;
        if (response && response.Participants && response.Participants.length > 0) {
-         this.router.navigate(['/child-signin/assignment']);
+         if (this.eventParticipants.CurrentEvent.isStudentMinistry) {
+          this.router.navigate(['/child-signin/search']);
+         } else {
+          this.router.navigate(['/child-signin/assignment']);
+         }
        } else {
          this.rootService.announceEvent('generalError');
        }
@@ -244,9 +248,10 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  setServingAndGuestDisplay() {
-   if (this.eventParticipants.CurrentEvent.EventTypeId === Constants.BigEventType ||
-        this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry6through8EventType ||
-        this.eventParticipants.CurrentEvent.EventTypeId === Constants.StudentMinistry9through12EventType) {
+   if (this.eventParticipants.CurrentEvent.isStudentMinistry) {
+     this.showGuestOption = true;
+     this.showServingOption = false;
+   } else if (this.eventParticipants.CurrentEvent.isChildCare) {
      this.showGuestOption = false;
      this.showServingOption = false;
    } else {
