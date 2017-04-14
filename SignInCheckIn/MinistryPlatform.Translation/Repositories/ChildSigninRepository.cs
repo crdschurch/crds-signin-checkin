@@ -132,7 +132,9 @@ namespace MinistryPlatform.Translation.Repositories
 
             foreach (var g in groupParticipants)
             {
-                g.YearGrade = _groupLookupRepository.GetGradeAttributeId(g.GroupId.Value);
+                if (g.GroupId != null) { 
+                    g.YearGrade = _groupLookupRepository.GetGradeAttributeId(g.GroupId.Value);
+                }
             }
             return Mapper.Map<List<MpGroupParticipantDto>, List<MpParticipantDto>>(groupParticipants);
         }
