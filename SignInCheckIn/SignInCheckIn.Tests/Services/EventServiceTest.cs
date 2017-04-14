@@ -172,6 +172,68 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
+        public void ShouldGetEventsForAdmin()
+        {
+            // Arrange
+            var kioskConfig = new MpKioskConfigDto
+            {
+                KioskTypeId = 3
+            };
+
+            var mpEventDtos = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 1234567,
+                    EventTitle = "Test Event",
+                    EventType = "Oakley Service",
+                    EventTypeId = 123
+                },
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 2345678,
+                    EventTitle = "Test Big Event",
+                    EventType = "Big Event (MSM and HSM Combined)",
+                    EventTypeId = 369
+                },
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 3456789,
+                    EventTitle = "Test MSM Event",
+                    EventType = "Student Ministry 6 to 8",
+                    EventTypeId = 402
+                },
+                new MpEventDto
+                {
+                    CongregationName = "Oakley",
+                    EventStartDate = new DateTime(2016, 10, 10),
+                    EventId = 4567890,
+                    EventTitle = "Test HSM Event",
+                    EventType = "Student Ministry 9 to 12",
+                    EventTypeId = 403
+                }
+            };
+
+            var start = new DateTime(2016, 10, 9);
+            var end = new DateTime(2016, 10, 12);
+            const int site = 1;
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kioskConfig);
+            _eventRepository.Setup(m => m.GetEvents(start, end, site, false, It.IsAny<List<int>>(), true)).Returns(mpEventDtos);
+
+            // Act
+            var result = _fixture.GetCheckinEvents(start, end, site, Guid.NewGuid().ToString());
+
+            // Assert
+            Assert.AreEqual(4, result.Count);
+        }
+
+        [Test]
         public void TestGetEvent()
         {
             const int eventId = 123;
