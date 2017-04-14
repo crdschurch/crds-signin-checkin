@@ -44,11 +44,13 @@ namespace SignInCheckIn.Services
             // be pulling all events on the day
             foreach (var participant in participantEventMapDto.Participants.Where(r => r.DuplicateSignIn == false && r.Selected == true))
             {
-                mpEventParticipantList.AddRange(SignInParticipant(participant, participantEventMapDto, currentEvents));
+                // save the participant if they are selected and have a valid room assignment - moved down here so that we
+                // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
+                // we are using this logic correctly - getting a rock vs. no sign in, so we may still need the
+                // mp event participants to be created
+                var mpEventParticipant = SignInParticipant(participant, participantEventMapDto, currentEvents);
+                mpEventParticipantList.AddRange(_childSigninRepository.CreateEventParticipants(mpEventParticipant));
             }
-
-            // insert event participants here and get their event participant ids
-            mpEventParticipantList = _childSigninRepository.CreateEventParticipants(mpEventParticipantList);
 
             var mappedParticipants = mpEventParticipantList.Select(Mapper.Map<ParticipantDto>).ToList();
 
@@ -87,11 +89,6 @@ namespace SignInCheckIn.Services
             SyncInvalidSignins(mpEventParticipantList, participant);
 
             AuditSigninIssues(participantEventMapDto, mpEventParticipantList, eligibleEvents, participant);
-
-            // save the participant if they are selected and have a valid room assignment - moved down here so that we
-            // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
-            // we are using this logic correctly - getting a rock vs. no sign in, so we may still need the
-            // mp event participants to be created
 
             return mpEventParticipantList;
         } 
