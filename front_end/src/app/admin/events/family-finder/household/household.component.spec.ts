@@ -22,7 +22,8 @@ let fakeModal = { show: {}, hide: {} };
 describe('HouseholdComponent', () => {
   beforeEach(() => {
     apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
-    adminService = jasmine.createSpyObj('adminService', ['getChildrenByHousehold', 'findFamilySigninAndPrint', 'addFamilyMember']);
+    adminService = jasmine.createSpyObj('adminService', ['getChildrenByHousehold', 'findFamilySigninAndPrint',
+      'addFamilyMember', 'updateFamilyMember']);
     rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
     headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
     router = jasmine.createSpyObj<Router>('router', ['navigate']);
@@ -36,6 +37,7 @@ describe('HouseholdComponent', () => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getChildrenByHousehold)).and.returnValue(Observable.of(eventParticipants));
     (<jasmine.Spy>(adminService.addFamilyMember)).and.returnValue(Observable.of());
+    (<jasmine.Spy>(adminService.updateFamilyMember)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
 
     fixture = new HouseholdComponent(apiService, adminService, rootService, route, router, headerService);
@@ -87,6 +89,24 @@ describe('HouseholdComponent', () => {
         expect(adminService.addFamilyMember).toHaveBeenCalledWith(newContact);
       });
     });
+    it('edits existing family member if valid form', () => {
+      let existingContact: Contact = new Contact();
+      existingContact.Nickname = 'Pacman';
+      existingContact.LastName = 'Jones';
+      existingContact.GenderId = 2;
+      existingContact.IsSpecialNeeds = false;
+      existingContact.ContactId = 789;
+      fixture.contact = existingContact;
+      fixture.guestDOB = new DateOfBirth();
+      fixture.guestDOB.month = 4;
+      fixture.guestDOB.day = 4;
+      fixture.guestDOB.year = moment().subtract(1, 'year').year();
+      // ui event after you pick a date
+      fixture.datePickerBlur();
+      let c = fixture.saveNewFamilyMember(fakeModal);
+      expect(adminService.updateFamilyMember).toHaveBeenCalledWith(existingContact);
+    });
+  });
     describe('shows error if invalid form', () => {
       it('shows error if invalid not valid name', () => {
         let invalidContact: Contact = new Contact();
@@ -178,4 +198,17 @@ describe('HouseholdComponent', () => {
       });
     });
   });
-});
+
+  describe('#editMode', () => {
+    it('should return true if there is a contact', () => {
+      let existingContact: Contact = new Contact();
+      existingContact.ContactId = 444444;
+      fixture.contact = existingContact;
+      expect(fixture.editMode).toBeTruthy();
+    });
+    it('should return false if new contact', () => {
+      let newContact: Contact = new Contact();
+      fixture.contact = newContact;
+      expect(fixture.editMode).toBeFalsy();
+    });
+  });

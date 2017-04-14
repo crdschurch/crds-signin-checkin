@@ -163,7 +163,6 @@ export class HouseholdComponent implements OnInit {
    contact.YearGrade = groupId;
  }
 
-
  saveNewFamilyMember(modal) {
   try {
     this.processingAddFamilyMember = true;
