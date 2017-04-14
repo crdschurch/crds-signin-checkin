@@ -147,6 +147,10 @@
       <Project>{9CA5C91A-96E5-4968-B4CE-213B581B33F6}</Project>
       <Name>MinistryPlatform.Translation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SignInCheckIn\SignInCheckIn.csproj">
+      <Project>{178426a1-78f0-456f-b3d8-eaec78a9f348}</Project>
+      <Name>SignInCheckIn</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

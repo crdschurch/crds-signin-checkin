@@ -11,6 +11,7 @@ export class Contact {
   Nickname: string;
   FirstName: string;
   LastName: string;
+  DisplayName: string;
   Address: string;
   DateOfBirth: Date;
   GenderId: number;

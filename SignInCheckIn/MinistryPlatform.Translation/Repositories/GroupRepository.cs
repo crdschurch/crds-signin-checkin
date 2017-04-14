@@ -93,7 +93,7 @@ namespace MinistryPlatform.Translation.Repositories
             var token = _apiUserRepository.GetToken();
 
             var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
-                .SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId}", "Group_ID_Table.[Group_ID]");
+                .SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId} AND End_Date IS NULL", "Group_ID_Table.[Group_ID]");
 
             return mpGroupDtos;
         } 

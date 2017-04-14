@@ -1,3 +1,5 @@
+@import '../../../../../assets/scss/_variables.scss';
+
 .card-wrapper {
   float: left;
 }
@@ -5,11 +7,5 @@
 .eqWrap {
   .card.xl {
     width: 40%;
-  }
-}
-
-footer {
-  a {
-    margin-left: auto;
   }
 }
