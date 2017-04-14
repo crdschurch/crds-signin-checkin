@@ -14,6 +14,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
     {
         private ChildSigninRepository _fixture;
         private Mock<IApiUserRepository> _apiUserRepository;
+        private Mock<IGroupLookupRepository> _groupLookupRepository;
         private Mock<IMinistryPlatformRestRepository> _ministryPlatformRestRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
 
@@ -28,9 +29,10 @@ namespace MinistryPlatform.Translation.Test.Repositories
         public void SetUp()
         {
             _apiUserRepository = new Mock<IApiUserRepository>(MockBehavior.Strict);
+            _groupLookupRepository = new Mock<IGroupLookupRepository>(MockBehavior.Strict);
             _ministryPlatformRestRepository = new Mock<IMinistryPlatformRestRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>(MockBehavior.Default);
-            _fixture = new ChildSigninRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
+            _fixture = new ChildSigninRepository(_apiUserRepository.Object, _groupLookupRepository.Object, _ministryPlatformRestRepository.Object, _applicationConfiguration.Object);
 
             _householdColumns = new List<string>
             {
@@ -203,7 +205,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
-        [Obsolete("GetChildrenByHouseholdId is Obsolete")]
+
         public void TestGetChildrenByHouseholdIdWithHouseholdPhone()
         {
             var phoneNumber = "812-812-8877";
@@ -535,9 +537,9 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 $"Household_Position_ID_Table.[Household_Position_ID] IN (3,4,2) AND ([Mobile_Phone] = '{phoneNumber}' OR [Mobile_Phone] = '{phoneNumberWithoutDashes}' OR Household_ID_Table.[Home_Phone] = '{phoneNumber}' OR Household_ID_Table.[Home_Phone] = '{phoneNumberWithoutDashes}')";
         }
 
-	        private static string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
+	    private static string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
         {
-            return $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
+            return $"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
         }
 
         private static string GetChildParticpantsByOtherHouseholdFilter(int householdId)

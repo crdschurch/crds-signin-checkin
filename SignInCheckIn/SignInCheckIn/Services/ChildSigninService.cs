@@ -609,10 +609,13 @@ namespace SignInCheckIn.Services
             };
             var list = new List<MpGroupParticipantDto>();
             list.Add(groupParticipantDto);
-            //if (removeExisting)
-            //{
-            //    _participantRepository.DeleteAgeGradeGroupParticipants(token, 7593713, _groupLookupRepository.GetGroupId(dob, gradeAttributeId));
-            //}
+            if (removeExisting)
+            {
+                // var participantGroups = _groupRepository.GetGroupsForParticipantId(participantId).Where(r => r
+                // _participantRepository.DeleteAgeGradeGroupParticipants(token, participantId, _groupLookupRepository.GetGroupId(dob, gradeAttributeId));
+                var ageGradeGroupParticipants = _participantRepository.GetGroupParticipantsByParticipantId(participantId).Where(gp => gp.GroupTypeId == 4).ToList();
+                _participantRepository.DeleteGroupParticipants(token, ageGradeGroupParticipants);
+            }
             return _participantRepository.CreateGroupParticipants(token, list)[0];
         }
 

@@ -7,6 +7,7 @@ namespace MinistryPlatform.Translation.Models.DTO
     [MpRestApiTable(Name = "Group_Participants")]
     public class MpGroupParticipantDto
     {
+        [MpRestApiPrimaryKey("Group_Participant_ID")]
         [JsonProperty("Group_Participant_ID")]
         public int GroupParticipantId { get; set; }
 

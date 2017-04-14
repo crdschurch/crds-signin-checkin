@@ -118,31 +118,10 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpGroupParticipantDtos, groupParticipantColumns);
         }
 
-        public void DeleteAgeGradeGroupParticipants(string authenticationToken, int participantId, int groupId)
+        public void DeleteGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> groupParticipants)
         {
             var token = authenticationToken ?? _apiUserRepository.GetToken();
-
-            List<string> groupParticipantColumns = new List<string>
-            {
-                "Group_Participant_ID",
-                "Group_ID",
-                "Participant_ID",
-                "Group_Role_ID",
-                "Start_Date",
-                "Employee_Role",
-                "Auto_Promote"
-            };
-
-            var x = new MpGroupParticipantDto()
-            {
-                GroupId = groupId,
-                ParticipantId = participantId
-            };
-
-            var y = GetGroupParticipantsByParticipantAndGroupId(groupId, new List<int> { participantId });
-
-            // IEnumerable<int> existingGradeGroups = new List<int>(14672202);
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpGroupParticipantDto>(y[0].GroupParticipantId);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
         }
 
         public void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
@@ -244,6 +223,30 @@ namespace MinistryPlatform.Translation.Repositories
                  Search<MpGroupParticipantDto>(
                     $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) " +
                     "AND End_Date IS NULL", groupParticipantColumns);
+
+            return mpGroupParticipantDtos;
+        }
+
+        public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantId(int participantId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            List<string> groupParticipantColumns = new List<string>
+            {
+                "Group_Participant_ID",
+                "Group_Participants.Group_ID",
+                "Group_ID_Table.[Group_Type_ID]",
+                "Participant_ID",
+                "Group_Role_ID",
+                "Group_Participants.[Start_Date]",
+                "Employee_Role",
+                "Auto_Promote"
+            };
+
+            var mpGroupParticipantDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                 Search<MpGroupParticipantDto>(
+                    $"Group_Participants.Participant_ID = {participantId}" +
+                    "AND Group_Participants.End_Date IS NULL", groupParticipantColumns);
 
             return mpGroupParticipantDtos;
         }

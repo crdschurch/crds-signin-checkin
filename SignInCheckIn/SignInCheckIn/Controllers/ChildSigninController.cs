@@ -317,12 +317,10 @@ namespace SignInCheckIn.Controllers
         {
             return Authorized(token =>
             {
-                string kioskIdentifier;
-
-                // make sure kiosk is admin type and configured for printing
+                 // make sure kiosk is admin type and configured for printing
                 if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
                 {
-                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    string kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
                     var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
                     // must be kiosk type admin and have a printer set up
                     if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
@@ -337,13 +335,8 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    //var newParticipants = new List<MpNewParticipantDto>()
-                    //{
-                    //    newFamilyContactDto
-                    //};
-
                     _contactRepository.Update(Mapper.Map<ContactDto, MpContactDto>(newFamilyContactDto), token);
-                    _childSigninService.UpdateGradeGroupParticipant(token, 7593713, newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, true);
+                    _childSigninService.UpdateGradeGroupParticipant(token, 7593828, newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, true);
                     return Ok();
                 }
                 catch (Exception e)
