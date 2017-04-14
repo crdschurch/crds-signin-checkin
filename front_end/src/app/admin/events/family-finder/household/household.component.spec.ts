@@ -72,11 +72,11 @@ describe('HouseholdComponent', () => {
       });
       it('creates new family member if valid form', () => {
         let newContact: Contact = new Contact();
-        newContact.FirstName = 'Pacman';
+        newContact.Nickname = 'Pacman';
         newContact.LastName = 'Jones';
         newContact.GenderId = 2;
         newContact.IsSpecialNeeds = false;
-        fixture.newContact = newContact;
+        fixture.contact = newContact;
         fixture.guestDOB = new DateOfBirth();
         fixture.guestDOB.month = 4;
         fixture.guestDOB.day = 4;
@@ -90,9 +90,9 @@ describe('HouseholdComponent', () => {
     describe('shows error if invalid form', () => {
       it('shows error if invalid not valid name', () => {
         let invalidContact: Contact = new Contact();
-        invalidContact.FirstName = 'Pacman';
+        invalidContact.Nickname = 'Pacman';
         invalidContact.LastName = '';
-        fixture.newContact = invalidContact;
+        fixture.contact = invalidContact;
         let c = fixture.saveNewFamilyMember(fakeModal);
         expect(this.processingAddFamilyMember).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninAddGuestFormInvalid');
@@ -100,13 +100,13 @@ describe('HouseholdComponent', () => {
       });
       it('shows error if bad DOB', () => {
         let invalidContact: Contact = new Contact();
-        invalidContact.FirstName = 'Pacman';
+        invalidContact.Nickname = 'Pacman';
         invalidContact.LastName = 'Jones';
         fixture.guestDOB = new DateOfBirth();
         fixture.guestDOB.month = 13;
         fixture.guestDOB.day = 4;
         fixture.guestDOB.year = moment().subtract(1, 'year').year();
-        fixture.newContact = invalidContact;
+        fixture.contact = invalidContact;
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
@@ -116,9 +116,9 @@ describe('HouseholdComponent', () => {
       });
       it('shows error if invalid no valid dob', () => {
         let invalidContact: Contact = new Contact();
-        invalidContact.FirstName = 'Pacman';
+        invalidContact.Nickname = 'Pacman';
         invalidContact.LastName = 'Jones';
-        fixture.newContact = invalidContact;
+        fixture.contact = invalidContact;
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
@@ -128,13 +128,13 @@ describe('HouseholdComponent', () => {
       });
       it('shows error if invalid no valid group selected', () => {
         let invalidContact: Contact = new Contact();
-        invalidContact.FirstName = 'Pacman';
+        invalidContact.Nickname = 'Pacman';
         invalidContact.LastName = 'Jones';
         fixture.guestDOB = new DateOfBirth();
         fixture.guestDOB.month = 12;
         fixture.guestDOB.day = 4;
         fixture.guestDOB.year = moment().subtract(7, 'year').year();
-        fixture.newContact = invalidContact;
+        fixture.contact = invalidContact;
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
@@ -144,14 +144,14 @@ describe('HouseholdComponent', () => {
       });
       it('shows error if no gender selected', () => {
         let invalidContact: Contact = new Contact();
-        invalidContact.FirstName = 'Pacman';
+        invalidContact.Nickname = 'Pacman';
         invalidContact.LastName = 'Jones';
         invalidContact.IsSpecialNeeds = true;
         fixture.guestDOB = new DateOfBirth();
         fixture.guestDOB.month = 12;
         fixture.guestDOB.day = 4;
         fixture.guestDOB.year = moment().subtract(1, 'year').year();
-        fixture.newContact = invalidContact;
+        fixture.contact = invalidContact;
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
@@ -161,14 +161,14 @@ describe('HouseholdComponent', () => {
       });
       it('shows error if no special needs selected', () => {
         let invalidContact: Contact = new Contact();
-        invalidContact.FirstName = 'Pacman';
+        invalidContact.Nickname = 'Pacman';
         invalidContact.LastName = 'Jones';
         invalidContact.GenderId = 1;
         fixture.guestDOB = new DateOfBirth();
         fixture.guestDOB.month = 12;
         fixture.guestDOB.day = 4;
         fixture.guestDOB.year = moment().subtract(1, 'year').year();
-        fixture.newContact = invalidContact;
+        fixture.contact = invalidContact;
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);

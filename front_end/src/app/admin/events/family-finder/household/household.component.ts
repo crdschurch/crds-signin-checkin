@@ -48,16 +48,13 @@ export class HouseholdComponent implements OnInit {
 
  private getChildren() {
    this.processing = true;
-   console.log("getchildren")
    this.adminService.getChildrenByHousehold(+this.householdId).subscribe((ep: EventParticipants) => {
-     console.log("1")
      this.eventParticipants = ep;
      if (this.eventParticipants === undefined || !this.eventParticipants.hasParticipants()) {
        this.rootService.announceEvent('echeckFamilyFinderNoChildren');
      }
      this.processing = false;
    }, (err) => {
-     console.log("2")
      if (err === 'No current events for site') {
        this.rootService.announceEvent('noCurrentEvent');
      } else {
@@ -117,12 +114,10 @@ export class HouseholdComponent implements OnInit {
  }
 
  openNewFamilyMemberModal(modal, existingContact: Contact) {
-   console.log("ec", existingContact)
    if (existingContact) {
      this.contact = Contact.fromJson(existingContact);
      this.guestDOB = new DateOfBirth(moment(existingContact.DateOfBirth).month() + 1,
       moment(existingContact.DateOfBirth).date(), moment(existingContact.DateOfBirth).year());
-      console.log(this.guestDOB)
    } else {
      this.guestDOB = new DateOfBirth();
      this.contact = new Contact();
