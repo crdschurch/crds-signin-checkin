@@ -612,6 +612,20 @@ namespace MinistryPlatform.Translation.Repositories
                         return _applicationConfiguration.KcFourthGrade;
                     case 9037:
                         return _applicationConfiguration.KcFifthGrade;
+                    case 9038:
+                        return _applicationConfiguration.MsmSixth;
+                    case 9042:
+                        return _applicationConfiguration.MsmSeventh;
+                    case 9043:
+                        return _applicationConfiguration.MsmEighth;
+                    case 9044:
+                        return _applicationConfiguration.HighSchoolNinth;
+                    case 9045:
+                        return _applicationConfiguration.HighSchoolTenth;
+                    case 9046:
+                        return _applicationConfiguration.HighSchoolEleventh;
+                    case 9047:
+                        return _applicationConfiguration.HighSchoolTwelfth;
                 }
             }
 

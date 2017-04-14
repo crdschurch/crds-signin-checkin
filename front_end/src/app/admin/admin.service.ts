@@ -133,6 +133,13 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  updateFamilyMember(contact: Contact) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member/${contact.ContactId}`;
+    return this.http.put(url, contact)
+                    .map(res => {})
+                    .catch(this.handleError);
+  }
+
   getHouseholdInformation(householdId: number): Observable<Household> {
     const url = `${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`;
     return this.http.get(url)

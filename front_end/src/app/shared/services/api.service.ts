@@ -44,8 +44,10 @@ export class ApiService {
                     .catch(this.handleError);
   }
 
-  getGradeGroups() {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
+  getGradeGroups(eventId = null) {
+    let url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
+    url += (eventId === null ? '' : `?eventId=${eventId}`);
+
     return this.http.get(url)
                     .map(res => { return (<Group[]>res.json()).map(r => Group.fromJson(r)); })
                     .catch(this.handleError);

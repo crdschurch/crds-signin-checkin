@@ -9,6 +9,8 @@ export class Child {
   ContactId: number;
   HouseholdId: number;
   HouseholdPositionId: number;
+  GenderId: number;
+  YearGrade: number;
   Nickname: string;
   FirstName: string;
   LastName: string;
@@ -40,6 +42,8 @@ export class Child {
     c.FirstName = json.FirstName;
     c.LastName = json.LastName;
     c.Nickname = json.Nickname;
+    c.GenderId = json.GenderId;
+    c.YearGrade = json.YearGrade;
     c.DateOfBirth = json.DateOfBirth;
     c.Selected = json.Selected;
     c.ParticipationStatusId = json.ParticipationStatusId;
