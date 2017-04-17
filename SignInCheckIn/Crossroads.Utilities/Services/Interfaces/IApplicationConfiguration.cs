@@ -58,7 +58,7 @@ namespace Crossroads.Utilities.Services.Interfaces
 
         string ManageRoomsChannel { get; set; }
         string CheckinParticipantsChannel { get; set; }
-        string CheckinCapacityChannel { get; set; }
+        string CheckinRoomChannel { get; set; }
 
         int ChildcareEventTypeId { get; }
         int ChildcareGroupTypeId { get; }
