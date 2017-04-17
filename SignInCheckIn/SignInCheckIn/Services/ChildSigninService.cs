@@ -141,6 +141,22 @@ namespace SignInCheckIn.Services
             participantEventMapDto.HouseholdPhoneNumber = phoneNumber;
             participantEventMapDto.HouseholdId = household.HouseholdId.GetValueOrDefault();
 
+            var msmEventTypes = new List<int>
+            {
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                _applicationConfiguration.BigEventTypeId
+            };
+
+            if (msmEventTypes.Contains(eventDto.EventTypeId))
+            {
+                participantEventMapDto.KioskTypeId = 4;
+            }
+            else
+            {
+                participantEventMapDto.KioskTypeId = 1;
+            }
+
             return participantEventMapDto;
         }
 
@@ -197,7 +213,7 @@ namespace SignInCheckIn.Services
             }
 
             // check the current and next event set to make sure they're not signed in to one of those events already
-            var eventsForSignin = GetEventsForSignin(participantEventMapDto);
+            var eventsForSignin = GetEventsForSignin(participantEventMapDto, participantEventMapDto.KioskTypeId);
             CheckForDuplicateSignIns(eventsForSignin, participantEventMapDto);
 
             // this needs to be a list of participants, not a list of event participants - the automapping
@@ -604,13 +620,51 @@ namespace SignInCheckIn.Services
             return _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
         }
 
+        public MpGroupParticipantDto UpdateGradeGroupParticipant(string token, int participantId, DateTime dob, int gradeAttributeId, bool removeExisting)
+        {
+            var groupParticipantDto = new MpGroupParticipantDto
+            {
+                GroupId = _groupLookupRepository.GetGroupId(dob, gradeAttributeId),
+                ParticipantId = participantId,
+                GroupRoleId = _applicationConfiguration.GroupRoleMemberId,
+                StartDate = DateTime.Now,
+                EmployeeRole = false,
+                AutoPromote = true
+            };
+            var list = new List<MpGroupParticipantDto>();
+            list.Add(groupParticipantDto);
+            if (removeExisting)
+            {
+                var ageGradeGroupParticipants = _participantRepository.GetGroupParticipantsByParticipantId(participantId).Where(gp => gp.GroupTypeId == 4).ToList();
+                _participantRepository.DeleteGroupParticipants(token, ageGradeGroupParticipants);
+            }
+            return _participantRepository.CreateGroupParticipants(token, list)[0];
+        }
+
         // this will pull the current event set and next event set for the site - logic to determine which
         // events to sign into now lives in the signin logic class
-        public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto)
+
+        // this can potentially pull back 2 to 4 events, representing the current service/ac and future ac/service event set,
+        // or sm events - we need to determine if it's either a sm event or kc event they're trying to sign into...
+
+        // solution here might be to pass down the event type on the PEM Dto and use that in the get events function
+        public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto, int kioskTypeId)
         {
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
-            var dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true)
+            List<MpEventDto> dailyEvents;
+
+            var msmEventTypes = new List<int>
+            {
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                _applicationConfiguration.BigEventTypeId
+            };
+
+            // if admin type or event being signed into is not MSM, then we should exclude MSM event typse
+            bool excludeIds = (kioskTypeId == 1 || !msmEventTypes.Contains(participantEventMapDto.CurrentEvent.EventTypeId));
+
+            dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, excludeIds)
                 .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
 
             var eligibleEvents = new List<MpEventDto>();
@@ -686,8 +740,14 @@ namespace SignInCheckIn.Services
             {
                 childNewParticipantDto.GradeGroupAttributeId = gradeGroupId;
             }
+
             var newParticipant = _participantRepository.CreateParticipantWithContact(childNewParticipantDto);
             newParticipant.Contact = childNewParticipantDto.Contact;
+
+            if (gradeGroupId.HasValue && gradeGroupId > 0)
+            {
+                newParticipant.GradeGroupAttributeId = gradeGroupId;
+            }
 
             if (isSpecialNeeds == true)
             {

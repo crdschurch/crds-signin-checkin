@@ -30,7 +30,7 @@
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
         <div class="card" *ngFor="let kid of childrenAvailable()" >
           <child-signin-card [child]="kid">
-        </child-signin-card>
+          </child-signin-card>
         </div><!--/card-->
       </div><!--/eqWrap-->
 
@@ -155,7 +155,7 @@
                       <label for="childGrade" class="control-label">Year / Grade</label>
                       <select class="form-control form-control-lg" (change)="updateChildYearGradeGroup(newGuestChild, $event.target.value)" required>
                         <option value="-1">Select a Grade</option>
-                        <option value="0">Has not started Kindergarten yet</option>
+                        <option value="0" *ngIf="!eventParticipants.CurrentEvent.isStudentMinistry">Has not started Kindergarten yet</option>
                         <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}">{{ grade.Name }}</option>
                       </select>
                     </div>

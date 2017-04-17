@@ -15,9 +15,10 @@ import * as moment from 'moment';
 export class HouseholdComponent implements OnInit {
   private eventId: number;
   private householdId: number;
+  private _editMode: boolean;
   private processing: boolean;
   private processingAddFamilyMember: boolean;
-  private _newContact: Contact;
+  private _contact: Contact;
   private gradeGroups: Array<Group> = [];
   numberOfMonthsSelection: Array<number>;
   numberOfDaysSelection: Array<number>;
@@ -82,6 +83,12 @@ export class HouseholdComponent implements OnInit {
    );
  }
 
+ get editMode() {
+   if (this.contact) {
+     return this.contact.ContactId;
+   }
+ }
+
  signIn() {
     if (!this.eventParticipants.hasSelectedParticipants()) {
       return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
@@ -106,10 +113,16 @@ export class HouseholdComponent implements OnInit {
     );
  }
 
- openNewFamilyMemberModal(modal) {
-   this.guestDOB = new DateOfBirth();
-   this._newContact = new Contact();
-   this._newContact.HouseholdId = +this.householdId;
+ openNewFamilyMemberModal(modal, existingContact: Contact) {
+   if (existingContact) {
+     this.contact = Contact.fromJson(existingContact);
+     this.guestDOB = new DateOfBirth(moment(existingContact.DateOfBirth).month() + 1,
+      moment(existingContact.DateOfBirth).date(), moment(existingContact.DateOfBirth).year());
+   } else {
+     this.guestDOB = new DateOfBirth();
+     this.contact = new Contact();
+     this.contact.HouseholdId = +this.householdId;
+   }
    modal.show();
  }
 
@@ -121,75 +134,95 @@ export class HouseholdComponent implements OnInit {
    return Contact.genderIdFemale();
  }
 
- get newContact() {
-   return this._newContact;
+ get contact() {
+   return this._contact;
  }
 
- set newContact(newContact) {
-   this._newContact = newContact;
+ set contact(contact) {
+   this._contact = contact;
  }
 
  datePickerBlur() {
    if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
-     this.newContact.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
+     this.contact.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
    }
-   let needGradeLevelValue = moment(this.newContact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+   let needGradeLevelValue = moment(this.contact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
 
     if (needGradeLevelValue) {
-      this.newContact.YearGrade = -1;
+      this.contact.YearGrade = -1;
     } else {
-      this.newContact.YearGrade = 0;
+      this.contact.YearGrade = 0;
     }
  }
 
  needGradeLevel(): boolean {
-   return moment(this.newContact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y').add(1, 'd'));
+   return moment(this.contact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y').add(1, 'd'));
  }
 
  updateContactYearGradeGroup(contact: Contact, groupId: number) {
    contact.YearGrade = groupId;
  }
 
-
  saveNewFamilyMember(modal) {
   try {
     this.processingAddFamilyMember = true;
-    this.newContact.FirstName.trim();
-    this.newContact.LastName.trim();
+    this.contact.Nickname.trim();
+    this.contact.LastName.trim();
+    this.contact.FirstName = this.contact.Nickname;
+    this.contact.DisplayName = `${this.contact.LastName}, ${this.contact.Nickname}`;
   } finally {
-    if (!this.newContact.FirstName || !this.newContact.LastName) {
+    if (!this.contact.Nickname || !this.contact.LastName) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
-    } else if (!this.newContact.DateOfBirth || !moment(this.newContact.DateOfBirth).isValid()) {
+    } else if (!this.contact.DateOfBirth || !moment(this.contact.DateOfBirth).isValid()) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
-    } else if (this.newContact.YearGrade === -1) {
+    } else if (this.contact.YearGrade === -1) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedValidGradeSelection');
-    } else if (this.newContact.GenderId !== Contact.genderIdMale() && this.newContact.GenderId !== Contact.genderIdFemale()) {
+    } else if (this.contact.GenderId !== Contact.genderIdMale() && this.contact.GenderId !== Contact.genderIdFemale()) {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedValidGenderSelection');
-    } else if (this.newContact.IsSpecialNeeds === undefined) {
+    } else if (!this.contact.ContactId && this.contact.IsSpecialNeeds === undefined) {
+      // only check this for new contacts
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedSpecialNeedsSelection');
     } else {
-      if (+this.newContact.YearGrade < 1) {
-        this.newContact.YearGrade = undefined;
+      if (+this.contact.YearGrade < 1) {
+        this.contact.YearGrade = undefined;
       }
-      this.adminService.addFamilyMember(this.newContact).subscribe(
-        (response: EventParticipants) => {
-          this.processingAddFamilyMember = false;
-          this.getChildren();
-          this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
-          return modal.hide();
-        }, (err) => {
-          this.processingAddFamilyMember = false;
-          this.rootService.announceEvent('generalError');
-        }
-      );
+      if (this.contact.ContactId) {
+        this.adminService.updateFamilyMember(this.contact).subscribe(
+          (response: EventParticipants) => {
+            this.announceSuccess(modal);
+            this.rootService.announceEvent('echeckEditFamilyMemberSuccess');
+          }, (err) => {
+            this.announceError();
+          }
+        );
+      } else {
+        this.adminService.addFamilyMember(this.contact).subscribe(
+          (response: EventParticipants) => {
+            this.announceSuccess(modal);
+            this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
+          }, (err) => {
+            this.announceError();
+          }
+        );
+      }
     }
   }
  }
 
+ announceSuccess(modal) {
+   this.processingAddFamilyMember = false;
+   this.getChildren();
+   return modal.hide();
+ }
+
+ announceError() {
+   this.processingAddFamilyMember = false;
+   this.rootService.announceEvent('generalError');
+ }
 
 }

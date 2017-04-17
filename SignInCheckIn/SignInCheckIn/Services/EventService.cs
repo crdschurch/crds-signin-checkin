@@ -33,14 +33,27 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
-        public List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site)
+        public List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site, string kioskId)
         {
+            // filter events we don't want to show on the checkin kiosk
+            var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskId));
+
+            List<int> excludeEventTypeIds = new List<int>();
+
+            if (kioskConfig.KioskTypeId == _applicationConfiguration.CheckinKioskTypeId)
+            {
+                excludeEventTypeIds.Add(_applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId);
+                excludeEventTypeIds.Add(_applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId);
+                excludeEventTypeIds.Add(_applicationConfiguration.BigEventTypeId);
+            }
+
             var events = Mapper.Map<List<MpEventDto>, List<EventDto>>(_eventRepository.GetEvents(startDate, endDate, site));
+
             foreach (var eventDto in events)
             {
                 eventDto.IsCurrentEvent = CheckEventTimeValidity(eventDto);
             }
-            return events;
+            return events.Where(r => !excludeEventTypeIds.Contains(r.EventTypeId)).ToList();
         }
 
         public EventDto GetEvent(int eventId)
@@ -60,15 +73,8 @@ namespace SignInCheckIn.Services
                 _applicationConfiguration.BigEventTypeId
             };
 
-            bool excludeIds = true;
-
-            // this is hacky, but is probably the best solution, given that KC events currently do not have a fixed event
-            // type id - we assume that unless we're looking for a specific event id, we want to exclude these event ids
-
-            if (kioskConfig.KioskTypeId == _applicationConfiguration.StudentMinistryKioskTypeId)
-            {
-                excludeIds = false;
-            }
+            // if it's not an SM event, we want to filter these events out and return only KC/Childcare events
+            var excludeIds = kioskConfig.KioskTypeId != _applicationConfiguration.StudentMinistryKioskTypeId;
 
             // look between midnights on the current day
             var eventOffsetStartString = DateTime.Now.ToShortDateString();
@@ -85,23 +91,6 @@ namespace SignInCheckIn.Services
 
             return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
         }
-
-        //public List<EventDto> GetCurrentEventsForSite(int siteId)
-        //{
-        //    // look between midnights on the current day
-        //    var eventOffsetStartString = DateTime.Now.ToShortDateString();
-        //    var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
-        //    var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
-
-        //    var currentEvents = _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
-
-        //    if (!currentEvents.Any())
-        //    {
-        //        throw new Exception("No current events for site");
-        //    }
-
-        //    return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
-        //}
 
         public void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token)
         {

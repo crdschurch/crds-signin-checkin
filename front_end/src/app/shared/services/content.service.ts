@@ -21,7 +21,7 @@ export class ContentService {
   }
 
   getContentBlocks () {
-      const url = `${process.env.CRDS_CMS_ENDPOINT}/api/contentblock?category[]=main&category[]=common&category[]=echeck`;
+      const url = `${process.env.CRDS_CMS_CLIENT_ENDPOINT}/api/contentblock?category[]=main&category[]=common&category[]=echeck`;
       return this.http.get(url).toPromise()
                     .then(res => { return res.json().contentblocks; })
                     .catch(this.handleError);

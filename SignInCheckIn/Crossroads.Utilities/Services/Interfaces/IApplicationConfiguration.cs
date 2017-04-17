@@ -10,6 +10,9 @@ namespace Crossroads.Utilities.Services.Interfaces
     {
         int AgesAttributeTypeId { get; }
         int GradesAttributeTypeId { get; }
+        int SMMiddleSchoolGradesAttributeTypeId { get; }
+        int SMHighSchoolGradesAttributeTypeId { get; }
+
         int BirthMonthsAttributeTypeId { get; }
         int NurseryAgesAttributeTypeId { get; }
         int NurseryAgeAttributeId { get; }
@@ -35,6 +38,8 @@ namespace Crossroads.Utilities.Services.Interfaces
         int StudentMinistryGradesSixToEightEventTypeId { get; }
         int StudentMinistryGradesNineToTwelveEventTypeId { get; }
 
+        int CheckinKioskTypeId { get; }
+        int AdminKioskTypeId { get; }
         int StudentMinistryKioskTypeId { get; }
 
         int BumpingRoomTypePriorityId { get; }

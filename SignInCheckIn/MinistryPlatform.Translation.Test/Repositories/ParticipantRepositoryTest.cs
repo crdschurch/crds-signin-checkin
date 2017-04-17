@@ -351,6 +351,73 @@ namespace MinistryPlatform.Translation.Test.Repositories
         }
 
         [Test]
+        public void ShouldGetGroupParticipantsByParticipantId()
+        {
+            // Arrange
+            var token = "123abc";
+
+            List<string> groupParticipantColumns = new List<string>
+            {
+                "Group_Participant_ID",
+                "Group_Participants.Group_ID",
+                "Group_ID_Table.[Group_Type_ID]",
+                "Participant_ID",
+                "Group_Role_ID",
+                "Group_Participants.[Start_Date]",
+                "Employee_Role",
+                "Auto_Promote"
+            };
+
+            var mpGroupParticipantDto = new MpGroupParticipantDto
+            {
+                ParticipantId = 345678,
+                GroupId = 4455667
+            };
+            var list = new List<MpGroupParticipantDto>
+            {
+                mpGroupParticipantDto
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpGroupParticipantDto>(
+                 $"Group_Participants.Participant_ID = {mpGroupParticipantDto.ParticipantId}" + "AND Group_Participants.End_Date IS NULL", groupParticipantColumns, null, false)).Returns(list);
+
+            // Act
+            var result = _fixture.GetGroupParticipantsByParticipantId(mpGroupParticipantDto.ParticipantId);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
+        }
+
+        [Test]
+        public void ShouldDeleteGroupParticipants()
+        {
+            // Arrange
+            var token = "123abc";
+            
+            var mpGroupParticipantDto = new MpGroupParticipantDto
+            {
+                GroupParticipantId = 345678,
+                GroupId = 4455667
+            };
+            var list = new List<MpGroupParticipantDto>
+            {
+                mpGroupParticipantDto
+            };
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Delete<MpGroupParticipantDto>(It.IsAny<IEnumerable<int>>()));
+
+            // Act
+            _fixture.DeleteGroupParticipants(token, list);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
+        }
+
+        [Test]
         public void ShouldGetContactsForFindFamilies()
         {
             // Arrange

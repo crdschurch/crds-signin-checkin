@@ -7,6 +7,8 @@ namespace Crossroads.Utilities.Services
     {
         public int AgesAttributeTypeId { get; }
         public int GradesAttributeTypeId { get; }
+        public int SMMiddleSchoolGradesAttributeTypeId { get; }
+        public int SMHighSchoolGradesAttributeTypeId { get; }
         public int BirthMonthsAttributeTypeId { get; }
         public int NurseryAgesAttributeTypeId { get; }
         public int NurseryAgeAttributeId { get; }
@@ -32,6 +34,8 @@ namespace Crossroads.Utilities.Services
         public int StudentMinistryGradesSixToEightEventTypeId { get; }
         public int StudentMinistryGradesNineToTwelveEventTypeId { get; }
 
+        public int CheckinKioskTypeId { get; }
+        public int AdminKioskTypeId { get; }
         public int StudentMinistryKioskTypeId { get; }
 
         public int BumpingRoomTypePriorityId { get; }
@@ -298,6 +302,8 @@ namespace Crossroads.Utilities.Services
         {
             AgesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubAgesAttributeTypeId");
             GradesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubGradesAttributeTypeId");
+            SMMiddleSchoolGradesAttributeTypeId = configurationWrapper.GetConfigIntValue("SMMiddleSchoolGradesAttributeTypeId");
+            SMHighSchoolGradesAttributeTypeId = configurationWrapper.GetConfigIntValue("SMHighSchoolGradesAttributeTypeId");
             BirthMonthsAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubBirthMonthsAttributeTypeId");
             NurseryAgesAttributeTypeId = configurationWrapper.GetConfigIntValue("KidsClubNurseryAgesAttributeTypeId");
             NurseryAgeAttributeId = configurationWrapper.GetConfigIntValue("KidsClubNurseryAgeAttributeId");
@@ -323,6 +329,8 @@ namespace Crossroads.Utilities.Services
             StudentMinistryGradesSixToEightEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesSixToEightEventTypeId");
             StudentMinistryGradesNineToTwelveEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesNineToTwelveEventTypeId");
 
+            CheckinKioskTypeId = configurationWrapper.GetConfigIntValue("CheckinKioskTypeId");
+            AdminKioskTypeId = configurationWrapper.GetConfigIntValue("AdminKioskTypeId");
             StudentMinistryKioskTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryKioskTypeId");
 
             BumpingRoomTypePriorityId = configurationWrapper.GetConfigIntValue("BumpingRoomTypePriorityId");

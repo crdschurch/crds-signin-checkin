@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using System.Linq;
+using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.MinistryPlatform;
 
@@ -13,15 +14,18 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IGroupLookupRepository _groupLookupRepository;
 
         private const string ChildSigninSearchStoredProcName = "api_crds_Child_Signin_Search";
         private const string MSMSigninSearchStoredProcName = "api_crds_Groups_Signin_Search";
 
         public ChildSigninRepository(IApiUserRepository apiUserRepository,
+            IGroupLookupRepository groupLookupRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository,
             IApplicationConfiguration applicationConfiguration)
         {
             _apiUserRepository = apiUserRepository;
+            _groupLookupRepository = groupLookupRepository;
             _ministryPlatformRestRepository = ministryPlatformRestRepository;
             _applicationConfiguration = applicationConfiguration;
         }
@@ -110,21 +114,29 @@ namespace MinistryPlatform.Translation.Repositories
 
             var columnList = new List<string>
             {
-                "Participant_ID",
-                "Contact_ID_Table.Contact_ID",
-                "Contact_ID_Table_Household_ID_Table.Household_ID",
-                "Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
-                "Contact_ID_Table.First_Name",
-                "Contact_ID_Table.Last_Name",
-                "Contact_ID_Table.Nickname",
-                "Contact_ID_Table.Date_of_Birth"
+                "Group_ID_Table.[Group_ID]",
+                "Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID]",
+                "Participant_ID_Table.[Participant_ID]",
+                "Participant_ID_Table_Contact_ID_Table.[Contact_ID]",
+                "Participant_ID_Table_Contact_ID_Table_Gender_ID_Table.[Gender_ID]",
+                "Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID]",
+                "Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.Household_Position_ID",
+                "Participant_ID_Table_Contact_ID_Table.[First_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
+                "Participant_ID_Table_Contact_ID_Table.[Nickname]",
+                "Participant_ID_Table_Contact_ID_Table.[Date_of_Birth]"
             };
 
-            var filter =
-                $"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}";
+            var groupParticipants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                        Search<MpGroupParticipantDto>($"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList).ToList();
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        Search<MpParticipantDto>($"Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId}", columnList);
+            foreach (var g in groupParticipants)
+            {
+                if (g.GroupId != null) { 
+                    g.YearGrade = _groupLookupRepository.GetGradeAttributeId(g.GroupId.Value);
+                }
+            }
+            return Mapper.Map<List<MpGroupParticipantDto>, List<MpParticipantDto>>(groupParticipants);
         }
 
         private void GetChildParticipantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
