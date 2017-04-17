@@ -67,7 +67,7 @@ namespace MinistryPlatform.Translation.Repositories
             var children = GetChildParticipantsByPrimaryHousehold(householdId);
             GetChildParticipantsByOtherHousehold(householdId, children);
             var eventGroups = GetEventGroups(eventId);
-            children = GetOnlyKidsClubChildren(children, eventGroups);
+            children = GetKidsClubAndStudentMinistryChildren(children, eventGroups);
 
             if (children.Count == 0)
             {
@@ -183,7 +183,7 @@ namespace MinistryPlatform.Translation.Repositories
             
         }
 
-        private List<MpParticipantDto> GetOnlyKidsClubChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
+        private List<MpParticipantDto> GetKidsClubAndStudentMinistryChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
         {
             if (children.Count == 0) return new List<MpParticipantDto>();
             var apiUserToken = _apiUserRepository.GetToken();
