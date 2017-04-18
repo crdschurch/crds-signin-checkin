@@ -10,7 +10,7 @@
     <div class="row">
       <div class="col-sm-4">
         <div class="input-group child-search-input">
-          <input #box type="text" class="form-control" placeholder="Search by Last Name" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()">
+          <input #box type="text" class="form-control" placeholder="Search by Parent Last Name, First Name" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()">
           <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
             <span [hidden]="!box.value.length">&times;</span>
           </span>
