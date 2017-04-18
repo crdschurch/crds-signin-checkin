@@ -34,6 +34,7 @@ namespace Crossroads.Utilities.Services.Interfaces
         int GroupRoleMemberId { get; }
 
         int AdventureClubEventTypeId { get; }
+        int StudentMinistryId { get; }
         int BigEventTypeId { get; } // Grades 6 to 12 combined
         int StudentMinistryGradesSixToEightEventTypeId { get; }
         int StudentMinistryGradesNineToTwelveEventTypeId { get; }

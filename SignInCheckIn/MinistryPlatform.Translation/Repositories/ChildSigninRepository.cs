@@ -67,7 +67,7 @@ namespace MinistryPlatform.Translation.Repositories
             var children = GetChildParticipantsByPrimaryHousehold(householdId);
             GetChildParticipantsByOtherHousehold(householdId, children);
             var eventGroups = GetEventGroups(eventId);
-            children = GetOnlyKidsClubChildren(children, eventGroups);
+            children = GetKidsClubAndStudentMinistryChildren(children, eventGroups);
 
             if (children.Count == 0)
             {
@@ -183,7 +183,7 @@ namespace MinistryPlatform.Translation.Repositories
             
         }
 
-        private List<MpParticipantDto> GetOnlyKidsClubChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
+        private List<MpParticipantDto> GetKidsClubAndStudentMinistryChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
         {
             if (children.Count == 0) return new List<MpParticipantDto>();
             var apiUserToken = _apiUserRepository.GetToken();
@@ -206,7 +206,7 @@ namespace MinistryPlatform.Translation.Repositories
 
             var participantIds = string.Join(",", children.Select(x => x.ParticipantId));
             var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] = {_applicationConfiguration.KidsClubMinistryId}", columnList);
+                        SearchTable<MpParticipantDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = {_applicationConfiguration.KidsClubCongregationId} AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] IN ({_applicationConfiguration.KidsClubMinistryId}, {_applicationConfiguration.StudentMinistryId})", columnList);
 
             children.ForEach(child =>
             {

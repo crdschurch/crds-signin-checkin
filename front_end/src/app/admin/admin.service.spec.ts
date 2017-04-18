@@ -179,6 +179,7 @@ describe('AdminService', () => {
   describe('#getChildrenByHousehold', () => {
     it('should return children in household', () => {
       const householdId = 4312;
+      const eventId = 21322;
       let eventParticipants = new EventParticipants();
       eventParticipants.Participants = [new Child(), new Child()];
       eventParticipants.Participants[0].ParticipantId = 1;
@@ -188,8 +189,8 @@ describe('AdminService', () => {
       (<jasmine.Spy>httpClientService.get).and.returnValue(response);
       (<jasmine.Spy>responseObject.json).and.returnValue(eventParticipants);
 
-      let result = fixture.getChildrenByHousehold(householdId);
-      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/children/household/${householdId}`);
+      let result = fixture.getChildrenByHousehold(householdId, eventId);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/signin/children/household/${householdId}`);
       expect(result).toBeDefined();
       expect(result).toEqual(jasmine.any(Observable));
       result.subscribe((r) => {

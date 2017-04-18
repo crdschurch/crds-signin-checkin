@@ -40,9 +40,9 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/children/household/{householdId}", minimumVersion: "1.0.0")]
-        [Route("signin/children/household/{householdId}")]
-        public IHttpActionResult GetChildrenAndEventByHousehold(int householdId)
+        [VersionedRoute(template: "events/{eventId}/signin/children/household/{householdId}", minimumVersion: "1.0.0")]
+        [Route("events/{eventId}/signin/children/household/{householdId}")]
+        public IHttpActionResult GetChildrenAndEventByHousehold(int eventId, int householdId)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace SignInCheckIn.Controllers
                     kioskId = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
                 }
 
-                var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, siteId, kioskId);
+                var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, eventId, siteId, kioskId);
                 return Ok(children);
             }
             catch (Exception e)
