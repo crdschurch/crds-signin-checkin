@@ -48,7 +48,7 @@ export class HouseholdComponent implements OnInit {
 
  private getChildren() {
    this.processing = true;
-   this.adminService.getChildrenByHousehold(+this.householdId).subscribe((ep: EventParticipants) => {
+   this.adminService.getChildrenByHousehold(+this.householdId, +this.eventId).subscribe((ep: EventParticipants) => {
      this.eventParticipants = ep;
      if (this.eventParticipants === undefined || !this.eventParticipants.hasParticipants()) {
        this.rootService.announceEvent('echeckFamilyFinderNoChildren');
@@ -76,7 +76,7 @@ export class HouseholdComponent implements OnInit {
  }
 
  private populateGradeGroups() {
-   this.apiService.getGradeGroups().subscribe((groups) => {
+   this.apiService.getGradeGroups(this.eventId).subscribe((groups) => {
        this.gradeGroups = groups;
      },
      error => console.error(error)
