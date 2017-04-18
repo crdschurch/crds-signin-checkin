@@ -149,9 +149,11 @@ export class RoomComponent implements OnInit {
     let channelName = `${Constants.CheckinRoomChannel}${comp.eventId}${comp.room.RoomId}`;
     comp.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
-        comp.room.Capacity = x.Data.Capacity;
-        comp.room.Volunteers = x.Data.Volunteers;
-        comp.room.AllowSignIn = x.Data.AllowSignIn;
+        comp.zone.run(() => {
+          comp.room.Capacity = x.Data.Capacity;
+          comp.room.Volunteers = x.Data.Volunteers;
+          comp.room.AllowSignIn = x.Data.AllowSignIn;
+        });
       },
       (error: any) => {
         console.warn('Attempt to join channel failed!', error);
