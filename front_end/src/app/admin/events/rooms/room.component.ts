@@ -140,6 +140,26 @@ export class RoomComponent implements OnInit {
   }
 
   setup(comp) {
+    this.checkinEventRoomWebSocket(comp);
+    this.checkinParticipantsWebSocket(comp);
+  }
+
+  checkinEventRoomWebSocket(comp) {
+    // Get an observable for events emitted on this channel
+    let channelName = `${Constants.CheckinRoomChannel}${comp.eventId}${comp.room.RoomId}`;
+    comp.channelService.sub(channelName).subscribe(
+      (x: ChannelEvent) => {
+        comp.room.Capacity = x.Data.Capacity;
+        comp.room.Volunteers = x.Data.Volunteers;
+        comp.room.AllowSignIn = x.Data.AllowSignIn;
+      },
+      (error: any) => {
+        console.warn('Attempt to join channel failed!', error);
+      }
+    );
+  }
+
+  checkinParticipantsWebSocket(comp) {
     // Get an observable for events emitted on this channel
     let channelName = `${Constants.CheckinParticipantsChannel}${comp.eventId}${comp.room.RoomId}`;
     comp.channelService.sub(channelName).subscribe(
