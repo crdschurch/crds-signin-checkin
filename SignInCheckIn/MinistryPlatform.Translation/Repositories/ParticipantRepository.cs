@@ -270,7 +270,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var contacts = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                 Search<MpContactDto>($"Contacts.[Display_Name] LIKE '%{search}%' AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns);
+                 Search<MpContactDto>($"Contacts.[Display_Name] LIKE '%{search}%' AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns, "Contacts.Last_Name ASC, Contacts.First_Name ASC");
 
             return contacts;
         }

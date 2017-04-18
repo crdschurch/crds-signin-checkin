@@ -458,7 +458,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
-            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpContactDto>($"Contacts.[Display_Name] LIKE '%{search}%' AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns, null, false)).Returns(contacts);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpContactDto>($"Contacts.[Display_Name] LIKE '%{search}%' AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns, "Contacts.Last_Name ASC, Contacts.First_Name ASC", false)).Returns(contacts);
 
             // Act
             var result = _fixture.GetFamiliesForSearch(token, search);
