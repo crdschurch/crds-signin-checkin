@@ -30,6 +30,7 @@ namespace Crossroads.Utilities.Services
         public int GroupRoleMemberId { get; }
 
         public int AdventureClubEventTypeId { get; }
+        public int StudentMinistryId { get; }
         public int BigEventTypeId { get; } // Grades 6 to 12 combined
         public int StudentMinistryGradesSixToEightEventTypeId { get; }
         public int StudentMinistryGradesNineToTwelveEventTypeId { get; }
@@ -325,6 +326,7 @@ namespace Crossroads.Utilities.Services
             GroupRoleMemberId = configurationWrapper.GetConfigIntValue("GroupRoleMemberId");
 
             AdventureClubEventTypeId = configurationWrapper.GetConfigIntValue("AdventureClubEventTypeId");
+            StudentMinistryId = configurationWrapper.GetConfigIntValue("StudentMinistryId");
             BigEventTypeId = configurationWrapper.GetConfigIntValue("BigEventTypeId");
             StudentMinistryGradesSixToEightEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesSixToEightEventTypeId");
             StudentMinistryGradesNineToTwelveEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesNineToTwelveEventTypeId");
