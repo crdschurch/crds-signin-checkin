@@ -32,7 +32,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             
             _applicationConfiguration.Setup(ac => ac.CheckinParticipantsChannel).Returns("CheckinParticipantsChannel");
-            _applicationConfiguration.Setup(ac => ac.CheckinCapacityChannel).Returns("CheckinCapacityChannel");
+            _applicationConfiguration.Setup(ac => ac.CheckinRoomChannel).Returns("CheckinRoomChannel");
             _applicationConfiguration.Setup(ac => ac.AdventureClubEventTypeId).Returns(20);
 
             var eventDto = new EventDto()
@@ -139,7 +139,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
 
             _applicationConfiguration.Setup(ac => ac.CheckinParticipantsChannel).Returns("CheckinParticipantsChannel");
-            _applicationConfiguration.Setup(ac => ac.CheckinCapacityChannel).Returns("CheckinCapacityChannel");
+            _applicationConfiguration.Setup(ac => ac.CheckinRoomChannel).Returns("CheckinRoomChannel");
             _applicationConfiguration.Setup(ac => ac.AdventureClubEventTypeId).Returns(20);
 
             var eventDto = new EventDto()

@@ -83,8 +83,8 @@ export class ChildCheckinComponent implements OnInit {
 
   subscribeToSignalr() {
     // Get an observable for events emitted on this channel
-    this.channelService.unsubAll(Constants.CheckinCapacityChannel);
-    let channelName = `${Constants.CheckinCapacityChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
+    this.channelService.unsubAll(Constants.CheckinRoomChannel);
+    let channelName = `${Constants.CheckinRoomChannel}${this.selectedEvent.EventId}${this.kioskDetails.RoomId}`;
     this.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
         this.room = Room.fromJson(x.Data);

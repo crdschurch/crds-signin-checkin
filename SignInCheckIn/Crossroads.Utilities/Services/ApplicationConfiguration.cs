@@ -54,7 +54,7 @@ namespace Crossroads.Utilities.Services
 
         public string ManageRoomsChannel { get; set; }
         public string CheckinParticipantsChannel { get; set; }
-        public string CheckinCapacityChannel { get; set; }
+        public string CheckinRoomChannel { get; set; }
 
         public int ChildcareEventTypeId { get; }
         public int ChildcareGroupTypeId { get; }
@@ -349,7 +349,7 @@ namespace Crossroads.Utilities.Services
 
             ManageRoomsChannel = configurationWrapper.GetConfigValue("ManageRoomsChannel");
             CheckinParticipantsChannel = configurationWrapper.GetConfigValue("CheckinParticipantsChannel");
-            CheckinCapacityChannel = configurationWrapper.GetConfigValue("CheckinCapacityChannel");
+            CheckinRoomChannel = configurationWrapper.GetConfigValue("CheckinRoomChannel");
 
             ChildcareEventTypeId = configurationWrapper.GetConfigIntValue("ChildcareEventTypeId");
             ChildcareGroupTypeId = configurationWrapper.GetConfigIntValue("ChildcareGroupTypeId");
