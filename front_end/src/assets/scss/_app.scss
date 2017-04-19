@@ -251,8 +251,12 @@ datepicker {
 
 .manage-rooms-table-container {
   @media screen {
-    height: 70vh;
+    height: 78vh;
     overflow-y: scroll;
+
+    &.no-header {
+      height: 92vh;
+    }
   }
 
   .manage-rooms-fixed-header {
@@ -279,7 +283,7 @@ datepicker {
 
     @media screen {
       td, th {
-        padding: $table-sm-cell-padding;
+        padding: $table-sm-cell-padding $table-sm-cell-padding 0;
       }
     }
   }
@@ -322,4 +326,17 @@ datepicker {
   .text-print-right {
     text-align: right;
   }
+}
+
+.btn-show-header {
+  font-size: 1.5rem;
+  padding: 0rem .5rem;
+  line-height: 1;
+  border-radius: 0 0 0.15rem 0.15rem;
+}
+
+.btn-hide-header {
+  font-size: 1.5rem;
+  padding: 0rem .5rem;
+  line-height: 1;
 }

@@ -1,17 +1,5 @@
-<td [ngClass]="{'disabled': pending }"  class="hidden-print">
-  <a (click)="isCollapsed = !isCollapsed" class="pointer text-primary" *ngIf="ageRangeAndGrades()[0] != 'Add'">View</a>
-  <div [collapse]="isCollapsed">
-    <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
-      <div *ngFor="let ageGrade of ageRangeAndGrades();">
-        {{ ageGrade }}
-      </div>
-    </a>
-  </div>
-</td>
 <td [ngClass]="{'disabled': pending }">
   {{room.RoomName}} <label class="tag tag-info" tooltipPlacement="top" tooltip="Adventure Club" [hidden]="!isAdventureClub()">AC</label>
-  <br>
-  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }"  class="hidden-print">Alt Rooms</a>
 </td>
 <td [ngClass]="{'disabled': pending }">
   <span *ngIf="hasCapacity()">
@@ -34,8 +22,21 @@
   </span>
 </td>
 <td [ngClass]="{'disabled': pending }"  class="hidden-print">
+  <a (click)="isCollapsed = !isCollapsed" class="pointer text-primary" *ngIf="ageRangeAndGrades()[0] != 'Add'">View</a>
+  <div [collapse]="isCollapsed">
+    <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}">
+      <div *ngFor="let ageGrade of ageRangeAndGrades();">
+        {{ ageGrade }}
+      </div>
+    </a>
+  </div>
+</td>
+<td [ngClass]="{'disabled': pending }">
+  <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt</a>
+</td>
+<td [ngClass]="{'disabled': pending }"  class="hidden-print">
   <input class='tgl tgl-light' id='allow-signin-{{room.RoomId}}' type='checkbox' (change)="toggle('AllowSignIn')" [checked]="room.AllowSignIn">
-  <label class='tgl-btn' attr.for='allow-signin-{{room.RoomId}}' (click)="toggleClick()"><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
+  <label class='tgl-btn tgl-btn-sm' attr.for='allow-signin-{{room.RoomId}}' (click)="toggleClick()"><span class="tgl-yes">Yes</span><span class="tgl-no">No</span></label>
 </td>
 <td [ngClass]="{'disabled': pending }">
   <div class="number-stepper">
@@ -65,7 +66,6 @@
 </td>
 <td [ngClass]="{'disabled': pending }" class="text-xs-right">{{ room.SignedIn }}</td>
 <td [ngClass]="{'disabled': pending }" class="text-xs-right">{{ room.CheckedIn }}</td>
-<td [ngClass]="{'disabled': pending }" class="text-xs-right">{{getRoomRatioString()}}</td>
 <td [ngClass]="{'disabled': pending }" class="text-xs-right save-button">
   <a class="btn btn-success btn-sm" (click)="saveRoom()" href="#" [hidden]="!dirty">Save</a>
 </td>
