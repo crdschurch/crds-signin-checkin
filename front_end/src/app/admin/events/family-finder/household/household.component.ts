@@ -188,7 +188,7 @@ export class HouseholdComponent implements OnInit {
       this.processingAddFamilyMember = false;
       return this.rootService.announceEvent('echeckNeedSpecialNeedsSelection');
     } else {
-      if (+this.contact.YearGrade < 1) {
+      if (+this.contact.YearGrade < 0) {
         this.contact.YearGrade = undefined;
       }
       if (this.contact.ContactId) {
