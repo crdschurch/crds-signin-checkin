@@ -69,5 +69,13 @@ describe('HouseholdComponent', () => {
       fixture.onSave(form);
       expect(fixture.adminService.updateHousehold).toHaveBeenCalledWith(fixture.household);
     });
+
+    it('should not save data', () => {
+      let form = jasmine.createSpyObj('form', ['valid', 'dirty']);
+      (<jasmine.Spy>(form.valid)).and.returnValue(false);
+      (<jasmine.Spy>(form.dirty)).and.returnValue(true);
+      fixture.onSave(form);
+      expect(fixture.router.navigate).toHaveBeenCalled;
+    });
   });
 });
