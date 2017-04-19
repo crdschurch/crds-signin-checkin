@@ -15,6 +15,9 @@
             </div>
           </a>
         </div>
+        <div class="card xl text-xs-center pointer">
+          <serving-toggle (setServingHours)="setServingHours($event)"></serving-toggle>
+        </div>
       </div>
       <div *ngIf="eventParticipants && eventParticipants.hasParticipants()">
         <div class="eqWrap mt-2">
