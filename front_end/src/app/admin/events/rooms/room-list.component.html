@@ -1,5 +1,8 @@
-<header-event></header-event>
+<header-event [collapse]="headerCollapsed"></header-event>
 
+<div class="container-fluid" [collapse]="!headerCollapsed">
+  <span class="btn btn-default btn-sm btn-show-header" (click)="headerCollapsed = !headerCollapsed">&#9662;</span>
+</div>
 
 <div class="wrapper rooms">
   <div class="container-fluid admin-content py-1">
@@ -22,20 +25,20 @@
       </ul>
     </div>
 
-
+  <div [collapse]="headerCollapsed">
     <div class="row">
       <div class="col-lg-3">
-        <h3 class="hidden-print">Manage Rooms</h3>
+        <h3 class="hidden-print">Rooms <span class="btn btn-default btn-sm btn-hide-header" (click)="headerCollapsed = !headerCollapsed">&#9652;</span></h3>
         <h3 class="visible-print-block">KC Service Report</h3>
       </div>
-      <div class="col-lg-9 text-lg-right pb-1 hidden-print">
+      <div class="col-lg-9 text-lg-right pb-0 hidden-print">
         <!-- TODO -->
-        <button type="button" class="btn btn-unstyled mr-1 mb-1">{{getOpenRooms()}} of {{getTotalRooms()}} rooms open</button>
-        <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
-        <button type="button" class="btn btn-default  mb-1" (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
-        <button type="button" class="btn btn-default  mb-1" (click)="isCollapsed = !isCollapsed" [hidden]="!unassignedGroups"><span class="text-primary">{{unassignedGroups?.length}}</span> unassigned groups
+        <button type="button" class="btn btn-unstyled mr-1 ">{{getOpenRooms()}} of {{getTotalRooms()}} rooms open</button>
+        <button type="button" class="btn btn-default " (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="hideClosedRooms">Hide Unused Rooms</button>
+        <button type="button" class="btn btn-default " (click)="toggleUnusedRooms()" [disabled]="isSaving" [hidden]="!hideClosedRooms">Show All Rooms</button>
+        <button type="button" class="btn btn-default " (click)="isCollapsed = !isCollapsed" [hidden]="!unassignedGroups"><span class="text-primary">{{unassignedGroups?.length}}</span> unassigned groups
         </button>
-        <div class="btn px-0  mb-1" dropdown [(isOpen)]="dropdownStatus.isOpen">
+        <div class="btn px-0" dropdown [(isOpen)]="dropdownStatus.isOpen">
           <button id="single-button" type="button" class="btn btn-default" dropdownToggle [disabled]="dropdownStatus.isDisabled">
             <span class="icon">
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
@@ -53,7 +56,7 @@
             <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
           </ul>
         </div>
-        <button class="btn btn-default  mb-1" onClick="window.print();">
+        <button class="btn btn-default" onClick="window.print();">
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
               <path d="M8 2h16v4h-16v-4zM30 8h-28c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h6v8h16v-8h6c1.1 0 2-.9 2-2v-10c0-1.1-.9-2-2-2zm-26 6c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2zm18 14h-12v-10h12v10z"/>
@@ -61,6 +64,7 @@
           </span>
         </button>
     </div>
+  </div>
     <div [collapse]="isCollapsed"
         class="col-xs-12">
       <div class="mb-2">
@@ -78,39 +82,40 @@
         </div>
       </div>
     </div>
-
+  </div>
+  <div class="row">
     <div class="col-xs-12">
       <preloader *ngIf="!isReady()"></preloader>
 
-      <div class="manage-rooms-table-container">
-        <table class="table table-striped manage-rooms-table manage-rooms-fixed-header hidden-print">
+      <div class="manage-rooms-table-container" [ngClass]="{'no-header': headerCollapsed }">
+        <table class="table table-sm table-striped manage-rooms-table manage-rooms-fixed-header hidden-print">
           <thead>
             <tr>
-              <th class="hidden-print">Age Ranges</th>
               <th>Room</th>
-              <th class="alert">&nbsp;</th> <!-- room alerts -->
+              <th class="alert"></th> <!-- room alerts -->
+              <th class="hidden-print">Ages</th>
+              <th class="hidden-print">Rooms</th>
               <th class="hidden-print">Allow Sign In</th>
               <th class="text-print-right">Volunteers</th>
               <th class="text-print-right">Capacity</th>
               <th class="text-xs-right">Signed In</th>
               <th class="text-xs-right">Checked In</th>
-              <th class="text-xs-right">Room Ratio</th>
               <th></th>
             </tr>
           </thead>
         </table>
-        <table class="table table-striped manage-rooms-table manage-rooms-scroll-header" *ngIf="isReady()">
+        <table class="table table-sm table-striped manage-rooms-table manage-rooms-scroll-header" *ngIf="isReady()">
           <thead>
             <tr>
-              <th class="hidden-print">Age Ranges</th>
               <th>Room</th>
-              <th class="alert">&nbsp;</th> <!-- room alerts -->
+              <th class="alert"></th> <!-- room alerts -->
+              <th class="hidden-print">Ages</th>
+              <th class="hidden-print">Rooms</th>
               <th class="hidden-print">Allow Sign In</th>
               <th class="text-print-right">Volunteers</th>
               <th class="text-print-right">Capacity</th>
               <th class="text-xs-right">Signed In</th>
               <th class="text-xs-right">Checked In</th>
-              <th class="text-xs-right">Room Ratio</th>
               <th></th>
             </tr>
           </thead>
