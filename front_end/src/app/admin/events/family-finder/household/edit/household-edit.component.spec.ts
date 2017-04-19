@@ -71,9 +71,8 @@ describe('HouseholdComponent', () => {
     });
 
     it('should not save data', () => {
-      let form = jasmine.createSpyObj('form', ['valid', 'dirty']);
-      (<jasmine.Spy>(form.valid)).and.returnValue(false);
-      (<jasmine.Spy>(form.dirty)).and.returnValue(true);
+      let form = jasmine.createSpyObj('form', ['pristine']);
+      (<jasmine.Spy>(form.pristine)).and.returnValue(true);
       fixture.onSave(form);
       expect(fixture.router.navigate).toHaveBeenCalled;
     });
