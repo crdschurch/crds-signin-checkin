@@ -187,10 +187,14 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   saveRoom() {
+    debugger;
     // dont allow saving of bumping rules on AC rooms as it creates bad data
-    if (this.isAdventureClub) {
+    let altRoomSelected = this.hasBumpingRooms();
+
+    if (this.isAdventureClub && this.hasBumpingRooms()) {
       return this.rootService.announceEvent('echeckNoACBumpingRules');
     }
+    
     this.updating = true;
     this.isDirty = false;
 
