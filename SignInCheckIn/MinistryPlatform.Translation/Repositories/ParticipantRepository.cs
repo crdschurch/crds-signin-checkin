@@ -48,7 +48,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Registrant_Message_Sent",
                 "Call_Number",
                 "Checkin_Phone",
-                "Checkin_Household_ID"
+                "Checkin_Household_ID",
+                "Guest_Sign_In"
             };
         }
 
@@ -153,7 +154,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Registrant_Message_Sent",
                 "Call_Number",
                 "Checkin_Phone",
-                "Checkin_Household_ID"
+                "Checkin_Household_ID",
+                "Guest_Sign_In"
             };
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<MpEventParticipantDto>(mpEventParticipantDtos, columnList);
@@ -194,7 +196,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Registrant_Message_Sent",
                 "Call_Number",
                 "Checkin_Phone",
-                "Checkin_Household_ID"
+                "Checkin_Household_ID",
+                "Guest_Sign_In"
             };
 
             var eventParticipantsForEvent = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).

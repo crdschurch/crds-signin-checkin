@@ -266,7 +266,8 @@ namespace MinistryPlatform.Translation.Repositories
                 "Registrant_Message_Sent",
                 "Call_Number",
                 "Checkin_Phone",
-                "Checkin_Household_ID"
+                "Checkin_Household_ID",
+                "Guest_Sign_In"
             };
 
             var participants = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventParticipantDtos, columnList);
