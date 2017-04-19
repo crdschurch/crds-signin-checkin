@@ -24,7 +24,8 @@ describe('RoomGroupListComponent', () => {
     route.snapshot.params = { eventId: serviceEventId, roomId: roomId };
     route.snapshot.queryParams = { tab: '' };
     apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEventMaps', 'getEvent']);
-    adminService = jasmine.createSpyObj<AdminService>('adminService', ['getRoomGroups', 'getBumpingRooms', 'updateBumpingRooms', 'updateRoomGroups']);
+    adminService = jasmine.createSpyObj<AdminService>('adminService',
+      ['getRoomGroups', 'getBumpingRooms', 'updateBumpingRooms', 'updateRoomGroups']);
     headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
 

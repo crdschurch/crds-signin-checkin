@@ -191,7 +191,7 @@ export class RoomGroupListComponent implements OnInit {
     if (this.isAdventureClub && this.hasBumpingRooms()) {
       return this.rootService.announceEvent('echeckNoACBumpingRules');
     }
-    
+
     this.updating = true;
     this.isDirty = false;
 
