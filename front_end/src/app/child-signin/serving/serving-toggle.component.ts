@@ -79,7 +79,6 @@ export class ServingToggleComponent {
  }
 
  toggleServingHours(modal, hours) {
-   console.log("TOGGLE", hours)
    if (hours === 1) {
      this.servingOneHour = true;
    } else if (hours === 2) {

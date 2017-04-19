@@ -91,7 +91,6 @@ export class HouseholdComponent implements OnInit {
  }
 
  setServingHours(hours) {
-   console.log("hours", hours)
    this.numberEventsAttending = hours;
  }
 
