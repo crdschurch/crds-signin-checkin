@@ -54,7 +54,8 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Registrant_Message_Sent",
                 "Call_Number",
                 "Checkin_Phone",
-                "Checkin_Household_ID"
+                "Checkin_Household_ID",
+                "Guest_Sign_In"
             };
 
             _fixture = new ParticipantRepository(_apiUserRepository.Object, _ministryPlatformRestRepository.Object, _contactRepository.Object);

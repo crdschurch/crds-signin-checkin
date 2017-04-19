@@ -501,7 +501,8 @@ namespace SignInCheckIn.Services
                 TimeIn = DateTime.Now,
                 OpportunityId = null,
                 RoomId = roomId,
-                GroupId = participant.GroupId
+                GroupId = participant.GroupId,
+                GuestSignIn = participant.GuestSignin
             };
 
             return mpEventParticipantDto;
