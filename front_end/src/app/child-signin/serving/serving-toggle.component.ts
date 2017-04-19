@@ -1,4 +1,4 @@
-import { Component, Output, ViewChild, OnInit, EventEmitter } from '@angular/core';
+import { Component, Output, ViewChild, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
@@ -15,7 +15,7 @@ import * as _ from 'lodash';
   styleUrls: [ 'serving-toggle.component.scss' ]
 })
 
-export class ServingToggleComponent implements OnInit {
+export class ServingToggleComponent {
   @Output() setServingHours = new EventEmitter<any>();
   private _isServingOneHour = false;
   private _isServingTwoHours = false;
@@ -23,9 +23,6 @@ export class ServingToggleComponent implements OnInit {
  @ViewChild('serviceSelectModal') public serviceSelectModal: ModalDirective;
 
  constructor() { }
-
- ngOnInit() {
- }
 
  get numberEventsAttending(): number {
    if (this.isServingOneHour) {
@@ -82,6 +79,7 @@ export class ServingToggleComponent implements OnInit {
  }
 
  toggleServingHours(modal, hours) {
+   console.log("TOGGLE", hours)
    if (hours === 1) {
      this.servingOneHour = true;
    } else if (hours === 2) {

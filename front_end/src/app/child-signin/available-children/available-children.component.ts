@@ -18,7 +18,7 @@ import * as _ from 'lodash';
 export class AvailableChildrenComponent implements OnInit {
   private _eventParticipants: EventParticipants = new EventParticipants();
   private isReady = false;
-  private numberEventsAttending: number;
+  private _numberEventsAttending: number;
   private maxDate: Date = moment().toDate();
   private _newGuestChild: Guest;
   private gradeGroups: Array<Group> = [];
@@ -60,8 +60,15 @@ export class AvailableChildrenComponent implements OnInit {
  }
 
  setServingHours(hours) {
-   console.log('hours recieved on parent', hours);
-   this.numberEventsAttending = hours;
+   this._numberEventsAttending = hours;
+ }
+
+ get numberEventsAttending() {
+   return this._numberEventsAttending;
+ }
+
+ set numberEventsAttending(hours) {
+   this._numberEventsAttending = hours;
  }
 
  getChildren(phoneNumber) {
