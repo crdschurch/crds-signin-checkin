@@ -18,8 +18,6 @@ import { MomentModule } from 'angular2-moment';
     MomentModule,
     AvailableChildrenModule,
     childSigninRouting
-  ],
-  exports: [
   ]
 })
 
