@@ -17,8 +17,6 @@ import * as _ from 'lodash';
 
 export class AvailableChildrenComponent implements OnInit {
   private _eventParticipants: EventParticipants = new EventParticipants();
-  // private _isServingOneHour = false;
-  // private _isServingTwoHours = false;
   private isReady = false;
   private numberEventsAttending: number;
   private maxDate: Date = moment().toDate();

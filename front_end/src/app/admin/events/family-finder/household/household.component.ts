@@ -89,6 +89,10 @@ export class HouseholdComponent implements OnInit {
    }
  }
 
+ setServingHours(hours) {
+   console.log("hours", hours)
+ }
+
  signIn() {
     if (!this.eventParticipants.hasSelectedParticipants()) {
       return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');

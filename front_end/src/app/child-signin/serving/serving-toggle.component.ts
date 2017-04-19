@@ -67,18 +67,7 @@ export class ServingToggleComponent implements OnInit {
    this.setServingHours.emit(2);
  }
 
- toggleServingHours(modal, hours) {
-   if (hours === 1) {
-     this.servingOneHour = true;
-   } else if (hours === 2) {
-     this.servingTwoHours = true;
-   }
-   if (modal) {
-     modal.hide();
-   }
- }
-
- toggleClick(modal) {
+ toggleServicesClick(modal) {
    // if on, turn off
    if (this.isServing) {
      this.notServing = true;
@@ -89,6 +78,17 @@ export class ServingToggleComponent implements OnInit {
        modal.show();
      }
      return false;
+   }
+ }
+
+ toggleServingHours(modal, hours) {
+   if (hours === 1) {
+     this.servingOneHour = true;
+   } else if (hours === 2) {
+     this.servingTwoHours = true;
+   }
+   if (modal) {
+     return modal.hide();
    }
  }
 
