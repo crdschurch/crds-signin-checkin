@@ -6,7 +6,6 @@
 
       <div class="eqWrap">
         <div class="card text-xs-center pointer" *ngIf="showGuestOption">
-          <!-- <a routerLink="/child-signin/guest"> -->
           <a (click)="openNewGuestModal(addGuestModal)">
             <div class="card-block">
               <span class="round-plus">+</span>
@@ -31,7 +30,7 @@
         <!--DEVNOTE: Card should be clickable and toggle the on/off state -->
         <div class="card" *ngFor="let kid of childrenAvailable()" >
           <child-signin-card [child]="kid">
-        </child-signin-card>
+          </child-signin-card>
         </div><!--/card-->
       </div><!--/eqWrap-->
 
@@ -72,10 +71,10 @@
         </h5>
         <div class="row my-3">
           <div class="col-sm-4 offset-sm-2">
-            <a (click)="toggleServingHours(showServiceSelectModal, 1);" class="btn btn-primary btn-block py-3" [ngClass]="{'active': isServingOneHour}">1 HOUR</a>
+            <a (click)="toggleServingHours(showServiceSelectModal, 1);" class="btn btn-primary btn-block py-3" [ngClass]="{'active': isServingOneHour}">1 SERVICE</a>
           </div>
           <div class="col-sm-4">
-            <a (click)="toggleServingHours(showServiceSelectModal, 2);" class="btn btn-primary btn-block py-3" [ngClass]="{'active': isServingTwoHours}">2 HOURS</a>
+            <a (click)="toggleServingHours(showServiceSelectModal, 2);" class="btn btn-primary btn-block py-3" [ngClass]="{'active': isServingTwoHours}">2 SERVICES</a>
           </div>
         </div>
       </div>
@@ -101,7 +100,7 @@
                 </div>
                 <div class="row text-xs-left">
                   <div class="col-xs-12">
-                    <p>Have a new family member? Add them at the New Family Check In Desk</p>
+                    <p>Have a new family member? Add them at the New Family Check In Desk.</p>
                   </div>
                 </div>
                 <div class="row my-2">
@@ -156,7 +155,7 @@
                       <label for="childGrade" class="control-label">Year / Grade</label>
                       <select class="form-control form-control-lg" (change)="updateChildYearGradeGroup(newGuestChild, $event.target.value)" required>
                         <option value="-1">Select a Grade</option>
-                        <option value="0">Has not started Kindergarten yet</option>
+                        <option value="0" *ngIf="!eventParticipants.CurrentEvent.isStudentMinistry">Has not started Kindergarten yet</option>
                         <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}">{{ grade.Name }}</option>
                       </select>
                     </div>

@@ -66,7 +66,7 @@ namespace MinistryPlatform.Translation.Repositories
         /// <param name="site"></param>
         /// <param name="includeSubevents"></param>
         /// <returns></returns>
-        public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site, bool? includeSubevents = false)
+        public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site, bool? includeSubevents = false, List<int> eventTypeIds = null, bool excludeIds = true)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
@@ -76,6 +76,16 @@ namespace MinistryPlatform.Translation.Repositories
 
             var queryString =
                 $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}";
+
+            if (excludeIds == true && eventTypeIds != null)
+            {
+                queryString += $" AND Events.[Event_Type_ID] NOT IN ({string.Join(",", eventTypeIds)})";
+            }
+            else if (eventTypeIds != null)
+            {
+                queryString += $" AND Events.[Event_Type_ID] IN ({string.Join(",", eventTypeIds)})";
+            }
+
             if (includeSubevents != true)
             {
                 // do not include subevents

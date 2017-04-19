@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
@@ -34,7 +34,13 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                var eventList = _eventService.GetCheckinEvents(startDate, endDate, site);
+                string kioskIdentifier = "";
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var eventList = _eventService.GetCheckinEvents(startDate, endDate, site, kioskIdentifier);
                 return Ok(eventList);
             }
             catch (Exception e)
@@ -224,6 +230,44 @@ namespace SignInCheckIn.Controllers
             catch (Exception e)
             {
                 var apiError = new ApiErrorDto($"Error getting families for search {search}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(HouseholdDto))]
+        [VersionedRoute(template: "getHouseholdByID/{householdId}", minimumVersion: "1.0.0")]
+        [Route("getHouseholdByID/{householdId}")]
+        public IHttpActionResult GetHouseholdById([FromUri] int householdId)
+        {
+            try
+            {
+
+                return Authorized(token => Ok(_eventService.GetHouseholdByHouseholdId(token, householdId)));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error updating family ID of {householdId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpPut]
+        [VersionedRoute(template: "updateFamily", minimumVersion: "1.0.0")]
+        [Route("updateFamily")]
+        public IHttpActionResult UpdateFamily(HouseholdDto householdDto)
+        {
+            try
+            {
+                return Authorized(token =>
+                {
+                    _eventService.UpdateHouseholdInformation(token, householdDto);
+                    return Ok();
+                });
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error updating Household ID of {householdDto.HouseholdId}", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }

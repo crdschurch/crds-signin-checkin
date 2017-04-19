@@ -84,16 +84,18 @@ namespace MinistryPlatform.Translation.Repositories
             return children;
         }
 
-        public MpNewParticipantDto CreateParticipantWithContact(string authenticationToken, MpNewParticipantDto mpNewParticipantDto)
+        public MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto, string userToken = null)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = userToken ?? _apiUserRepository.GetToken();
 
             List<string> participantColumns = new List<string>
             {
                 "Participants.Participant_ID",
                 "Participants.Participant_Type_ID",
-                "Participants.Participant_Start_Date"
+                "Participants.Participant_Start_Date",
+                "Contact_ID_Table.[Contact_ID] AS [Participant_Contact_ID]"
             };
+
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
         }
@@ -114,6 +116,12 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpGroupParticipantDtos, groupParticipantColumns);
+        }
+
+        public void DeleteGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> groupParticipants)
+        {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
         }
 
         public void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
@@ -219,6 +227,30 @@ namespace MinistryPlatform.Translation.Repositories
             return mpGroupParticipantDtos;
         }
 
+        public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantId(int participantId)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            List<string> groupParticipantColumns = new List<string>
+            {
+                "Group_Participant_ID",
+                "Group_Participants.Group_ID",
+                "Group_ID_Table.[Group_Type_ID]",
+                "Participant_ID",
+                "Group_Role_ID",
+                "Group_Participants.[Start_Date]",
+                "Employee_Role",
+                "Auto_Promote"
+            };
+
+            var mpGroupParticipantDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
+                 Search<MpGroupParticipantDto>(
+                    $"Group_Participants.Participant_ID = {participantId}" +
+                    "AND Group_Participants.End_Date IS NULL", groupParticipantColumns);
+
+            return mpGroupParticipantDtos;
+        }
+
         public List<MpContactDto> GetFamiliesForSearch(string token, string search)
         {
             var columns = new List<string>
@@ -241,6 +273,59 @@ namespace MinistryPlatform.Translation.Repositories
                  Search<MpContactDto>($"Contacts.[Display_Name] LIKE '%{search}%' AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns);
 
             return contacts;
+        }
+
+        public MpHouseholdDto GetHouseholdByHouseholdId(string token, int householdID)
+        {
+            var columns = new List<string>
+            {
+                "Households.[Household_ID]",
+                "Households.[Household_Name]",
+                "Household_Source_ID_Table.[Household_Source_ID]",
+                "Congregation_ID_Table.[Congregation_ID]",
+                "Address_ID_Table.[Address_ID]",
+                "Address_ID_Table.[Address_Line_1]",
+                "Address_ID_Table.[Address_Line_2]",
+                "Address_ID_Table.[City]",
+                "Address_ID_Table.[State/Region] as State",
+                "Address_ID_Table.[Postal_Code]",
+                "Address_ID_Table.[County]",
+                "Address_ID_Table.[Country_Code]",
+                "Households.[Home_Phone]"
+            };
+
+            var household = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
+                 Get<MpHouseholdDto>(householdID, columns);
+
+            return household;
+        }
+
+        public void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto)
+        {
+            var columns = new List<string>
+            {
+                "Households.[Household_ID]"
+            };
+
+            var columns2 = new List<string>
+            {
+                "Addresses.[Address_ID]"
+            };
+
+            var address = new MpAddressDto
+            {
+                AddressId = householdDto.AddressId.Value,
+                AddressLine1 = householdDto.AddressLine1,
+                AddressLine2 = householdDto.AddressLine2,
+                City = householdDto.City,
+                State = householdDto.State,
+                ZipCode = householdDto.ZipCode,
+                County = householdDto.County,
+                CountryCode = householdDto.CountryCode,
+            };
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, columns2);
         }
     }
 }

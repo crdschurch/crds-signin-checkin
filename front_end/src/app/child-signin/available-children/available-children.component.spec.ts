@@ -4,8 +4,7 @@ import { ApiService, RootService } from '../../shared/services';
 import { ChildSigninService } from '../child-signin.service';
 import { Observable } from 'rxjs/Observable';
 import { Child, DateOfBirth, Guest, EventParticipants, Event } from '../../shared/models';
-
-
+import { Constants } from '../../shared/constants';
 import * as moment from 'moment';
 
 let fixture: AvailableChildrenComponent;
@@ -91,7 +90,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.guestDOB = new DateOfBirth();
       fixture.guestDOB.month = 4;
       fixture.guestDOB.day = 4;
-      fixture.guestDOB.year = 2016;
+      fixture.guestDOB.year = moment().subtract(1, 'year').year();
       // ui event after you pick a date
       fixture.datePickerBlur();
       fixture.saveNewGuest(fakeModal);
@@ -114,27 +113,57 @@ describe('AvailableChildrenComponent', () => {
       fixture.guestDOB = new DateOfBirth();
       fixture.guestDOB.month = 2;
       fixture.guestDOB.day = 30;
-      fixture.guestDOB.year = 2015;
+      fixture.guestDOB.year = moment().subtract(2, 'year').year();
       // ui event after you pick a date
       fixture.datePickerBlur();
       fixture.saveNewGuest(fakeModal);
       expect(fixture.eventParticipants.Participants.length).toEqual(0);
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
     });
-    it('should hide guest and serving for childcare event', () => {
+    it('should hide guest and serving for big event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
       let childcareEvent: Event = new Event();
-      childcareEvent.EventTypeId = 243; // childcare event
+      childcareEvent.EventTypeId = Constants.BigEventType;
+      eventParticipants.CurrentEvent = childcareEvent;
+      fixture.eventParticipants = eventParticipants;
+      fixture.setServingAndGuestDisplay();
+      expect(fixture.showServingOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(true);
+    });
+    it('should hide guest and serving for SM 6-8 event', () => {
+      let eventParticipants: EventParticipants = new EventParticipants();
+      let childcareEvent: Event = new Event();
+      childcareEvent.EventTypeId = Constants.StudentMinistry6through8EventType;
+      eventParticipants.CurrentEvent = childcareEvent;
+      fixture.eventParticipants = eventParticipants;
+      fixture.setServingAndGuestDisplay();
+      expect(fixture.showServingOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(true);
+    });
+    it('should hide guest and serving for SM 9-12 event', () => {
+      let eventParticipants: EventParticipants = new EventParticipants();
+      let childcareEvent: Event = new Event();
+      childcareEvent.EventTypeId = Constants.StudentMinistry9through12EventType;
+      eventParticipants.CurrentEvent = childcareEvent;
+      fixture.eventParticipants = eventParticipants;
+      fixture.setServingAndGuestDisplay();
+      expect(fixture.showServingOption).toBe(false);
+      expect(fixture.showGuestOption).toBe(true);
+    });
+    it('should show guest and serving for Child Care event', () => {
+      let eventParticipants: EventParticipants = new EventParticipants();
+      let childcareEvent: Event = new Event();
+      childcareEvent.EventTypeId = Constants.ChildCareEventType;
       eventParticipants.CurrentEvent = childcareEvent;
       fixture.eventParticipants = eventParticipants;
       fixture.setServingAndGuestDisplay();
       expect(fixture.showServingOption).toBe(false);
       expect(fixture.showGuestOption).toBe(false);
     });
-    it('should show guest and serving for service event', () => {
+    it('should show guest and serving for KC event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();
       let childcareEvent: Event = new Event();
-      childcareEvent.EventTypeId = 20; // non-childcare event id, these vary for service events
+      childcareEvent.EventTypeId = Constants.StudentMinistry9through12EventType + 10;
       eventParticipants.CurrentEvent = childcareEvent;
       fixture.eventParticipants = eventParticipants;
       fixture.setServingAndGuestDisplay();

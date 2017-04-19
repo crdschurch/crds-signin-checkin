@@ -31,9 +31,9 @@ namespace SignInCheckIn.Services
         }
 
         // TODO: The call to _eventService needs to be refactored at some future point to directly access the repo layer
-        public ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId)
+        public ParticipantEventMapDto GetChildrenForCurrentEventAndRoom(int roomId, int siteId, int? eventId, string kioskId)
         {
-            var eventDto = (eventId == null) ? _eventService.GetCurrentEventForSite(siteId) : _eventService.GetEvent((int) eventId);
+            var eventDto = (eventId == null) ? _eventService.GetCurrentEventForSite(siteId, kioskId) : _eventService.GetEvent((int) eventId);
             var eventAndSubeventIds = new List<int> { eventDto.EventId };
             var subEvents = _eventRepository.GetSubeventsForEvents(new List<int> {eventDto.EventId}, null).ToList();
             eventAndSubeventIds.AddRange(subEvents.Select(r => r.EventId).ToList());

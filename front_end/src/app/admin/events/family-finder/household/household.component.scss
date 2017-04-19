@@ -1,3 +1,18 @@
+@import '../../../../../assets/scss/_variables.scss';
+
 .card-wrapper {
   float: left;
+}
+
+.eqWrap {
+  .card.xl {
+    width: 40%;
+  }
+}
+
+.datepicker {
+  .wrapper {
+    padding-left: 3px;
+    padding-right: 3px;
+  }
 }

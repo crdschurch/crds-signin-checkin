@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
+using AutoMapper;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
@@ -11,6 +12,7 @@ using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
+using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json.Linq;
 
 namespace SignInCheckIn.Controllers
@@ -21,14 +23,18 @@ namespace SignInCheckIn.Controllers
         private readonly IChildSigninService _childSigninService;
         private readonly IChildCheckinService _childCheckinService;
         private readonly IKioskRepository _kioskRepository;
+        private readonly IContactRepository _contactRepository;
+        private readonly IParticipantRepository _participantRepository;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public ChildSigninController(IChildSigninService childSigninService, IWebsocketService websocketService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public ChildSigninController(IChildSigninService childSigninService, IWebsocketService websocketService, IChildCheckinService childCheckinService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IContactRepository contactRepository, IParticipantRepository participantRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
         {
             _websocketService = websocketService;
             _childSigninService = childSigninService;
             _childCheckinService = childCheckinService;
             _kioskRepository = kioskRepository;
+            _contactRepository = contactRepository;
+            _participantRepository = participantRepository;
             _applicationConfiguration = applicationConfiguration;
         }
 
@@ -51,7 +57,14 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id is Invalid");
                 }
 
-                var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, siteId);
+                string kioskId = "";
+
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskId = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var children = _childSigninService.GetChildrenAndEventByHouseholdId(householdId, siteId, kioskId);
                 return Ok(children);
             }
             catch (Exception e)
@@ -80,7 +93,14 @@ namespace SignInCheckIn.Controllers
                     throw new Exception("Site Id is Invalid");
                 }
 
-                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null);
+                string kioskId = "";
+
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskId = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                }
+
+                var children = _childSigninService.GetChildrenAndEventByPhoneNumber(phoneNumber, siteId, null, false, kioskId);
                 return Ok(children);
             }
             catch (Exception e)
@@ -238,6 +258,90 @@ namespace SignInCheckIn.Controllers
                 catch (Exception e)
                 {
                     var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(int))]
+        [VersionedRoute(template: "signin/family/member", minimumVersion: "1.0.0")]
+        [Route("signin/family/member")]
+        public IHttpActionResult AddNewFamilyMember(ContactDto newFamilyContactDto)
+        {
+            return Authorized(token =>
+            {
+                string kioskIdentifier;
+
+                // make sure kiosk is admin type and configured for printing
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    // must be kiosk type admin and have a printer set up
+                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    {
+                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    }
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                }
+
+                try
+                {
+                   var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
+                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
+                    var newParticipants = new List<MpNewParticipantDto>()
+                    {
+                        participant
+                    };
+                    _childSigninService.CreateGroupParticipants(token, newParticipants);
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Create new family error: ", e);
+                    throw new HttpResponseException(apiError.HttpResponseMessage);
+                }
+            });
+        }
+
+
+        [HttpPut]
+        [ResponseType(typeof(int))]
+        [VersionedRoute(template: "signin/family/member/{contactId}", minimumVersion: "1.0.0")]
+        [Route("signin/family/member/{contactId}")]
+        public IHttpActionResult UpdateFamilyMember(ContactDto newFamilyContactDto)
+        {
+            return Authorized(token =>
+            {
+                 // make sure kiosk is admin type and configured for printing
+                if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
+                {
+                    string kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
+                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    // must be kiosk type admin and have a printer set up
+                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    {
+                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    }
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                }
+
+                try
+                {
+                    _contactRepository.Update(Mapper.Map<ContactDto, MpContactDto>(newFamilyContactDto), token);
+                    _childSigninService.UpdateGradeGroupParticipant(token, newFamilyContactDto.ParticipantId, newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, true);
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    var apiError = new ApiErrorDto("Update family member error: ", e);
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });

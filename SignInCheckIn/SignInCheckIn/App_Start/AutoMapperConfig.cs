@@ -13,6 +13,8 @@ namespace SignInCheckIn
 
         private static void CreateMappings(IMapperConfigurationExpression config)
         {
+            config.CreateMap<MpStateDto, StateDto>().ReverseMap();
+            config.CreateMap<MpCountryDto, CountryDto>().ReverseMap();
             config.CreateMap<MpEventRoomDto, EventRoomDto>().ReverseMap();
             config.CreateMap<MpEventDto, EventDto>()
                 .ForMember(dest => dest.EventSite, opts => opts.MapFrom(src => src.CongregationName))
@@ -74,6 +76,7 @@ namespace SignInCheckIn
                 .ForMember(dest => dest.CheckinHouseholdId, opts => opts.MapFrom(src => src.CheckinHouseholdId))
                 .ForMember(dest => dest.CheckinPhone, opts => opts.MapFrom(src => src.CheckinPhone));
             config.CreateMap<MpRoomDto, RoomDto>().ReverseMap();
+            config.CreateMap<MpHouseholdDto, HouseholdDto>().ReverseMap();
             config.CreateMap<MpContactDto, ContactDto>().ReverseMap();
             config.CreateMap<MpCongregationDto, CongregationDto>()
                 .ForMember(dest => dest.CongregationId, opts => opts.MapFrom(src => src.CongregationId))
@@ -81,6 +84,9 @@ namespace SignInCheckIn
                 .ReverseMap()
                 .ForMember(dest => dest.CongregationId, opts => opts.MapFrom(src => src.CongregationId))
                 .ForMember(dest => dest.CongregationName, opts => opts.MapFrom(src => src.CongregationName));
+            config.CreateMap<MpGroupParticipantDto, MpParticipantDto>().ReverseMap();
+            config.CreateMap<ContactDto, MpContactDto>().ReverseMap();
+            config.CreateMap<ContactDto, MpParticipantDto>().ReverseMap();
         }
     }
 }

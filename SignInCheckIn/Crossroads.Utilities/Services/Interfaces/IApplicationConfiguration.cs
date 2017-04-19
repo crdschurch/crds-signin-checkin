@@ -10,6 +10,9 @@ namespace Crossroads.Utilities.Services.Interfaces
     {
         int AgesAttributeTypeId { get; }
         int GradesAttributeTypeId { get; }
+        int SMMiddleSchoolGradesAttributeTypeId { get; }
+        int SMHighSchoolGradesAttributeTypeId { get; }
+
         int BirthMonthsAttributeTypeId { get; }
         int NurseryAgesAttributeTypeId { get; }
         int NurseryAgeAttributeId { get; }
@@ -17,6 +20,8 @@ namespace Crossroads.Utilities.Services.Interfaces
         int KidsClubGroupTypeId { get; }
         int KidsClubMinistryId { get; }
         int KidsClubCongregationId { get; }
+
+        int SpecialNeedsAttributeId { get; }
 
         int HeadOfHouseholdId { get; }
         int OtherAdultId { get; }
@@ -27,7 +32,15 @@ namespace Crossroads.Utilities.Services.Interfaces
         int KidsClubRegistrationSourceId { get; }
         int AttendeeParticipantType { get; }
         int GroupRoleMemberId { get; }
+
         int AdventureClubEventTypeId { get; }
+        int BigEventTypeId { get; } // Grades 6 to 12 combined
+        int StudentMinistryGradesSixToEightEventTypeId { get; }
+        int StudentMinistryGradesNineToTwelveEventTypeId { get; }
+
+        int CheckinKioskTypeId { get; }
+        int AdminKioskTypeId { get; }
+        int StudentMinistryKioskTypeId { get; }
 
         int BumpingRoomTypePriorityId { get; }
         int BumpingRoomTypeVacancyId { get; }
@@ -280,5 +293,14 @@ namespace Crossroads.Utilities.Services.Interfaces
         int KcThirdGrade { get; }
         int KcFourthGrade { get; }
         int KcFifthGrade { get; }
+
+        // middle school and high school
+        int MsmSixth { get; }
+        int MsmSeventh { get; }
+        int MsmEighth { get; }
+        int HighSchoolNinth { get; }
+        int HighSchoolTenth { get; }
+        int HighSchoolEleventh { get; }
+        int HighSchoolTwelfth { get; }
     }
 }

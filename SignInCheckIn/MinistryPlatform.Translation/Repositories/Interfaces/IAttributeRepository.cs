@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
@@ -7,5 +8,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         List<MpAttributeDto> GetAttributesByAttributeTypeId(int attributeTypeId, string authenticationToken = null);
         List<MpAttributeDto> GetAttributesByAttributeTypeId(IEnumerable<int> attributeTypeIds, string authenticationToken = null);
+        MpContactAttributeDto CreateContactAttribute(MpContactAttributeDto attribute);
     }
 }

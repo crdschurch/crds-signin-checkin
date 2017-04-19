@@ -18,12 +18,16 @@ namespace MinistryPlatform.Translation.Models.DTO
 #pragma warning restore 649
         [JsonIgnore]
         public MpAttributeTypeDto Type { get; set; }
+
         [JsonProperty("Attribute_ID")]
         public int Id { get; set; }
+
         [JsonProperty("Attribute_Name")]
         public string Name { get; set; }
+
         [JsonProperty("Sort_Order")]
         public int SortOrder { get; set; }
+
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
