@@ -53,6 +53,7 @@ describe('HouseholdComponent', () => {
 
   describe('#signIn', () => {
     it('should sign in selected kids', () => {
+      fixture.setServingHours(1);
       fixture.eventParticipants = new EventParticipants();
       fixture.eventParticipants.Participants = [new Child(), new Child()];
       fixture.eventParticipants.Participants[0].Selected = false;

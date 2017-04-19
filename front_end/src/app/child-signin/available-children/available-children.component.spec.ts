@@ -23,21 +23,6 @@ describe('AvailableChildrenComponent', () => {
     childSigninService = jasmine.createSpyObj<ChildSigninService>('childSigninService', ['getChildrenByPhoneNumber', 'signInChildren']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
     fixture = new AvailableChildrenComponent(childSigninService, routerStub, router, apiService, rootService);
-    fixture.servingOneHour = true;
-  });
-  describe('#toggleServingHours', () => {
-    it('should activate a step and deactivate the other', () => {
-      fixture.toggleServingHours(null, 2);
-      expect(fixture.isServingOneHour).toBeFalsy();
-      expect(fixture.isServingTwoHours).toBeTruthy();
-      expect(fixture.numberEventsAttending).toEqual(2);
-    });
-    it('should allow you to toggle off an option', () => {
-      fixture.toggleServingHours(null, 1);
-      expect(fixture.isServingOneHour).toBeFalsy();
-      expect(fixture.isServingTwoHours).toBeFalsy();
-      expect(fixture.numberEventsAttending).toEqual(0);
-    });
   });
   describe('#ngOnInit', () => {
     it('should get children and get grade groups for modal', () => {
@@ -64,6 +49,7 @@ describe('AvailableChildrenComponent', () => {
   describe('#signIn', () => {
     it('should only send selected kids', () => {
       fixture.eventParticipants = new EventParticipants();
+      fixture.numberEventsAttending = 1;
       fixture.eventParticipants.Participants = [new Child(), new Child()];
       fixture.eventParticipants.Participants[0].Selected = false;
       fixture.eventParticipants.Participants[1].Selected = true;

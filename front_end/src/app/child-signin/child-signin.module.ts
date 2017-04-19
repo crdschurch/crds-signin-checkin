@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
-
 import { ChildSigninComponent } from './child-signin.component';
 import { SearchModule } from './search';
 import { AvailableChildrenModule } from './available-children';
@@ -19,7 +18,7 @@ import { MomentModule } from 'angular2-moment';
     MomentModule,
     AvailableChildrenModule,
     childSigninRouting
-  ],
+  ]
 })
 
 export class ChildSigninModule { }
