@@ -17,10 +17,10 @@ import * as _ from 'lodash';
 
 export class AvailableChildrenComponent implements OnInit {
   private _eventParticipants: EventParticipants = new EventParticipants();
-  private _isServingOneHour = false;
-  private _isServingTwoHours = false;
+  // private _isServingOneHour = false;
+  // private _isServingTwoHours = false;
   private isReady = false;
-  // tslint:disable:no-unused-variable
+  private numberEventsAttending: number;
   private maxDate: Date = moment().toDate();
   private _newGuestChild: Guest;
   private gradeGroups: Array<Group> = [];
@@ -59,6 +59,11 @@ export class AvailableChildrenComponent implements OnInit {
      this.yearsSelection.push(moment().subtract(i, 'y').year());
      i++;
    }
+ }
+
+ setServingHours(hours) {
+   console.log('hours recieved on parent', hours);
+   this.numberEventsAttending = hours;
  }
 
  getChildren(phoneNumber) {
@@ -112,43 +117,6 @@ export class AvailableChildrenComponent implements OnInit {
   if (this._eventParticipants) { return this._eventParticipants.Participants; };
  }
 
- get numberEventsAttending(): number {
-   if (this.isServingOneHour) {
-     return 1;
-   } else if (this.isServingTwoHours) {
-     return 2;
-   } else {
-     return 0;
-   }
- }
-
- get isServing(): boolean {
-   return this._isServingOneHour || this._isServingTwoHours;
- }
-
- get isServingOneHour(): boolean {
-   return this._isServingOneHour;
- }
-
- get isServingTwoHours(): boolean {
-   return this._isServingTwoHours;
- }
-
- set servingOneHour(b) {
-   this._isServingTwoHours = false;
-   this._isServingOneHour = !this._isServingOneHour;
- }
-
- set notServing(b) {
-   this._isServingOneHour = false;
-   this._isServingTwoHours = false;
- }
-
- set servingTwoHours(b) {
-   this._isServingOneHour = false;
-   this._isServingTwoHours = !this._isServingTwoHours;
- }
-
  get newGuestChild() {
    return this._newGuestChild;
  }
@@ -163,35 +131,6 @@ export class AvailableChildrenComponent implements OnInit {
 
  set eventParticipants(eventParticipants) {
    this._eventParticipants = eventParticipants;
- }
-
- toggleServingHours(modal, hours) {
-   if (hours === 1) {
-     this.servingOneHour = true;
-   } else if (hours === 2) {
-     this.servingTwoHours = true;
-   }
-   if (modal) {
-     modal.hide();
-   }
- }
-
- public showChildModal(): void {
-   this.serviceSelectModal.show();
- }
- 
- toggleClick(modal) {
-   // if on, turn off
-   if (this.isServing) {
-     this.notServing = true;
-     return true;
-   // else if off, open modal to turn on
-   } else {
-     if (modal) {
-       modal.show();
-     }
-     return false;
-   }
  }
 
  updateChildYearGradeGroup(guest: Guest, groupId: number) {

@@ -1,0 +1,33 @@
+<label attr.for='isServing' class="text-xs-center pointer px-1 serving-label">
+  <div class="serving-question-cont mt-2">
+    <span class="tgl-inline-label tgl-serving-label">Are you serving today?</span>
+    <input class='tgl tgl-light' id='isServing' type='checkbox' [(ngModel)]="isServing" (click)="toggleClick(showServiceSelectModal)">
+    <label class='tgl-btn' for='isServing'>
+      <span class="tgl-yes">Yes</span>
+      <span class="tgl-no">No</span>
+    </label>
+  </div>
+</label>
+
+<div bsModal #showServiceSelectModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="serviceSelectModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <button type="button" class="close mr-1 mt-1" (click)="showServiceSelectModal.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="modal-body">
+        <h5 class="my-2">
+          How many services will your children be in Kids’ Club?
+        </h5>
+        <div class="row my-3">
+          <div class="col-sm-4 offset-sm-2">
+            <a (click)="toggleServingHours(showServiceSelectModal, 1);" class="btn btn-primary btn-block py-3" [ngClass]="{'active': isServingOneHour}">1 SERVICE</a>
+          </div>
+          <div class="col-sm-4">
+            <a (click)="toggleServingHours(showServiceSelectModal, 2);" class="btn btn-primary btn-block py-3" [ngClass]="{'active': isServingTwoHours}">2 SERVICES</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
 import { ChildSigninCardModule } from '../../shared/components/child-signin-card';
-
+import { ServingToggleComponent } from '../serving/serving-toggle.component';
 import { AvailableChildrenComponent } from './available-children.component';
 import { availableChildrenRouting } from './available-children.routes';
 
@@ -15,10 +15,12 @@ import { availableChildrenRouting } from './available-children.routes';
     availableChildrenRouting
   ],
   declarations: [
-    AvailableChildrenComponent
+    AvailableChildrenComponent,
+    ServingToggleComponent
   ],
   exports: [
-    AvailableChildrenComponent
+    AvailableChildrenComponent,
+    ServingToggleComponent
   ]
 })
 
