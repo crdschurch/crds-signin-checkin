@@ -517,7 +517,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
             }
 
-            if (ageYears == 3)
+            if (ageYears == 3 && (gradeGroupAttributeId == null || gradeGroupAttributeId == 0))
             {
                 switch (birthDate.Month)
                 {
@@ -548,7 +548,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
             }
 
-            if (ageYears == 4)
+            if (ageYears == 4 && (gradeGroupAttributeId == null || gradeGroupAttributeId ==0) )
             {
                 switch (birthDate.Month)
                 {
@@ -579,7 +579,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
             }
 
-            if (ageYears >= 5 && gradeGroupAttributeId == null)
+            if (ageYears >= 5 && (gradeGroupAttributeId == null || gradeGroupAttributeId == 0))
             {
                 switch (birthDate.Month)
                 {
