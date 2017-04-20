@@ -13,12 +13,14 @@ namespace MinistryPlatform.Translation.Repositories
             _applicationConfiguration = applicationConfiguration;
         }
 
-        public int GetGradeAttributeId(int gradeGroupId)
+        public int GetGradeAttributeId(int groupId)
         {
-            if (gradeGroupId != null)
+            if (groupId != null)
             {
-                switch (gradeGroupId)
+                switch (groupId)
                 {
+                    case 173939:
+                        return 9032;
                     case 173938:
                         return 9033;
                     case 173937:
@@ -43,9 +45,6 @@ namespace MinistryPlatform.Translation.Repositories
                         return 9046;
                     case 173927:
                         return 9047;
-                    default:
-                        // if no match, assume kindergarten?
-                        return 9032;
                 }
             }
             return 0;
@@ -517,7 +516,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
             }
 
-            if (ageYears == 3)
+            if (ageYears == 3 && (gradeGroupAttributeId == null || gradeGroupAttributeId == 0))
             {
                 switch (birthDate.Month)
                 {
@@ -548,7 +547,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
             }
 
-            if (ageYears == 4)
+            if (ageYears == 4 && (gradeGroupAttributeId == null || gradeGroupAttributeId ==0) )
             {
                 switch (birthDate.Month)
                 {
@@ -579,7 +578,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
             }
 
-            if (ageYears >= 5 && gradeGroupAttributeId == null)
+            if (ageYears >= 5 && (gradeGroupAttributeId == null || gradeGroupAttributeId == 0))
             {
                 switch (birthDate.Month)
                 {

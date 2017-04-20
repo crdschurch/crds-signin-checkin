@@ -119,7 +119,7 @@
                       <label for="childGrade" class="control-label">Year / Grade</label>
                       <select class="form-control form-control-lg" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
                         <option value="-1">Select a Grade</option>
-                        <option value="0">Has not started Kindergarten yet</option>
+                        <option value="0" [attr.selected]="contact.YearGrade === 0 ? '' : null">Has not started Kindergarten yet</option>
                         <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}" [attr.selected]="contact.YearGrade === grade.Id ? '' : null">{{ grade.Name }}</option>
                       </select>
                     </div>
