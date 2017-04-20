@@ -177,11 +177,7 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   save() {
-    if (this.alternateRoomsSelected) {
-      this.saveAlternateRooms();
-    } else {
-      this.saveRoomGroups();
-    }
+    this.saveRoom();
   }
 
   cancel() {
@@ -190,22 +186,12 @@ export class RoomGroupListComponent implements OnInit {
     this.getData();
   }
 
-  saveRoomGroups() {
-    this.updating = true;
-    this.isDirty = false;
-
-    this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room).subscribe((resp) => {
-      this.updating = false;
-      this.rootService.announceEvent('roomGroupsUpdateSuccess');
-      this.isDirty = false;
-    }, error => (this.rootService.announceEvent('generalError')));
-  }
-
-  saveAlternateRooms() {
+  saveRoom() {
     // dont allow saving of bumping rules on AC rooms as it creates bad data
-    if (this.isAdventureClub) {
+    if (this.isAdventureClub && this.hasBumpingRooms()) {
       return this.rootService.announceEvent('echeckNoACBumpingRules');
     }
+
     this.updating = true;
     this.isDirty = false;
 
@@ -215,10 +201,12 @@ export class RoomGroupListComponent implements OnInit {
     }
 
     this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'],
-      this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp) => {
-        this.updating = false;
-        this.rootService.announceEvent('alternateRoomsUpdateSuccess');
-        this.isDirty = false;
+      this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp1) => {
+        this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room).subscribe((resp) => {
+          this.updating = false;
+          this.rootService.announceEvent('echeckUpdateRoom');
+          this.isDirty = false;
+        }, error => (this.rootService.announceEvent('generalError')));
       }, error => (this.rootService.announceEvent('generalError')));
     }
 

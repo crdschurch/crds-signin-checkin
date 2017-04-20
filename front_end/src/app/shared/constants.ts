@@ -3,9 +3,8 @@ export class Constants {
   static CheckedInParticipationStatusId = 4;
   static GuestHouseholdId = 5771805;
 
-  static ManageRoomsChannel = 'ManageRoomsChannel';
   static CheckinParticipantsChannel = 'CheckinParticipantsChannel';
-  static CheckinCapacityChannel = 'CheckinCapacityChannel';
+  static CheckinRoomChannel = 'CheckinRoomChannel';
 
   static StudentMinistry = 81;
   static ChildCareEventType = 243;

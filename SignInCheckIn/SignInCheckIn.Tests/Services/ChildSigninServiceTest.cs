@@ -122,11 +122,11 @@ namespace SignInCheckIn.Tests.Services
                     ContactId = 331
                 }
             };
-            _eventService.Setup(m => m.GetCurrentEventForSite(siteId, kioskId)).Returns(eventDto);
+            _eventService.Setup(m => m.GetEvent(eventDto.EventId)).Returns(eventDto);
             _childSigninRepository.Setup(m => m.GetChildrenByHouseholdId(householdId, eventDto.EventId)).Returns(children);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(householdId)).Returns(headsOfHousehold);
 
-            var result = _fixture.GetChildrenAndEventByHouseholdId(householdId, siteId, kioskId);
+            var result = _fixture.GetChildrenAndEventByHouseholdId(householdId, eventDto.EventId, siteId, kioskId);
 
             Assert.AreEqual(result.Contacts[0].ContactId, headsOfHousehold[0].ContactId);
             Assert.AreEqual(result.Participants[0].ParticipantId, children[0].ParticipantId);

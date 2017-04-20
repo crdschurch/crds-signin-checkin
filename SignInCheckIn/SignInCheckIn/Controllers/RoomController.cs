@@ -125,7 +125,7 @@ namespace SignInCheckIn.Controllers
                     eventRoom.RoomId = roomId;
 
                     var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(token, eventRoom);
-                    _websocketService.PublishCheckinCapacity(eventId, roomId, updatedEventRoom);
+                    _websocketService.PublishRoomCapacity(eventId, roomId, updatedEventRoom);
 
                     return Ok(updatedEventRoom);
                 }
