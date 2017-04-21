@@ -50,7 +50,7 @@
             </span>
           </span>
         </a>
-        <a (click)="showChildSearchModal()" class="btn btn-primary float-md-right"  [ngClass]="{'disabled': !selectedEvent }">
+        <a id="childSearch" (click)="showChildSearchModal()" class="btn btn-primary float-md-right"  [ngClass]="{'disabled': !selectedEvent }">
           <span>
             Child Number Search
           </span>
@@ -106,27 +106,27 @@
       </div>
 
       <div class="modal-body p-3 step-2" [hidden]="!overrideChild.EventParticipantId">
-        <h3 class="mb-1 text-xs-left display-4">
+        <h3 id="callNumber" class="mb-1 text-xs-left display-4">
           #{{overrideChild.CallNumber}}
         </h3>
         <div>
-          <h3>
+          <h3 id="childName" >
             <b>{{overrideChild.name()}}</b>
           </h3>
           <ul class="list-unstyled">
             <li><br></li>
             <li>
               <b>Classroom:</b>
-              <span>{{overrideChild.AssignedRoomName}}</span>
+              <span id="roomName">{{overrideChild.AssignedRoomName}}</span>
             </li>
             <li><br></li>
             <li>
               <b>Birthdate:</b>
-              <span>{{overrideChild.DateOfBirth| amDateFormat: 'M-DD-YYYY'}}</span>
+              <span id="dateOfBirth" >{{overrideChild.DateOfBirth| amDateFormat: 'M-DD-YYYY'}}</span>
             </li>
             <li>
               <b>Group:</b>
-              <span>{{overrideChild.GroupName}}</span>
+              <span id="groupName" >{{overrideChild.GroupName}}</span>
             </li>
             <li><br></li>
             <li>
@@ -137,17 +137,17 @@
             </li>
             <li>
               <b>Time signed in:</b>
-              <span>{{overrideChild.TimeIn | amDateFormat :'h:mma'}}</span>
+              <span id="timeSignedIn">{{overrideChild.TimeIn | amDateFormat :'h:mma'}}</span>
             </li>
             <li>
               <b>Time checked in:</b>
-              <span>{{overrideChild.TimeConfirmed | amDateFormat :'h:mma'}}</span>
+              <span id="timeCheckIn">{{overrideChild.TimeConfirmed | amDateFormat :'h:mma'}}</span>
             </li>
           </ul>
         </div>
       </div>
       <div class="modal-footer" [hidden]="!overrideChild.EventParticipantId">
-        <button class="btn btn-info btn-lg float-xs-right" (click)="overrideCheckin()">Check In</button>
+        <button id="overrideCheckInButton" class="btn btn-info btn-lg float-xs-right" (click)="overrideCheckin()">Check In</button>
       </div>
 
     </div>
