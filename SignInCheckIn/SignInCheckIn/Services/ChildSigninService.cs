@@ -80,6 +80,8 @@ namespace SignInCheckIn.Services
 
             var participantEventMapDto = new ParticipantEventMapDto
             {
+                HouseholdId = householdId,
+                HouseholdPhoneNumber = headsOfHousehold.First().HomePhone,
                 Contacts = headsOfHousehold,
                 Participants = childrenDtos,
                 CurrentEvent = eventDto
