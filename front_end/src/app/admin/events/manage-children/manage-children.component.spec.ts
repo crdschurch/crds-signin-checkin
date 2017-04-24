@@ -63,4 +63,21 @@ describe('ManageChildrenComponent', () => {
       expect(adminService.getChildrenForEvent).toHaveBeenCalledWith(fixture.eventId, fixture.searchString);
     });
   });
+
+  describe('#children', () => {
+    it('should be sorted', () => {
+      let unsortedChildren: Array<any> = [];
+      unsortedChildren.push({KCSortOrder: 4, AssignedRoomName: 'four'});
+      unsortedChildren.push({KCSortOrder: 2, AssignedRoomName: 'two'});
+      unsortedChildren.push({KCSortOrder: 1, AssignedRoomName: 'one'});
+      unsortedChildren.push({KCSortOrder: 3, AssignedRoomName: 'three'});
+
+      fixture.children = unsortedChildren;
+
+      expect(fixture.children[0].AssignedRoomName).toBe('one');
+      expect(fixture.children[1].AssignedRoomName).toBe('two');
+      expect(fixture.children[2].AssignedRoomName).toBe('three');
+      expect(fixture.children[3].AssignedRoomName).toBe('four');
+    });
+  });
 });
