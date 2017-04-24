@@ -29,6 +29,7 @@ export class Child {
   TimeIn: Date;
   TimeConfirmed: Date;
   HeadsOfHousehold: Array<Contact> = [];
+  KCSortOrder: number;
 
   static fromJson(json: any): Child {
     let c = new Child();
@@ -58,6 +59,7 @@ export class Child {
     c.GroupName = json.GroupName;
     c.TimeIn = json.TimeIn;
     c.TimeConfirmed = json.TimeConfirmed;
+    c.KCSortOrder = json.KCSortOrder;
 
     if (json.HeadsOfHousehold !== null && json.HeadsOfHousehold !== undefined) {
       c.HeadsOfHousehold = (<Contact[]>json.HeadsOfHousehold).map(r => Contact.fromJson(r));
