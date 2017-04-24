@@ -77,5 +77,7 @@ namespace SignInCheckIn.Models.DTO
         public int? CheckinHouseholdId { get; set; }
 
         public bool DuplicateSignIn { get; set; }
+        
+        public int KCSortOrder { get; set; }
     }
 }
