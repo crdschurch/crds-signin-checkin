@@ -32,7 +32,7 @@ countries[0].CountryId = 123;
 
 let fixture;
 
-describe('HouseholdComponent', () => {
+describe('HouseholdEditComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getHouseholdInformation)).and.returnValue(Observable.of(household));
