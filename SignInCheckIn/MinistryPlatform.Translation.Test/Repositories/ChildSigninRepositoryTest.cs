@@ -548,7 +548,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
 	    private static string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
         {
-            return $"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2";
+            return $"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2 and Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4";
         }
 
         private static string GetChildParticpantsByOtherHouseholdFilter(int householdId)

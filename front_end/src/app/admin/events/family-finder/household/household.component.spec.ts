@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { HouseholdComponent } from './household.component';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { DateOfBirth, Contact, EventParticipants, Child } from '../../../../shared/models';
+import { Constants } from '../../../../shared/constants';
 import * as moment from 'moment';
 
 const eventId = 4335;
@@ -47,7 +48,7 @@ describe('HouseholdComponent', () => {
     it('should initialize data', () => {
       (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
       fixture.ngOnInit();
-      expect(fixture.eventParticipants.Participants[0].ParticipantId).toEqual(eventParticipants.Participants[0].ParticipantId);
+      expect(apiService.getEvent).toHaveBeenCalled();
     });
   });
 
@@ -211,5 +212,78 @@ describe('HouseholdComponent', () => {
       let newContact: Contact = new Contact();
       fixture.contact = newContact;
       expect(fixture.editMode).toBeFalsy();
+    });
+  });
+
+  describe('test', () => {
+    it('Childcare Group and Childcare Event Should Be False', () => {
+      let child: Child = new Child();
+      child.GroupId = 1201029;
+      child.canCheckIn(Constants.ChildCareEventType);
+
+      expect(child.CanCheckIn).toBeTruthy();
+    });
+    it('Childcare Group and SM Event Should Be False', () => {
+      let child: Child = new Child();
+      child.GroupId = 1201029;
+      child.canCheckIn(Constants.StudentMinistry6through8EventType);
+
+      expect(child.CanCheckIn).toBeFalsy();
+    });
+    it('Kids Club Group and KC Event Should Be True', () => {
+      let child: Child = new Child();
+      child.GroupId = 1201029;
+      child.canCheckIn(Constants.BigEventType + 1000);
+
+      expect(child.CanCheckIn).toBeTruthy();
+    });
+    it('Kids Club Group and SM Event Should Be False', () => {
+      let child: Child = new Child();
+      child.GroupId = 1201029;
+      child.canCheckIn(Constants.StudentMinistry6through8EventType);
+
+      expect(child.CanCheckIn).toBeFalsy();
+    });
+    it('SM6-8 Group and SM6-8 Event Should Be True', () => {
+      let child: Child = new Child();
+      child.GroupId = Constants.MsmSixth;
+      child.canCheckIn(Constants.StudentMinistry6through8EventType);
+
+      expect(child.CanCheckIn).toBeTruthy();
+    });
+    it('SM6-8 Group and SM9-12 Event Should Be False', () => {
+      let child: Child = new Child();
+      child.GroupId = Constants.MsmSixth;
+      child.canCheckIn(Constants.StudentMinistry9through12EventType);
+
+      expect(child.CanCheckIn).toBeFalsy();
+    });
+    it('SM9-12 Group and SM9-12 Event Should Be True', () => {
+      let child: Child = new Child();
+      child.GroupId = Constants.HighSchoolEleventh;
+      child.canCheckIn(Constants.StudentMinistry9through12EventType);
+
+      expect(child.CanCheckIn).toBeTruthy();
+    });
+    it('SM9-12 Group and SM6-8 Event Should Be False', () => {
+      let child: Child = new Child();
+      child.GroupId = Constants.HighSchoolEleventh;
+      child.canCheckIn(Constants.StudentMinistry6through8EventType);
+
+      expect(child.CanCheckIn).toBeFalsy();
+    });
+    it('Big Group and Big Event Should Be True', () => {
+      let child: Child = new Child();
+      child.GroupId = Constants.HighSchoolEleventh;
+      child.canCheckIn(Constants.BigEventType);
+
+      expect(child.CanCheckIn).toBeTruthy();
+    });
+    it('Big Group and ChildCare Event Should Be False', () => {
+      let child: Child = new Child();
+      child.GroupId = Constants.HighSchoolEleventh;
+      child.canCheckIn(Constants.ChildCareEventType);
+
+      expect(child.CanCheckIn).toBeFalsy();
     });
   });
