@@ -123,7 +123,13 @@ export class ManageChildrenComponent implements OnInit {
   }
 
   set children(unsortedChildren) {
-    this._children = unsortedChildren.sort(function(a, b): any { return a.KCSortOrder - b.KCSortOrder; });
+    let noKCSortOrder = unsortedChildren.find(c => { return c.KCSortOrder === undefined || c.KCSortOrder === null; });
+
+    if (noKCSortOrder) {
+      this._children = unsortedChildren;
+    } else {
+      this._children = unsortedChildren.sort(function(a, b): any { return a.KCSortOrder - b.KCSortOrder; });
+    }
 
     // now sort children by room and set it to this.childrenByRoom
     let groupedChildren = _(this.children).groupBy(r => r.AssignedRoomName).value();
