@@ -32,7 +32,7 @@ countries[0].CountryId = 123;
 
 let fixture;
 
-describe('HouseholdComponent', () => {
+describe('HouseholdEditComponent', () => {
   beforeEach(() => {
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getHouseholdInformation)).and.returnValue(Observable.of(household));
@@ -68,6 +68,13 @@ describe('HouseholdComponent', () => {
       (<jasmine.Spy>(form.dirty)).and.returnValue(true);
       fixture.onSave(form);
       expect(fixture.adminService.updateHousehold).toHaveBeenCalledWith(fixture.household);
+    });
+
+    it('should not save data', () => {
+      let form = jasmine.createSpyObj('form', ['pristine']);
+      (<jasmine.Spy>(form.pristine)).and.returnValue(true);
+      fixture.onSave(form);
+      expect(fixture.router.navigate).toHaveBeenCalled;
     });
   });
 });

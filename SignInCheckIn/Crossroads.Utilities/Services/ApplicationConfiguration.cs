@@ -30,6 +30,7 @@ namespace Crossroads.Utilities.Services
         public int GroupRoleMemberId { get; }
 
         public int AdventureClubEventTypeId { get; }
+        public int StudentMinistryId { get; }
         public int BigEventTypeId { get; } // Grades 6 to 12 combined
         public int StudentMinistryGradesSixToEightEventTypeId { get; }
         public int StudentMinistryGradesNineToTwelveEventTypeId { get; }
@@ -54,7 +55,7 @@ namespace Crossroads.Utilities.Services
 
         public string ManageRoomsChannel { get; set; }
         public string CheckinParticipantsChannel { get; set; }
-        public string CheckinCapacityChannel { get; set; }
+        public string CheckinRoomChannel { get; set; }
 
         public int ChildcareEventTypeId { get; }
         public int ChildcareGroupTypeId { get; }
@@ -325,6 +326,7 @@ namespace Crossroads.Utilities.Services
             GroupRoleMemberId = configurationWrapper.GetConfigIntValue("GroupRoleMemberId");
 
             AdventureClubEventTypeId = configurationWrapper.GetConfigIntValue("AdventureClubEventTypeId");
+            StudentMinistryId = configurationWrapper.GetConfigIntValue("StudentMinistryId");
             BigEventTypeId = configurationWrapper.GetConfigIntValue("BigEventTypeId");
             StudentMinistryGradesSixToEightEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesSixToEightEventTypeId");
             StudentMinistryGradesNineToTwelveEventTypeId = configurationWrapper.GetConfigIntValue("StudentMinistryGradesNineToTwelveEventTypeId");
@@ -349,7 +351,7 @@ namespace Crossroads.Utilities.Services
 
             ManageRoomsChannel = configurationWrapper.GetConfigValue("ManageRoomsChannel");
             CheckinParticipantsChannel = configurationWrapper.GetConfigValue("CheckinParticipantsChannel");
-            CheckinCapacityChannel = configurationWrapper.GetConfigValue("CheckinCapacityChannel");
+            CheckinRoomChannel = configurationWrapper.GetConfigValue("CheckinRoomChannel");
 
             ChildcareEventTypeId = configurationWrapper.GetConfigIntValue("ChildcareEventTypeId");
             ChildcareGroupTypeId = configurationWrapper.GetConfigIntValue("ChildcareGroupTypeId");

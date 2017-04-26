@@ -9,4 +9,5 @@ import { Child, NewChild } from '../../models';
 
 export class ChildSigninCardComponent {
   @Input() child: Child|NewChild;
+  @Input() allowSignin = true;
 }

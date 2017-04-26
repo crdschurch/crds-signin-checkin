@@ -80,6 +80,8 @@ export class HouseholdEditComponent implements OnInit {
         this.rootService.announceEvent('generalError');
         this.processing = false;
       });
+    } else if (form.pristine) {
+      this.router.navigate(['/admin/events', this.eventId, 'family-finder', this.householdId]);
     }
   }
 

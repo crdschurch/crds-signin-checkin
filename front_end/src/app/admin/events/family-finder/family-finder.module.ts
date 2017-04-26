@@ -7,6 +7,7 @@ import { ChildSigninCardModule } from '../../../shared/components/child-signin-c
 import { FamilyFinderComponent } from './family-finder.component';
 import { HouseholdComponent } from './household/household.component';
 import { HouseholdEditComponent } from './household/edit/household-edit.component';
+import { ServingToggleModule } from '../../../child-signin/serving/serving-toggle.module';
 import { familyFinderRouting } from './family-finder.routes';
 
 @NgModule({
@@ -20,7 +21,8 @@ import { familyFinderRouting } from './family-finder.routes';
     ChildSigninCardModule,
     HeaderModule,
     TextMaskModule,
-    SharedModule
+    SharedModule,
+    ServingToggleModule
   ],
   exports: [ ]
 })

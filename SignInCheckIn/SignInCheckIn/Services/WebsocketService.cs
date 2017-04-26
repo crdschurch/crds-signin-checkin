@@ -22,10 +22,10 @@ namespace SignInCheckIn.Services
             _context = hubContext;
         }
 
-        public void PublishCheckinCapacity(int eventId, int roomId, EventRoomDto data)
+        public void PublishRoomCapacity(int eventId, int roomId, EventRoomDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
-            var channelName = $"{_applicationConfiguration.CheckinCapacityChannel}{publishEventId}{roomId}";
+            var channelName = $"{_applicationConfiguration.CheckinRoomChannel}{publishEventId}{roomId}";
             Publish(channelName, null, data);
         }
 

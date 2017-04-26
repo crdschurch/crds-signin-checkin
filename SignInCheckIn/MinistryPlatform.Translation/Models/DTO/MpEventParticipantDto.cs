@@ -103,5 +103,11 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty("End_Date")]
         public DateTime? EndDate { get; set; }
+
+        [JsonProperty("Guest_Sign_In")]
+        public bool GuestSignIn { get; set; }
+
+        [JsonProperty("KC_Sort_Order")]
+        public int KCSortOrder { get; set; }
     }
 }

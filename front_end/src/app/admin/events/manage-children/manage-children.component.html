@@ -120,7 +120,7 @@
       <div class="col-xs-2">Call #</div>
       <div class="col-xs-2"></div>
     </div>
-    <div *ngFor="let child of cbr" class="row">
+    <div *ngFor="let child of cbr" class="row" [ngClass]="{'hidden-print': !child.TimeConfirmed }">
       <div class="col-xs-4">{{child.Nickname}}</div>
       <div class="col-xs-4">{{child.LastName}}</div>
       <div class="col-xs-2">{{child.CallNumber}}</div>
