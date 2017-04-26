@@ -1500,16 +1500,6 @@ namespace SignInCheckIn.Tests.Services
                     SignedIn = 0,
                     CheckedIn = 0
                 },
-                //new MpEventRoomDto
-                //{
-                //    AllowSignIn = false,
-                //    EventId = 7654321,
-                //    EventRoomId = 6778899,
-                //    RoomId = 4321,
-                //    Capacity = 0,
-                //    SignedIn = 0,
-                //    CheckedIn = 0
-                //},
                 new MpEventRoomDto
                 {
                     AllowSignIn = true,

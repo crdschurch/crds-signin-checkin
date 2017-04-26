@@ -81,8 +81,6 @@ namespace SignInCheckIn.Models.DTO
         public int KCSortOrder { get; set; }
 
         // used for MSM sign in, as they do not get a room assignment
-        // room ID can be null - the front end will need to not show an error on this field,
-        // need to test that
         [JsonIgnore]
         public bool NonRoomSignIn { get; set; }
     }
