@@ -500,7 +500,9 @@ namespace SignInCheckIn.Services
                     {"ParentRoomName2", secondRoomName},
                     {"Informative1", "This label is worn by a parent/guardian"},
                     {"Informative2", "You must have this label to pick up your child"},
-                    {"ErrorText", participant.SignInErrorMessage}
+                    {"ErrorText", participant.SignInErrorMessage},
+                    {"Child_Info", participant.Nickname},
+                    {"Group_Info", participant.GroupId.ToString()}
                 };
 
                 // Choose the correct label template
