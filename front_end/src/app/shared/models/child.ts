@@ -29,6 +29,8 @@ export class Child {
   TimeIn: Date;
   TimeConfirmed: Date;
   HeadsOfHousehold: Array<Contact> = [];
+  KCSortOrder: number;
+  _CanCheckIn: boolean;
 
   static fromJson(json: any): Child {
     let c = new Child();
@@ -58,6 +60,7 @@ export class Child {
     c.GroupName = json.GroupName;
     c.TimeIn = json.TimeIn;
     c.TimeConfirmed = json.TimeConfirmed;
+    c.KCSortOrder = json.KCSortOrder;
 
     if (json.HeadsOfHousehold !== null && json.HeadsOfHousehold !== undefined) {
       c.HeadsOfHousehold = (<Contact[]>json.HeadsOfHousehold).map(r => Contact.fromJson(r));
@@ -96,5 +99,57 @@ export class Child {
 
   uniqueIdentifier() {
     return this.ContactId;
+  }
+
+  KCEvent(eventType: number): boolean {
+    return eventType !== Constants.ChildCareEventType && eventType !== Constants.BigEventType &&
+      eventType !== Constants.StudentMinistry6through8EventType && eventType !== Constants.StudentMinistry9through12EventType;
+  }
+
+  ChildCareEvent(eventType: number): boolean {
+    return eventType === Constants.ChildCareEventType;
+  }
+
+  StudentMinistry6through8Event(eventType: number): boolean {
+    return eventType === Constants.StudentMinistry6through8EventType;
+  }
+
+  StudentMinistry9through12Event(eventType: number): boolean {
+    return eventType === Constants.StudentMinistry9through12EventType;
+  }
+
+  BigEvent(eventType: number): boolean {
+    return eventType === Constants.BigEventType;
+  }
+
+  KCGroup(): boolean {
+    return !this.BigGroup();
+  }
+
+  StudentMinistry6through8GradeGroup(): boolean {
+    return this.GroupId === Constants.MsmSixth || this.GroupId === Constants.MsmSeventh || this.GroupId === Constants.MsmEighth;
+  }
+
+  StudentMinistry9through12GradeGroup(): boolean {
+    return this.GroupId === Constants.HighSchoolNinth || this.GroupId === Constants.HighSchoolTenth ||
+      this.GroupId === Constants.HighSchoolEleventh || this.GroupId === Constants.HighSchoolTwelfth;
+  }
+
+  BigGroup(): boolean {
+    return this.StudentMinistry6through8GradeGroup() || this.StudentMinistry9through12GradeGroup();
+  }
+
+  canCheckIn(eventType: number): boolean {
+    this._CanCheckIn = (this.ChildCareEvent(eventType) && this.KCGroup()) || // Child Care Event and Kids Club Group
+      (this.KCEvent(eventType) && this.KCGroup()) || // or Kids Club Event and Kids Club Group
+      (this.StudentMinistry6through8Event(eventType) && this.StudentMinistry6through8GradeGroup()) || // or Student 6-8 Event and group
+      (this.StudentMinistry9through12Event(eventType) && this.StudentMinistry9through12GradeGroup()) || // or Student 9-12 Event and group
+      (this.BigEvent(eventType) && this.BigGroup()); // or Student 6-12 Big Event and group 6-12
+
+    return this._CanCheckIn;
+  }
+
+  get CanCheckIn(): boolean {
+    return this._CanCheckIn;
   }
 }

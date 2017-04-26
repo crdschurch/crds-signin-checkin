@@ -14,6 +14,7 @@ import * as moment from 'moment';
 })
 export class HouseholdComponent implements OnInit {
   private eventId: number;
+  private eventTypeId: number;
   private householdId: number;
   private _editMode: boolean;
   private processing: boolean;
@@ -39,10 +40,11 @@ export class HouseholdComponent implements OnInit {
    this.householdId = +this.route.snapshot.params['householdId'];
 
    this.apiService.getEvent(String(this.eventId)).subscribe((event) => {
+     this.eventTypeId = event.EventTypeId;
      this.headerService.announceEvent(event);
+     this.getChildren();
    }, error => console.error(error));
 
-   this.getChildren();
    this.populateGradeGroups();
    this.populateDatepicker();
  }
@@ -51,6 +53,7 @@ export class HouseholdComponent implements OnInit {
    this.processing = true;
    this.adminService.getChildrenByHousehold(+this.householdId, +this.eventId).subscribe((ep: EventParticipants) => {
      this.eventParticipants = ep;
+     this.eventParticipants.Participants.forEach(p => p.Selected = true && p.canCheckIn(this.eventTypeId));
      if (this.eventParticipants === undefined || !this.eventParticipants.hasParticipants()) {
        this.rootService.announceEvent('echeckFamilyFinderNoChildren');
      }
