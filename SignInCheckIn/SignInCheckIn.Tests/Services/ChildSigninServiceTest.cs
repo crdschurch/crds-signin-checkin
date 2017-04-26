@@ -40,8 +40,10 @@ namespace SignInCheckIn.Tests.Services
 
         private static int ChildcareEventTypeId = 243;
         private static int ChildcareGroupTypeId = 27;
-        private static int MiddleSchoolEventTypeId = 398;
-        private static int KidsClublEventTypeId = 410;
+        private static int BigEventTypeId = 369;
+        private static int MiddleSchoolEventTypeId = 402;
+        private static int HighSchoolEventTypeId = 403;
+        private static int KidsClubEventTypeId = 410; // huh?
 
         [SetUp]
         public void SetUp()
@@ -86,8 +88,8 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareEventTypeId);
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareGroupTypeId);
             _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesSixToEightEventTypeId).Returns(MiddleSchoolEventTypeId);
-            _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesNineToTwelveEventTypeId).Returns(MiddleSchoolEventTypeId);
-            _applicationConfiguration.SetupGet(m => m.BigEventTypeId).Returns(MiddleSchoolEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesNineToTwelveEventTypeId).Returns(HighSchoolEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.BigEventTypeId).Returns(BigEventTypeId);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
