@@ -31,7 +31,7 @@
     </a>
   </div>
 </td>
-<td [ngClass]="{'disabled': pending }">
+<td class="hidden-print" [ngClass]="{'disabled': pending }">
   <a routerLink="/admin/events/{{ mainEventId() }}/rooms/{{room.RoomId}}" [queryParams]="{ tab: 'alternate-rooms' }">Alt</a>
 </td>
 <td [ngClass]="{'disabled': pending }"  class="hidden-print">
@@ -66,6 +66,6 @@
 </td>
 <td [ngClass]="{'disabled': pending }" class="text-xs-right">{{ room.SignedIn }}</td>
 <td [ngClass]="{'disabled': pending }" class="text-xs-right">{{ room.CheckedIn }}</td>
-<td [ngClass]="{'disabled': pending }" class="text-xs-right save-button">
+<td [ngClass]="{'disabled': pending }" class="hidden-print text-xs-right save-button">
   <a class="btn btn-success btn-sm" (click)="saveRoom()" href="#" [hidden]="!dirty">Save</a>
 </td>
