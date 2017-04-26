@@ -24,7 +24,8 @@ describe('RoomGroupListComponent', () => {
     route.snapshot.params = { eventId: serviceEventId, roomId: roomId };
     route.snapshot.queryParams = { tab: '' };
     apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEventMaps', 'getEvent']);
-    adminService = jasmine.createSpyObj<AdminService>('adminService', ['getRoomGroups', 'getBumpingRooms']);
+    adminService = jasmine.createSpyObj<AdminService>('adminService',
+      ['getRoomGroups', 'getBumpingRooms', 'updateBumpingRooms', 'updateRoomGroups']);
     headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
 
@@ -78,5 +79,19 @@ describe('RoomGroupListComponent', () => {
       expect(fixture.isAdventureClub).toBeTruthy();
     });
 
+  });
+
+  describe('#saveRoom', () => {
+    const clickEvent = {target: { checked: true } };
+    it('should save', () => {
+      (<jasmine.Spy>adminService.updateBumpingRooms).and.returnValue(Observable.of());
+      (<jasmine.Spy>adminService.updateRoomGroups).and.returnValue(Observable.of());
+      fixture.isAdventureClub = false;
+      fixture.allAlternateRooms = [];
+
+      fixture.saveRoom();
+      expect(adminService.updateBumpingRooms).toHaveBeenCalled;
+      expect(adminService.updateRoomGroups).toHaveBeenCalled;
+    });
   });
 });

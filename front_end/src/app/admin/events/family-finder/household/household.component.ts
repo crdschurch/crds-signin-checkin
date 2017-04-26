@@ -14,6 +14,7 @@ import * as moment from 'moment';
 })
 export class HouseholdComponent implements OnInit {
   private eventId: number;
+  private eventTypeId: number;
   private householdId: number;
   private _editMode: boolean;
   private processing: boolean;
@@ -25,6 +26,7 @@ export class HouseholdComponent implements OnInit {
   yearsSelection: Array<number>;
   eventParticipants: EventParticipants;
   guestDOB: DateOfBirth = new DateOfBirth();
+  numberEventsAttending: number;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -38,18 +40,20 @@ export class HouseholdComponent implements OnInit {
    this.householdId = +this.route.snapshot.params['householdId'];
 
    this.apiService.getEvent(String(this.eventId)).subscribe((event) => {
+     this.eventTypeId = event.EventTypeId;
      this.headerService.announceEvent(event);
+     this.getChildren();
    }, error => console.error(error));
 
-   this.getChildren();
    this.populateGradeGroups();
    this.populateDatepicker();
  }
 
  private getChildren() {
    this.processing = true;
-   this.adminService.getChildrenByHousehold(+this.householdId).subscribe((ep: EventParticipants) => {
+   this.adminService.getChildrenByHousehold(+this.householdId, +this.eventId).subscribe((ep: EventParticipants) => {
      this.eventParticipants = ep;
+     this.eventParticipants.Participants.forEach(p => p.Selected = true && p.canCheckIn(this.eventTypeId));
      if (this.eventParticipants === undefined || !this.eventParticipants.hasParticipants()) {
        this.rootService.announceEvent('echeckFamilyFinderNoChildren');
      }
@@ -76,7 +80,7 @@ export class HouseholdComponent implements OnInit {
  }
 
  private populateGradeGroups() {
-   this.apiService.getGradeGroups().subscribe((groups) => {
+   this.apiService.getGradeGroups(this.eventId).subscribe((groups) => {
        this.gradeGroups = groups;
      },
      error => console.error(error)
@@ -89,6 +93,10 @@ export class HouseholdComponent implements OnInit {
    }
  }
 
+ setServingHours(hours) {
+   this.numberEventsAttending = hours;
+ }
+
  signIn() {
     if (!this.eventParticipants.hasSelectedParticipants()) {
       return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
@@ -96,8 +104,7 @@ export class HouseholdComponent implements OnInit {
     this.processing = true;
     // remove unselected event participants
     this.eventParticipants.removeUnselectedParticipants();
-    const numberEventsAttending = 1;
-    this.adminService.findFamilySigninAndPrint(this.eventParticipants, numberEventsAttending).subscribe(
+    this.adminService.findFamilySigninAndPrint(this.eventParticipants, this.numberEventsAttending).subscribe(
       (response: EventParticipants) => {
         this.processing = false;
         if (response && response.Participants && response.Participants.length > 0) {

@@ -68,7 +68,7 @@ namespace SignInCheckIn.Models.DTO
 
         public List<ContactDto> HeadsOfHousehold;
 
-        public bool GuestSignin { get; set; }
+        public bool? GuestSignin { get; set; }
 
         public int? YearGrade { get; set; }
 
@@ -77,5 +77,7 @@ namespace SignInCheckIn.Models.DTO
         public int? CheckinHouseholdId { get; set; }
 
         public bool DuplicateSignIn { get; set; }
+        
+        public int KCSortOrder { get; set; }
     }
 }

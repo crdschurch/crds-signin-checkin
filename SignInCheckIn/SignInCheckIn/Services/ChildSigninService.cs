@@ -68,9 +68,10 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
-        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int siteId, string kioskId)
+        public ParticipantEventMapDto GetChildrenAndEventByHouseholdId(int householdId, int eventId, int siteId, string kioskId)
         {
-            var eventDto = _eventService.GetCurrentEventForSite(siteId, kioskId);
+            // var eventDto = _eventService.GetCurrentEventForSite(siteId, kioskId);
+            var eventDto = _eventService.GetEvent(eventId);
 
             var household = _childSigninRepository.GetChildrenByHouseholdId(householdId, eventDto.EventId);
 
@@ -80,6 +81,8 @@ namespace SignInCheckIn.Services
 
             var participantEventMapDto = new ParticipantEventMapDto
             {
+                HouseholdId = householdId,
+                HouseholdPhoneNumber = headsOfHousehold.First().HomePhone,
                 Contacts = headsOfHousehold,
                 Participants = childrenDtos,
                 CurrentEvent = eventDto

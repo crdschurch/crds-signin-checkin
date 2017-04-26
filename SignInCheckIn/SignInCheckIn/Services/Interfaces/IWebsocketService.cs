@@ -7,7 +7,7 @@ namespace SignInCheckIn.Services.Interfaces
 {
     public interface IWebsocketService
     {
-        void PublishCheckinCapacity(int eventId, int roomId, EventRoomDto data);
+        void PublishRoomCapacity(int eventId, int roomId, EventRoomDto data);
         void PublishCheckinParticipantsCheckedIn(int eventId, int roomId, ParticipantDto data);
         void PublishCheckinParticipantsAdd(int eventId, int roomId, List<ParticipantDto> data);
         void PublishCheckinParticipantsRemove(int eventId, int roomId, ParticipantDto data);
