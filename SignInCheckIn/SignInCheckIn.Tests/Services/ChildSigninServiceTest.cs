@@ -846,7 +846,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 111,
-                    Selected = true
+                    Selected = true,
+                    GroupId = 5544555
                 },
                 new ParticipantDto
                 {
@@ -856,7 +857,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 222,
-                    Selected = true
+                    Selected = true,
+                    GroupId = 5544555
                 },
                 new ParticipantDto
                 {
@@ -866,7 +868,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomId = 2345678,
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 333,
-                    Selected = false
+                    Selected = false,
+                    GroupId = 5544555
                 },
                 new ParticipantDto
                 {
@@ -877,7 +880,8 @@ namespace SignInCheckIn.Tests.Services
                     AssignedSecondaryRoomName = "TestSecondaryRoom",
                     ParticipantId = 333,
                     Selected = true,
-                    SignInErrorMessage = "testerror"
+                    SignInErrorMessage = "testerror",
+                    GroupId = 5544555
                 }
             };
 
@@ -904,9 +908,16 @@ namespace SignInCheckIn.Tests.Services
                 CurrentEvent = eventDto
             };
 
+            var mpGroupDto = new MpGroupDto
+            {
+                Id = 5544555,
+                Name = "test group"
+            };
+
             const string successLabel = "aaa";
             _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns(successLabel);
             _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1234567);
+            _groupRepository.Setup(m => m.GetGroup(It.IsAny<string>(), 5544555, false)).Returns(mpGroupDto);
 
             // Act
             _fixture.PrintParticipants(participantEventMapDto, kioskId.ToString());
@@ -932,6 +943,84 @@ namespace SignInCheckIn.Tests.Services
             _printingService.VerifyAll();
 
             _kioskRepository.VerifyAll();
+        }
+
+        [Test]
+        public void ShouldPrintCapacityErrorLabel()
+        {
+            // Arrange
+            var kioskId = Guid.Parse("1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
+
+            var mpKioskConfigDto = new MpKioskConfigDto
+            {
+                KioskIdentifier = kioskId,
+                CongregationId = 1,
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+
+            var mpPrinterMapDto = new MpPrinterMapDto
+            {
+                PrinterMapId = 1111111
+            };
+
+            _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
+
+            var participantDtos = new List<ParticipantDto>
+            {
+                new ParticipantDto
+                {
+                    FirstName = "Child1First",
+                    AssignedRoomId = null,
+                    AssignedRoomName = null,
+                    AssignedSecondaryRoomId = null,
+                    AssignedSecondaryRoomName = null,
+                    ParticipantId = 111,
+                    Selected = true,
+                    CallNumber = "1234",
+                    GroupId = 5544555
+                }
+            };
+
+            var contactDtos = new List<ContactDto>
+            {
+                new ContactDto
+                {
+                    ContactId = 1234567,
+                    LastName = "TestLast",
+                    Nickname = "TestNickname"
+                }
+            };
+
+            var eventDto = new EventDto
+            {
+                EventTitle = "test event",
+                EventTypeId = KidsClubEventTypeId
+            };
+
+            var mpGroupDto = new MpGroupDto
+            {
+                Id = 5544555,
+                Name = "test group"
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto();
+            participantEventMapDto.Participants = participantDtos;
+            participantEventMapDto.Contacts = contactDtos;
+            participantEventMapDto.CurrentEvent = eventDto;
+
+            _groupRepository.Setup(m => m.GetGroup(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(mpGroupDto);
+            _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns("zzz");
+            _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1234567);
+
+            // Act
+            var result = _fixture.PrintParticipants(participantEventMapDto, kioskId.ToString());
+
+            // Assert
+            _kioskRepository.VerifyAll();
+            _participantRepository.VerifyAll();
+            Assert.IsNotNull(result);
         }
 
         [Test]
@@ -1230,6 +1319,12 @@ namespace SignInCheckIn.Tests.Services
                 PrinterMapId = 1111111
             };
 
+            var mpGroupDto = new MpGroupDto
+            {
+                Id = 5544555,
+                Name = "test group"
+            };
+
             _participantRepository.Setup(m => m.GetEventParticipantByEventParticipantId(token, 765)).Returns(participant);
             _eventService.Setup(m => m.GetEvent(123)).Returns(currentEvent);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(4)).Returns(contacts);
@@ -1237,7 +1332,7 @@ namespace SignInCheckIn.Tests.Services
             _kioskRepository.Setup(m => m.GetPrinterMapById(mpKioskConfigDto.PrinterMapId.GetValueOrDefault())).Returns(mpPrinterMapDto);
             _pdfEditor.Setup(m => m.PopulatePdfMergeFields(It.IsAny<byte[]>(), It.IsAny<Dictionary<string, string>>())).Returns("");
             _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1);
-
+            _groupRepository.Setup(m => m.GetGroup(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(mpGroupDto);
 
             var participantEventMapDto = _fixture.PrintParticipant(765, "1a11a1a1-a11a-1a1a-11a1-a111a111a11a", "abcd");
 
