@@ -65,7 +65,7 @@ describe('ManageChildrenComponent', () => {
   });
 
   describe('#children', () => {
-    it('should be sorted', () => {
+    it('should be sorted by KC Sort Order', () => {
       let unsortedChildren: Array<any> = [];
       unsortedChildren.push({KCSortOrder: 4, AssignedRoomName: 'four'});
       unsortedChildren.push({KCSortOrder: 2, AssignedRoomName: 'two'});
@@ -78,6 +78,20 @@ describe('ManageChildrenComponent', () => {
       expect(fixture.children[1].AssignedRoomName).toBe('two');
       expect(fixture.children[2].AssignedRoomName).toBe('three');
       expect(fixture.children[3].AssignedRoomName).toBe('four');
+    });
+    it('should not be sorted by KC Sort Order', () => {
+      let unsortedChildren: Array<any> = [];
+      unsortedChildren.push({AssignedRoomName: 'four'});
+      unsortedChildren.push({KCSortOrder: 2, AssignedRoomName: 'two'});
+      unsortedChildren.push({KCSortOrder: 1, AssignedRoomName: 'one'});
+      unsortedChildren.push({KCSortOrder: 3, AssignedRoomName: 'three'});
+
+      fixture.children = unsortedChildren;
+
+      expect(fixture.children[0].AssignedRoomName).toBe(unsortedChildren[0].AssignedRoomName);
+      expect(fixture.children[1].AssignedRoomName).toBe(unsortedChildren[1].AssignedRoomName);
+      expect(fixture.children[2].AssignedRoomName).toBe(unsortedChildren[2].AssignedRoomName);
+      expect(fixture.children[3].AssignedRoomName).toBe(unsortedChildren[3].AssignedRoomName);
     });
   });
 });

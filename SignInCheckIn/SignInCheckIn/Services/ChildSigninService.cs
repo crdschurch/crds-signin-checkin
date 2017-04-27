@@ -238,13 +238,14 @@ namespace SignInCheckIn.Services
                 r.CheckinPhone = participantEventMapDto.HouseholdPhoneNumber;
             });
 
-            // sort the participants, and use only the first participant in each group as the return print value thing
-            var groupedParticipants = SetParticipantsPrintInformation(response.Participants, eventsForSignin);
-            response.Participants = groupedParticipants.Select(r => r.First()).ToList();
+            // sort the participants, and use only the first participant in each group as the return print value thing --
+            // this is not called for MSM/HSM participants
+            if (!GetStudentMinistryEventIds().Contains(response.CurrentEvent.EventTypeId))
+            {
+                var groupedParticipants = SetParticipantsPrintInformation(response.Participants.Where(r => r.NonRoomSignIn == false).ToList(), eventsForSignin);
+                response.Participants = groupedParticipants.Select(r => r.First()).ToList();
+            }
 
-            // Add back those participants that didn't get a room assigned - this may be able to be removed
-            // TODO: Verify this can be removed
-            //response.Participants.AddRange(participantEventMapDto.Participants.Where(p => !p.AssignedRoomId.HasValue && p.Selected));
             response.Participants.ForEach(p => p.Selected = true);
 
             return response;
@@ -541,6 +542,8 @@ namespace SignInCheckIn.Services
             var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
             CreateGroupParticipants(token, newFamilyParticipants);
 
+            // note that the events are drawn from the context that the new family is being edited in - 
+            // i.e. if accessed via a KC event, the kids will be checked into KC, etc.
             var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto, true);
 
             // mark all as selected so they get signed in, but guard against an exception with no participants
@@ -851,5 +854,15 @@ namespace SignInCheckIn.Services
                 }
             }
         }
+
+        private List<int> GetStudentMinistryEventIds()
+        {
+            return new List<int>
+            {
+                _applicationConfiguration.BigEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId
+            };
+        } 
     }
 }
