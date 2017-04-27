@@ -487,6 +487,15 @@ namespace SignInCheckIn.Services
                         secondRoomName = participant.AssignedRoomName;
                     }
                 }
+
+                MpGroupDto mpGroupDto = new MpGroupDto();
+
+                if (participant.ErrorSigningIn == false && participant.NotSignedIn == true)
+                {
+                    mpGroupDto = _groupRepository.GetGroup(null, participant.GroupId.GetValueOrDefault(), false);
+                }
+
+
                 var printValues = new Dictionary<string, string>
                 {
                     {"ChildName", participant.Nickname},
@@ -502,13 +511,14 @@ namespace SignInCheckIn.Services
                     {"Informative2", "You must have this label to pick up your child"},
                     {"ErrorText", participant.SignInErrorMessage},
                     {"Child_Info", participant.Nickname},
-                    {"Group_Info", participant.GroupId.ToString()}
+                    {"Group_Info", mpGroupDto.Name}
                 };
 
                 // Choose the correct label template
                 var labelTemplate = participant.ErrorSigningIn
                     ? Properties.Resources.Error_Label
                     : participant.NotSignedIn ? Properties.Resources.Activity_Kit_Label : Properties.Resources.Checkin_KC_Label;
+
                 var mergedPdf = _pdfEditor.PopulatePdfMergeFields(labelTemplate, printValues);
 
                 var printRequestDto = new PrintRequestDto
