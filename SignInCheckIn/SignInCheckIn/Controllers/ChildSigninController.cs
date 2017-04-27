@@ -143,7 +143,7 @@ namespace SignInCheckIn.Controllers
                     kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
                 }
 
-                var participants = _childSigninService.SigninParticipants(participantEventMapDto);
+                var participants = _childSigninService.SigninParticipants(participantEventMapDto, true);
                 PublishSignedInParticipantsToRooms(participants);
                 participantEventMapDto.Participants = participants.Participants;
                 _childSigninService.PrintParticipants(participantEventMapDto, kioskIdentifier);
