@@ -704,7 +704,7 @@ namespace SignInCheckIn.Services
             return eligibleEvents;
         }
 
-        private bool CheckEventTimeValidity(MpEventDto mpEventDto, bool allowLateSignin)
+        public bool CheckEventTimeValidity(MpEventDto mpEventDto, bool allowLateSignin)
         {
             // check to see if the event's start is equal to or later than the time minus the offset period
             if (allowLateSignin)
