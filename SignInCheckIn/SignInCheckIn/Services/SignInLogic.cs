@@ -40,21 +40,44 @@ namespace SignInCheckIn.Services
         {
             var mpEventParticipantList = new List<MpEventParticipantDto>();
 
-            // we need to get the events on a per person basis, when doing this - the previous check for duplicate signins needs to 
-            // be pulling all events on the day
-            foreach (var participant in participantEventMapDto.Participants.Where(r => r.DuplicateSignIn == false && r.Selected == true))
+            // separate path for SM signin
+            if (currentEvents.Any(r => GetStudentMinistryEventIds().Contains(r.EventTypeId)))
             {
-                // save the participant if they are selected and have a valid room assignment - moved down here so that we
-                // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
-                // we are using this logic correctly - getting a rock vs. no sign in, so we may still need the
-                // mp event participants to be created
-                var mpEventParticipant = SignInParticipant(participant, participantEventMapDto, currentEvents);
-                mpEventParticipantList.AddRange(_childSigninRepository.CreateEventParticipants(mpEventParticipant));
+                var nonRoomParticipants = new List<MpEventParticipantDto>();
+
+                foreach (var participant in participantEventMapDto.Participants.Where(r => r.DuplicateSignIn == false && r.Selected == true))
+                {
+                    var mpEventParticipant = TranslateParticipantDtoToMpEventParticipantDto(participant,
+                                                                                            participantEventMapDto.CurrentEvent.EventId,
+                                                                                            null,
+                                                                                            _applicationConfiguration.SignedInParticipationStatusId);
+
+                    nonRoomParticipants.Add(mpEventParticipant);
+
+                    participant.NonRoomSignIn = true;
+                }
+
+                _childSigninRepository.CreateEventParticipants(nonRoomParticipants);
+
+                return participantEventMapDto.Participants;
             }
+            else
+            {
+                // we need to get the events on a per person basis, when doing this - the previous check for duplicate signins needs to 
+                // be pulling all events on the day
+                foreach (var participant in participantEventMapDto.Participants.Where(r => r.DuplicateSignIn == false && r.Selected == true))
+                {
+                    // save the participant if they are selected and have a valid room assignment - moved down here so that we
+                    // don't sign in multiple kids to a single room over capacity -- also, we want to make sure that 
+                    // we are using this logic correctly - getting a rock vs. no sign in, so we may still need the
+                    // mp event participants to be created
+                    var mpEventParticipant = SignInParticipant(participant, participantEventMapDto, currentEvents);
+                    mpEventParticipantList.AddRange(_childSigninRepository.CreateEventParticipants(mpEventParticipant));
+                }
 
-            var mappedParticipants = mpEventParticipantList.Select(Mapper.Map<ParticipantDto>).ToList();
-
-            return mappedParticipants;
+                var mappedParticipants = mpEventParticipantList.Select(Mapper.Map<ParticipantDto>).ToList();
+                return mappedParticipants;
+            }
         }
 
         public List<MpEventParticipantDto> SignInParticipant(ParticipantDto participant, ParticipantEventMapDto participantEventMapDto, List<MpEventDto> currentEvents)
@@ -556,6 +579,16 @@ namespace SignInCheckIn.Services
                 participantDto.AssignedSecondaryRoomId = null;
                 participantDto.AssignedSecondaryRoomName = String.Empty;
             }
+        }
+
+        private List<int> GetStudentMinistryEventIds()
+        {
+            return new List<int>
+            {
+                _applicationConfiguration.BigEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId
+            };
         }
     }
 
