@@ -326,9 +326,6 @@ namespace MinistryPlatform.Translation.Repositories
                 CountryCode = householdDto.CountryCode,
             };
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
-
-
             if (householdDto.AddressId == null)
             {
                 var result = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create<MpAddressDto>(address, columns2);
@@ -339,6 +336,8 @@ namespace MinistryPlatform.Translation.Repositories
                 address.AddressId = householdDto.AddressId.Value;
                 _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, columns2);
             }
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
         }
     }
 }
