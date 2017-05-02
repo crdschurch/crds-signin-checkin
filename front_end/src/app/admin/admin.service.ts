@@ -149,7 +149,9 @@ export class AdminService {
 
   updateHousehold(household: Household) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/updateFamily`;
-    return this.http.put(url, household).catch(this.handleError);
+    return this.http.put(url, household)
+                    .map((res) => Household.fromJson(res.json()))
+                    .catch(this.handleError);
   }
 
   getStates(): Observable<Array<State>> {
