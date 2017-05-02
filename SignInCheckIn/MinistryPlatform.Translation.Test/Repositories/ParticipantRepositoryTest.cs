@@ -542,7 +542,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             var mpUpdatedHouseholdDto = new MpHouseholdDto
             {
                 HouseholdId = 123,
-                HouseholdName= "Test1",
+                HouseholdName = "Test1",
                 AddressId = 123
             };
 
@@ -559,6 +559,49 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Update(mpUpdatedHouseholdDto, columns)).Returns(returnHouseholdDto);
             _ministryPlatformRestRepository.Setup(m => m.Update(It.IsAny<MpAddressDto>(), columns2)).Returns(returnAddressDto);
+
+            // Act
+            _fixture.UpdateHouseholdInformation(token, mpUpdatedHouseholdDto);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
+        }
+
+        [Test]
+        public void ItShouldUpdateHouseholdAndCreateNewAddress()
+        {
+            // Arrange
+            string token = "123abc";
+
+            List<string> columns = new List<string>
+            {
+                "Households.[Household_ID]"
+            };
+
+            var columns2 = new List<string>
+            {
+                "Addresses.[Address_ID]"
+            };
+
+            var mpUpdatedHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdId = 123,
+                HouseholdName= "Test1"
+            };
+
+            var returnHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdId = 123
+            };
+
+            var returnAddressDto = new MpAddressDto
+            {
+                AddressId = 123
+            };
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(m => m.Update(mpUpdatedHouseholdDto, columns)).Returns(returnHouseholdDto);
+            _ministryPlatformRestRepository.Setup(m => m.Create(It.IsAny<MpAddressDto>(), columns2)).Returns(returnAddressDto);
 
             // Act
             _fixture.UpdateHouseholdInformation(token, mpUpdatedHouseholdDto);
