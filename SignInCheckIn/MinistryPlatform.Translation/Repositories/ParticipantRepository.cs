@@ -317,7 +317,6 @@ namespace MinistryPlatform.Translation.Repositories
 
             var address = new MpAddressDto
             {
-                AddressId = householdDto.AddressId.Value,
                 AddressLine1 = householdDto.AddressLine1,
                 AddressLine2 = householdDto.AddressLine2,
                 City = householdDto.City,
@@ -327,8 +326,18 @@ namespace MinistryPlatform.Translation.Repositories
                 CountryCode = householdDto.CountryCode,
             };
 
+            if (householdDto.AddressId == null)
+            {
+                var result = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create<MpAddressDto>(address, columns2);
+                householdDto.AddressId = result.AddressId;
+            }
+            else
+            {
+                address.AddressId = householdDto.AddressId.Value;
+                _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, columns2);
+            }
+
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, columns2);
         }
     }
 }

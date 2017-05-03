@@ -233,10 +233,11 @@ namespace SignInCheckIn.Services
             return Mapper.Map<MpHouseholdDto, HouseholdDto>(result);
         }
 
-        public void UpdateHouseholdInformation(string token, HouseholdDto householdDto)
+        public HouseholdDto UpdateHouseholdInformation(string token, HouseholdDto householdDto)
         {
             var mpHouseholdDto = Mapper.Map<HouseholdDto, MpHouseholdDto>(householdDto);
             _participantRepository.UpdateHouseholdInformation(token, mpHouseholdDto);
+            return Mapper.Map<MpHouseholdDto, HouseholdDto>(mpHouseholdDto);
         }
     }
 }

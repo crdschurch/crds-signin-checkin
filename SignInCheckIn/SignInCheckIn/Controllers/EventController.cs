@@ -261,8 +261,8 @@ namespace SignInCheckIn.Controllers
             {
                 return Authorized(token =>
                 {
-                    _eventService.UpdateHouseholdInformation(token, householdDto);
-                    return Ok();
+                    var updatedHousehold = _eventService.UpdateHouseholdInformation(token, householdDto);
+                    return Ok(updatedHousehold);
                 });
             }
             catch (Exception e)
