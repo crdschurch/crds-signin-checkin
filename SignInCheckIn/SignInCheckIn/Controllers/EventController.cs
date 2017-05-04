@@ -279,11 +279,8 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token =>
-                {
-                    //_eventService.UpdateHouseholdInformation(token, householdDto);
-                    return Ok();
-                });
+                var capacities = _eventService.GetCapacityBySite(siteId);
+                return Ok(capacities);
             }
             catch (Exception e)
             {
