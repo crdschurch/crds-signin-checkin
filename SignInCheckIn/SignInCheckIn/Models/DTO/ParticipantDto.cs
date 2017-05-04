@@ -60,7 +60,7 @@ namespace SignInCheckIn.Models.DTO
 
         public bool ErrorSigningIn => Selected && !string.IsNullOrWhiteSpace(SignInErrorMessage);
 
-        public bool SignedIn => Selected && AssignedRoomId != null;
+        public bool SignedIn => (Selected && AssignedRoomId != null) || NonRoomSignIn;
 
         public bool NotSignedIn => Selected && AssignedRoomId == null && string.IsNullOrWhiteSpace(SignInErrorMessage);
 
@@ -79,5 +79,9 @@ namespace SignInCheckIn.Models.DTO
         public bool DuplicateSignIn { get; set; }
         
         public int KCSortOrder { get; set; }
+
+        // used for MSM sign in, as they do not get a room assignment
+        [JsonIgnore]
+        public bool NonRoomSignIn { get; set; }
     }
 }

@@ -116,7 +116,7 @@
               <th class="text-print-right">Capacity</th>
               <th class="text-xs-right">Signed In</th>
               <th class="text-xs-right">Checked In</th>
-              <th></th>
+              <th class="hidden-print"></th>
             </tr>
           </thead>
           <tbody>
@@ -127,18 +127,20 @@
           </tbody>
           <tfoot>
             <tr class="text-xs-right">
-              <td class="hidden-print">
-              </td>
               <td>
               </td>
               <td>
               </td>
               <td class="hidden-print">
               </td>
-              <td>
+              <td class="hidden-print">
+              </td>
+              <td class="hidden-print">
+              </td>
+              <td class="text-xs-left">
                 <strong>Total Volunteers:</strong> {{getVolunteersTotal()}}
               </td>
-              <td>
+              <td class="text-xs-left">
                 <strong>Total Capacity: </strong> {{getCapacityTotal()}}
               </td>
               <td>
@@ -147,7 +149,7 @@
               <td>
                 <strong>Total Checked In: </strong> {{getCheckedInTotal()}}
               </td>
-              <td class="hidden-print">
+              <td>
               </td>
               <td class="hidden-print">
               </td>
