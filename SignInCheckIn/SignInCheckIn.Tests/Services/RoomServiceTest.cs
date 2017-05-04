@@ -31,14 +31,14 @@ namespace SignInCheckIn.Tests.Services
         private const int AgesAttributeTypeId = 102;
         private const int BirthMonthsAttributeTypeId = 103;
         private const int GradesAttributeTypeId = 104;
-        private const int SMMiddleSchoolGradesAttributeTypeId = 107;
-        private const int SMHighSchoolGradesAttributeTypeId = 108;
+        private const int SmMiddleSchoolGradesAttributeTypeId = 107;
+        private const int SmHighSchoolGradesAttributeTypeId = 108;
         private const int NurseryAgeAttributeId = 9014;
         private const int NurseryAgesAttributeTypeId = 105;
 
         private const int NonAdminKioskTypeId = 22;
         private const int AdminKioskTypeId = 12;
-        private const int KCEventTypeId = 12;
+        private const int KcEventTypeId = 12;
         private const int BigEventTypeId = 22;
         private const int StudentMinistryGradesSixToEightEventTypeId = 32;
         private const int StudentMinistryGradesNineToTwelveEventTypeId = 42;
@@ -68,8 +68,8 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.SetupGet(mocked => mocked.AgesAttributeTypeId).Returns(AgesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.BirthMonthsAttributeTypeId).Returns(BirthMonthsAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.GradesAttributeTypeId).Returns(GradesAttributeTypeId);
-            _applicationConfiguration.SetupGet(mocked => mocked.SMMiddleSchoolGradesAttributeTypeId).Returns(SMMiddleSchoolGradesAttributeTypeId);
-            _applicationConfiguration.SetupGet(mocked => mocked.SMHighSchoolGradesAttributeTypeId).Returns(SMHighSchoolGradesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.SMMiddleSchoolGradesAttributeTypeId).Returns(SmMiddleSchoolGradesAttributeTypeId);
+            _applicationConfiguration.SetupGet(mocked => mocked.SMHighSchoolGradesAttributeTypeId).Returns(SmHighSchoolGradesAttributeTypeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgeAttributeId).Returns(NurseryAgeAttributeId);
             _applicationConfiguration.SetupGet(mocked => mocked.NurseryAgesAttributeTypeId).Returns(NurseryAgesAttributeTypeId);
             _applicationConfiguration.Setup(mocked => mocked.AdminKioskTypeId).Returns(AdminKioskTypeId);
@@ -111,22 +111,6 @@ namespace SignInCheckIn.Tests.Services
             {
                 EventId = 1234567,
                 LocationId = 3
-            };
-            var events = new List<MpEventDto> {mpEventDto};
-
-            var mpEventRoomDtos = new List<MpEventRoomDto>
-            {
-                new MpEventRoomDto
-                {
-                    AllowSignIn = false,
-                    Capacity = 0,
-                    CheckedIn = 0,
-                    EventId = 1234567,
-                    EventRoomId = 123,
-                    RoomName = "Test Room",
-                    SignedIn = 0,
-                    Volunteers = 0
-                }
             };
 
             string eventRoomJson = @"{  'Allow_Checkin': true, 'Capacity': 50, 'Checked_In': 0, 'Event_ID': 4534870, 'Event_Room_ID': 4601093,
@@ -958,13 +942,6 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            List<int?> roomIds = new List<int?>
-            {
-                111,
-                222,
-                333
-            };
-
             List<EventRoomDto> eventRoomDtos = new List<EventRoomDto>
             {
                 new EventRoomDto
@@ -973,8 +950,6 @@ namespace SignInCheckIn.Tests.Services
                     EventId = 1234567
                 }
             };
-
-
 
             _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomFrom);
@@ -1008,14 +983,14 @@ namespace SignInCheckIn.Tests.Services
             var eventDto = new EventDto
             {
                 EventId = 1,
-                EventTypeId = KCEventTypeId,
+                EventTypeId = KcEventTypeId,
             };
 
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1024,7 +999,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void TestGetGradeAttributeForKCEvent()
+        public void TestGetGradeAttributeForKcEvent()
         {
             const string token = "token 123";
             var siteId = 1;
@@ -1039,14 +1014,14 @@ namespace SignInCheckIn.Tests.Services
             var eventDto = new EventDto
             {
                 EventId = 1,
-                EventTypeId = KCEventTypeId,
+                EventTypeId = KcEventTypeId,
             };
 
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1055,7 +1030,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void TestGetGradeAttributeFor6through8Event()
+        public void TestGetGradeAttributeFor6Through8Event()
         {
             const string token = "token 123";
             var siteId = 1;
@@ -1076,8 +1051,8 @@ namespace SignInCheckIn.Tests.Services
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1086,7 +1061,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void TestGetGradeAttributeFor9through12Event()
+        public void TestGetGradeAttributeFor9Through12Event()
         {
             const string token = "token 123";
             var siteId = 1;
@@ -1107,8 +1082,8 @@ namespace SignInCheckIn.Tests.Services
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1138,8 +1113,8 @@ namespace SignInCheckIn.Tests.Services
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SmHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
