@@ -21,5 +21,6 @@ namespace SignInCheckIn.Services.Interfaces
         List<ContactDto> GetFamiliesForSearch(string token, string search);
         HouseholdDto GetHouseholdByHouseholdId(string token, int householdId);
         void UpdateHouseholdInformation(string token, HouseholdDto householdDto);
+        List<CapacityDto> GetCapacityBySite(int siteId);
     }
 }

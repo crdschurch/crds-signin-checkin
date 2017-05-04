@@ -238,5 +238,24 @@ namespace SignInCheckIn.Services
             var mpHouseholdDto = Mapper.Map<HouseholdDto, MpHouseholdDto>(householdDto);
             _participantRepository.UpdateHouseholdInformation(token, mpHouseholdDto);
         }
+
+        public List<CapacityDto> GetCapacityBySite(int siteId)
+        {
+            return new List<CapacityDto>
+            {
+                new CapacityDto
+                {
+                    CapacityKey = "NURSERY",
+                    CurrentParticipants = 10,
+                    MaxCapacity = 25
+                },
+                new CapacityDto
+                {
+                    CapacityKey = "FIRSTYEAR",
+                    CurrentParticipants = 8,
+                    MaxCapacity = 32
+                }
+            };
+        }
     }
 }

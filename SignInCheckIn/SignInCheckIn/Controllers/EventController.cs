@@ -271,5 +271,25 @@ namespace SignInCheckIn.Controllers
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }
+
+        [HttpGet]
+        [VersionedRoute(template: "events/getCapacity/{siteId}", minimumVersion: "1.0.0")]
+        [Route("events/getCapacity/{siteId}")]
+        public IHttpActionResult GetCapacity([FromUri] int siteId)
+        {
+            try
+            {
+                return Authorized(token =>
+                {
+                    //_eventService.UpdateHouseholdInformation(token, householdDto);
+                    return Ok();
+                });
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting Capacity information. Site: {siteId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
     }
 }
