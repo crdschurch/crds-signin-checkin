@@ -213,7 +213,6 @@ namespace MinistryPlatform.Translation.Repositories
                 {"EventID", eventId},
             };
 
-            // need to double check what this is actually returning? should just be able to use the first list result
             var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpCapacityDto>("api_crds_Capacity_App_Data", parms);
             return result[0];
         }

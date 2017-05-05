@@ -40,6 +40,7 @@ describe('HouseholdEditComponent', () => {
     (<jasmine.Spy>(adminService.getStates)).and.returnValue(Observable.of(states));
     (<jasmine.Spy>(adminService.getCountries)).and.returnValue(Observable.of(countries));
     fixture = new HouseholdEditComponent(apiService, adminService, route, headerService, rootService, router);
+    fixture.household = household;
   });
 
   describe('#ngOnInit', () => {
