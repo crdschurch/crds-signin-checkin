@@ -241,21 +241,9 @@ namespace SignInCheckIn.Services
 
         public List<CapacityDto> GetCapacityBySite(int siteId)
         {
-            return new List<CapacityDto>
-            {
-                new CapacityDto
-                {
-                    CapacityKey = "NURSERY",
-                    CurrentParticipants = 10,
-                    MaxCapacity = 25
-                },
-                new CapacityDto
-                {
-                    CapacityKey = "FIRSTYEAR",
-                    CurrentParticipants = 8,
-                    MaxCapacity = 32
-                }
-            };
+            var eventId = GetCurrentEventForSite(siteId).EventId;
+            var result = _eventRepository.GetCapacitiesForEvent(eventId);
+            return Mapper.Map<List<MpCapacityDto>, List<CapacityDto>>(result);
         }
     }
 }

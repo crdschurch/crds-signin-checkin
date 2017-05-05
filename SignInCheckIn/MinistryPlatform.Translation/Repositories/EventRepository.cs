@@ -4,6 +4,7 @@ using System.Linq;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -203,6 +204,18 @@ namespace MinistryPlatform.Translation.Repositories
         {
             return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
                 .Search<MpEventGroupDto>($"Event_Groups.Group_ID ={groupId} AND Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
+        }
+
+        public List<MpCapacityDto> GetCapacitiesForEvent(int eventId)
+        {
+            var parms = new Dictionary<string, object>
+            {
+                {"EventID", eventId},
+            };
+
+            // need to double check what this is actually returning? should just be able to use the first list result
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpCapacityDto>("api_crds_Get_Checkin_Single_Room_Data", parms);
+            return result[0];
         }
     }
 }
