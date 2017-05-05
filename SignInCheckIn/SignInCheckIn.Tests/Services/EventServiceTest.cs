@@ -633,5 +633,43 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             _participantRepository.VerifyAll();
         }
+
+        [Test]
+        public void ShouldGetCapacityBySite()
+        {
+            // Arrange
+            var siteId = 1;
+
+            var eventsList = new List<MpEventDto>
+            {
+                new MpEventDto
+                {
+                    EventId = 1234567,
+                    LocationId = 1,
+                    EventStartDate = System.DateTime.Now
+                }
+            };
+
+            var capacitiesList = new List<MpCapacityDto>
+            {
+                new MpCapacityDto
+                {
+                    CapacityKey = "NURSERY",
+                    CurrentParticipants = 5,
+                    MaxCapacity = 20
+                }
+            };
+
+
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), siteId, false, It.IsAny<List<int>>(), true)).Returns(eventsList);
+            _eventRepository.Setup(m => m.GetCapacitiesForEvent(1234567)).Returns(capacitiesList);
+
+            // Act
+            var result = _fixture.GetCapacityBySite(siteId);
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
     }
 }
