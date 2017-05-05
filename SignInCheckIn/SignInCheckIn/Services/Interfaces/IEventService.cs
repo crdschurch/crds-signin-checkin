@@ -22,5 +22,6 @@ namespace SignInCheckIn.Services.Interfaces
         HouseholdDto GetHouseholdByHouseholdId(string token, int householdId);
         void UpdateHouseholdInformation(string token, HouseholdDto householdDto);
         List<CapacityDto> GetCapacityBySite(int siteId);
+        EventDto GetCurrentEventForSiteKcOnly(int siteId);
     }
 }

@@ -214,7 +214,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             // need to double check what this is actually returning? should just be able to use the first list result
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpCapacityDto>("api_crds_Get_Checkin_Single_Room_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpCapacityDto>("api_crds_Capacity_App_Data", parms);
             return result[0];
         }
     }
