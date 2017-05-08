@@ -77,5 +77,26 @@ namespace MinistryPlatform.Translation.Repositories
 
             return congregations;
         }
+
+
+        /// <summary>
+        /// Gets a list of the Locations in MP
+        /// </summary>
+        /// <returns></returns>
+        public List<MpLocationDto> GetLocations()
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+
+            var locationColumnList = new List<string>
+            {
+                "Location_ID",
+                "Location_Name"
+            };
+
+            var locations = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpLocationDto>($"Move_Out_Date IS NULL OR Move_Out_Date > '{DateTime.Now:yyyy-MM-dd}'", locationColumnList);
+
+            return locations;
+        }
     }
 }

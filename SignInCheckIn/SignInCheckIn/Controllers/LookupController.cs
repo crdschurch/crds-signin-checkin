@@ -64,12 +64,21 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof(List<MpCongregationDto>))]
+        [ResponseType(typeof(List<CongregationDto>))]
         [VersionedRoute(template: "sites", minimumVersion: "1.0.0")]
         [Route("sites")]
         public IHttpActionResult GetSites()
         {
             return Ok(_lookupService.GetCongregations());
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(List<MpCongregationDto>))]
+        [VersionedRoute(template: "sites", minimumVersion: "1.0.0")]
+        [Route("sites")]
+        public IHttpActionResult GetLocations()
+        {
+            return Ok(_lookupService.GetLocations());
         }
     }
 }

@@ -31,8 +31,13 @@ namespace SignInCheckIn.Services
         public List<CongregationDto> GetCongregations()
         {
             var congregationDtos = _lookupRepository.GetCongregations();
-
             return Mapper.Map<List<MpCongregationDto>, List<CongregationDto>>(congregationDtos);
+        }
+
+        public List<LocationDto> GetLocations()
+        {
+            var locationDtos = _lookupRepository.GetLocations();
+            return Mapper.Map<List<MpLocationDto>, List<LocationDto>>(locationDtos);
         }
     }
 }

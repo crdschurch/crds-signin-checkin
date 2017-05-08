@@ -141,5 +141,44 @@ namespace MinistryPlatform.Translation.Test.Repositories
             result.First().Should().BeSameAs(mpCongregationDtos.First());
             result[1].Should().BeSameAs(mpCongregationDtos[1]);
         }
+
+        [Test]
+        public void TestGetAllLocations()
+        {
+            const string token = "tok123";
+
+            var locationColumnList = new List<string>
+            {
+                "Location_ID",
+                "Location_Name"
+            };
+
+            var mpLocationDtos = new List<MpLocationDto>();
+            mpLocationDtos.Add(
+                new MpLocationDto
+                {
+                    LocationId = 16,
+                    LocationName = "Oxford"
+                }
+            );
+            mpLocationDtos.Add(
+                new MpLocationDto
+                {
+                    LocationId = 18,
+                    LocationName = "Georgetown"
+                }
+            );
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpLocationDto>($"Move_Out_Date IS NULL OR Move_Out_Date > '{System.DateTime.Now:yyyy-MM-dd}'", locationColumnList, null, false)).Returns(mpLocationDtos);
+
+            var result = _fixture.GetLocations();
+
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
+            result.First().Should().BeSameAs(mpLocationDtos.First());
+            result[1].Should().BeSameAs(mpLocationDtos[1]);
+        }
     }
 }
