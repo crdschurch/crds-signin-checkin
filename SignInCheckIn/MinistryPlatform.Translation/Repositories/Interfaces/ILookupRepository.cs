@@ -7,5 +7,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
     {
         List<MpStateDto> GetStates();
         List<MpCountryDto> GetCountries();
+        List<MpCongregationDto> GetCongregations();
     }
 }

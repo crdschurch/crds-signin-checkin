@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Crossroads.Web.Common.MinistryPlatform;
+using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using Moq;
@@ -99,6 +101,45 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.VerifyAll();
 
             Assert.AreEqual(countries.Count, result.Count);
+        }
+
+        [Test]
+        public void TestGetAllCongregations()
+        {
+            const string token = "tok123";
+
+            var congregationColumnList = new List<string>
+            {
+                "Congregation_ID",
+                "Congregation_Name"
+            };
+
+            var mpCongregationDtos = new List<MpCongregationDto>();
+            mpCongregationDtos.Add(
+                new MpCongregationDto
+                {
+                    CongregationId = 16,
+                    CongregationName = "Oxford"
+                }
+            );
+            mpCongregationDtos.Add(
+                new MpCongregationDto
+                {
+                    CongregationId = 18,
+                    CongregationName = "Georgetown"
+                }
+            );
+
+            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpCongregationDto>($"Available_Online = 1 AND (End_Date IS NULL OR End_Date > '{System.DateTime.Now:yyyy-MM-dd}')", congregationColumnList, null, false)).Returns(mpCongregationDtos);
+
+            var result = _fixture.GetCongregations();
+
+            _apiUserRepository.VerifyAll();
+            _ministryPlatformRestRepository.VerifyAll();
+            result.First().Should().BeSameAs(mpCongregationDtos.First());
+            result[1].Should().BeSameAs(mpCongregationDtos[1]);
         }
     }
 }

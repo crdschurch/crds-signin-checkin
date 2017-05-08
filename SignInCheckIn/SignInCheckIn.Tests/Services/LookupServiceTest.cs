@@ -99,5 +99,34 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(result[1].Country, mpCountries[1].Country);
             Assert.AreEqual(result[1].Code3, mpCountries[1].Code3);
         }
+
+        [Test]
+        public void ShouldGetAllCongregations()
+        {
+            var mpCongreationDtos = new List<MpCongregationDto>
+            {
+                new MpCongregationDto
+                {
+                    CongregationName = "Dade County",
+                    CongregationId = 444
+                },
+                new MpCongregationDto
+                {
+                    CongregationName = "Compton",
+                    CongregationId = 555
+                }
+            };
+
+            _lookupRepository.Setup(m => m.GetCongregations()).Returns(mpCongreationDtos);
+
+            // Act
+            var result = _fixture.GetCongregations();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result[0].CongregationName, mpCongreationDtos[0].CongregationName);
+            Assert.AreEqual(result[1].CongregationName, mpCongreationDtos[1].CongregationName);
+            _lookupRepository.VerifyAll();
+        }
     }
 }
