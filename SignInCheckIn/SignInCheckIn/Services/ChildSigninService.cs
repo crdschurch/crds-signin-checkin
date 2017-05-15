@@ -205,9 +205,9 @@ namespace SignInCheckIn.Services
             }
 
             return new List<int>();
-        } 
+        }
 
-        public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto)
+        public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto, bool allowLateSignin = false)
         {
             // create participant records for guests, and assign to a group
             if (participantEventMapDto.Participants.Any(r => r.GuestSignin == true))
@@ -216,7 +216,7 @@ namespace SignInCheckIn.Services
             }
 
             // check the current and next event set to make sure they're not signed in to one of those events already
-            var eventsForSignin = GetEventsForSignin(participantEventMapDto, participantEventMapDto.KioskTypeId);
+            var eventsForSignin = GetEventsForSignin(participantEventMapDto, participantEventMapDto.KioskTypeId, allowLateSignin);
             CheckForDuplicateSignIns(eventsForSignin, participantEventMapDto);
 
             // this needs to be a list of participants, not a list of event participants - the automapping
@@ -552,7 +552,7 @@ namespace SignInCheckIn.Services
                 participantEventMapDto.Participants.ForEach(p => p.Selected = true);
 
                 // sign them all into a room
-                participantEventMapDto = SigninParticipants(participantEventMapDto);
+                participantEventMapDto = SigninParticipants(participantEventMapDto, true);
 
                 // print labels
                 PrintParticipants(participantEventMapDto, kioskIdentifier);
@@ -666,7 +666,7 @@ namespace SignInCheckIn.Services
         // or sm events - we need to determine if it's either a sm event or kc event they're trying to sign into...
 
         // solution here might be to pass down the event type on the PEM Dto and use that in the get events function
-        public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto, int kioskTypeId)
+        public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto, int kioskTypeId, bool allowLateSignin = false)
         {
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
@@ -683,7 +683,7 @@ namespace SignInCheckIn.Services
             bool excludeIds = (kioskTypeId == 1 || !msmEventTypes.Contains(participantEventMapDto.CurrentEvent.EventTypeId));
 
             dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, excludeIds)
-                .Where(r => CheckEventTimeValidity(r)).OrderBy(r => r.EventStartDate).ToList();
+                .Where(r => CheckEventTimeValidity(r, allowLateSignin)).OrderBy(r => r.EventStartDate).ToList();
 
             var eligibleEvents = new List<MpEventDto>();
 
@@ -704,9 +704,14 @@ namespace SignInCheckIn.Services
             return eligibleEvents;
         }
 
-        private bool CheckEventTimeValidity(MpEventDto mpEventDto)
+        public bool CheckEventTimeValidity(MpEventDto mpEventDto, bool allowLateSignin)
         {
             // check to see if the event's start is equal to or later than the time minus the offset period
+            if (allowLateSignin)
+            {
+                return DateTime.Now < mpEventDto.EventEndDate;
+            }
+
             var offsetPeriod = DateTime.Now.AddMinutes(-(mpEventDto.EarlyCheckinPeriod ?? _defaultEarlyCheckinPeriod));
             return mpEventDto.EventStartDate >= offsetPeriod;
         }

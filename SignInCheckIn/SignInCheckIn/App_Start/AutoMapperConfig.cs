@@ -87,6 +87,7 @@ namespace SignInCheckIn
             config.CreateMap<MpGroupParticipantDto, MpParticipantDto>().ReverseMap();
             config.CreateMap<ContactDto, MpContactDto>().ReverseMap();
             config.CreateMap<ContactDto, MpParticipantDto>().ReverseMap();
+            config.CreateMap<CapacityDto, MpCapacityDto>().ReverseMap();
         }
     }
 }

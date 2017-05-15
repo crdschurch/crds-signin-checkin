@@ -261,13 +261,30 @@ namespace SignInCheckIn.Controllers
             {
                 return Authorized(token =>
                 {
-                    _eventService.UpdateHouseholdInformation(token, householdDto);
-                    return Ok();
+                    var updatedHousehold = _eventService.UpdateHouseholdInformation(token, householdDto);
+                    return Ok(updatedHousehold);
                 });
             }
             catch (Exception e)
             {
                 var apiError = new ApiErrorDto($"Error updating Household ID of {householdDto.HouseholdId}", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
+        [VersionedRoute(template: "events/getCapacity/{siteId}", minimumVersion: "1.0.0")]
+        [Route("events/getCapacity/{siteId}")]
+        public IHttpActionResult GetCapacity([FromUri] int siteId)
+        {
+            try
+            {
+                var capacities = _eventService.GetCapacityBySite(siteId);
+                return Ok(capacities);
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto($"Error getting Capacity information. Site: {siteId}", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
         }

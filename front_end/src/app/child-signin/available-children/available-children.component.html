@@ -15,7 +15,7 @@
         </div>
 
         <div class="card" *ngIf="showServingOption">
-          <serving-toggle (setServingHours)="setServingHours($event)"></serving-toggle>          
+          <serving-toggle (setServingHours)="setServingHours($event)"></serving-toggle>
         </div>
 
       </div>
@@ -52,7 +52,7 @@
   </div>
 </footer>
 
-<div bsModal #addGuestModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addGuestModal" aria-hidden="true">
+<div bsModal #addGuestModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addGuestModal" aria-hidden="true" [config]="{backdrop: 'static'}">
   <div class="modal-dialog modal-lg" *ngIf="newGuestChild">
     <div class="modal-content">
       <button type="button" class="close mr-1 mt-1" (click)="addGuestModal.hide()" aria-label="Close">

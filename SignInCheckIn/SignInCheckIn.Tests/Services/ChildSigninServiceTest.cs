@@ -1914,6 +1914,66 @@ namespace SignInCheckIn.Tests.Services
             Assert.AreEqual(0, result.Participants.Count(r => !bigGroupsIds.Contains(r.GroupId.GetValueOrDefault())));
         }
 
+        [Test]
+        public void ShouldCheckEventTimeValidityNoLateSigninFalse()
+        {
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 1234,
+                EventStartDate = DateTime.Now.AddHours(-2),
+                EventEndDate = DateTime.Now.AddHours(-1)
+            };
+
+            var result = _fixture.CheckEventTimeValidity(mpEventDto, false);
+
+            Assert.AreEqual(result, false);
+        }
+
+        [Test]
+        public void ShouldCheckEventTimeValidityNoLateSigninTrue()
+        {
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 1234,
+                EventStartDate = DateTime.Now.AddMinutes(-20),
+                EventEndDate = DateTime.Now.AddHours(1)
+            };
+
+            var result = _fixture.CheckEventTimeValidity(mpEventDto, false);
+
+            Assert.AreEqual(result, true);
+        }
+
+        [Test]
+        public void ShouldCheckEventTimeValidityAllowLateSignInFalse()
+        {
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 1234,
+                EventStartDate = DateTime.Now.AddMinutes(-1),
+                EventEndDate = DateTime.Now.AddMinutes(-2)
+            };
+
+            var result = _fixture.CheckEventTimeValidity(mpEventDto, true);
+
+            Assert.AreEqual(result, false);
+        }
+
+        [Test]
+        public void ShouldCheckEventTimeValiditAllowLateSigninTrue()
+        {
+            MpEventDto mpEventDto = new MpEventDto
+            {
+                EventId = 1234,
+                EventStartDate = DateTime.Now.AddMinutes(-1),
+                EventEndDate = DateTime.Now.AddMinutes(2)
+            };
+
+            var result = _fixture.CheckEventTimeValidity(mpEventDto, true);
+
+            Assert.AreEqual(result, true);
+        }
+
         private EventDto GetTestEvent(int siteId, int eventTypeId)
         {
             var eventDto = new EventDto
