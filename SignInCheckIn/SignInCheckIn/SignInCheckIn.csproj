@@ -233,6 +233,7 @@
     <Compile Include="Hubs\EventHub.cs" />
     <Compile Include="Models\Authentication\Credentials.cs" />
     <Compile Include="Models\Authentication\LoginReturn.cs" />
+    <Compile Include="Models\DTO\CapacityDto.cs" />
     <Compile Include="Models\DTO\CountryDto.cs" />
     <Compile Include="Models\DTO\StateDto.cs" />
     <Compile Include="Models\DTO\HouseholdDto.cs" />

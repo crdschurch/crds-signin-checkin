@@ -20,6 +20,8 @@ namespace SignInCheckIn.Services.Interfaces
         void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token);
         List<ContactDto> GetFamiliesForSearch(string token, string search);
         HouseholdDto GetHouseholdByHouseholdId(string token, int householdId);
-        void UpdateHouseholdInformation(string token, HouseholdDto householdDto);
+        HouseholdDto UpdateHouseholdInformation(string token, HouseholdDto householdDto);
+        List<CapacityDto> GetCapacityBySite(int siteId);
+        EventDto GetCurrentEventForSiteKcOnly(int siteId);
     }
 }

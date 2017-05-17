@@ -233,10 +233,48 @@ namespace SignInCheckIn.Services
             return Mapper.Map<MpHouseholdDto, HouseholdDto>(result);
         }
 
-        public void UpdateHouseholdInformation(string token, HouseholdDto householdDto)
+        public HouseholdDto UpdateHouseholdInformation(string token, HouseholdDto householdDto)
         {
             var mpHouseholdDto = Mapper.Map<HouseholdDto, MpHouseholdDto>(householdDto);
             _participantRepository.UpdateHouseholdInformation(token, mpHouseholdDto);
+            return Mapper.Map<MpHouseholdDto, HouseholdDto>(mpHouseholdDto);
+        }
+
+        // List<CapacityDto> GetCapacityBySite(int siteId);
+        public List<CapacityDto> GetCapacityBySite(int siteId)
+        {
+            var eventId = GetCurrentEventForSiteKcOnly(siteId).EventId;
+            var result = _eventRepository.GetCapacitiesForEvent(eventId);
+            return Mapper.Map<List<MpCapacityDto>, List<CapacityDto>>(result);
+        }
+
+        // this function only supports the capacity app
+        public EventDto GetCurrentEventForSiteKcOnly(int siteId)
+        {
+            List<int> msmEventTypeIds = new List<int>
+            {
+                _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
+                _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId,
+                _applicationConfiguration.BigEventTypeId
+            };
+
+            // if it's not an SM event, we want to filter these events out and return only KC/Childcare events
+            var excludeIds = true;
+
+            // look between midnights on the current day
+            var eventOffsetStartString = DateTime.Now.ToShortDateString();
+            var eventOffsetStartTime = DateTime.Parse(eventOffsetStartString);
+            var eventOffsetEndTime = DateTime.Parse(eventOffsetStartString).AddDays(1);
+
+            var currentEvents =
+                    _eventRepository.GetEvents(eventOffsetStartTime, eventOffsetEndTime, siteId, false, msmEventTypeIds, excludeIds).Where(r => CheckEventTimeValidity(Mapper.Map<MpEventDto, EventDto>(r))).ToList();
+
+            if (!currentEvents.Any())
+            {
+                throw new Exception("No current events for site");
+            }
+
+            return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
         }
     }
 }

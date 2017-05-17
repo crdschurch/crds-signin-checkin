@@ -23,5 +23,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId);
         MpEventDto GetSubeventByParentEventId(string token, int serviceEventId, int eventTypeId);
         List<MpEventGroupDto> GetEventGroupsByGroupIdAndEventIds(int groupId, List<int> eventIds);
+        List<MpCapacityDto> GetCapacitiesForEvent(int eventId);
     }
 }
