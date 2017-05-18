@@ -385,7 +385,7 @@ namespace SignInCheckIn.Services
             }
 
             // if there is only one room in each set, make sure they belong to different events
-            if (serviceEventRoomDtos.Count == 1 && acEventRoomDtos.Count == 1 && (serviceEventRoomDtos[0].EventId != acEventRoomDtos[0].EventId))
+            if (serviceEventRoomDtos.Count == 1 && acEventRoomDtos.Count == 1 && (serviceEventRoomDtos[0].EventId != acEventRoomDtos[0].ParentEventId))
             {
                 returnEventRooms.Add(serviceEventRoomDtos[0]);
                 returnEventRooms.Add(acEventRoomDtos[0]);
