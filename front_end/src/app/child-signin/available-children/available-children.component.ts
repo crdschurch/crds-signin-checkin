@@ -191,6 +191,14 @@ export class AvailableChildrenComponent implements OnInit {
    return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
  }
 
+ setFirstName(value) {
+   this.newGuestChild.FirstName = value;
+ }
+
+ setLastName(value) {
+   this.newGuestChild.LastName = value;
+ }
+
  setServingAndGuestDisplay() {
    if (this.eventParticipants.CurrentEvent.isStudentMinistry) {
      this.showGuestOption = true;
