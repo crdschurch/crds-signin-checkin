@@ -76,12 +76,13 @@
                 <div class="row my-2">
                   <div class="col-sm-6">
                     <fieldset class="form-group">
-                      <input type="text" class="form-control form-control-lg" id="formGroupExampleInput" placeholder="First Name" [(ngModel)]="newGuestChild.FirstName">
+                      <!-- using ngModel here for some reason breaks the Touch Kiosk Keyboard Chrome Extension that we are using -->
+                      <input #first type="text" class="form-control form-control-lg" placeholder="First Name" (keyup)="setFirstName(first.value)">
                     </fieldset>
                   </div>
                   <div class="col-sm-6">
                     <fieldset class="form-group">
-                      <input type="text" class="form-control form-control-lg" id="formGroupExampleInput2" placeholder="Last Name" [(ngModel)]="newGuestChild.LastName">
+                      <input #last type="text" class="form-control form-control-lg" placeholder="Last Name" (keyup)="setLastName(last.value)">
                     </fieldset>
                   </div>
                 </div>
