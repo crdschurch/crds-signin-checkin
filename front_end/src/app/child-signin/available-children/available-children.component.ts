@@ -59,6 +59,10 @@ export class AvailableChildrenComponent implements OnInit {
    }
  }
 
+ addGuestChild() {
+   debugger;
+ }
+
  setServingHours(hours) {
    this._numberEventsAttending = hours;
  }

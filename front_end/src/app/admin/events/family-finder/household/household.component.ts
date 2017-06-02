@@ -93,6 +93,10 @@ export class HouseholdComponent implements OnInit {
    }
  }
 
+ addGuestChild() {
+   debugger;
+ }
+
  setServingHours(hours) {
    this.numberEventsAttending = hours;
  }
