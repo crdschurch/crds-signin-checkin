@@ -19,6 +19,10 @@ export class GuestModalComponent {
   @Output() addGuestChild = new EventEmitter<any>();
   showGuestOption = false;
   private _newGuestChild: Guest;
+  numberOfMonthsSelection: Array<number>;
+  numberOfDaysSelection: Array<number>;
+  yearsSelection: Array<number>;
+  guestDOB: DateOfBirth = new DateOfBirth();
 //   @Output() setServingHours = new EventEmitter<any>();
 //   private _isServingOneHour = false;
 //   private _isServingTwoHours = false;
@@ -27,31 +31,19 @@ export class GuestModalComponent {
 
  constructor() {
    this.showGuestOption = true;
+   this._newGuestChild = new Guest();
+   this.populateDatepicker();
    //this.newGuestChild = true;
   }
 
-//  public showChildModal(): void {
-//    debugger;
-//    this.addGuestModal.show();
-//  }
-
   showChildModal(modal) {
-   // if on, turn off
-  //  if (this.isServing) {
-  //    this.notServing = true;
-  //    return true;
-  //  // else if off, open modal to turn on
-  //  } else {
-  //    if (modal) {
-  //      modal.show();
-  //    }
-  //    return false;
-  //  }
-  debugger;
-
   if (modal) {
+    this.guestDOB = new DateOfBirth();
+   this._newGuestChild = new Guest();
+   this._newGuestChild.GuestSignin = true;
+   this._newGuestChild.Selected = true;
     modal.show();
-    this.addGuestChild.emit(undefined);
+    //this.addGuestChild.emit(undefined);
   }
  }
 
@@ -61,6 +53,17 @@ export class GuestModalComponent {
 
  set newGuestChild(guestChild) {
    this._newGuestChild = guestChild;
+ }
+
+ populateDatepicker() {
+   this.numberOfMonthsSelection = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
+   this.numberOfDaysSelection = Array.apply(null, {length: 31}).map(function (e, i) { return i + 1; }, Number);
+   this.yearsSelection = [];
+   let i = 0;
+   while (i <= 18) {
+     this.yearsSelection.push(moment().subtract(i, 'y').year());
+     i++;
+   }
  }
 
 
