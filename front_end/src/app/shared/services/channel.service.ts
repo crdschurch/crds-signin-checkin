@@ -163,8 +163,10 @@ export class ChannelService {
             .map((state: ConnectionState) => { return ConnectionState[state]; });
 
         this.error$.subscribe(
-            (error: any) => { console.warn(error); },
-            (error: any) => { console.error('errors$ error', error); }
+            (error: any) => {
+              alert('A network error occured. The page will refresh and reconnect.');
+              this.window.location.reload();
+            }
         );
 
         // Wire up a handler for the starting$ observable to log the
@@ -195,8 +197,9 @@ export class ChannelService {
                 this.startingSubject.next();
             })
             .fail((error: any) => {
-                alert('Please Refresh to properly connect to server.');
-                this.startingSubject.error(error);
+              alert('A network error occured. The page will refresh and reconnect.');
+              this.window.location.reload();
+              this.startingSubject.error(error);
             });
     }
 
@@ -286,6 +289,8 @@ export class ChannelService {
               console.log('Subscribed channels:', this.subjects);
           })
           .fail((error: any) => {
+              alert('A network error occured. The page will refresh and reconnect.');
+              this.window.location.reload();
               channelSub.subject.error(error);
           });
     }
