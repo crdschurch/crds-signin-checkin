@@ -1,4 +1,4 @@
-import { Component, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, Output, Input, ViewChild, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'guest-modal',
   templateUrl: 'guest-modal.component.html',
-  styleUrls: [ 'guest-modal.component.scss' ]
+  styleUrls: [ 'guest-modal.component.scss', '../scss/_cards.scss' ]
 })
 
 export class GuestModalComponent {
@@ -23,33 +23,36 @@ export class GuestModalComponent {
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
   guestDOB: DateOfBirth = new DateOfBirth();
-//   @Output() setServingHours = new EventEmitter<any>();
-//   private _isServingOneHour = false;
-//   private _isServingTwoHours = false;
-
+  private gradeGroups: Array<Group> = [];
   @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
+  @Input() eventTypeId: number;
+  @Input() eventId: number;
 
- constructor() {
+  constructor(private apiService: ApiService) {
+
+  }
+
+  ngOnInit() {
    this.showGuestOption = true;
    this._newGuestChild = new Guest();
    this.populateDatepicker();
-   //this.newGuestChild = true;
-  }
+   this.populateGradeGroups();
+ }
+
 
   showChildModal(modal) {
-  if (modal) {
-    this.guestDOB = new DateOfBirth();
-   this._newGuestChild = new Guest();
-   this._newGuestChild.GuestSignin = true;
-   this._newGuestChild.Selected = true;
-    modal.show();
-    //this.addGuestChild.emit(undefined);
+    if (modal) {
+      this.guestDOB = new DateOfBirth();
+      this._newGuestChild = new Guest();
+      this._newGuestChild.GuestSignin = true;
+      this._newGuestChild.Selected = true;
+      modal.show();
+    }
   }
- }
 
   get newGuestChild() {
-   return this._newGuestChild;
- }
+    return this._newGuestChild;
+  }
 
  set newGuestChild(guestChild) {
    this._newGuestChild = guestChild;
@@ -66,74 +69,59 @@ export class GuestModalComponent {
    }
  }
 
+ saveNewGuest() {
+   this.addGuestChild.emit(this._newGuestChild);
+   this.addGuestModal.hide();
+ }
 
-//  get numberEventsAttending(): number {
-//    if (this.isServingOneHour) {
-//      return 1;
-//    } else if (this.isServingTwoHours) {
-//      return 2;
-//    } else {
-//      return 0;
-//    }
-//  }
+  needGradeLevel(): boolean {
+   return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+ }
 
-//  get isServing(): boolean {
-//    return this._isServingOneHour || this._isServingTwoHours;
-//  }
+  datePickerBlur() {
+   if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
+     this.newGuestChild.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
+   }
 
-//  get isServingOneHour(): boolean {
-//    return this._isServingOneHour;
-//  }
+   let needGradeLevelValue = moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
 
-//  get isServingTwoHours(): boolean {
-//    return this._isServingTwoHours;
-//  }
+    if (needGradeLevelValue === true) {
+      this.newGuestChild.YearGrade = -1;
+    } else {
+      this.newGuestChild.YearGrade = 0;
+    }
+ }
 
-//  set servingOneHour(b) {
-//    this._isServingTwoHours = false;
-//    this._isServingOneHour = !this._isServingOneHour;
-//    this.setServingHours.emit(1);
-//  }
+  setFirstName(value) {
+   this.newGuestChild.FirstName = value;
+ }
 
-//  set notServing(b) {
-//    this._isServingOneHour = false;
-//    this._isServingTwoHours = false;
-//    this.setServingHours.emit(0);
-//  }
+ setLastName(value) {
+   this.newGuestChild.LastName = value;
+ }
 
-//  set servingTwoHours(b) {
-//    this._isServingOneHour = false;
-//    this._isServingTwoHours = !this._isServingTwoHours;
-//    this.setServingHours.emit(2);
-//  }
+  populateGradeGroups() {
+   this.apiService.getGradeGroups(this.eventId).subscribe((groups) => {
+       this.gradeGroups = groups;
+       debugger;
+     },
+     error => console.error(error)
+   );
+ }
 
-//  toggleServicesClick(modal) {
-//    // if on, turn off
-//    if (this.isServing) {
-//      this.notServing = true;
-//      return true;
-//    // else if off, open modal to turn on
-//    } else {
-//      if (modal) {
-//        modal.show();
-//      }
-//      return false;
-//    }
-//  }
+  updateChildYearGradeGroup(guest: Guest, groupId: number) {
+   this._newGuestChild.YearGrade = +groupId;
+ }
 
-//  toggleServingHours(modal, hours) {
-//    if (hours === 1) {
-//      this.servingOneHour = true;
-//    } else if (hours === 2) {
-//      this.servingTwoHours = true;
-//    }
-//    if (modal) {
-//      return modal.hide();
-//    }
-//  }
-
-//  public showChildModal(): void {
-//    this.serviceSelectModal.show();
-//  }
+ checkSMEventTypeId() {
+   if (this.eventTypeId === Constants.StudentMinistry6through8EventType ||
+    this.eventTypeId === Constants.StudentMinistry9through12EventType ||
+    this.eventTypeId === Constants.BigEventType)
+   {
+     return true;
+   } else {
+     return false;
+   }
+ }
 
 }

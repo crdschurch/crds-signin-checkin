@@ -22,6 +22,8 @@ export class AvailableChildrenComponent implements OnInit {
   private maxDate: Date = moment().toDate();
   private _newGuestChild: Guest;
   private gradeGroups: Array<Group> = [];
+  private eventTypeId: number;
+  private eventId: number;
   numberOfMonthsSelection: Array<number>;
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
@@ -59,8 +61,8 @@ export class AvailableChildrenComponent implements OnInit {
    }
  }
 
- addGuestChild() {
-   debugger;
+ addGuestChild(guestChild) {
+   this.eventParticipants.Participants.push(guestChild);
  }
 
  setServingHours(hours) {
@@ -80,6 +82,8 @@ export class AvailableChildrenComponent implements OnInit {
        (result) => {
          this.isReady = true;
          this._eventParticipants = result;
+         this.eventId = this._eventParticipants.CurrentEvent.EventId;
+         this.eventTypeId = this._eventParticipants.CurrentEvent.EventTypeId;
          this.setServingAndGuestDisplay();
        }, (err) => {
          this.isReady = true;

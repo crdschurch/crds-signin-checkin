@@ -15,8 +15,7 @@
             </div>
           </a>
         </div>
-        <!-- JPC - add guest modal here -->
-        <guest-modal (addGuestChild)="addGuestChild($event)"></guest-modal>
+        <guest-modal (addGuestChild)="addGuestChild($event)" [eventId]="eventId" [eventTypeId]="eventTypeId"></guest-modal>
         <div class="card xl text-xs-center pointer">
           <serving-toggle (setServingHours)="setServingHours($event)"></serving-toggle>
         </div>
