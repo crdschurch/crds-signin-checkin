@@ -101,7 +101,10 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     } else {
       return true;
     }
+  }
 
+  isZeroCapacityAndOpen(room) {
+    return room.AllowSignIn && !room.Capacity;
   }
 
   public isReady(): boolean {
