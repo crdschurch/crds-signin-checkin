@@ -48,23 +48,30 @@ describe('RoomComponent', () => {
   });
 
   describe('capacity alerts', () => {
-    describe('#checkedInEqualsCapacity', () => {
-      it('should return true if checked in >= capacity', () => {
+    describe('#isCapacityWarning', () => {
+      it('should return true if checked in + signed in is > 80% of capacity', () => {
         fixture.room.Capacity = 6;
-        fixture.room.CheckedIn = 6;
-        fixture.room.SignedIn = 0;
-        expect(fixture.checkedInEqualsCapacity()).toBeTruthy();
-        expect(fixture.signedInWillEqualCapacity()).toBeFalsy();
+        fixture.room.CheckedIn = 3;
+        fixture.room.SignedIn = 2;
+        expect(fixture.isCapacityWarning()).toBeTruthy();
+        expect(fixture.isCapacityDanger()).toBeFalsy();
       });
     });
-    describe('#signedInWillEqualCapacity', () => {
-      it('should return true if checked in equals capacity and checked in will equal capacity when all signed ins are checked in', () => {
+    describe('#isCapacityDanger', () => {
+      it('should return true if checked in + signed in >= 100% capacity', () => {
         fixture.room.Capacity = 5;
         fixture.room.CheckedIn = 3;
         fixture.room.SignedIn = 2;
-        expect(fixture.checkedInEqualsCapacity()).toBeFalsy();
-        expect(fixture.signedInWillEqualCapacity()).toBeTruthy();
+        expect(fixture.isCapacityWarning()).toBeFalsy();
+        expect(fixture.isCapacityDanger()).toBeTruthy();
       });
+    });
+    it('should return no warnings if < 80%', () => {
+      fixture.room.Capacity = 100;
+      fixture.room.CheckedIn = 70;
+      fixture.room.SignedIn = 9;
+      expect(fixture.isCapacityWarning()).toBeFalsy();
+      expect(fixture.isCapacityDanger()).toBeFalsy();
     });
   });
   describe('#getRoomRatioString', () => {

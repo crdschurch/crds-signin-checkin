@@ -93,14 +93,19 @@ export class RoomComponent implements OnInit {
     this.dirty = true;
   }
 
-  checkedInEqualsCapacity() {
-    return this.room.CheckedIn >= this.room.Capacity;
+  get capacityPercentage() {
+    const capacityPercentage = (this.room.CheckedIn + this.room.SignedIn) / this.room.Capacity;
+    return Math.round(100 * capacityPercentage) / 100;
   }
 
-  signedInWillEqualCapacity() {
-    // only return true if checkedInEqualsCapacity isnt true
-    if (!this.checkedInEqualsCapacity()) {
-      return this.room.SignedIn + this.room.CheckedIn >= this.room.Capacity;
+  isCapacityWarning() {
+    return this.capacityPercentage > .8 && this.capacityPercentage < 1;
+  }
+
+  isCapacityDanger() {
+    // only return true if isCapacityWarning isnt true
+    if (!this.isCapacityWarning()) {
+      return this.capacityPercentage >= 1;
     }
   }
 
