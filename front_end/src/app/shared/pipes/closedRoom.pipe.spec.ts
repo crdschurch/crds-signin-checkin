@@ -7,13 +7,16 @@ describe ('ClosedRoomPipe', () => {
   // interaction with the room class
   class TestRoom {
     public AllowSignIn: boolean;
+    public Capacity: number;
   }
 
   this._rooms = [];
   let closedTestRoom = new TestRoom();
   closedTestRoom.AllowSignIn = false;
+  closedTestRoom.Capacity = 0;
   let openTestRoom = new TestRoom();
   openTestRoom.AllowSignIn = true;
+  openTestRoom.Capacity = 5;
 
   this._rooms.push(closedTestRoom);
   this._rooms.push(openTestRoom);

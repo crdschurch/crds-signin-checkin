@@ -9,7 +9,7 @@ export class ClosedRoomPipe implements PipeTransform {
     return value.filter(room => {
 
       if (allowSignIn === true) {
-        return room.AllowSignIn === allowSignIn;
+        return (room.AllowSignIn === allowSignIn) && (room.Capacity > 0);
       } else {
         return (room.AllowSignIn === true || room.AllowSignIn === false);
       }

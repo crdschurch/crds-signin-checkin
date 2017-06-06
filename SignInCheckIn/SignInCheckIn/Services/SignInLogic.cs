@@ -196,15 +196,15 @@ namespace SignInCheckIn.Services
                     continue;
                 }
 
-                //// JPC - this means we should drop directly into bumping rules if the room is closed -- left in place for reference in case
-                //// the old ways are determined to be best
-                //if (eventRoom.AllowSignIn == false)
-                //{
-                //    // if the room is closed, set capacity status on participant
-                //    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.CapacityParticipationStatusId);
-                //    mpEventParticipantRecords.Add(mpEventParticipantDto);
-                //    continue;
-                //}
+                // JPC - we were at one point allowing rooms to be closed, then running bumping rules on those rooms anyway -
+                // we are reverting that because of issues with adventure club, so this needs to match that logic
+                if (eventRoom.AllowSignIn == false)
+                {
+                    // if the room is closed, set capacity status on participant
+                    var mpEventParticipantDto = TranslateParticipantDtoToMpEventParticipantDto(participant, serviceEvent.EventId, null, _applicationConfiguration.CapacityParticipationStatusId);
+                    mpEventParticipantRecords.Add(mpEventParticipantDto);
+                    continue;
+                }
 
                 // run bumping rules on closed rooms now
                 if ((eventRoom.Capacity > (eventRoom.SignedIn + eventRoom.CheckedIn)) && eventRoom.AllowSignIn == true)
@@ -264,8 +264,7 @@ namespace SignInCheckIn.Services
                 return mpEventParticipantRecords;
             }
 
-            // what data point could be used here to distinguish between capacity rooms and no rooms being available?
-                var acEventSignInDataItems = GetEligibleRoomsForEvents(acEventDtos, eventRoomDtos.Where(r => r.AllowSignIn == true).ToList());
+            var acEventSignInDataItems = GetEligibleRoomsForEvents(acEventDtos, eventRoomDtos.Where(r => r.AllowSignIn == true).ToList());
             var serviceEventSignInDataItems = GetEligibleRoomsForEvents(serviceEventDtos, eventRoomDtos.Where(r => r.AllowSignIn == true).ToList());
 
             var signInRooms = FinalizeAcRoomAssignments(acEventSignInDataItems, serviceEventSignInDataItems);
