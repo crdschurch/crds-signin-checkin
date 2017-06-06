@@ -83,15 +83,10 @@ namespace SignInCheckIn.Services
             {
                 throw new Exception($"no event room for room {roomId}");
             }
-            bool isClosed = !eventRoom.AllowSignIn;
-            bool isAtCapacity = eventRoom.Capacity <= (eventRoom.CheckedIn + eventRoom.SignedIn);
-            if (isClosed)
+
+            if (!eventRoom.AllowSignIn)
             {
                 throw new Exception("closed");
-            }
-            else if (isAtCapacity)
-            {
-                throw new Exception("capacity");
             }
             else
             {
