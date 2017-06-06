@@ -9,11 +9,14 @@
           <a (click)="openNewFamilyMemberModal(newFamilyMemberModal)">
             <div class="card-block">
               <span class="round-plus">+</span>
-              <h4 class="card-title guest-title">
+              <h5 class="card-title guest-title">
                 <span>Add New Family Member</span>
-              </h4>
+              </h5>
             </div>
           </a>
+        </div>
+        <div class="card xl text-xs-center pointer">
+          <guest-modal (addGuestChild)="addGuestChild($event)" [eventId]="eventId" [eventTypeId]="eventTypeId"></guest-modal>
         </div>
         <div class="card xl text-xs-center pointer">
           <serving-toggle (setServingHours)="setServingHours($event)"></serving-toggle>
