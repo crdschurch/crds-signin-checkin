@@ -17,6 +17,9 @@ import * as _ from 'lodash';
 
 export class GuestModalComponent {
   @Output() addGuestChild = new EventEmitter<any>();
+  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
+  @Input() eventTypeId: number;
+  @Input() eventId: number;
   showGuestOption = false;
   private _newGuestChild: Guest;
   numberOfMonthsSelection: Array<number>;
@@ -24,11 +27,8 @@ export class GuestModalComponent {
   yearsSelection: Array<number>;
   guestDOB: DateOfBirth = new DateOfBirth();
   private gradeGroups: Array<Group> = [];
-  @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
-  @Input() eventTypeId: number;
-  @Input() eventId: number;
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private rootService: RootService) {
 
   }
 
@@ -38,7 +38,6 @@ export class GuestModalComponent {
    this.populateDatepicker();
    this.populateGradeGroups();
  }
-
 
   showChildModal(modal) {
     if (modal) {
@@ -69,14 +68,33 @@ export class GuestModalComponent {
    }
  }
 
- saveNewGuest() {
-   this.addGuestChild.emit(this._newGuestChild);
-   this.addGuestModal.hide();
- }
+ saveNewGuest(addGuestModal) {
+   try {
+     this.newGuestChild.FirstName.trim();
+     this.newGuestChild.LastName.trim();
+   } finally {
+     if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
+       console.log('in the invalid form function');
+       return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
+     } else if (!this.newGuestChild.DateOfBirth || !moment(this.newGuestChild.DateOfBirth).isValid()) {
+       return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
+     } else if (this.newGuestChild.YearGrade === -1) {
+       return this.rootService.announceEvent('echeckNeedValidGradeSelection');
+     } else {
+
+       if (this.newGuestChild.YearGrade === 0) {
+         this.newGuestChild.YearGrade = undefined;
+       }
+
+        this.addGuestChild.emit(this._newGuestChild);
+        addGuestModal.hide();
+      }
+    }
+  }
 
   needGradeLevel(): boolean {
-   return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
- }
+    return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
+  }
 
   datePickerBlur() {
    if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {

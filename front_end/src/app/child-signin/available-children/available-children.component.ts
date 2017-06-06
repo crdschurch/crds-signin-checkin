@@ -44,7 +44,6 @@ export class AvailableChildrenComponent implements OnInit {
    this.route.params.forEach((params: Params) => {
       let phoneNumber = params['phoneNumber'];
       this.getChildren(phoneNumber);
-      this.populateGradeGroups();
     });
 
     this.populateDatepicker();
@@ -92,14 +91,6 @@ export class AvailableChildrenComponent implements OnInit {
      );
  }
 
- populateGradeGroups() {
-   this.apiService.getGradeGroups().subscribe((groups) => {
-       this.gradeGroups = groups;
-     },
-     error => console.error(error)
-   );
- }
-
  signIn() {
    if (!this._eventParticipants.hasSelectedParticipants()) {
      return this.rootService.announceEvent('echeckSigninNoParticipantsSelected');
@@ -130,14 +121,6 @@ export class AvailableChildrenComponent implements OnInit {
   if (this._eventParticipants) { return this._eventParticipants.Participants; };
  }
 
- get newGuestChild() {
-   return this._newGuestChild;
- }
-
- set newGuestChild(guestChild) {
-   this._newGuestChild = guestChild;
- }
-
  get eventParticipants() {
    return this._eventParticipants;
  }
@@ -146,78 +129,17 @@ export class AvailableChildrenComponent implements OnInit {
    this._eventParticipants = eventParticipants;
  }
 
- updateChildYearGradeGroup(guest: Guest, groupId: number) {
-   this._newGuestChild.YearGrade = +groupId;
- }
-
- openNewGuestModal(modal) {
-   this.guestDOB = new DateOfBirth();
-   this._newGuestChild = new Guest();
-   this._newGuestChild.GuestSignin = true;
-   this._newGuestChild.Selected = true;
-   modal.show();
- }
-
- datePickerBlur() {
-   if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
-     this.newGuestChild.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
-   }
-
-   let needGradeLevelValue = moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
-
-    if (needGradeLevelValue === true) {
-      this.newGuestChild.YearGrade = -1;
+  setServingAndGuestDisplay() {
+    if (this.eventParticipants.CurrentEvent.isStudentMinistry) {
+      this.showGuestOption = true;
+      this.showServingOption = false;
+    } else if (this.eventParticipants.CurrentEvent.isChildCare) {
+      this.showGuestOption = false;
+      this.showServingOption = false;
     } else {
-      this.newGuestChild.YearGrade = 0;
+      this.showGuestOption = true;
+      this.showServingOption = true;
     }
- }
-
-  saveNewGuest(modal) {
-   try {
-     this.newGuestChild.FirstName.trim();
-     this.newGuestChild.LastName.trim();
-   } finally {
-     if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
-       return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
-     } else if (!this.newGuestChild.DateOfBirth || !moment(this.newGuestChild.DateOfBirth).isValid()) {
-       return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
-     } else if (this.newGuestChild.YearGrade === -1) {
-       return this.rootService.announceEvent('echeckNeedValidGradeSelection');
-     } else {
-
-       if (this.newGuestChild.YearGrade === 0) {
-         this.newGuestChild.YearGrade = undefined;
-       }
-
-       this._eventParticipants.Participants.push(this.newGuestChild);
-       return modal.hide();
-     }
-   }
- }
-
- needGradeLevel(): boolean {
-   return moment(this.newGuestChild.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
- }
-
- setFirstName(value) {
-   this.newGuestChild.FirstName = value;
- }
-
- setLastName(value) {
-   this.newGuestChild.LastName = value;
- }
-
- setServingAndGuestDisplay() {
-   if (this.eventParticipants.CurrentEvent.isStudentMinistry) {
-     this.showGuestOption = true;
-     this.showServingOption = false;
-   } else if (this.eventParticipants.CurrentEvent.isChildCare) {
-     this.showGuestOption = false;
-     this.showServingOption = false;
-   } else {
-     this.showGuestOption = true;
-     this.showServingOption = true;
-   }
- }
+  }
 
 }
