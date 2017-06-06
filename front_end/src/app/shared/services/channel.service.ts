@@ -1,4 +1,4 @@
-import {Injectable, Inject} from '@angular/core';
+import {Injectable, Inject, ApplicationRef} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 
@@ -93,7 +93,8 @@ export class ChannelService {
 
     constructor(
         @Inject(SignalrWindow) private window: SignalrWindow,
-        @Inject('channel.config') private channelConfig: ChannelConfig
+        @Inject('channel.config') private channelConfig: ChannelConfig,
+        private ref: ApplicationRef
     ) {
         if (this.window.$ === undefined || this.window.$.hubConnection === undefined) {
             throw new Error(
@@ -315,6 +316,7 @@ export class ChannelService {
 
         setInterval(() => {
           that.timeLeft = that.timeLeft - 1;
+          this.ref.tick();
         }, 1000);
       }
     }
