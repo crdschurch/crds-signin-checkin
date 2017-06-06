@@ -5,14 +5,6 @@
     <div class="col-md-12">
 
       <div class="eqWrap">
-        <!--<div class="card text-xs-center pointer" *ngIf="showGuestOption">
-          <a (click)="openNewGuestModal(addGuestModal)">
-            <div class="card-block">
-              <span class="round-plus">+</span>
-              <h4 class="card-title guest-title">Add A Guest</h4>
-            </div>
-          </a>
-        </div>-->
         <div class="card">
           <guest-modal (addGuestChild)="addGuestChild($event)" [eventId]="eventId" [eventTypeId]="eventTypeId"></guest-modal>
         </div>

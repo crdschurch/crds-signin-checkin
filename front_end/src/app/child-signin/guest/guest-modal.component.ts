@@ -74,7 +74,6 @@ export class GuestModalComponent {
      this.newGuestChild.LastName.trim();
    } finally {
      if (!this.newGuestChild.FirstName || !this.newGuestChild.LastName) {
-       console.log('in the invalid form function');
        return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
      } else if (!this.newGuestChild.DateOfBirth || !moment(this.newGuestChild.DateOfBirth).isValid()) {
        return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
@@ -121,7 +120,6 @@ export class GuestModalComponent {
   populateGradeGroups() {
    this.apiService.getGradeGroups(this.eventId).subscribe((groups) => {
        this.gradeGroups = groups;
-       debugger;
      },
      error => console.error(error)
    );

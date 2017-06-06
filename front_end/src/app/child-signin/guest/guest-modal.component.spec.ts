@@ -48,9 +48,7 @@ describe('GuestModalComponent', () => {
       invalidGuest.FirstName = 'Vontaze';
       invalidGuest.LastName = '';
       fixture.newGuestChild = invalidGuest;
-      console.log(fixture.newGuestChild.LastName);
       fixture.saveNewGuest(fakeModal);
-      console.log('root service: ' + rootService);
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninAddGuestFormInvalid');
     });
     it('shows dob error if invalid date', () => {
