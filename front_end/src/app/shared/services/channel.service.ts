@@ -75,6 +75,7 @@ export class ChannelService {
     public networkError = false;
     public timeToRefresh = 5000;
     public timeLeft = 5;
+    private stopped = false;
     // These are used to feed the public observables
     //
     private connectionStateSubject = new Subject<ConnectionState>();
@@ -102,7 +103,7 @@ export class ChannelService {
               'check the SignalR scripts have been loaded properly');
         }
 
-        this.timeLeft = this.timeToRefresh/1000;
+        this.timeLeft = this.timeToRefresh / 1000;
         // Set up our observables
         //
         this.connectionState$ = this.connectionStateSubject.asObservable();
@@ -207,7 +208,8 @@ export class ChannelService {
     }
 
     stop(): void {
-        this.hubConnection.stop();
+      this.stopped = true;
+      this.hubConnection.stop();
     }
 
     unsub(channelName: string) {
@@ -293,7 +295,6 @@ export class ChannelService {
           })
           .fail((error: any) => {
             channelSub.subject.error(error);
-            debugger
             this.networkErrorResponse();
           });
     }
@@ -309,7 +310,7 @@ export class ChannelService {
     private networkErrorResponse() {
       let that = this;
 
-      if (!that.networkError) {
+      if (!that.networkError && !that.stopped) {
         that.networkError = true;
 
         setTimeout(() => { that.window.location.reload(); }, that.timeToRefresh);

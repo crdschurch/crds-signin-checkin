@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 import { ChildSigninService } from './child-signin.service';
+import { ChannelService } from '../shared/services';
 
 @Component({
   selector: 'child-signin',
@@ -10,11 +11,16 @@ import { ChildSigninService } from './child-signin.service';
   styleUrls: ['child-signin.component.scss', 'scss/_stepper.scss' ],
   providers: [ ChildSigninService ]
 })
-export class ChildSigninComponent {
+export class ChildSigninComponent implements OnInit {
 
   clock = Observable.interval(10000).startWith(0).map(() => new Date());
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private channelService: ChannelService) {}
+
+  ngOnInit() {
+    // Start the signalr connection up!
+    this.channelService.stop();
+  }
 
   isStepActive(step) {
     if (step === 1) {
