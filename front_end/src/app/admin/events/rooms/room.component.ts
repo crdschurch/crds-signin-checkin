@@ -94,12 +94,11 @@ export class RoomComponent implements OnInit {
   }
 
   get capacityPercentage() {
-    const capacityPercentage = (this.room.CheckedIn + this.room.SignedIn) / this.room.Capacity;
-    return Math.round(100 * capacityPercentage) / 100;
+    return (this.room.CheckedIn + this.room.SignedIn) / this.room.Capacity;
   }
 
   isCapacityWarning() {
-    return this.capacityPercentage > .8 && this.capacityPercentage < 1;
+    return this.capacityPercentage >= .8 && this.capacityPercentage < 1;
   }
 
   isCapacityDanger() {

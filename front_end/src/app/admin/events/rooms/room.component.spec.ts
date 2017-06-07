@@ -30,7 +30,6 @@ let route: any = {
 let rootService: any;
 
 describe('RoomComponent', () => {
-
   beforeEach(() => {
     fixture = new RoomComponent(route, adminServiceStub, rootService, channelService, zone);
     fixture.room = new Room();
@@ -49,10 +48,15 @@ describe('RoomComponent', () => {
 
   describe('capacity alerts', () => {
     describe('#isCapacityWarning', () => {
-      it('should return true if checked in + signed in is > 80% of capacity', () => {
+      it('should return true if checked in + signed in is >= 80% of capacity', () => {
         fixture.room.Capacity = 6;
         fixture.room.CheckedIn = 3;
         fixture.room.SignedIn = 2;
+        expect(fixture.isCapacityWarning()).toBeTruthy();
+        expect(fixture.isCapacityDanger()).toBeFalsy();
+        fixture.room.Capacity = 20;
+        fixture.room.CheckedIn = 15;
+        fixture.room.SignedIn = 1;
         expect(fixture.isCapacityWarning()).toBeTruthy();
         expect(fixture.isCapacityDanger()).toBeFalsy();
       });
