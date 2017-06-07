@@ -1,4 +1,15 @@
 <div class="crossroads-growl">
   <toaster-container [toasterconfig]="customToasterConfig"></toaster-container>
 </div>
-<router-outlet></router-outlet>
+
+<div *ngIf="networkError()">
+  <div class="network-error">
+    NETWORK ERROR WAIT WHILE I REFRESH
+    <div>
+      {{ timeLeft() }}
+    </div>
+  </div>
+  <preloader></preloader>
+</div>
+
+<router-outlet *ngIf="!networkError()"></router-outlet>
