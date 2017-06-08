@@ -59,7 +59,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create<MpContactRelationshipDto>(contactRelationshipDtos, columnList));
 
             // Act
-            _fixture.CreateContactRelationships(contactRelationshipDtos, token);
+            _fixture.CreateContactRelationships(token, contactRelationshipDtos);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
