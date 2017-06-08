@@ -44,6 +44,7 @@ namespace SignInCheckIn.Tests.Services
         private static int MiddleSchoolEventTypeId = 402;
         private static int HighSchoolEventTypeId = 403;
         private static int KidsClubEventTypeId = 410; // huh?
+        private static int ChildOfRelationshipId = 5;
 
         [SetUp]
         public void SetUp()
@@ -90,6 +91,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesSixToEightEventTypeId).Returns(MiddleSchoolEventTypeId);
             _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesNineToTwelveEventTypeId).Returns(HighSchoolEventTypeId);
             _applicationConfiguration.SetupGet(m => m.BigEventTypeId).Returns(BigEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.ChildOfRelationshipId).Returns(ChildOfRelationshipId);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
@@ -1064,6 +1066,7 @@ namespace SignInCheckIn.Tests.Services
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
             _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), It.IsAny<string>())).Returns(newParticipantDto);
+            _contactRepository.Setup(m => m.CreateContactRelationships(It.IsAny<string>(), It.IsAny<List<MpContactRelationshipDto>>()));
 
             // Act
             var result = _fixture.SaveNewFamilyData(token, newFamilyDto);

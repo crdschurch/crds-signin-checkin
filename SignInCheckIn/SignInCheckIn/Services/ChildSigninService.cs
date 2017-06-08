@@ -592,7 +592,7 @@ namespace SignInCheckIn.Services
             };
 
             // parentNewParticipantDto.Contact.DateOfBirth = null;
-            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
+            var parentParticipant = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
 
             // Step 3 create the children contacts
             List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
@@ -610,6 +610,16 @@ namespace SignInCheckIn.Services
                 mpNewChildParticipantDtos.Add(newParticipant);
 
             }
+
+            List<MpContactRelationshipDto> mpContactRelationshipDtos = mpNewChildParticipantDtos.Select(item => new MpContactRelationshipDto
+            {
+                ContactId = item.ContactId.GetValueOrDefault(),
+                RelationshipId = _applicationConfiguration.ChildOfRelationshipId,
+                RelatedContactId = parentParticipant.ContactId.GetValueOrDefault(),
+                StartDate = System.DateTime.Now
+            }).ToList();
+
+            _contactRepository.CreateContactRelationships(token, mpContactRelationshipDtos);
 
             return mpNewChildParticipantDtos;
         }

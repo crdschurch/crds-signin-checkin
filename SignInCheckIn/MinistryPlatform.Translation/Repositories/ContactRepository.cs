@@ -65,5 +65,18 @@ namespace MinistryPlatform.Translation.Repositories
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpContactDto>(contactDto, columnList);
         }
-}
+
+        public void CreateContactRelationships(string token, List<MpContactRelationshipDto> contactRelationshipDtos)
+        {
+            List<string> columnList = new List<string>
+            {
+                "Contact_ID",
+                "Related_Contact_ID",
+                "Relationship_ID",
+                "Start_Date"
+            };
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(contactRelationshipDtos, columnList);
+        }
+    }
 }
