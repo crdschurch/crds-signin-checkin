@@ -426,7 +426,7 @@ namespace SignInCheckIn.Services
         {
             // Get participant from event participant id
             var participants = new List<ParticipantDto>();
-            var participant = Mapper.Map<ParticipantDto>(_participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId));
+            var participant = Mapper.Map<ParticipantDto>(_participantRepository.GetEventParticipantByEventParticipantId(eventParticipantId, token));
             participant.Selected = true;
             participants.Add(participant);
 
@@ -818,7 +818,7 @@ namespace SignInCheckIn.Services
         public bool ReverseSignin(string token, int eventParticipantId)
         {
             // load the event participant, check their status
-            var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(token, eventParticipantId);
+            var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(eventParticipantId, token);
 
             if (mpEventParticipantDto.ParticipantStatusId == _applicationConfiguration.CheckedInParticipationStatusId)
             {
