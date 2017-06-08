@@ -174,9 +174,13 @@ export class RoomComponent implements OnInit {
           comp.zone.run(() => {
             comp.room.SignedIn += x.Data.length;
           });
-        } else if (x.Name === 'Remove' && (x.Data.OriginalRoomId !== x.Data.OverRideRoomId)) {
+        } else if (x.Name === 'RemoveSignIn' && (x.Data.OriginalRoomId !== x.Data.OverRideRoomId)) {
           comp.zone.run(() => {
             comp.room.SignedIn--;
+          });
+        } else if (x.Name === 'RemoveCheckIn' && (x.Data.OriginalRoomId !== x.Data.OverRideRoomId)) {
+          comp.zone.run(() => {
+            comp.room.CheckedIn--;
           });
         } else if (x.Name === 'CheckedIn') {
           comp.zone.run(() => {
