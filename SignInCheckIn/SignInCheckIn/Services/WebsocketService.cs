@@ -22,6 +22,7 @@ namespace SignInCheckIn.Services
             _context = hubContext;
         }
 
+        // Room capacity changes
         public void PublishRoomCapacity(int eventId, int roomId, EventRoomDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
@@ -29,6 +30,7 @@ namespace SignInCheckIn.Services
             Publish(channelName, null, data);
         }
 
+        // Event participant moves from signed in to checked in
         public void PublishCheckinParticipantsCheckedIn(int eventId, int roomId, ParticipantDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
@@ -36,6 +38,7 @@ namespace SignInCheckIn.Services
             Publish(channelName, "CheckedIn", data);
         }
 
+        // Event participant signed in
         public void PublishCheckinParticipantsAdd(int eventId, int roomId, List<ParticipantDto> data)
         {
             var publishEventId = GetPublishEventId(eventId);
@@ -43,13 +46,23 @@ namespace SignInCheckIn.Services
             Publish(channelName, "Add", data);
         }
 
-        public void PublishCheckinParticipantsRemove(int eventId, int roomId, ParticipantDto data)
+        // Event participant signed out
+        public void PublishCheckinParticipantsSignedInRemove(int eventId, int roomId, ParticipantDto data)
         {
             var publishEventId = GetPublishEventId(eventId);
             var channelName = GetChannelNameCheckinParticipants(publishEventId, roomId);
-            Publish(channelName, "Remove", data);
+            Publish(channelName, "RemoveSignIn", data);
         }
 
+        // Event participant checked out
+        public void PublishCheckinParticipantsCheckedInRemove(int eventId, int roomId, ParticipantDto data)
+        {
+            var publishEventId = GetPublishEventId(eventId);
+            var channelName = GetChannelNameCheckinParticipants(publishEventId, roomId);
+            Publish(channelName, "RemoveCheckIn", data);
+        }
+
+        // Event participant as overridden
         public void PublishCheckinParticipantsOverrideCheckin(int eventId, int roomId, ParticipantDto data)
         {
             var publishEventId = GetPublishEventId(eventId);

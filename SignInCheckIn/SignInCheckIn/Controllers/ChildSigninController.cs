@@ -365,7 +365,7 @@ namespace SignInCheckIn.Controllers
                         data.EventParticipantId = eventparticipantId;
                         data.OriginalRoomId = roomId;
 
-                        _websocketService.PublishCheckinParticipantsRemove(eventId, roomId, data);
+                        _websocketService.PublishCheckinParticipantsSignedInRemove(eventId, roomId, data);
                         return Ok();
                     }
                     else
