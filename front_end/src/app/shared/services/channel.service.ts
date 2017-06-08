@@ -73,8 +73,8 @@ export class ChannelService {
     error$: Observable<string>;
 
     public networkError = false;
-    public timeToRefresh = 5000;
-    public timeLeft = 5;
+    public timeToRefresh = 1000;
+    public timeLeft = 1;
     private stopped = false;
     // These are used to feed the public observables
     //
