@@ -1,4 +1,4 @@
-import { Component, Output, Input, ViewChild, EventEmitter } from '@angular/core';
+import { Component, Output, Input, ViewChild, EventEmitter, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { ChildSigninService } from '../child-signin.service';
@@ -15,7 +15,7 @@ import * as _ from 'lodash';
   styleUrls: [ 'guest-modal.component.scss', '../scss/_cards.scss' ]
 })
 
-export class GuestModalComponent {
+export class GuestModalComponent implements OnInit {
   @Output() addGuestChild = new EventEmitter<any>();
   @ViewChild('addGuestModal') public addGuestModal: ModalDirective;
   @Input() eventTypeId: number;
@@ -132,8 +132,7 @@ export class GuestModalComponent {
  checkSMEventTypeId() {
    if (this.eventTypeId === Constants.StudentMinistry6through8EventType ||
     this.eventTypeId === Constants.StudentMinistry9through12EventType ||
-    this.eventTypeId === Constants.BigEventType)
-   {
+    this.eventTypeId === Constants.BigEventType) {
      return true;
    } else {
      return false;
