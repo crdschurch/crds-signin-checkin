@@ -3,8 +3,10 @@ import { NewParent, NewChild, Event } from '.';
 export class NewFamily {
   event: Event;
   parent: NewParent;
+  parents: Array<NewParent> = [];
   children: Array<NewChild> = [];
   numberOfKids = 1;
+  numberOfParents = 1;
 
   static fromJson(json: any): NewFamily {
     if (!json) {
@@ -13,6 +15,11 @@ export class NewFamily {
 
     let newFamily = new NewFamily();
     newFamily.event = Event.fromJson(json.event);
+
+    newFamily.parents = [];
+    for (let p of json.parents) {
+      newFamily.parents.push(NewParent.fromJson(p));
+    }
     newFamily.parent = NewParent.fromJson(json.parent);
 
     newFamily.children = [];

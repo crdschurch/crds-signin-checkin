@@ -8,14 +8,17 @@
       </div><!--/col-sm-12-->
     </div>
     <div class="row">
-      <div class="col-sm-4">
+      <div class="col-sm-6">
         <div class="input-group child-search-input">
-          <input #box type="text" class="form-control" placeholder="Search by Parent Last Name, First Name" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()">
+          <input #box type="text" class="form-control" placeholder="Search by Parent Last Name, First Name or Email or Phone" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()">
           <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
             <span [hidden]="!box.value.length">&times;</span>
           </span>
           <button type="submit" class="btn btn-primary input-group-addon" (click)="onSearch()">Search</button>
         </div>
+      </div>
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-secondary" [routerLink]="['/admin/events',eventId,'new-family-registration']">New Family Registration</button>
       </div>
     </div>
     <br/>

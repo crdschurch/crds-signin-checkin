@@ -25,6 +25,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private processing: boolean;
   private submitted: boolean;
   numberOfKidsSelection: any = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
+  numberOfParentsSelection: any = Array.apply(null, {length: 2}).map(function (e, i) { return i + 1; }, Number);
 
   constructor(
     private route: ActivatedRoute,
@@ -44,6 +45,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
    this.family.parent = new NewParent();
+   this.family.parents = [this.newParent()];
    this.family.children = [this.newChild()];
    this.family.numberOfKids = 1;
 
@@ -72,6 +74,20 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
 
     this.family.children = tmpChildren;
+  }
+
+  updateNumberOfParents(): void {
+    let tmpParents: Array<NewParent> = [];
+
+    for (let i = 0; i < this.family.numberOfParents; i++) {
+      if (this.family.parents[i] === undefined) {
+        tmpParents.push(this.newParent());
+      } else {
+        tmpParents.push(this.family.parents[i]);
+      }
+    }
+
+    this.family.parents = tmpParents;
   }
 
   needGradeLevel(child: NewChild): boolean {
@@ -127,6 +143,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
         this.processing = false;
       });
     }
+  }
+
+  private newParent(): NewParent {
+    return new NewParent();
   }
 
   private newChild(): NewChild {
