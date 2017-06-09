@@ -27,23 +27,8 @@ describe('AvailableChildrenComponent', () => {
   describe('#ngOnInit', () => {
     it('should get children and get grade groups for modal', () => {
       spyOn(fixture, 'getChildren').and.callFake(() => {});
-      spyOn(fixture, 'populateGradeGroups').and.callFake(() => {});
       fixture.ngOnInit();
       expect(fixture.getChildren).toHaveBeenCalledWith(mockPhoneNumber);
-      expect(fixture.populateGradeGroups).toHaveBeenCalled();
-    });
-  });
-  describe('#openNewGuestModal', () => {
-    let fakeModal = { show: {} };
-    beforeEach(() => {
-      spyOn(fakeModal, 'show').and.callFake(() => {});
-    });
-    it('creates new guest', () => {
-      fixture.openNewGuestModal(fakeModal);
-      expect(fixture.newGuestChild).toBeDefined();
-      expect(fixture.newGuestChild.GuestSignin).toBeTruthy();
-      expect(fixture.newGuestChild.Selected).toBeTruthy();
-      expect(fixture.newGuestChild.DateOfBirth).toBeUndefined();
     });
   });
   describe('#signIn', () => {
@@ -53,7 +38,7 @@ describe('AvailableChildrenComponent', () => {
       fixture.eventParticipants.Participants = [new Child(), new Child()];
       fixture.eventParticipants.Participants[0].Selected = false;
       fixture.eventParticipants.Participants[1].Selected = true;
-      // spyOn(childSigninService, 'signInChildren').and.callFake(() => {});
+      //spyOn(childSigninService, 'signInChildren').and.callFake(() => {});
       (<jasmine.Spy>(childSigninService.signInChildren)).and.returnValue(Observable.of());
       fixture.signIn();
 
@@ -67,44 +52,6 @@ describe('AvailableChildrenComponent', () => {
     beforeEach(() => {
       spyOn(fakeModal, 'show').and.callFake(() => {});
       spyOn(fakeModal, 'hide').and.callFake(() => {});
-    });
-    it('creates new guest if valid form', () => {
-      let validGuest: Guest = new Guest();
-      validGuest.FirstName = 'Pacman';
-      validGuest.LastName = 'Jones';
-      fixture.newGuestChild = validGuest;
-      fixture.guestDOB = new DateOfBirth();
-      fixture.guestDOB.month = 4;
-      fixture.guestDOB.day = 4;
-      fixture.guestDOB.year = moment().subtract(1, 'year').year();
-      // ui event after you pick a date
-      fixture.datePickerBlur();
-      fixture.saveNewGuest(fakeModal);
-      expect(fixture.eventParticipants.Participants[0].FirstName).toEqual('Pacman');
-    });
-    it('shows error if invalid form', () => {
-      let invalidGuest: Guest = new Guest();
-      invalidGuest.FirstName = 'Vontaze';
-      invalidGuest.LastName = '';
-      fixture.newGuestChild = invalidGuest;
-      fixture.saveNewGuest(fakeModal);
-      expect(fixture.eventParticipants.Participants.length).toEqual(0);
-      expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninAddGuestFormInvalid');
-    });
-    it('shows dob error if invalid date', () => {
-      let validGuest: Guest = new Guest();
-      validGuest.FirstName = 'Vontaze';
-      validGuest.LastName = 'Burfict';
-      fixture.newGuestChild = validGuest;
-      fixture.guestDOB = new DateOfBirth();
-      fixture.guestDOB.month = 2;
-      fixture.guestDOB.day = 30;
-      fixture.guestDOB.year = moment().subtract(2, 'year').year();
-      // ui event after you pick a date
-      fixture.datePickerBlur();
-      fixture.saveNewGuest(fakeModal);
-      expect(fixture.eventParticipants.Participants.length).toEqual(0);
-      expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
     });
     it('should hide guest and serving for big event', () => {
       let eventParticipants: EventParticipants = new EventParticipants();

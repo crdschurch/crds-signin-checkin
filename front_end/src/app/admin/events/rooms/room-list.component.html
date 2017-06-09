@@ -120,7 +120,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room"
+            <tr *ngFor="let someRoom of rooms | ClosedRoomPipe:hideClosedRooms; let i = index;" class="room" [ngClass]="{'open-capacity-zero': isZeroCapacityAndOpen(someRoom) }"
                 (notifyDirty)="onNotifyDirty($event)" (notifySaving)="onNotifySaving($event)" (updateRoomArray)="updateRooms($event)"
                 [room]="someRoom">
             </tr>

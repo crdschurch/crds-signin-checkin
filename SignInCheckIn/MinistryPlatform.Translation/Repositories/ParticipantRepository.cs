@@ -161,8 +161,9 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<MpEventParticipantDto>(mpEventParticipantDtos, columnList);
         }
 
-        public MpEventParticipantDto GetEventParticipantByEventParticipantId(string token, int eventParticipantId)
+        public MpEventParticipantDto GetEventParticipantByEventParticipantId(int eventParticipantId, string authenticationToken = null)
         {
+            var token = authenticationToken ?? _apiUserRepository.GetToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpEventParticipantDto>(eventParticipantId, _eventParticipantColumns);
         }
 

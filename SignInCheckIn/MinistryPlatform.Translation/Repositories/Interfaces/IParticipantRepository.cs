@@ -13,7 +13,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto, string token = null);
         List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpGroupParticipantDto> mpGroupParticipantDtos);
         void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos);
-        MpEventParticipantDto GetEventParticipantByEventParticipantId(string token, int eventParticipantId);
+        MpEventParticipantDto GetEventParticipantByEventParticipantId(int eventParticipantId, string token = null);
         List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds);
         List<MpGroupParticipantDto> GetGroupParticipantsByParticipantAndGroupId(int groupId, List<int> participantIds);
         List<MpGroupParticipantDto> GetGroupParticipantsByParticipantId(int participantId);

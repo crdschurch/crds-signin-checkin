@@ -1,4 +1,4 @@
-import {Injectable, Inject} from '@angular/core';
+import {Injectable, Inject, ApplicationRef} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 
@@ -72,6 +72,10 @@ export class ChannelService {
      */
     error$: Observable<string>;
 
+    public networkError = false;
+    public timeToRefresh = 1000;
+    public timeLeft = 1;
+    private stopped = false;
     // These are used to feed the public observables
     //
     private connectionStateSubject = new Subject<ConnectionState>();
@@ -90,7 +94,8 @@ export class ChannelService {
 
     constructor(
         @Inject(SignalrWindow) private window: SignalrWindow,
-        @Inject('channel.config') private channelConfig: ChannelConfig
+        @Inject('channel.config') private channelConfig: ChannelConfig,
+        private ref: ApplicationRef
     ) {
         if (this.window.$ === undefined || this.window.$.hubConnection === undefined) {
             throw new Error(
@@ -98,6 +103,7 @@ export class ChannelService {
               'check the SignalR scripts have been loaded properly');
         }
 
+        this.timeLeft = this.timeToRefresh / 1000;
         // Set up our observables
         //
         this.connectionState$ = this.connectionStateSubject.asObservable();
@@ -163,8 +169,9 @@ export class ChannelService {
             .map((state: ConnectionState) => { return ConnectionState[state]; });
 
         this.error$.subscribe(
-            (error: any) => { console.warn(error); },
-            (error: any) => { console.error('errors$ error', error); }
+            (error: any) => {
+              this.networkErrorResponse();
+            }
         );
 
         // Wire up a handler for the starting$ observable to log the
@@ -195,13 +202,14 @@ export class ChannelService {
                 this.startingSubject.next();
             })
             .fail((error: any) => {
-                alert('Please Refresh to properly connect to server.');
-                this.startingSubject.error(error);
+              this.startingSubject.error(error);
+              this.networkErrorResponse();
             });
     }
 
     stop(): void {
-        this.hubConnection.stop();
+      this.stopped = true;
+      this.hubConnection.stop();
     }
 
     unsub(channelName: string) {
@@ -286,7 +294,8 @@ export class ChannelService {
               console.log('Subscribed channels:', this.subjects);
           })
           .fail((error: any) => {
-              channelSub.subject.error(error);
+            channelSub.subject.error(error);
+            this.networkErrorResponse();
           });
     }
 
@@ -296,6 +305,21 @@ export class ChannelService {
      */
     publish(ev: ChannelEvent): void {
         this.hubProxy.invoke('Publish', ev);
+    }
+
+    private networkErrorResponse() {
+      let that = this;
+
+      if (!that.networkError && !that.stopped) {
+        that.networkError = true;
+
+        setTimeout(() => { that.window.location.reload(); }, that.timeToRefresh);
+
+        setInterval(() => {
+          that.timeLeft = that.timeLeft - 1;
+          this.ref.tick();
+        }, 1000);
+      }
     }
 
 }

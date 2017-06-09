@@ -425,7 +425,7 @@ namespace SignInCheckIn.Tests.Services
                 RoomId = 111,
                 CheckedIn = 2,
                 SignedIn = 5,
-                Capacity = 20
+                Capacity = 7
             };
 
             _roomRepository.Setup(m => m.GetEventRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(eventRoom);
