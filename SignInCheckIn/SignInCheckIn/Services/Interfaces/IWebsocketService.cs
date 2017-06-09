@@ -10,7 +10,8 @@ namespace SignInCheckIn.Services.Interfaces
         void PublishRoomCapacity(int eventId, int roomId, EventRoomDto data);
         void PublishCheckinParticipantsCheckedIn(int eventId, int roomId, ParticipantDto data);
         void PublishCheckinParticipantsAdd(int eventId, int roomId, List<ParticipantDto> data);
-        void PublishCheckinParticipantsRemove(int eventId, int roomId, ParticipantDto data);
+        void PublishCheckinParticipantsCheckedInRemove(int eventId, int roomId, ParticipantDto data);
+        void PublishCheckinParticipantsSignedInRemove(int eventId, int roomId, ParticipantDto data);
         void PublishCheckinParticipantsOverrideCheckin(int eventId, int roomId, ParticipantDto data);
     }
 }

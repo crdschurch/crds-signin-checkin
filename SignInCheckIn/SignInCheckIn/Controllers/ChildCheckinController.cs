@@ -9,6 +9,7 @@ using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
+using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json.Linq;
 using SignInCheckIn.Security;
 
@@ -19,13 +20,15 @@ namespace SignInCheckIn.Controllers
         private readonly IChildCheckinService _childCheckinService;
         private readonly IWebsocketService _websocketService;
         private readonly IApplicationConfiguration _applicationConfiguration;
+        private readonly IParticipantRepository _participantRepository;
 
-        public ChildCheckinController(IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository, IWebsocketService websocketService) : base(authenticationRepository)
+        public ChildCheckinController(IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository, IWebsocketService websocketService, IParticipantRepository participantRepository) : base(authenticationRepository)
         {
             _childCheckinService = childCheckinService;
             _applicationConfiguration = applicationConfiguration;
             _websocketService = websocketService;
-        }
+            _participantRepository = participantRepository;
+    }
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
@@ -113,6 +116,7 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
+                var eventParticipant = _participantRepository.GetEventParticipantByEventParticipantId(eventParticipantId);
                 _childCheckinService.OverrideChildIntoRoom(eventId, eventParticipantId, overRideRoomId);
 
                 //Publish the removal of the kid from the original room
@@ -121,7 +125,15 @@ namespace SignInCheckIn.Controllers
                 data.OriginalRoomId = roomId;
                 data.OverRideRoomId = overRideRoomId;
 
-                _websocketService.PublishCheckinParticipantsRemove(eventId, roomId, data);
+                if (eventParticipant.ParticipantStatusId == _applicationConfiguration.SignedInParticipationStatusId)
+                {
+                    _websocketService.PublishCheckinParticipantsSignedInRemove(eventId, roomId, data);
+                }
+                else if (eventParticipant.ParticipantStatusId == _applicationConfiguration.CheckedInParticipationStatusId)
+                {
+                    _websocketService.PublishCheckinParticipantsCheckedInRemove(eventId, roomId, data);
+                }
+
                 _websocketService.PublishCheckinParticipantsOverrideCheckin(eventId, overRideRoomId, data);
 
                 return Ok();

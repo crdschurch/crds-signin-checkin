@@ -1222,7 +1222,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantStatusId = attendedParticipantStatusId
             };
 
-            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(token, eventParticipantId))
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(eventParticipantId, token))
                 .Returns(mpEventParticipantDto);
             _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
@@ -1254,7 +1254,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantStatusId = checkedInParticipantStatusId
             };
 
-            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(token, eventParticipantId))
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(eventParticipantId, token))
                 .Returns(mpEventParticipantDto);
             _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
@@ -1325,7 +1325,7 @@ namespace SignInCheckIn.Tests.Services
                 Name = "test group"
             };
 
-            _participantRepository.Setup(m => m.GetEventParticipantByEventParticipantId(token, 765)).Returns(participant);
+            _participantRepository.Setup(m => m.GetEventParticipantByEventParticipantId(765, token)).Returns(participant);
             _eventService.Setup(m => m.GetEvent(123)).Returns(currentEvent);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(4)).Returns(contacts);
             _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);

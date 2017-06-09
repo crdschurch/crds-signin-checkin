@@ -18,6 +18,7 @@ import { HomeModule } from './home';
 import { SetupModule } from './setup';
 import { AppComponent } from './app.component';
 import { routing } from './app.routes';
+import { PreloaderModule } from './shared/preloader';
 
 let channelConfig = new ChannelConfig();
 channelConfig.url = `${process.env.SIGNALR_ENDPOINT}`;
@@ -39,7 +40,8 @@ channelConfig.hubName = 'EventHub';
     AdminModule,
     routing,
     MomentModule,
-    ToasterModule
+    ToasterModule,
+    PreloaderModule
   ],
   exports: [
     ToasterModule

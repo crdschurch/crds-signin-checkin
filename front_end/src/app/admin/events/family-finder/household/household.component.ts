@@ -13,14 +13,14 @@ import * as moment from 'moment';
   styleUrls: ['household.component.scss', '../../../../child-signin/scss/_cards.scss']
 })
 export class HouseholdComponent implements OnInit {
-  private eventId: number;
-  private eventTypeId: number;
   private householdId: number;
   private _editMode: boolean;
   private processing: boolean;
   private processingAddFamilyMember: boolean;
   private _contact: Contact;
   private gradeGroups: Array<Group> = [];
+  private eventId: number;
+  private eventTypeId: number;
   numberOfMonthsSelection: Array<number>;
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
@@ -91,6 +91,10 @@ export class HouseholdComponent implements OnInit {
    if (this.contact) {
      return this.contact.ContactId;
    }
+ }
+
+ addGuestChild(guestChild) {
+   this.eventParticipants.Participants.push(guestChild);
  }
 
  setServingHours(hours) {
