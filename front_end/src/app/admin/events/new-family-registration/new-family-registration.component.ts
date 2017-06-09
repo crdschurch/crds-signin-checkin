@@ -44,7 +44,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.submitted = false;
    this.eventId = this.route.snapshot.params['eventId'];
    this.family = new NewFamily();
-   this.family.parent = new NewParent();
    this.family.parents = [this.newParent()];
    this.family.children = [this.newChild()];
    this.family.numberOfKids = 1;

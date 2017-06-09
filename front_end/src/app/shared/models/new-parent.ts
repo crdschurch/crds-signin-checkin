@@ -2,6 +2,8 @@ export class NewParent {
   FirstName: string;
   LastName: string;
   PhoneNumber: string;
+  EmailAddress: string;
+  GenderId: number;
 
  static fromJson(json: any): NewParent {
     let c = new NewParent();

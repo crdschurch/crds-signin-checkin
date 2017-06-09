@@ -2,7 +2,6 @@ import { NewParent, NewChild, Event } from '.';
 
 export class NewFamily {
   event: Event;
-  parent: NewParent;
   parents: Array<NewParent> = [];
   children: Array<NewChild> = [];
   numberOfKids = 1;
@@ -20,7 +19,6 @@ export class NewFamily {
     for (let p of json.parents) {
       newFamily.parents.push(NewParent.fromJson(p));
     }
-    newFamily.parent = NewParent.fromJson(json.parent);
 
     newFamily.children = [];
     for (let p of json.children) {
