@@ -109,7 +109,7 @@ namespace SignInCheckIn.Tests.Services
             mockIHubConnectionContext.Setup(hc => hc.Group(expectedChannelName)).Returns(mock.Object);
             _hubContext.SetupGet(hc => hc.Clients).Returns(mockIHubConnectionContext.Object);
 
-            _fixture.PublishCheckinParticipantsRemove(eventId, roomId, data);
+            _fixture.PublishCheckinParticipantsSignedInRemove(eventId, roomId, data);
 
             mock.VerifyAll();
             mockIHubConnectionContext.VerifyAll();

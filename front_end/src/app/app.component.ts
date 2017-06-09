@@ -65,6 +65,14 @@ export class AppComponent implements OnInit {
     });
   }
 
+  networkError() {
+    return this.channelService.networkError;
+  }
+
+  timeLeft() {
+    return this.channelService.timeLeft;
+  }
+
   // https://github.com/valor-software/ng2-bootstrap/issues/986#issuecomment-262293199
   private hackToFixNg221BugForNg2Bootstrap(): void {
     ComponentsHelper.prototype.getRootViewContainerRef = function () {

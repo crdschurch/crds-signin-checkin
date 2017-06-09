@@ -93,14 +93,18 @@ export class RoomComponent implements OnInit {
     this.dirty = true;
   }
 
-  checkedInEqualsCapacity() {
-    return this.room.CheckedIn >= this.room.Capacity;
+  get capacityPercentage() {
+    return (this.room.CheckedIn + this.room.SignedIn) / this.room.Capacity;
   }
 
-  signedInWillEqualCapacity() {
-    // only return true if checkedInEqualsCapacity isnt true
-    if (!this.checkedInEqualsCapacity()) {
-      return this.room.SignedIn + this.room.CheckedIn >= this.room.Capacity;
+  isCapacityWarning() {
+    return this.capacityPercentage >= .8 && this.capacityPercentage < 1;
+  }
+
+  isCapacityDanger() {
+    // only return true if isCapacityWarning isnt true
+    if (!this.isCapacityWarning()) {
+      return this.capacityPercentage >= 1;
     }
   }
 
@@ -166,16 +170,14 @@ export class RoomComponent implements OnInit {
     let channelName = `${Constants.CheckinParticipantsChannel}${comp.eventId}${comp.room.RoomId}`;
     comp.channelService.sub(channelName).subscribe(
       (x: ChannelEvent) => {
-        if (x.Name === 'Add') {
-          comp.zone.run(() => {
+        comp.zone.run(() => {
+          if (x.Name === 'Add') {
             comp.room.SignedIn += x.Data.length;
-          });
-        } else if (x.Name === 'Remove' && (x.Data.OriginalRoomId !== x.Data.OverRideRoomId)) {
-          comp.zone.run(() => {
+          } else if (x.Name === 'RemoveSignIn' && (x.Data.OriginalRoomId !== x.Data.OverRideRoomId)) {
             comp.room.SignedIn--;
-          });
-        } else if (x.Name === 'CheckedIn') {
-          comp.zone.run(() => {
+          } else if (x.Name === 'RemoveCheckIn' && (x.Data.OriginalRoomId !== x.Data.OverRideRoomId)) {
+            comp.room.CheckedIn--;
+          } else if (x.Name === 'CheckedIn') {
             let child = Child.fromJson(x.Data);
             if (child.checkedIn()) {
               comp.room.CheckedIn++;
@@ -184,12 +186,10 @@ export class RoomComponent implements OnInit {
               comp.room.CheckedIn--;
               comp.room.SignedIn++;
             }
-          });
-        } else if (x.Name === 'OverrideCheckin') {
-          comp.zone.run(() => {
+          } else if (x.Name === 'OverrideCheckin') {
             comp.room.CheckedIn++;
-          });
-        }
+          }
+        });
       },
       (error: any) => {
         console.warn('Attempt to join channel failed!', error);

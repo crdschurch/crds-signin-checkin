@@ -137,4 +137,18 @@ describe('RoomListComponent', () => {
     });
   });
 
+  describe('should add class if room open and has zero capacity', () => {
+    it('should set label text for visible rooms', () => {
+      let rooms: Room[] = [ new Room(), new Room()];
+      rooms[0].Capacity = 2;
+      rooms[0].AllowSignIn = true;
+      rooms[1].Capacity = 0;
+      rooms[1].AllowSignIn = true;
+      fixture.rooms = rooms;
+
+      expect(fixture.isZeroCapacityAndOpen(fixture.rooms[0])).toBe(false);
+      expect(fixture.isZeroCapacityAndOpen(fixture.rooms[1])).toBe(true);
+    });
+  });
+
 });
