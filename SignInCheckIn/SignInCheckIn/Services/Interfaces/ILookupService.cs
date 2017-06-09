@@ -7,5 +7,7 @@ namespace SignInCheckIn.Services.Interfaces
     {
         List<StateDto> GetStates();
         List<CountryDto> GetCountries();
+        List<CongregationDto> GetCongregations();
+        List<LocationDto> GetLocations();
     }
 }

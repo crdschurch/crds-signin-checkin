@@ -8,6 +8,7 @@ using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
+using MinistryPlatform.Translation.Models.DTO;
 
 namespace SignInCheckIn.Controllers
 {
@@ -60,6 +61,24 @@ namespace SignInCheckIn.Controllers
                     throw new HttpResponseException(apiError.HttpResponseMessage);
                 }
             });
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(List<CongregationDto>))]
+        [VersionedRoute(template: "sites", minimumVersion: "1.0.0")]
+        [Route("sites")]
+        public IHttpActionResult GetSites()
+        {
+            return Ok(_lookupService.GetCongregations());
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(List<MpCongregationDto>))]
+        [VersionedRoute(template: "sites", minimumVersion: "1.0.0")]
+        [Route("sites")]
+        public IHttpActionResult GetLocations()
+        {
+            return Ok(_lookupService.GetLocations());
         }
     }
 }

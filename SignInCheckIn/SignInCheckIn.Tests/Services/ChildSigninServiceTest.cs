@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Web.Http;
 using Crossroads.Utilities.Services.Interfaces;
-using FluentAssertions.Common;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.Models.DTO;
@@ -31,7 +27,6 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IParticipantRepository> _participantRepository;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IGroupLookupRepository> _groupLookupRepository;
-        private Mock<IRoomRepository> _roomRepository;
         private Mock<IConfigRepository> _configRepository;
         private Mock<IAttributeRepository> _attributeRepository;
         private Mock<ISignInLogic> _signInLogic;
@@ -61,7 +56,6 @@ namespace SignInCheckIn.Tests.Services
             _participantRepository = new Mock<IParticipantRepository>(MockBehavior.Strict);
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _groupLookupRepository = new Mock<IGroupLookupRepository>();
-            _roomRepository = new Mock<IRoomRepository>();
             _configRepository = new Mock<IConfigRepository>();
             _attributeRepository = new Mock<IAttributeRepository>();
             _signInLogic = new Mock<ISignInLogic>();
@@ -74,16 +68,7 @@ namespace SignInCheckIn.Tests.Services
                 Value = "60"
             };
 
-            var mpConfigDtoLate = new MpConfigDto
-            {
-                ApplicationCode = "COMMON",
-                ConfigurationSettingId = 1,
-                KeyName = "DefaultLateCheckIn",
-                Value = "60"
-            };
-
             _configRepository.Setup(m => m.GetMpConfigByKey("DefaultEarlyCheckIn")).Returns(mpConfigDtoEarly);
-            _configRepository.Setup(m => m.GetMpConfigByKey("DefaultLateCheckIn")).Returns(mpConfigDtoLate);
 
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareEventTypeId);
             _applicationConfiguration.SetupGet(m => m.ChildcareEventTypeId).Returns(ChildcareGroupTypeId);
@@ -94,7 +79,7 @@ namespace SignInCheckIn.Tests.Services
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
-                _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object,
+                _applicationConfiguration.Object, _groupLookupRepository.Object,
                 _configRepository.Object, _attributeRepository.Object, _signInLogic.Object);
         }
 
@@ -413,56 +398,6 @@ namespace SignInCheckIn.Tests.Services
                 CurrentEvent = eventDto
             };
 
-            var mpBumpingRooms = new List<MpBumpingRoomsDto>
-            {
-                new MpBumpingRoomsDto
-                {
-                    EventRoomId = 5134,
-                    RoomId = 161641,
-                    PriorityOrder = 2,
-                    AllowSignIn = true,
-                    Capacity = 32,
-                    RoomName = "Test Room 1",
-                    SignedIn = 93,
-                    CheckedIn = 12
-                },
-                new MpBumpingRoomsDto
-                {
-                    EventRoomId = 1248,
-                    RoomId = 3877727,
-                    PriorityOrder = 1,
-                    AllowSignIn = false,
-                    Capacity = 10,
-                    RoomName = "Test Room 2",
-                    SignedIn = 9,
-                    CheckedIn = 0
-                },
-                new MpBumpingRoomsDto
-                {
-                    EventRoomId = 1248,
-                    RoomId = 511,
-                    PriorityOrder = 4,
-                    AllowSignIn = false,
-                    Capacity = 10,
-                    RoomName = "Test Room 2",
-                    SignedIn = 9,
-                    CheckedIn = 0
-                },
-                new MpBumpingRoomsDto
-                {
-                    EventRoomId = 1248,
-                    RoomId = 3827,
-                    PriorityOrder = 3,
-                    AllowSignIn = true,
-                    Capacity = 10,
-                    RoomName = "Test Room 2",
-                    SignedIn = 9,
-                    CheckedIn = 0
-                }
-            };
-
-            //DateTime currentMpEventDtoStartTime = new DateTime(2016, 12, 1, 9, 0, 0);
-
             MpEventDto currentMpServiceEventDto = new MpEventDto
             {
                 EventId = 321,
@@ -487,7 +422,6 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
-            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(mpBumpingRooms);
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
@@ -591,7 +525,6 @@ namespace SignInCheckIn.Tests.Services
             _eventService.Setup(m => m.CheckEventTimeValidity(participantEventMapDto.CurrentEvent)).Returns(true);
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId)).Returns(mpEventGroupDtos);
             _groupRepository.Setup(m => m.GetGroup(null, 2, false)).Returns((MpGroupDto)null);
-            _roomRepository.Setup(m => m.GetBumpingRoomsForEventRoom(321, 153234)).Returns(new List<MpBumpingRoomsDto>());
             _childSigninRepository.Setup(m => m.CreateEventParticipants(It.IsAny<List<MpEventParticipantDto>>())).Returns(mpEventParticipantDtos);
             _participantRepository.Setup(m => m.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _participantRepository.Setup(m => m.GetEventParticipantsByEventAndParticipant(It.IsAny<int>(), It.IsAny<List<int>>())).Returns(new List<MpEventParticipantDto>());
@@ -1273,7 +1206,6 @@ namespace SignInCheckIn.Tests.Services
         public void ShouldReprintEventParticipantTag()
         {
             var token = "abcd";
-            var kioskId = "1a11a1a1-a11a-1a1a-11a1-a111a111a11a";
 
             var participant = new MpEventParticipantDto
             {
@@ -1439,7 +1371,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldMarkDuplicateSigninsACEvent()
+        public void ShouldMarkDuplicateSigninsAcEvent()
         {
             // Arrange
             List<MpEventDto> eventDtos = new List<MpEventDto>
@@ -1496,7 +1428,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldNotMarkDuplicateSigninsACEvent()
+        public void ShouldNotMarkDuplicateSigninsAcEvent()
         {
             // Arrange
             List<MpEventDto> eventDtos = new List<MpEventDto>
@@ -1525,15 +1457,6 @@ namespace SignInCheckIn.Tests.Services
                         ParticipantId = 4455544,
                         DuplicateSignIn = false
                     }
-                }
-            };
-
-            List<MpEventParticipantDto> mpEventParticipantDtos = new List<MpEventParticipantDto>
-            {
-                new MpEventParticipantDto
-                {
-                    EventId = 7654321,
-                    ParticipantId = 4455544
                 }
             };
 
@@ -1728,7 +1651,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldNotFilterKCParticipants()
+        public void ShouldNotFilterKcParticipants()
         {
             // Arrange
             var phoneNumber = "555-555-5555";
@@ -1753,7 +1676,7 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
-        public void ShouldNotFilterKCParticipantsNullEvent()
+        public void ShouldNotFilterKcParticipantsNullEvent()
         {
             // Arrange
             var phoneNumber = "555-555-5555";
@@ -1808,7 +1731,6 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
-            var kioskTypeId = 4; // MSM kiosk type
             const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var msmGroupsIds = new List<int>
@@ -1842,7 +1764,6 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
-            var kioskTypeId = 4; // MSM kiosk type
             const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var hsmGroupsIds = new List<int>
@@ -1877,7 +1798,6 @@ namespace SignInCheckIn.Tests.Services
             // Arrange
             var phoneNumber = "555-555-5555";
             var siteId = 8;
-            var kioskTypeId = 4; // MSM kiosk type
             const string kioskId = "504c73c1-d664-4ccd-964e-e008e7ce2635";
 
             var mpKioskConfig = new MpKioskConfigDto

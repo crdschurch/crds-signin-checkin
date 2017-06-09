@@ -135,6 +135,7 @@
     <Compile Include="Models\DTO\MpConfigDto.cs" />
     <Compile Include="Models\DTO\MpCountyDto.cs" />
     <Compile Include="Models\DTO\MpAddressDto.cs" />
+    <Compile Include="Models\DTO\MpLocationDto.cs" />
     <Compile Include="Models\DTO\MpStateDto.cs" />
     <Compile Include="Models\DTO\MpEventParticipantDto.cs" />
     <Compile Include="Models\DTO\MpGroupAttributeDto.cs" />
@@ -172,14 +173,12 @@
     <Compile Include="Repositories\Interfaces\IContactRepository.cs" />
     <Compile Include="Repositories\Interfaces\IEventRepository.cs" />
     <Compile Include="Repositories\Interfaces\IGroupLookupRepository.cs" />
-    <Compile Include="Repositories\Interfaces\ISiteRepository.cs" />
     <Compile Include="Repositories\Interfaces\IGroupRepository.cs" />
     <Compile Include="Repositories\Interfaces\IKioskRepository.cs" />
     <Compile Include="Repositories\Interfaces\IParticipantRepository.cs" />
     <Compile Include="Repositories\Interfaces\IRoomRepository.cs" />
     <Compile Include="Repositories\KioskRepository.cs" />
     <Compile Include="Repositories\ParticipantRepository.cs" />
-    <Compile Include="Repositories\SiteRepository.cs" />
     <Compile Include="Repositories\RoomRepository.cs" />
   </ItemGroup>
   <ItemGroup>
