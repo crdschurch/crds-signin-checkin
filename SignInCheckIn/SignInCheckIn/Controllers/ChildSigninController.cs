@@ -226,7 +226,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(int))]
         [VersionedRoute(template: "signin/newfamily", minimumVersion: "1.0.0")]
         [Route("signin/newfamily")]
-        public IHttpActionResult CreateNewFamily(NewFamilyDto newFamilyDto)
+        public IHttpActionResult CreateNewFamily(List<NewParentDto> newParents)
         {
             return Authorized(token =>
             {
@@ -250,9 +250,9 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    var participants = _childSigninService.CreateNewFamily(token, newFamilyDto, kioskIdentifier);
-
-                    PublishSignedInParticipantsToRooms(participants);
+                    var participants = _childSigninService.CreateNewFamily(token, newParents, kioskIdentifier);
+                    //TODO: Figure out if this still needs to be in here for the websockets stuff
+                    //PublishSignedInParticipantsToRooms(participants);
                     return Ok();
                 }
                 catch (Exception e)
@@ -267,7 +267,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(int))]
         [VersionedRoute(template: "signin/family/member", minimumVersion: "1.0.0")]
         [Route("signin/family/member")]
-        public IHttpActionResult AddNewFamilyMember(ContactDto newFamilyContactDto)
+        public IHttpActionResult AddNewFamilyMember(List<ContactDto> newFamilyContactDtos)
         {
             return Authorized(token =>
             {
@@ -291,13 +291,15 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                   var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
-                       newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
-                    var newParticipants = new List<MpNewParticipantDto>()
-                    {
-                        participant
-                    };
+                   var newParticipants = _childSigninService.AddFamilyMembers(token, newFamilyContactDtos);
                     _childSigninService.CreateGroupParticipants(token, newParticipants);
+                    //var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
+                    //    newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
+                    // var newParticipants = new List<MpNewParticipantDto>()
+                    // {
+                    //     participant
+                    // };
+                    // _childSigninService.CreateGroupParticipants(token, newParticipants);
                     return Ok();
                 }
                 catch (Exception e)

@@ -12,8 +12,9 @@ namespace SignInCheckIn.Services.Interfaces
         ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto, bool allowLateSignIn = false);
         ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier, string token);
         ParticipantEventMapDto PrintParticipants(ParticipantEventMapDto participantEventMapDto, string kioskIdentifier);
-        ParticipantEventMapDto CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier);
-        List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto);
+        List<ContactDto> CreateNewFamily(string token, List<NewParentDto> newParentDtos, string kioskIdentifier);
+        List<MpNewParticipantDto> AddFamilyMembers(string token, List<ContactDto> newContacts);
+        //List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto);
         List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto, int kisokTypeId, bool allowLateSignin = false);
         MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName, DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds, int? genderId = 0);
         bool ReverseSignin(string token, int eventParticipantId);

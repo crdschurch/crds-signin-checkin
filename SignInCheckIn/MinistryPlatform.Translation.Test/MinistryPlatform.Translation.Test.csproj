@@ -159,6 +159,7 @@
     <Compile Include="Extensions\MpEventGroupDtoExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\AttributeRepositoryTest.cs" />
+    <Compile Include="Repositories\ContactRepositoryTest.cs" />
     <Compile Include="Repositories\LookupRepositoryTest.cs" />
     <Compile Include="Repositories\EventRepositoryTest.cs" />
     <Compile Include="Repositories\GroupRepositoryTest.cs" />

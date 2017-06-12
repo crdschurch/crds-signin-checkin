@@ -60,6 +60,8 @@ namespace Crossroads.Utilities.Services
         public int ChildcareEventTypeId { get; }
         public int ChildcareGroupTypeId { get; }
 
+        public int ChildOfRelationshipId { get; }
+
         public int KcJan0To1 { get; }
         public int KcJan1To2 { get; }
         public int KcJan2To3 { get; }
@@ -355,6 +357,8 @@ namespace Crossroads.Utilities.Services
 
             ChildcareEventTypeId = configurationWrapper.GetConfigIntValue("ChildcareEventTypeId");
             ChildcareGroupTypeId = configurationWrapper.GetConfigIntValue("ChildcareGroupTypeId");
+
+            ChildOfRelationshipId = configurationWrapper.GetConfigIntValue("ChildOfRelationshipId");
 
             // kc groups - January Birth Months
             KcJan0To1 = configurationWrapper.GetConfigIntValue("Jan_0-1");
