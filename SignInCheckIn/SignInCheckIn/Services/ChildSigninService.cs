@@ -578,10 +578,10 @@ namespace SignInCheckIn.Services
             return parentContactDtos;
         }
 
-        public List<MpNewParticipantDto> AddFamilyMembers(string token, List<ContactDto> newContacts)
+        public List<MpNewParticipantDto> AddFamilyMembers(string token, int householdId, List<ContactDto> newContacts)
         {
             // get the adult contacts on the household to create the parent-child relationships
-            var headsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(newContacts[0].HouseholdId);
+            var headsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId);
 
             // create the children contacts
             List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
@@ -592,7 +592,7 @@ namespace SignInCheckIn.Services
                                                 childContactDto.LastName,
                                                 childContactDto.DateOfBirth,
                                                 childContactDto.YearGrade,
-                                                childContactDto.HouseholdId,
+                                                householdId,
                                                 _applicationConfiguration.MinorChildId
                     );
 
@@ -690,7 +690,6 @@ namespace SignInCheckIn.Services
         // this really can just return void, but we need to get the grade group id on the mp new participant dto
         public List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
         {
-            // Step 4 - create the group participants
             List<MpGroupParticipantDto> groupParticipantDtos = new List<MpGroupParticipantDto>();
 
             foreach (var tempItem in mpParticipantDtos)

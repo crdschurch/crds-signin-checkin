@@ -265,9 +265,9 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(int))]
-        [VersionedRoute(template: "signin/family/member", minimumVersion: "1.0.0")]
-        [Route("signin/family/member")]
-        public IHttpActionResult AddNewFamilyMember(List<ContactDto> newFamilyContactDtos)
+        [VersionedRoute(template: "signin/family/{householdid}/member", minimumVersion: "1.0.0")]
+        [Route("signin/family/{householdid}/member")]
+        public IHttpActionResult AddNewFamilyMember([FromUri(Name = "householdid")] int householdId, List<ContactDto> newFamilyContactDtos)
         {
             return Authorized(token =>
             {
@@ -291,7 +291,7 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                   var newParticipants = _childSigninService.AddFamilyMembers(token, newFamilyContactDtos);
+                   var newParticipants = _childSigninService.AddFamilyMembers(token, householdId, newFamilyContactDtos);
                     _childSigninService.CreateGroupParticipants(token, newParticipants);
                     //var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
                     //    newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);

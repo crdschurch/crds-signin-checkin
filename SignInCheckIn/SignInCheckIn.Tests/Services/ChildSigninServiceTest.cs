@@ -2174,5 +2174,111 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             Assert.IsNotNull(result[0].HouseholdId);
         }
+
+        [Test]
+        public void ShouldCreateGroupParticipantsForAgeGroup()
+        {
+            // Arrange
+            string token = "123abc";
+            int groupId = 173440;
+
+            var mpNewParticipantDtos = new List<MpNewParticipantDto>
+            {
+                new MpNewParticipantDto
+                {
+                    ContactId = 5544555,
+                    Contact = new MpContactDto
+                    {
+                        DateOfBirth = new DateTime(2015, 06, 06, 00, 00, 00)
+                    },
+                    GradeGroupAttributeId = null
+                }
+            };
+
+            var newMpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                new MpGroupParticipantDto
+                {
+                    GroupId = 173440
+                }
+            };
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(It.IsAny<DateTime>(), null)).Returns(groupId);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(token, It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
+
+            // Act
+            var result = _fixture.CreateGroupParticipants(token, mpNewParticipantDtos);
+
+            // Assert
+            Assert.AreEqual(173440, result[0].GroupId);
+        }
+
+        [Test]
+        public void ShouldCreateGroupParticipantsForGradeGroup()
+        {
+            // Arrange
+            string token = "123abc";
+            int gradeGroupAttributeId = 173550;
+
+            var mpNewParticipantDtos = new List<MpNewParticipantDto>
+            {
+                new MpNewParticipantDto
+                {
+                    ContactId = 5544555,
+                    Contact = new MpContactDto
+                    {
+                        DateOfBirth = new DateTime(2010, 06, 06, 00, 00, 00)
+                    },
+                    GradeGroupAttributeId = gradeGroupAttributeId
+                }
+            };
+
+            var newMpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                new MpGroupParticipantDto
+                {
+                    GroupId = 173550
+                }
+            };
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(It.IsAny<DateTime>(), null)).Returns(gradeGroupAttributeId);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(token, It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
+
+            // Act
+            var result = _fixture.CreateGroupParticipants(token, mpNewParticipantDtos);
+
+            // Assert
+            Assert.AreEqual(173550, result[0].GroupId);
+        }
+
+        //[Test]
+        //public void ShouldCreateNewHousehold()
+        //{
+        //    // Arrange
+        //    string token = "123abc";
+        //    string kioskIdentifier = "kiosk";
+
+        //    var newParents = new List<NewParentDto>
+        //    {
+        //        new NewParentDto
+        //        {
+        //            LastName = "testlast",
+        //            PhoneNumber = "555-555-5555",
+        //            CongregationId = 1
+        //        }
+        //    };
+
+        //    //var mpHouseholdDto = new MpHouseholdDto
+        //    //{
+
+        //    //};
+
+        //    // Act
+        //    var result = _fixture.CreateNewFamily(token, newParents, kioskIdentifier);
+
+
+        //    // Assert
+        //    Assert.AreEqual(1, result[0].HouseholdId);
+        //}
     }
 }
