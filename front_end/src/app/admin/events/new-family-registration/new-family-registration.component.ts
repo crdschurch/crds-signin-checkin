@@ -41,10 +41,16 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   setUp() {
-   this.processing = false;
-   this.submitted = false;
-   this.eventId = this.route.snapshot.params['eventId'];
-   this.parents = [this.newParent()];
+    this.processing = false;
+    this.submitted = false;
+    this.eventId = this.route.snapshot.params['eventId'];
+    this.parents = [this.newParent()];
+
+    this.apiService.getEvent(this.eventId).subscribe((event) => {
+        this.headerService.announceEvent(event);
+      },
+      error => console.error(error)
+    );
   }
 
   get maleGenderId(): number {

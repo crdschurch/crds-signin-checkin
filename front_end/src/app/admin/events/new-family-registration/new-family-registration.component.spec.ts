@@ -43,24 +43,10 @@ describe('NewFamilyRegistrationComponent', () => {
   });
   it('#setUp', () => {
     fixture.setUp();
-    expect(fixture.family).toBeDefined();
-    expect(fixture.family.parent).toBeDefined(1);
-    expect(fixture.family.children.length).toEqual(1);
+    expect(fixture.parents).toBeDefined(2);
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
     expect(apiService.getEvent).toHaveBeenCalledWith(event.EventId);
-    expect(apiService.getGradeGroups).toHaveBeenCalled();
     expect(headerService.announceEvent).toHaveBeenCalledWith(event);
-  });
-  it('#onSubmit should not submit form with a missing child DOB', () => {
-    let form = {
-      pristine: false,
-      valid: true
-    };
-    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
-    // this child has no DOB
-    fixture.family.children[2] = new Child();
-    fixture.onSubmit(form);
-    expect(adminService.createNewFamily).not.toHaveBeenCalled();
   });
   it('#onSubmit success', () => {
     let form = {
