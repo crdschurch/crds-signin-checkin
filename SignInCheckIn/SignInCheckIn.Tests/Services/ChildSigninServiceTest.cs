@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web.Http;
+using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using FluentAssertions.Common;
 using MinistryPlatform.Translation.Models.DTO;
@@ -1972,6 +1973,174 @@ namespace SignInCheckIn.Tests.Services
             var result = _fixture.CheckEventTimeValidity(mpEventDto, true);
 
             Assert.AreEqual(result, true);
+        }
+
+        [Test]
+        public void GetEventsForSigninNoLateCheckin()
+        {
+            var firstEvent = new EventDto
+            {
+                EventId = 234,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(0),
+                EventEndDate = DateTime.Now.AddHours(1),
+            };
+            var secondEvent = new EventDto
+            {
+                EventId = 2345,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(1),
+                EventEndDate = DateTime.Now.AddHours(2),
+            };
+            var secondEventAc = new EventDto
+            {
+                ParentEventId = 2345,
+                EventId = 23456,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(1),
+                EventEndDate = DateTime.Now.AddHours(2),
+            };
+            var thirdEvent = new EventDto
+            {
+                EventId = 234567,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(2),
+                EventEndDate = DateTime.Now.AddHours(3),
+            };
+            var dayEvents = new List<MpEventDto>
+            {
+                Mapper.Map<EventDto, MpEventDto>(firstEvent),
+                Mapper.Map<EventDto, MpEventDto>(thirdEvent),
+                Mapper.Map<EventDto, MpEventDto>(secondEvent),
+                Mapper.Map<EventDto, MpEventDto>(secondEventAc)
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = firstEvent
+            };
+            var kioskTypeId = 1;
+            var allowLateSignin = false;
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<List<int>>(), It.IsAny<bool>())).Returns(dayEvents);
+
+            var result = _fixture.GetEventsForSignin(participantEventMapDto, kioskTypeId, allowLateSignin);
+
+            Assert.AreEqual(result[0].EventId, firstEvent.EventId);
+            Assert.AreEqual(result[1].EventId, secondEvent.EventId);
+            Assert.AreEqual(result[2].EventId, secondEventAc.EventId);
+        }
+
+        [Test]
+        public void GetEventsForSigninLateCheckinForCurrentEvent()
+        {
+            var firstEvent = new EventDto
+            {
+                EventId = 234,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(0),
+                EventEndDate = DateTime.Now.AddHours(1),
+            };
+            var secondEvent = new EventDto
+            {
+                EventId = 2345,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(1),
+                EventEndDate = DateTime.Now.AddHours(2),
+            };
+            var secondEventAc = new EventDto
+            {
+                ParentEventId = 2345,
+                EventId = 23456,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(1),
+                EventEndDate = DateTime.Now.AddHours(2),
+            };
+            var thirdEvent = new EventDto
+            {
+                EventId = 234567,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(2),
+                EventEndDate = DateTime.Now.AddHours(3),
+            };
+            var dayEvents = new List<MpEventDto>
+            {
+                Mapper.Map<EventDto, MpEventDto>(firstEvent),
+                Mapper.Map<EventDto, MpEventDto>(thirdEvent),
+                Mapper.Map<EventDto, MpEventDto>(secondEvent),
+                Mapper.Map<EventDto, MpEventDto>(secondEventAc)
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = firstEvent
+            };
+            var kioskTypeId = 1;
+            var allowLateSignin = true;
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<List<int>>(), It.IsAny<bool>())).Returns(dayEvents);
+
+            var result = _fixture.GetEventsForSignin(participantEventMapDto, kioskTypeId, allowLateSignin);
+
+            Assert.AreEqual(result[0].EventId, firstEvent.EventId);
+            Assert.AreEqual(result[1].EventId, secondEvent.EventId);
+            Assert.AreEqual(result[2].EventId, secondEventAc.EventId);
+        }
+
+        [Test]
+        public void GetEventsForSigninLateCheckinForFutureEvent()
+        {
+            var firstEvent = new EventDto
+            {
+                EventId = 234,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(0),
+                EventEndDate = DateTime.Now.AddHours(1),
+            };
+            var secondEvent = new EventDto
+            {
+                EventId = 2345,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(1),
+                EventEndDate = DateTime.Now.AddHours(2),
+            };
+            var secondEventAc = new EventDto
+            {
+                ParentEventId = 2345,
+                EventId = 23456,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(1),
+                EventEndDate = DateTime.Now.AddHours(2),
+            };
+            var thirdEvent = new EventDto
+            {
+                EventId = 234567,
+                EventTypeId = KidsClubEventTypeId,
+                EventStartDate = DateTime.Now.AddHours(2),
+                EventEndDate = DateTime.Now.AddHours(3),
+            };
+            var dayEvents = new List<MpEventDto>
+            {
+                Mapper.Map<EventDto, MpEventDto>(firstEvent),
+                Mapper.Map<EventDto, MpEventDto>(thirdEvent),
+                Mapper.Map<EventDto, MpEventDto>(secondEvent),
+                Mapper.Map<EventDto, MpEventDto>(secondEventAc)
+            };
+
+            var participantEventMapDto = new ParticipantEventMapDto
+            {
+                CurrentEvent = secondEvent
+            };
+            var kioskTypeId = 1;
+            var allowLateSignin = true;
+
+            _eventRepository.Setup(m => m.GetEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<List<int>>(), It.IsAny<bool>())).Returns(dayEvents);
+
+            var result = _fixture.GetEventsForSignin(participantEventMapDto, kioskTypeId, allowLateSignin);
+
+            Assert.AreEqual(result[0].EventId, secondEvent.EventId);
+            Assert.AreEqual(result[1].EventId, secondEventAc.EventId);
+            Assert.AreEqual(result[2].EventId, thirdEvent.EventId);
         }
 
         private EventDto GetTestEvent(int siteId, int eventTypeId)
