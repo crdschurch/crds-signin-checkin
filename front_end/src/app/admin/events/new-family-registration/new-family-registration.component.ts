@@ -4,12 +4,13 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { NewFamily, NewParent, NewChild, Group } from '../../../shared/models';
+import { NewParent, NewChild } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
-import { ApiService, RootService } from '../../../shared/services';
+import { ApiService, RootService, SetupService } from '../../../shared/services';
 import { HeaderService } from '../../header/header.service';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
   styleUrls: ['new-family-registration.component.scss'],
@@ -20,11 +21,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
   private maskDate: any = [/[0-1]/, /[0-9]/, '/', /[0-3]/, /\d/, '/', /[1,2]/, /[0,9]/, /[0,1,2,8,9]/, /\d/];
   private eventId: string;
-  private family: NewFamily;
-  private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  numberOfKidsSelection: any = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
+  private parents: Array<NewParent> = [];
+  private numberOfParents = 1;
   numberOfParentsSelection: any = Array.apply(null, {length: 2}).map(function (e, i) { return i + 1; }, Number);
 
   constructor(
@@ -33,6 +33,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
     private headerService: HeaderService,
     private adminService: AdminService,
     private rootService: RootService,
+    private setupService: SetupService,
     private router: Router) {}
 
   ngOnInit() {
@@ -43,50 +44,29 @@ export class NewFamilyRegistrationComponent implements OnInit {
    this.processing = false;
    this.submitted = false;
    this.eventId = this.route.snapshot.params['eventId'];
-   this.family = new NewFamily();
-   this.family.parents = [this.newParent()];
-   this.family.children = [this.newChild()];
-   this.family.numberOfKids = 1;
-
-   this.apiService.getEvent(this.eventId).subscribe((event) => {
-        this.family.event = event;
-        this.headerService.announceEvent(event);
-        this.apiService.getGradeGroups(this.eventId).subscribe((groups) => {
-            this.gradeGroups = groups;
-          },
-          error => console.error(error)
-        );
-      },
-      error => console.error(error)
-    );
+   this.parents = [this.newParent()];
   }
 
-  updateNumberOfKids(): void {
-    let tmpChildren: Array<NewChild> = [];
+  get maleGenderId(): number {
+    return NewParent.genderIdMale();
+  }
 
-    for (let i = 0; i < this.family.numberOfKids; i++) {
-      if (this.family.children[i] === undefined) {
-        tmpChildren.push(this.newChild());
-      } else {
-        tmpChildren.push(this.family.children[i]);
-      }
-    }
-
-    this.family.children = tmpChildren;
+  get femaleGenderId(): number {
+    return NewParent.genderIdFemale();
   }
 
   updateNumberOfParents(): void {
     let tmpParents: Array<NewParent> = [];
 
-    for (let i = 0; i < this.family.numberOfParents; i++) {
-      if (this.family.parents[i] === undefined) {
+    for (let i = 0; i < this.numberOfParents; i++) {
+      if (this.parents[i] === undefined) {
         tmpParents.push(this.newParent());
       } else {
-        tmpParents.push(this.family.parents[i]);
+        tmpParents.push(this.parents[i]);
       }
     }
 
-    this.family.parents = tmpParents;
+    this.parents = tmpParents;
   }
 
   needGradeLevel(child: NewChild): boolean {
@@ -116,15 +96,15 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   onSubmit(form: NgForm) {
-    // ensure all children have birthdates
-    // https://rally1.rallydev.com/#/27593764268d/detail/defect/100109967564
-    if (!this.family.allChildrenHaveBirthdays()) {
-      return;
-    }
     this.submitted = true;
     if (!form.pristine && form.valid) {
       this.processing = true;
-      this.adminService.createNewFamily(this.family).subscribe((res) => {
+
+      _.forEach(this.parents, (parent: NewParent): void => {
+        parent.CongregationId = this.setupService.getMachineDetailsConfigCookie().CongregationId;
+      });
+
+      this.adminService.createNewFamily(this.parents).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();
         setTimeout(() => {
@@ -148,7 +128,4 @@ export class NewFamilyRegistrationComponent implements OnInit {
     return new NewParent();
   }
 
-  private newChild(): NewChild {
-    return new NewChild();
-  }
 }

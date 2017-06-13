@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { EventParticipants, Room, NewFamily, Child, Group, Contact, Household, State, Country } from '../shared/models';
+import { EventParticipants, Room, Child, Group, Contact, Household, State, Country, NewParent } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -59,9 +59,9 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  createNewFamily(family: NewFamily) {
+  createNewFamily(parents: Array<NewParent>) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`;
-    return this.http.post(url, family).map(res => { return res; }).catch(this.handleError);
+    return this.http.post(url, parents).map(res => { return res; }).catch(this.handleError);
   }
 
   getChildrenForEvent(eventId: number, searchString?: string) {

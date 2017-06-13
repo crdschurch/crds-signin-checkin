@@ -15,50 +15,62 @@
           <div class="row">
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
-                <label for="numberOfParents" class="control-label">Number of Parents/Guardians</label>
-                <select class="form-control" name="numberOfParents" [(ngModel)]="family.numberOfParents" (change)="updateNumberOfParents()">
-                  <option *ngFor="let num of numberOfParentsSelection" [attr.selected]="family.numberOfParents == num">{{num}}</option>
+                <label for="numberOfParents" id="numberOfParents" class="control-label">Number of Parents/Guardians</label>
+                <select class="form-control" name="numberOfParents" [(ngModel)]="numberOfParents" (change)="updateNumberOfParents()">
+                  <option *ngFor="let num of numberOfParentsSelection" [attr.selected]="numberOfParents == num">{{num}}</option>
                 </select>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="col-xs-12 mb-2" *ngFor="let parent of family.parents, let i = index;">
+        <div class="col-xs-12 mb-2" *ngFor="let parent of parents, let i = index;">
           <h4 *ngIf="i > 0">Parent/Guardian {{i + 1}}</h4>
 
           <div class="row">
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
-                <label for="firstName" class="control-label">First Name</label>
-                <input type="text" class="form-control" [(ngModel)]="family.parents[i].FirstName" name="firstName" #firstName="ngModel"
+                <label for="firstName" id="firstName" class="control-label">First Name</label>
+                <input type="text" class="form-control" [(ngModel)]="parents[i].FirstName" name="firstName" #firstName="ngModel"
                   required>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
-                <label for="lastName" class="control-label">Last Name</label>
-                <input type="text" class="form-control" [(ngModel)]="family.parents[i].LastName" name="lastName" #lastName="ngModel"
+                <label for="lastName" id="lastName" class="control-label">Last Name</label>
+                <input type="text" class="form-control" [(ngModel)]="parents[i].LastName" name="lastName" #lastName="ngModel"
                   required>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required">
-                <label for="phoneNumber" class="control-label">Phone Number</label>
-                <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="family.parents[i].PhoneNumber" name="phoneNumber" #phoneName="ngModel"
-                  (blur)="onPhoneBlur($event, family.parents[i])" required>
+                <label for="phoneNumber" id="phoneNumber" class="control-label">Phone Number</label>
+                <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="parents[i].PhoneNumber" name="phoneNumber" #phoneName="ngModel"
+                  (blur)="onPhoneBlur($event, parents[i])" required>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
-              <div class="form-group required">
+              <div class="form-group">
                 <label for="emailAddress" class="control-label">Email</label>
-                <input type="email" class="form-control" [(ngModel)]="family.parents[i].EmailAddress" name="emailAddress" required>
+                <input type="email" id="emailAddress" class="form-control" [(ngModel)]="parents[i].EmailAddress" name="emailAddress">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
-              <div class="form-group required">
+              <div class="form-group">
                 <label for="gender" class="control-label">Gender</label>
-                <input type="gender" class="form-control" [(ngModel)]="family.parents[i].Gender" name="gender" required>
+
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio2" value="{{femaleGenderId}}" [checked]="parents[i].isFemale()" (change)="parents[i].GenderId = femaleGenderId">
+                    Female
+                  </label>
+                </div>
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio1" value="{{maleGenderId}}" [checked]="parents[i].isMale()" (change)="parents[i].GenderId = maleGenderId">
+                    Male
+                  </label>
+                </div>
               </div>
             </div>
           </div>
