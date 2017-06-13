@@ -253,7 +253,7 @@ namespace SignInCheckIn.Controllers
                     var participants = _childSigninService.CreateNewFamily(token, newParents, kioskIdentifier);
                     //TODO: Figure out if this still needs to be in here for the websockets stuff
                     //PublishSignedInParticipantsToRooms(participants);
-                    return Ok();
+                    return Ok(participants);
                 }
                 catch (Exception e)
                 {

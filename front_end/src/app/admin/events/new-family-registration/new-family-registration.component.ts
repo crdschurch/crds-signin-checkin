@@ -101,7 +101,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
   }
 
-  onSubmit(form: NgForm) {
+  onSubmit(form: NgForm, editMode = false) {
     this.submitted = true;
     if (!form.pristine && form.valid) {
       this.processing = true;
@@ -113,9 +113,15 @@ export class NewFamilyRegistrationComponent implements OnInit {
       this.adminService.createNewFamily(this.parents).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();
-        setTimeout(() => {
-          this.setUp();
-        });
+
+        // let householdId = res.householdId;
+        let householdId = 5781623;
+
+        if (editMode) {
+          this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId, 'edit']);
+        } else {
+          this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId]);
+        }
       }, (error) => {
         switch (error.status) {
           case 412:
