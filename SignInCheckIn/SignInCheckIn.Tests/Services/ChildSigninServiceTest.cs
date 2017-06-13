@@ -2166,6 +2166,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(new MpContactDto());
             _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
 
             // Act
