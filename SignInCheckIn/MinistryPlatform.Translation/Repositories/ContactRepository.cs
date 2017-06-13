@@ -78,5 +78,25 @@ namespace MinistryPlatform.Translation.Repositories
  
              _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(contactRelationshipDtos, columnList);
          }
+
+        public MpContactDto GetContactById(string token, int contactId)
+        {
+            var contactColumnList = new List<string>
+            {
+                "Contact_ID",
+                "Contacts.Household_ID",
+                "Contacts.Household_Position_ID",
+                "Household_ID_Table.Home_Phone",
+                "Contacts.Household_ID",
+                "Mobile_Phone",
+                "Nickname",
+                "Last_Name"
+            };
+
+            var contact = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                .Search<MpContactDto>($"Contacts.Contact_ID={contactId}", contactColumnList).FirstOrDefault();
+
+            return contact;
+        }
     }
 }

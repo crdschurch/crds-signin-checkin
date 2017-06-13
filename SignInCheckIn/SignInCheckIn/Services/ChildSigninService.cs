@@ -571,8 +571,9 @@ namespace SignInCheckIn.Services
                     }
                 };
 
-                var newMpContactDto = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token).Contact;
-                parentContactDtos.Add(Mapper.Map<ContactDto>(newMpContactDto));
+                var newParticipant = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
+                var newContact = _contactRepository.GetContactById(token, newParticipant.ContactId.GetValueOrDefault());
+                parentContactDtos.Add(Mapper.Map<ContactDto>(newContact));
             }
 
             return parentContactDtos;

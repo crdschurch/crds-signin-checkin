@@ -97,7 +97,6 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contact_ID_Table.[Contact_ID] AS [Participant_Contact_ID]"
             };
 
-
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
         }
 
