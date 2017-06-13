@@ -90,7 +90,9 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contacts.Household_ID",
                 "Mobile_Phone",
                 "Nickname",
-                "Last_Name"
+                "Last_Name",
+                "Email_Address",
+                "Gender_ID"
             };
 
             var contact = _ministryPlatformRestRepository.UsingAuthenticationToken(token)

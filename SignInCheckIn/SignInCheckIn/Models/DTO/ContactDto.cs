@@ -40,5 +40,7 @@ namespace SignInCheckIn.Models.DTO
         public string Address => $"{AddressLine1}, {City} {State}, {ZipCode}";
 
         public string CongregationName { get; set; }
+
+        public string EmailAddress { get; set; }
     }
 }

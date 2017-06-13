@@ -57,5 +57,8 @@ namespace MinistryPlatform.Translation.Models.DTO
         
         [JsonProperty(PropertyName = "Congregation_Name")]
         public string CongregationName { get; set; }
+
+        [JsonProperty(PropertyName = "Email_Address")]
+        public string EmailAddress { get; set; }
     }
 }
