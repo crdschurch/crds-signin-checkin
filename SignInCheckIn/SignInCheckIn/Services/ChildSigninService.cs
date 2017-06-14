@@ -686,23 +686,32 @@ namespace SignInCheckIn.Services
 
             // if admin type or event being signed into is not MSM, then we should exclude MSM event typse
             bool excludeIds = (kioskTypeId == 1 || !msmEventTypes.Contains(participantEventMapDto.CurrentEvent.EventTypeId));
-
+            
             dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, excludeIds)
                 .Where(r => CheckEventTimeValidity(r, allowLateSignin)).OrderBy(r => r.EventStartDate).ToList();
 
             var eligibleEvents = new List<MpEventDto>();
 
             // pull off (at most) the top 2 service events
-            var serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).Take(2).ToList();
+            List<MpEventDto> serviceEventSet;
+            if (allowLateSignin)
+            {
+                var currentEvent = dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId);
+                serviceEventSet = dailyEvents.Where(r => r.EventId == currentEvent.EventId || (r.EventStartDate >= currentEvent.EventStartDate && r.ParentEventId == null)).Take(2).ToList();
+            }
+            else
+            {
+                serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).Take(2).ToList();
+            }
 
             // we need to get first two event services, and then the matching ac events
-            for (int i = 0; i < serviceEventSet.Count; i++)
+            foreach (var serviceEvent in serviceEventSet)
             {
-                eligibleEvents.Add(serviceEventSet[i]);
+                eligibleEvents.Add(serviceEvent);
 
-                if (dailyEvents.Any(r => r.ParentEventId == serviceEventSet[i].EventId))
+                if (dailyEvents.Any(r => r.ParentEventId == serviceEvent.EventId))
                 {
-                    eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == serviceEventSet[i].EventId));
+                    eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == serviceEvent.EventId));
                 }
             }
 
