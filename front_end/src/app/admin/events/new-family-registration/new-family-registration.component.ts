@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { NewParent, NewChild } from '../../../shared/models';
+import { NewParent, NewChild, Contact } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { ApiService, RootService, SetupService } from '../../../shared/services';
 import { HeaderService } from '../../header/header.service';
@@ -114,8 +114,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();
 
-        // let householdId = res.householdId;
-        let householdId = 5781623;
+        let contacts = (<Contact[]>res.json()).map(r => Contact.fromJson(r));
+        let householdId = contacts[0].HouseholdId;
 
         if (editMode) {
           this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId, 'edit']);
