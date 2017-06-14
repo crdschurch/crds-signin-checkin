@@ -1,4 +1,5 @@
 export class NewParent {
+
   private static GENDER = {
     MALE: 1,
     FEMALE: 2
@@ -8,7 +9,7 @@ export class NewParent {
   LastName: string;
   PhoneNumber: string;
   EmailAddress: string;
-  GenderId: number;
+  GenderId: number = NewParent.GENDER.FEMALE;
   CongregationId: number;
 
   public static genderIdMale(): number {
