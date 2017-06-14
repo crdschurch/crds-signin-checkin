@@ -11,15 +11,15 @@
       <div class="row">
         <div class="col-sm-6">
           <div class="form-group">
+            <label for="search" class="control-label">Search</label>
             <div class="input-group child-search-input">
-              <label for="search" class="control-label">Search</label>
               <input #box type="text" id="search" class="form-control" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()">
               <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
               <span [hidden]="!box.value.length">&times;</span>
             </span>
               <button type="submit" class="btn btn-primary input-group-addon" (click)="onSearch()">Search</button>
             </div>
-            <div class="help-block">Search by <strong>Phone</strong> or <strong>Parent Last Name, First Name</strong> or <strong>Email</strong></div>
+            <div class="form-text text-muted small">Search by <strong>Phone</strong> or <strong>Parent Last Name, First Name</strong> or <strong>Email</strong></div>
           </div>
         </div>
         <div class="col-sm-6 text-sm-right">
