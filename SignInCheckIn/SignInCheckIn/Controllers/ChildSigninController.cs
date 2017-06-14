@@ -267,7 +267,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(int))]
         [VersionedRoute(template: "signin/family/{householdid}/member", minimumVersion: "1.0.0")]
         [Route("signin/family/{householdid}/member")]
-        public IHttpActionResult AddNewFamilyMember([FromUri(Name = "householdid")] int householdId, List<ContactDto> newFamilyContactDtos)
+        public IHttpActionResult AddNewFamilyMember([FromUri(Name = "householdid")] int householdId, [FromBody] ContactDto newFamilyContact)
         {
             return Authorized(token =>
             {
@@ -277,12 +277,12 @@ namespace SignInCheckIn.Controllers
                 if (Request.Headers.Contains("Crds-Kiosk-Identifier"))
                 {
                     kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
-                    var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
-                    // must be kiosk type admin and have a printer set up
-                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
-                    {
-                        throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
-                    }
+                    //var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
+                    //// must be kiosk type admin and have a printer set up
+                    //if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    //{
+                    //    throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
+                    //}
                 }
                 else
                 {
@@ -291,7 +291,12 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                   var newParticipants = _childSigninService.AddFamilyMembers(token, householdId, newFamilyContactDtos);
+                    List<ContactDto> newContacts = new List<ContactDto>
+                    {
+                        newFamilyContact
+                    };
+
+                    var newParticipants = _childSigninService.AddFamilyMembers(token, householdId, newContacts);
                     _childSigninService.CreateGroupParticipants(token, newParticipants);
                     //var participant = _childSigninService.CreateNewParticipantWithContact(newFamilyContactDto.FirstName, newFamilyContactDto.LastName, 
                     //    newFamilyContactDto.DateOfBirth, newFamilyContactDto.YearGrade, newFamilyContactDto.HouseholdId, _applicationConfiguration.MinorChildId, newFamilyContactDto.IsSpecialNeeds, newFamilyContactDto.GenderId);
