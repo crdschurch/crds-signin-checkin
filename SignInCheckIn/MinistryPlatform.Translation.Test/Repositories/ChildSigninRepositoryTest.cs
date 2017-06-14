@@ -548,7 +548,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
 	    private static string GetChildParticpantsByPrimaryHouseholdFilter(int householdId)
         {
-            return $"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2 and Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4";
+            return $"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = 2 and Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_Participants.[End_Date] IS NULL";
         }
 
         private static string GetChildParticpantsByOtherHouseholdFilter(int householdId)
@@ -558,7 +558,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
         private static string GetChildParticpantsByGroupFilter(string participantIds)
         {
-            return $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = 5 AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] IN (2, 34)";
+            return $"Participant_ID_Table.[Participant_ID] IN ({participantIds}) AND Group_ID_Table_Congregation_ID_Table.[Congregation_ID] = 5 AND Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = 4 AND Group_ID_Table_Ministry_ID_Table.[Ministry_ID] IN (2, 34) AND Group_Participants.[End_Date] IS NULL";
         }
     }
 }
