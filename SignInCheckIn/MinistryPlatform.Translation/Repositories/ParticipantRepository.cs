@@ -97,7 +97,6 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contact_ID_Table.[Contact_ID] AS [Participant_Contact_ID]"
             };
 
-
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
         }
 
@@ -274,7 +273,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var contacts = _ministryPlatformRestRepository.UsingAuthenticationToken(token).
-                 Search<MpContactDto>($"Contacts.[Display_Name] LIKE '%{search}%' AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns, "Contacts.Last_Name ASC, Contacts.Nickname ASC");
+                 Search<MpContactDto>($"(Contacts.[Display_Name] LIKE '%{search}%' OR Contacts.[Email_Address] = '{search}' OR Household_ID_Table.Home_Phone = '{search}' OR Contacts.[Mobile_Phone] = '{search}') AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns, "Contacts.Last_Name ASC, Contacts.Nickname ASC");
 
             return contacts;
         }

@@ -537,78 +537,84 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public ParticipantEventMapDto CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier)
-        {
-            var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
-            CreateGroupParticipants(token, newFamilyParticipants);
-
-            // note that the events are drawn from the context that the new family is being edited in - 
-            // i.e. if accessed via a KC event, the kids will be checked into KC, etc.
-            var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto, true);
-
-            // mark all as selected so they get signed in, but guard against an exception with no participants
-            if (participantEventMapDto.Participants.Any())
-            {
-                participantEventMapDto.Participants.ForEach(p => p.Selected = true);
-
-                // sign them all into a room
-                participantEventMapDto = SigninParticipants(participantEventMapDto, true);
-
-                // print labels
-                PrintParticipants(participantEventMapDto, kioskIdentifier);
-            }
-
-            return participantEventMapDto;
-        }
-
-        public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
+        public List<ContactDto> CreateNewFamily(string token, List<NewParentDto> newParentDtos, string kioskIdentifier)
         {
             // Step 1 - create the household
             MpHouseholdDto mpHouseholdDto = new MpHouseholdDto
             {
-                HouseholdName = newFamilyDto.ParentContactDto.LastName,
-                HomePhone = newFamilyDto.ParentContactDto.PhoneNumber,
-                CongregationId = newFamilyDto.EventDto.EventSiteId,
+                HouseholdName = newParentDtos.First(r => !string.IsNullOrEmpty(r.LastName)).LastName,
+                HomePhone = newParentDtos.First(r => !string.IsNullOrEmpty(r.PhoneNumber)).PhoneNumber,
+                CongregationId = newParentDtos.First().CongregationId, // could be set in the backend, too, based on the kiosk config
                 HouseholdSourceId = _applicationConfiguration.KidsClubRegistrationSourceId
             };
 
             mpHouseholdDto = _contactRepository.CreateHousehold(token, mpHouseholdDto);
 
-            // Step 2 - create the parent contact w/participant
-            MpNewParticipantDto parentNewParticipantDto = new MpNewParticipantDto
+            // Step 2 - create the parent contacts w/participants
+            List<ContactDto> parentContactDtos = new List<ContactDto>();
+
+            foreach (var parent in newParentDtos)
             {
-                ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
-                ParticipantStartDate = DateTime.Now,
-                Contact = new MpContactDto
+                MpNewParticipantDto parentNewParticipantDto = new MpNewParticipantDto
                 {
-                    FirstName = newFamilyDto.ParentContactDto.FirstName,
-                    Nickname = newFamilyDto.ParentContactDto.FirstName,
-                    LastName = newFamilyDto.ParentContactDto.LastName,
-                    DisplayName = newFamilyDto.ParentContactDto.LastName + ", " + newFamilyDto.ParentContactDto.FirstName,
-                    HouseholdId = mpHouseholdDto.HouseholdId,
-                    HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId,
-                    Company = false
-                }
-            };
+                    ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
+                    ParticipantStartDate = DateTime.Now,
+                    Contact = new MpContactDto
+                    {
+                        FirstName = parent.FirstName,
+                        Nickname = parent.FirstName,
+                        LastName = parent.LastName,
+                        EmailAddress = parent.EmailAddress,
+                        //GenderId = parent.GenderId,
+                        GenderId = 1,
+                        DisplayName = parent.LastName + ", " + parent.FirstName,
+                        HouseholdId = mpHouseholdDto.HouseholdId,
+                        HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId,
+                        Company = false
+                    }
+                };
 
-            // parentNewParticipantDto.Contact.DateOfBirth = null;
-            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
+                var newParticipant = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
+                var newContact = _contactRepository.GetContactById(token, newParticipant.ContactId.GetValueOrDefault());
+                parentContactDtos.Add(Mapper.Map<ContactDto>(newContact));
+            }
 
-            // Step 3 create the children contacts
+            return parentContactDtos;
+        }
+
+        public List<MpNewParticipantDto> AddFamilyMembers(string token, int householdId, List<ContactDto> newContacts)
+        {
+            // get the adult contacts on the household to create the parent-child relationships
+            var headsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId);
+
+            // create the children contacts
             List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
 
-            foreach (var childContactDto in newFamilyDto.ChildContactDtos)
+            foreach (var childContactDto in newContacts)
             {
                 var newParticipant = CreateNewParticipantWithContact(childContactDto.FirstName,
                                                 childContactDto.LastName,
                                                 childContactDto.DateOfBirth,
                                                 childContactDto.YearGrade,
-                                                mpHouseholdDto.HouseholdId,
+                                                householdId,
                                                 _applicationConfiguration.MinorChildId
                     );
 
                 mpNewChildParticipantDtos.Add(newParticipant);
 
+            }
+
+            foreach (var parent in headsOfHousehold)
+            {
+                List<MpContactRelationshipDto> mpContactRelationshipDtos = mpNewChildParticipantDtos.Select(item => new MpContactRelationshipDto
+                {
+                    ContactId = item.ContactId.GetValueOrDefault(),
+                    RelationshipId = _applicationConfiguration.ChildOfRelationshipId,
+                    RelatedContactId = parent.ContactId,
+                    StartDate = System.DateTime.Now
+                }).ToList();
+
+                _contactRepository.CreateContactRelationships(token, mpContactRelationshipDtos);
             }
 
             return mpNewChildParticipantDtos;
@@ -617,7 +623,6 @@ namespace SignInCheckIn.Services
         // this really can just return void, but we need to get the grade group id on the mp new participant dto
         public List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
         {
-            // Step 4 - create the group participants
             List<MpGroupParticipantDto> groupParticipantDtos = new List<MpGroupParticipantDto>();
 
             foreach (var tempItem in mpParticipantDtos)

@@ -133,6 +133,7 @@
     <Compile Include="Models\DTO\MpBumpingRoomsDto.cs" />
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
+    <Compile Include="Models\DTO\MpContactRelationshipDto.cs" />
     <Compile Include="Models\DTO\MpCountyDto.cs" />
     <Compile Include="Models\DTO\MpAddressDto.cs" />
     <Compile Include="Models\DTO\MpStateDto.cs" />

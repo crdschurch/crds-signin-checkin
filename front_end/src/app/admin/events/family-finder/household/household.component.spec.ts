@@ -80,15 +80,17 @@ describe('HouseholdComponent', () => {
         newContact.LastName = 'Jones';
         newContact.GenderId = 2;
         newContact.IsSpecialNeeds = false;
+        newContact.HouseholdId = householdId;
         fixture.contact = newContact;
         fixture.guestDOB = new DateOfBirth();
         fixture.guestDOB.month = 4;
         fixture.guestDOB.day = 4;
         fixture.guestDOB.year = moment().subtract(1, 'year').year();
+        fixture.household = householdId;
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(adminService.addFamilyMember).toHaveBeenCalledWith(newContact);
+        expect(adminService.addFamilyMember).toHaveBeenCalledWith(newContact, undefined);
       });
     });
     it('edits existing family member if valid form', () => {
@@ -98,6 +100,7 @@ describe('HouseholdComponent', () => {
       existingContact.GenderId = 2;
       existingContact.IsSpecialNeeds = false;
       existingContact.ContactId = 789;
+      existingContact.HouseholdId = householdId;
       fixture.contact = existingContact;
       fixture.guestDOB = new DateOfBirth();
       fixture.guestDOB.month = 4;

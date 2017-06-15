@@ -45,6 +45,7 @@ namespace SignInCheckIn.Tests.Services
         private static int MiddleSchoolEventTypeId = 402;
         private static int HighSchoolEventTypeId = 403;
         private static int KidsClubEventTypeId = 410; // huh?
+        private static int ChildOfRelationshipId = 5;
 
         [SetUp]
         public void SetUp()
@@ -91,6 +92,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesSixToEightEventTypeId).Returns(MiddleSchoolEventTypeId);
             _applicationConfiguration.SetupGet(m => m.StudentMinistryGradesNineToTwelveEventTypeId).Returns(HighSchoolEventTypeId);
             _applicationConfiguration.SetupGet(m => m.BigEventTypeId).Returns(BigEventTypeId);
+            _applicationConfiguration.SetupGet(m => m.ChildOfRelationshipId).Returns(ChildOfRelationshipId);
 
             _fixture = new ChildSigninService(_childSigninRepository.Object,_eventRepository.Object, 
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
@@ -1020,57 +1022,6 @@ namespace SignInCheckIn.Tests.Services
 
             // Assert
             _kioskRepository.VerifyAll();
-            _participantRepository.VerifyAll();
-            Assert.IsNotNull(result);
-        }
-
-        [Test]
-        public void ItShouldSaveNewFamilyData()
-        {
-            // Arrange
-            string token = "123abc";
-
-            EventDto eventDto = new EventDto
-            {
-                EventSiteId = 1
-            };
-
-            NewParentDto newParentDto = new NewParentDto
-            {
-                FirstName = "TestParentFirst",
-                LastName = "TestParentLast",
-                PhoneNumber = "123-456-7890"
-            };
-
-            List<NewChildDto> newChildDtos = new List<NewChildDto>
-            {
-                new NewChildDto
-                {
-                    DateOfBirth = new DateTime(2016, 12, 1, 00, 00, 00),
-                    FirstName = "TestChildFirst",
-                    LastName = "TestChildLast",
-                    YearGrade = 1
-                }
-            };
-
-            NewFamilyDto newFamilyDto = new NewFamilyDto
-            {
-                EventDto = eventDto,
-                ParentContactDto = newParentDto,
-                ChildContactDtos = newChildDtos
-            };
-
-            MpHouseholdDto mpHouseholdDto = new MpHouseholdDto();
-            MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
-
-            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), It.IsAny<string>())).Returns(newParticipantDto);
-
-            // Act
-            var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
-
-            // Assert
-            _contactRepository.VerifyAll();
             _participantRepository.VerifyAll();
             Assert.IsNotNull(result);
         }
@@ -2279,6 +2230,127 @@ namespace SignInCheckIn.Tests.Services
             };
 
             return groupParticipants;
+        }
+
+        [Test]
+        public void ShouldSaveNewFamily()
+        {
+            // Arrange
+            var token = "123abc";
+            var newFamilyDto = new NewFamilyDto();
+            var kioskId = "aaa";
+
+            var mpHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdId = 1234567
+            };
+
+            var newParentDtos = new List<NewParentDto>
+            {
+                new NewParentDto
+                {
+                    CongregationId = 1,
+                    FirstName = "first",
+                    LastName = "last",
+                    PhoneNumber = "555-555-0987"
+                }
+            };
+
+            var mpNewParticipantDtoFromRepo = new MpNewParticipantDto
+            {
+                FirstName = "first",
+                LastName = "last",
+                Contact = new MpContactDto
+                {
+                    HouseholdId = 1234567
+                }
+            };
+
+            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(new MpContactDto());
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
+
+            // Act
+            var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
+
+            // Assert
+            Assert.IsNotNull(result[0].HouseholdId);
+        }
+
+        [Test]
+        public void ShouldCreateGroupParticipantsForAgeGroup()
+        {
+            // Arrange
+            string token = "123abc";
+            int groupId = 173440;
+
+            var mpNewParticipantDtos = new List<MpNewParticipantDto>
+            {
+                new MpNewParticipantDto
+                {
+                    ContactId = 5544555,
+                    Contact = new MpContactDto
+                    {
+                        DateOfBirth = new DateTime(2015, 06, 06, 00, 00, 00)
+                    },
+                    GradeGroupAttributeId = null
+                }
+            };
+
+            var newMpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                new MpGroupParticipantDto
+                {
+                    GroupId = 173440
+                }
+            };
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(It.IsAny<DateTime>(), null)).Returns(groupId);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(token, It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
+
+            // Act
+            var result = _fixture.CreateGroupParticipants(token, mpNewParticipantDtos);
+
+            // Assert
+            Assert.AreEqual(173440, result[0].GroupId);
+        }
+
+        [Test]
+        public void ShouldCreateGroupParticipantsForGradeGroup()
+        {
+            // Arrange
+            string token = "123abc";
+            int gradeGroupAttributeId = 173550;
+
+            var mpNewParticipantDtos = new List<MpNewParticipantDto>
+            {
+                new MpNewParticipantDto
+                {
+                    ContactId = 5544555,
+                    Contact = new MpContactDto
+                    {
+                        DateOfBirth = new DateTime(2010, 06, 06, 00, 00, 00)
+                    },
+                    GradeGroupAttributeId = gradeGroupAttributeId
+                }
+            };
+
+            var newMpGroupParticipantDtos = new List<MpGroupParticipantDto>
+            {
+                new MpGroupParticipantDto
+                {
+                    GroupId = 173550
+                }
+            };
+
+            _groupLookupRepository.Setup(m => m.GetGroupId(It.IsAny<DateTime>(), null)).Returns(gradeGroupAttributeId);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(token, It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
+
+            // Act
+            var result = _fixture.CreateGroupParticipants(token, mpNewParticipantDtos);
+
+            // Assert
+            Assert.AreEqual(173550, result[0].GroupId);
         }
     }
 }
