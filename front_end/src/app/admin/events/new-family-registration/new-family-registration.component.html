@@ -61,13 +61,13 @@
 
                 <div class="form-check-inline">
                   <label class="form-check-label">
-                    <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio2" value="{{femaleGenderId}}" [checked]="parents[i].isFemale()" (change)="parents[i].GenderId = femaleGenderId">
+                    <input class="form-check-input" type="radio" name="{{ 'genderRadio' + i + 2 }}" id="{{ 'genderRadio' + i + 2 }}" value="{{femaleGenderId}}" [checked]="parents[i].isFemale()" (change)="parents[i].GenderId = femaleGenderId">
                     Female
                   </label>
                 </div>
                 <div class="form-check-inline">
                   <label class="form-check-label">
-                    <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio1" value="{{maleGenderId}}" [checked]="parents[i].isMale()" (change)="parents[i].GenderId = maleGenderId">
+                    <input class="form-check-input" type="radio" name="{{ 'genderRadio' + i + 1 }}" id="{{ 'genderRadio' + i + 1 }}" value="{{maleGenderId}}" [checked]="parents[i].isMale()" (change)="parents[i].GenderId = maleGenderId">
                     Male
                   </label>
                 </div>
