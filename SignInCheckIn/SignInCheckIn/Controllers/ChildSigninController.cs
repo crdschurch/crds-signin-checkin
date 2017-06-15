@@ -267,7 +267,7 @@ namespace SignInCheckIn.Controllers
         [ResponseType(typeof(int))]
         [VersionedRoute(template: "signin/family/{householdid}/member", minimumVersion: "1.0.0")]
         [Route("signin/family/{householdid}/member")]
-        public IHttpActionResult AddNewFamilyMember([FromUri(Name = "householdid")] int householdId, [FromBody] ContactDto newFamilyContact)
+        public IHttpActionResult AddNewFamilyMember([FromUri(Name = "householdid")] int householdId, [FromBody] List<ContactDto> newFamilyContacts)
         {
             return Authorized(token =>
             {
@@ -291,12 +291,12 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    List<ContactDto> newContacts = new List<ContactDto>
-                    {
-                        newFamilyContact
-                    };
+                    //List<ContactDto> newContacts = new List<ContactDto>
+                    //{
+                    //    newFamilyContact
+                    //};
 
-                    var newParticipants = _childSigninService.AddFamilyMembers(token, householdId, newContacts);
+                    var newParticipants = _childSigninService.AddFamilyMembers(token, householdId, newFamilyContacts);
                     _childSigninService.CreateGroupParticipants(token, newParticipants);
                     return Ok();
                 }
