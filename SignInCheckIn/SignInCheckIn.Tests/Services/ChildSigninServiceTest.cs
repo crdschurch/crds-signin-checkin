@@ -1026,74 +1026,6 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsNotNull(result);
         }
 
-        //[Test]
-        //public void ItShouldSaveNewFamilyData()
-        //{
-        //    // Arrange
-        //    string token = "123abc";
-
-        //    EventDto eventDto = new EventDto
-        //    {
-        //        EventSiteId = 1
-        //    };
-
-        //    NewParentDto newParentDto = new NewParentDto
-        //    {
-        //        FirstName = "TestParentFirst",
-        //        LastName = "TestParentLast",
-        //        PhoneNumber = "123-456-7890"
-        //    };
-
-        //    List<NewParentDto> newParentDtos = new List<NewParentDto>
-        //    {
-        //        new NewParentDto
-        //        {
-        //            FirstName = "TestParentFirst",
-        //            LastName = "TestParentLast",
-        //            PhoneNumber = "123-456-7890"
-        //        },
-        //        new NewParentDto
-        //        {
-        //            FirstName = "TestParentSecond",
-        //            LastName = "TestParentSecond",
-        //            PhoneNumber = "223-456-7890"
-        //        }
-        //    };
-
-        //    List<NewChildDto> newChildDtos = new List<NewChildDto>
-        //    {
-        //        new NewChildDto
-        //        {
-        //            DateOfBirth = new DateTime(2016, 12, 1, 00, 00, 00),
-        //            FirstName = "TestChildFirst",
-        //            LastName = "TestChildLast",
-        //            YearGrade = 1
-        //        }
-        //    };
-
-        //    NewFamilyDto newFamilyDto = new NewFamilyDto
-        //    {
-        //        EventDto = eventDto,
-        //        ParentContactDtos = newParentDtos,
-        //        ChildContactDtos = newChildDtos
-        //    };
-
-        //    MpHouseholdDto mpHouseholdDto = new MpHouseholdDto();
-        //    MpNewParticipantDto newParticipantDto = new MpNewParticipantDto();
-
-        //    _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-        //    _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), It.IsAny<string>())).Returns(newParticipantDto);
-        //    //_contactRepository.Setup(m => m.CreateContactRelationships(It.IsAny<string>(), It.IsAny<List<MpContactRelationshipDto>>()));
-
-        //    // Act
-        //    var result = _fixture.SaveNewFamilyData(token, newFamilyDto);
-
-        //    // Assert
-        //    _contactRepository.VerifyAll();
-        //    _participantRepository.VerifyAll();
-        //    Assert.IsNotNull(result);
-        //}
-
         [Test]
         public void ShouldProcessGuestSignIns()
         {
@@ -2420,35 +2352,5 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             Assert.AreEqual(173550, result[0].GroupId);
         }
-
-        //[Test]
-        //public void ShouldCreateNewHousehold()
-        //{
-        //    // Arrange
-        //    string token = "123abc";
-        //    string kioskIdentifier = "kiosk";
-
-        //    var newParents = new List<NewParentDto>
-        //    {
-        //        new NewParentDto
-        //        {
-        //            LastName = "testlast",
-        //            PhoneNumber = "555-555-5555",
-        //            CongregationId = 1
-        //        }
-        //    };
-
-        //    //var mpHouseholdDto = new MpHouseholdDto
-        //    //{
-
-        //    //};
-
-        //    // Act
-        //    var result = _fixture.CreateNewFamily(token, newParents, kioskIdentifier);
-
-
-        //    // Assert
-        //    Assert.AreEqual(1, result[0].HouseholdId);
-        //}
     }
 }
