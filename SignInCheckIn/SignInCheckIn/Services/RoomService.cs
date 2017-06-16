@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
+using System.Web.Script.Serialization;
 using System.Xml.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
@@ -540,7 +541,8 @@ namespace SignInCheckIn.Services
                 var groupIds = errorMsg.GetValue("Message").ToString().TrimEnd(','); // "173999,171883"
                 var groupIdsArray = groupIds.Split(',').Select(x => int.Parse(x));
                 var duplicateGroups = _groupRepository.GetGroups(authenticationToken, groupIdsArray);
-                throw new Exception(string.Join("\n", duplicateGroups.Select(x => x.Name)));
+                // throw new Exception(string.Join("\n", duplicateGroups.Select(x => x.Name)));
+                throw new Exception(new JavaScriptSerializer().Serialize(duplicateGroups));
             }
         }
 
