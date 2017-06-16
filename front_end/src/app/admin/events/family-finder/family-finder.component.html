@@ -30,7 +30,7 @@
       <div class="row">
         <div class="col-xs-12">
           <preloader *ngIf="searched && processing"></preloader>
-          <div class="text-xs-center my-3" *ngIf="searched && !processing && contacts?.length === 0">No results found for "{{ search }}".</div>
+          <div class="text-xs-center my-3" *ngIf="searched && !processing && contacts?.length === 0">No results found for "{{ search }}" search again or <a [routerLink]="['/admin/events',eventId,'new-family-registration']">Register a New Family</a>.</div>
           <div>
             <table class="table hidden-print col-xs-12" *ngIf="searched && !processing && contacts?.length > 0">
               <thead>
