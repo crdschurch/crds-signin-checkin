@@ -49,7 +49,9 @@ export class AdminService {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
     return this.http.put(url, room)
                     .map(res => Room.fromJson(res.json()))
-                    .catch(this.handleError);
+                    .catch(err => {
+                      return Observable.throw(JSON.parse(err.json().errors[0]));
+                    });
   }
 
   importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {
