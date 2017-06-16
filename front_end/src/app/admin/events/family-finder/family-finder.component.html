@@ -13,7 +13,7 @@
           <div class="form-group">
             <label for="search" class="control-label">Search</label>
             <div class="input-group child-search-input">
-              <input #box type="text" id="search" class="form-control" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()">
+              <input #box type="text" id="search" class="form-control" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()" autocomplete="off">
               <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
               <span [hidden]="!box.value.length">&times;</span>
             </span>
