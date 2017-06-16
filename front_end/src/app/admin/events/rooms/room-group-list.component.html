@@ -53,6 +53,9 @@
       </div>
     </div>
 
+    <div class="row alert alert-danger" role="alert" *ngIf="ageGroupsError.length">
+      {{{ageGroupsError}}}
+    </div>
     <div class="row my-2">
       <tabset class="col-xs-12">
         <tab heading='Age Ranges' [active]="!alternateRoomsSelected" (select)="roomGroupsSelect()">

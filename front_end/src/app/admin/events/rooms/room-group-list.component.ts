@@ -27,6 +27,7 @@ export class RoomGroupListComponent implements OnInit {
   alternateRoomsSelected = false;
   updating = false;
   isDirty = false;
+  ageGroupsError: string;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -187,6 +188,7 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   saveRoom() {
+    this.ageGroupsError = '';
     // dont allow saving of bumping rules on AC rooms as it creates bad data
     if (this.isAdventureClub && this.hasBumpingRooms()) {
       return this.rootService.announceEvent('echeckNoACBumpingRules');
@@ -206,7 +208,11 @@ export class RoomGroupListComponent implements OnInit {
           this.updating = false;
           this.rootService.announceEvent('echeckUpdateRoom');
           this.isDirty = false;
-        }, error => (this.rootService.announceEvent('generalError')));
+        }, (duplicateAgeGroupsList) => {
+          console.log("err", error)
+          this.ageGroupsError = `The following groups are already assigned to another room for this event: ${duplicateAgeGroupsList}`
+          this.rootService.announceEvent('generalError')
+        });
       }, error => (this.rootService.announceEvent('generalError')));
     }
 
