@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Net;
 using System.Web.Script.Serialization;
 using System.Xml.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Extensions;
 using Crossroads.Web.Common.MinistryPlatform;
-using Microsoft.Practices.Unity.Configuration;
 using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
@@ -456,12 +451,12 @@ namespace SignInCheckIn.Services
         public EventRoomDto UpdateEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId, EventRoomDto eventRoom)
         {
             eventRoom.EventId = eventId; // Kind of a hack, but we'll see if it works - looks like the event room event id is not in sync?
-            var thisRoomGroups = new List<int>();
+
             XElement nurseryGroupXml = new XElement("NurseryGroupXml", null);
 
             var nurseryGroups = eventRoom.AssignedGroups.FindAll(g =>
-                                                                     (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
-                                                                     g.Id == _applicationConfiguration.NurseryAgeAttributeId).ToList();
+                                      (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
+                                      g.Id == _applicationConfiguration.NurseryAgeAttributeId).ToList();
 
             foreach (var nurseryGroup in nurseryGroups)
             {
@@ -470,17 +465,13 @@ namespace SignInCheckIn.Services
                     XElement idElement = new XElement("Id", range.Id);
                     XElement typeIdElement = new XElement("TypeId", range.TypeId);
                     XElement selectedElement = new XElement("Selected", range.Selected);
-                    if (range.Selected)
-                    {
-                        thisRoomGroups.Add(range.Id);
-                    }
 
                     nurseryGroupXml.Add(new XElement("Attribute", idElement, typeIdElement, selectedElement));
                 }
             }
 
             XElement yearGroupXml = new XElement("YearGroupXml", null);
-
+            
             var yearGroups = eventRoom.AssignedGroups.FindAll(g =>
                                                                   (g.Selected || g.HasSelectedRanges) && g.TypeId == _applicationConfiguration.AgesAttributeTypeId &&
                                                                   g.Id != _applicationConfiguration.NurseryAgeAttributeId).ToList();
@@ -494,10 +485,6 @@ namespace SignInCheckIn.Services
                     XElement monthIdElement = new XElement("MonthId", yearGroup.Id);
                     XElement monthIdTypeElement = new XElement("MonthTypeId", yearGroup.TypeId);
                     XElement selectedElement = new XElement("Selected", range.Selected);
-                    if (range.Selected)
-                    {
-                        thisRoomGroups.Add(range.Id);
-                    }
 
                     yearGroupXml.Add(new XElement("Attribute", yearIdElement, yearTypeIdElement, monthIdElement, monthIdTypeElement, selectedElement));
                 }
@@ -508,28 +495,21 @@ namespace SignInCheckIn.Services
 
             foreach (var gradeGroup in gradeGroups)
             {
-                XElement idElement = new XElement("Id", gradeGroup.Id);
-                XElement typeIdElement = new XElement("TypeId", gradeGroup.TypeId);
-                XElement selectedElement = new XElement("Selected", gradeGroup.Selected);
-                if (gradeGroup.Selected)
-                {
-                    thisRoomGroups.Add(gradeGroup.Id);
-                }
+                    XElement idElement = new XElement("Id", gradeGroup.Id);
+                    XElement typeIdElement = new XElement("TypeId", gradeGroup.TypeId);
+                    XElement selectedElement = new XElement("Selected", gradeGroup.Selected);
 
-                gradeGroupXml.Add(new XElement("Attribute", idElement, typeIdElement, selectedElement));
+                    gradeGroupXml.Add(new XElement("Attribute", idElement, typeIdElement, selectedElement));               
             }
 
             XElement groupXml = new XElement("Groups", nurseryGroupXml, yearGroupXml, gradeGroupXml);
-
-            try
-            {
+            try { 
                 var result = _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventRoom.EventId, roomId, groupXml.ToString());
                 var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
                 var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
                 // stored proc is supposed to do this but doesnt seem to be working...
                 _eventService.UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), authenticationToken);
-
                 return eventRooms.First();
             }
             catch (RestResponseException e)
@@ -541,7 +521,6 @@ namespace SignInCheckIn.Services
                 var groupIds = errorMsg.GetValue("Message").ToString().TrimEnd(','); // "173999,171883"
                 var groupIdsArray = groupIds.Split(',').Select(x => int.Parse(x));
                 var duplicateGroups = _groupRepository.GetGroups(authenticationToken, groupIdsArray);
-                // throw new Exception(string.Join("\n", duplicateGroups.Select(x => x.Name)));
                 throw new Exception(new JavaScriptSerializer().Serialize(duplicateGroups));
             }
         }
