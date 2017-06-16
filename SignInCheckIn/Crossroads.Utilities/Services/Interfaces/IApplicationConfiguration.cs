@@ -64,6 +64,8 @@ namespace Crossroads.Utilities.Services.Interfaces
         int ChildcareEventTypeId { get; }
         int ChildcareGroupTypeId { get; }
 
+        int ChildOfRelationshipId { get; }
+
         // groups for new families
         int KcJan0To1 { get; }
         int KcJan1To2 { get; }

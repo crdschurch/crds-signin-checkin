@@ -212,7 +212,7 @@ export class HouseholdComponent implements OnInit {
           }
         );
       } else {
-        this.adminService.addFamilyMember(this.contact).subscribe(
+        this.adminService.addFamilyMember(this.contact, this.householdId).subscribe(
           (response: EventParticipants) => {
             this.announceSuccess(modal);
             this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
