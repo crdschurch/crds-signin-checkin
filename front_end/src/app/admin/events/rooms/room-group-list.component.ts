@@ -27,6 +27,7 @@ export class RoomGroupListComponent implements OnInit {
   alternateRoomsSelected = false;
   updating = false;
   isDirty = false;
+  duplicateAgeGroupsList: any[];
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -36,19 +37,22 @@ export class RoomGroupListComponent implements OnInit {
                private location: Location) {
   }
 
-  private getData(): void {
+  private getData() {
     this.eventId = this.route.snapshot.params['eventId'];
     this.roomId = this.route.snapshot.params['roomId'];
 
     this.apiService.getEventMaps(this.eventId).subscribe(
       events => {
         this.eventsMap = events;
+        this.getData2();
       },
       error => {
         console.error(error);
       }
     );
+  }
 
+  private getData2() {
     this.adminService.getRoomGroups(this.eventId, this.roomId).subscribe(
       room => {
         this.room = room;
@@ -77,7 +81,6 @@ export class RoomGroupListComponent implements OnInit {
         console.error(error);
       }
     );
-
   }
 
   // get the adventure club event if AdventureClub is true for room, else return service event
@@ -187,6 +190,7 @@ export class RoomGroupListComponent implements OnInit {
   }
 
   saveRoom() {
+    this.duplicateAgeGroupsList = [];
     // dont allow saving of bumping rules on AC rooms as it creates bad data
     if (this.isAdventureClub && this.hasBumpingRooms()) {
       return this.rootService.announceEvent('echeckNoACBumpingRules');
@@ -199,14 +203,16 @@ export class RoomGroupListComponent implements OnInit {
     for (let room of this.allAlternateRooms) {
       room.BumpingRuleTypeId = this._selectedBumpingType;
     }
-
     this.adminService.updateBumpingRooms(this.route.snapshot.params['eventId'],
       this.route.snapshot.params['roomId'], this.allAlternateRooms).subscribe((resp1) => {
         this.adminService.updateRoomGroups(this.eventToUpdate.EventId.toString(), this.roomId, this.room).subscribe((resp) => {
           this.updating = false;
           this.rootService.announceEvent('echeckUpdateRoom');
           this.isDirty = false;
-        }, error => (this.rootService.announceEvent('generalError')));
+        }, (duplicateAgeGroupsList) => {
+          this.duplicateAgeGroupsList = duplicateAgeGroupsList;
+          this.updating = false;
+        });
       }, error => (this.rootService.announceEvent('generalError')));
     }
 
