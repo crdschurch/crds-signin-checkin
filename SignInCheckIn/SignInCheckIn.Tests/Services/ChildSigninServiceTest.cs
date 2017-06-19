@@ -36,6 +36,7 @@ namespace SignInCheckIn.Tests.Services
         private Mock<IConfigRepository> _configRepository;
         private Mock<IAttributeRepository> _attributeRepository;
         private Mock<ISignInLogic> _signInLogic;
+        private Mock<IPasswordService> _passwordService;
 
         private ChildSigninService _fixture;
 
@@ -67,6 +68,7 @@ namespace SignInCheckIn.Tests.Services
             _configRepository = new Mock<IConfigRepository>();
             _attributeRepository = new Mock<IAttributeRepository>();
             _signInLogic = new Mock<ISignInLogic>();
+            _passwordService = new Mock<IPasswordService>();
 
             var mpConfigDtoEarly = new MpConfigDto
             {
@@ -98,7 +100,7 @@ namespace SignInCheckIn.Tests.Services
                 _groupRepository.Object, _eventService.Object, _pdfEditor.Object, _printingService.Object,
                 _contactRepository.Object, _kioskRepository.Object, _participantRepository.Object,
                 _applicationConfiguration.Object, _groupLookupRepository.Object, _roomRepository.Object,
-                _configRepository.Object, _attributeRepository.Object, _signInLogic.Object);
+                _configRepository.Object, _attributeRepository.Object, _signInLogic.Object, _passwordService.Object);
         }
 
         [Test]
@@ -2239,6 +2241,7 @@ namespace SignInCheckIn.Tests.Services
             var token = "123abc";
             var newFamilyDto = new NewFamilyDto();
             var kioskId = "aaa";
+            var passwordResetToken = "abcdefgh12345678";
 
             var mpHouseholdDto = new MpHouseholdDto
             {
@@ -2252,7 +2255,8 @@ namespace SignInCheckIn.Tests.Services
                     CongregationId = 1,
                     FirstName = "first",
                     LastName = "last",
-                    PhoneNumber = "555-555-0987"
+                    PhoneNumber = "555-555-0987",
+                    EmailAddress = "test@test.com"
                 }
             };
 
@@ -2266,8 +2270,47 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
+            var mpNewContactDto = new MpContactDto
+            {
+                ContactId = 5544555
+            };
+
+            var mpUserDto = new MpUserDto
+            {
+                FirstName = "first", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test@test.com",
+                ContactId = 5544555,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            var mpNewUserDto = new MpUserDto
+            {
+                UserId = 6677667,
+                FirstName = "first", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test@test.com",
+                ContactId = 5544555,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            _passwordService.Setup(r => r.GetNewUserPassword(16, 2)).Returns("abcdefghijklmnopq");
+            _passwordService.Setup(r => r.GeneratorPasswordResetToken("test@test.com")).Returns("abcdefgh12345678");
             _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(new MpContactDto());
+            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(mpNewContactDto);
+            _contactRepository.Setup(m => m.CreateUserRecord(token, It.IsAny<MpUserDto>())).Returns(mpNewUserDto);
+            _contactRepository.Setup(m => m.CreateUserRoles(token, It.IsAny<List<MpUserRoleDto>>()));
+            _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
             _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
 
             // Act

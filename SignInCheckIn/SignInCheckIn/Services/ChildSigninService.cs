@@ -29,6 +29,7 @@ namespace SignInCheckIn.Services
         private readonly IAttributeRepository _attributeRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly ISignInLogic _signInLogic;
+        private readonly IPasswordService _passwordService;
 
         private readonly int _defaultEarlyCheckinPeriod;
         private readonly int _defaultLateCheckinPeriod;
@@ -47,7 +48,8 @@ namespace SignInCheckIn.Services
                                   IRoomRepository roomRepository,
                                   IConfigRepository configRepository,
                                   IAttributeRepository attributeRepository,
-                                  ISignInLogic signInLogic)
+                                  ISignInLogic signInLogic,
+                                  IPasswordService passwordService)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -63,6 +65,7 @@ namespace SignInCheckIn.Services
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
             _signInLogic = signInLogic;
+            _passwordService = passwordService;
 
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
@@ -576,6 +579,55 @@ namespace SignInCheckIn.Services
 
                 var newParticipant = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
                 var newContact = _contactRepository.GetContactById(token, newParticipant.ContactId.GetValueOrDefault());
+
+                var newUserPassword = _passwordService.GetNewUserPassword(16, 2);
+                var newUserPasswordResetToken = _passwordService.GeneratorPasswordResetToken(parent.EmailAddress);
+
+                var mpUserDto = new MpUserDto
+                {
+                    FirstName = parent.FirstName, // contact?
+                    LastName = parent.LastName, // contact?
+                    UserEmail = parent.EmailAddress,
+                    Password = newUserPassword,
+                    Company = false, //contact?
+                    DisplayName = parent.LastName + ", " + parent.FirstName, // contact?
+                    DomainId = 1,
+                    UserName = parent.EmailAddress,
+                    ContactId = newContact.ContactId,
+                    PasswordResetToken = newUserPasswordResetToken
+                };
+
+                var newUserRecord = _contactRepository.CreateUserRecord(token, mpUserDto);
+
+                var mpUserRoleDtos = new List<MpUserRoleDto>
+                {
+                    new MpUserRoleDto
+                    {
+                        UserId = newUserRecord.UserId,
+                        RoleId = _applicationConfiguration.AllPlatformUsersRoleId
+                    }
+                };
+
+                _contactRepository.CreateUserRoles(token, mpUserRoleDtos);
+
+                var mpContactPublicationDtos = new List<MpContactPublicationDto>
+                {
+                    new MpContactPublicationDto
+                    {
+                        ContactId = newContact.ContactId,
+                        PublicationId = _applicationConfiguration.GeneralPublicationId,
+                        Unsubscribed = false
+                    },
+                    new MpContactPublicationDto
+                    {
+                        ContactId = newContact.ContactId,
+                        PublicationId = _applicationConfiguration.KidsClubPublicationId,
+                        Unsubscribed = false
+                    }
+                };
+
+                _contactRepository.CreateContactPublications(token, mpContactPublicationDtos);
+
                 parentContactDtos.Add(Mapper.Map<ContactDto>(newContact));
             }
 
