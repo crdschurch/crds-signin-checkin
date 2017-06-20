@@ -140,5 +140,25 @@ namespace MinistryPlatform.Translation.Repositories
 
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(contactPublicationDtos, columnList);
         }
+
+        public List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress)
+        {
+            var columnList = new List<string>
+            {
+                "User_ID",
+                "User_Email",
+                "Password",
+                "Display_Name",
+                "Domain_ID",
+                "User_Name",
+                "Contact_ID",
+                "PasswordResetToken"
+            };
+
+            var users = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                .Search<MpUserDto>($"dp_Users.User_Name='{emailAddress}'", columnList);
+
+            return users;
+        }
     }
 }

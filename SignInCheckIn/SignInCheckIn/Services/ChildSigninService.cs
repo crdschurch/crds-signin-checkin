@@ -542,6 +542,18 @@ namespace SignInCheckIn.Services
 
         public List<ContactDto> CreateNewFamily(string token, List<NewParentDto> newParentDtos, string kioskIdentifier)
         {
+            // check to see if either parent already exists as a user - if so, don't create them. This is to match
+            // logic on the family finder
+            foreach (var parent in newParentDtos)
+            {
+                var existingParents = _contactRepository.GetUserByEmailAddress(token, parent.EmailAddress);
+
+                if (existingParents.Any())
+                {
+                    return new List<ContactDto>();
+                }
+            }
+
             // Step 1 - create the household
             MpHouseholdDto mpHouseholdDto = new MpHouseholdDto
             {

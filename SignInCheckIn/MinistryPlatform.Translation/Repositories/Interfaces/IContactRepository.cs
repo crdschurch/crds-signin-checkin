@@ -14,5 +14,6 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         MpUserDto CreateUserRecord(string token, MpUserDto mpUserDto);
         void CreateUserRoles(string token, List<MpUserRoleDto> mpUserRoleDtos);
         void CreateContactPublications(string token, List<MpContactPublicationDto> contactPublicationDtos);
+        List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress);
     }
 }
