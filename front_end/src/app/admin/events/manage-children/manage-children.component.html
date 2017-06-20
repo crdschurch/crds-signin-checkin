@@ -116,7 +116,7 @@
     </div>
 
     <!--  this block doesnt show up in first print preview if it is a p tag -->
-    <section class="row">
+    <section class="row" *ngIf="cbr && cbr.length">
       {{cbr[0].AssignedRoomName}} - Total Checked In to Room: {{cbr.length}}
     </section>
     <div class="row">

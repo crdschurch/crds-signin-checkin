@@ -66,6 +66,11 @@ namespace Crossroads.Utilities.Services.Interfaces
 
         int ChildOfRelationshipId { get; }
 
+        int AllPlatformUsersRoleId { get; }
+
+        int GeneralPublicationId { get; }
+        int KidsClubPublicationId { get; }
+
         // groups for new families
         int KcJan0To1 { get; }
         int KcJan1To2 { get; }
