@@ -5,7 +5,7 @@ import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
 import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact, Household, State, Country } from '../shared/models';
 import { Observable } from 'rxjs';
-import {NewParent} from "../shared/models/new-parent";
+import {NewParent} from '../shared/models/new-parent';
 
 describe('AdminService', () => {
   let fixture: AdminService;

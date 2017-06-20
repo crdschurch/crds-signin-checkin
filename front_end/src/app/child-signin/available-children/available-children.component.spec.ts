@@ -38,7 +38,6 @@ describe('AvailableChildrenComponent', () => {
       fixture.eventParticipants.Participants = [new Child(), new Child()];
       fixture.eventParticipants.Participants[0].Selected = false;
       fixture.eventParticipants.Participants[1].Selected = true;
-      //spyOn(childSigninService, 'signInChildren').and.callFake(() => {});
       (<jasmine.Spy>(childSigninService.signInChildren)).and.returnValue(Observable.of());
       fixture.signIn();
 

@@ -17,8 +17,8 @@ describe('GuestModalComponent', () => {
     fixture = new GuestModalComponent(apiService, rootService);
   });
   describe('#openNewGuestModal', () => {
-    let fakeModal = { show: {}, hide: {} };
     beforeEach(() => {
+      fakeModal = { show: {}, hide: {} };
       spyOn(fakeModal, 'show').and.callFake(() => {});
       spyOn(fakeModal, 'hide').and.callFake(() => {});
     });

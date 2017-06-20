@@ -44,13 +44,28 @@ export class NewFamilyRegistrationComponent implements OnInit {
     this.processing = false;
     this.submitted = false;
     this.eventId = this.route.snapshot.params['eventId'];
-    this.parents = [this.newParent()];
+    this.createParents();
 
     this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.headerService.announceEvent(event);
       },
       error => console.error(error)
     );
+  }
+
+  createParents() {
+    let newParent;
+    if (this.route.snapshot.queryParams) {
+      newParent = this.newParent(
+        this.route.snapshot.queryParams['first'],
+        this.route.snapshot.queryParams['last'],
+        this.route.snapshot.queryParams['phone'],
+        this.route.snapshot.queryParams['email']
+      );
+    } else {
+      newParent = this.newParent();
+    }
+    this.parents = [newParent];
   }
 
   get maleGenderId(): number {
@@ -136,8 +151,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
   }
 
-  private newParent(): NewParent {
-    return new NewParent();
+  private newParent(firstName = '', lastName = '', phone = '', email = ''): NewParent {
+    return new NewParent(firstName, lastName, phone, email);
   }
 
 }
