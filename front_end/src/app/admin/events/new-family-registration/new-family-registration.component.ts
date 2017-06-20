@@ -54,12 +54,18 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   createParents() {
-    this.parents = [this.newParent(
-      this.route.snapshot.queryParams['first'],
-      this.route.snapshot.queryParams['last'],
-      this.route.snapshot.queryParams['phone'],
-      this.route.snapshot.queryParams['email']
-    )];
+    let newParent;
+    if (this.route.snapshot.queryParams) {
+      newParent = this.newParent(
+        this.route.snapshot.queryParams['first'],
+        this.route.snapshot.queryParams['last'],
+        this.route.snapshot.queryParams['phone'],
+        this.route.snapshot.queryParams['email']
+      );
+    } else {
+      newParent = this.newParent();
+    }
+    this.parents = [newParent];
   }
 
   get maleGenderId(): number {

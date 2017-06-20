@@ -51,4 +51,28 @@ describe('FamilyFinderComponent', () => {
     expect(fixture.searched).toBeTruthy;
     expect(adminService.findFamilies).toHaveBeenCalledWith(fixture.search);
   });
+
+  describe('#getSearchParams()', () => {
+    it('should populate phone', () => {
+      const phone = '513-345-4555';
+      fixture.search = phone;
+      expect(fixture.getSearchParams().phone).toEqual(phone);
+    });
+    it('should populate email', () => {
+      const email = 'edmond@xavier.edu';
+      fixture.search = email;
+      expect(fixture.getSearchParams().email).toEqual(email);
+    });
+    it('should populate last name', () => {
+      const last = 'sumner';
+      fixture.search = last;
+      expect(fixture.getSearchParams().last).toEqual(last);
+    });
+    it('should populate name', () => {
+      const last = 'sumner, edmond';
+      fixture.search = last;
+      expect(fixture.getSearchParams().last).toEqual('sumner');
+      expect(fixture.getSearchParams().first).toEqual('edmond');
+    });
+  });
 });
