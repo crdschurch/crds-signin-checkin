@@ -41,10 +41,10 @@ export class FamilyFinderComponent implements OnInit {
   }
 
   getSearchParams() {
+    this.search.trim();
     if (!this.search || !this.search.length) {
       return;
     }
-    this.search.trim();
     let parentParams = {
       first: '',
       last: '',
