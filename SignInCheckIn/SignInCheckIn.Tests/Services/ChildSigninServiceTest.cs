@@ -2408,6 +2408,89 @@ namespace SignInCheckIn.Tests.Services
         }
 
         [Test]
+        public void ShouldNotCreateNewUserWithoutEmailAddress()
+        {
+            // Arrange
+            var token = "123abc";
+            var kioskId = "aaa";
+            var passwordResetToken = "abcdefgh12345678";
+
+            var mpHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdId = 1234567
+            };
+
+            var newParentDtos = new List<NewParentDto>
+            {
+                new NewParentDto
+                {
+                    CongregationId = 1,
+                    FirstName = "first",
+                    LastName = "last",
+                    PhoneNumber = "555-555-0987",
+                }
+            };
+
+            var mpNewParticipantDtoFromRepo = new MpNewParticipantDto
+            {
+                FirstName = "first",
+                LastName = "last",
+                Contact = new MpContactDto
+                {
+                    HouseholdId = 1234567
+                }
+            };
+
+            var mpNewContactDto = new MpContactDto
+            {
+                ContactId = 5544555
+            };
+
+            var mpUserDto = new MpUserDto
+            {
+                FirstName = "first", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test@test.com",
+                ContactId = 5544555,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            var mpNewUserDto = new MpUserDto
+            {
+                UserId = 6677667,
+                FirstName = "first", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test@test.com",
+                ContactId = 5544555,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            _passwordService.Setup(r => r.GetNewUserPassword(16, 2)).Returns("abcdefghijklmnopq");
+            _passwordService.Setup(r => r.GeneratorPasswordResetToken("test@test.com")).Returns("abcdefgh12345678");
+            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test@test.com")).Returns(new List<MpUserDto> { new MpUserDto() });
+            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(mpNewContactDto);
+            _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
+
+            // Act
+            var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
+
+            // Assert
+            Assert.AreEqual(1, result.Count);
+        }
+
+        [Test]
         public void ShouldCreateGroupParticipantsForAgeGroup()
         {
             // Arrange
