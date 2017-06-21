@@ -105,8 +105,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
   requiredOnBlur(e) {
     this.optionalParentRequired = false;
 
-    if (this.parents[1].FirstName || this.parents[1].LastName ||
-        this.parents[1].PhoneNumber || this.parents[1].EmailAddress) {
+    if (!(this.parents[1].FirstName === '' || this.parents[1].FirstName === undefined || this.parents[1].FirstName === null) ||
+          !(this.parents[1].LastName === '' || this.parents[1].LastName === undefined || this.parents[1].LastName === null) ||
+          !(this.parents[1].PhoneNumber === '' || this.parents[1].PhoneNumber === undefined || this.parents[1].PhoneNumber === null) ||
+          !(this.parents[1].EmailAddress === '' || this.parents[1].EmailAddress === undefined || this.parents[1].EmailAddress === null)) {
       this.optionalParentRequired = true;
     }
   }
@@ -116,11 +118,15 @@ export class NewFamilyRegistrationComponent implements OnInit {
     if (!form.pristine && form.valid) {
       this.processing = true;
 
-      _.forEach(this.parents, (parent: NewParent): void => {
+      let tmpParents = this.parents.filter((parent: NewParent) => {
+        return !(parent.FirstName === '' || parent.FirstName === undefined || parent.FirstName === null);
+      })
+
+      tmpParents.map((parent: NewParent) => {
         parent.CongregationId = this.setupService.getMachineDetailsConfigCookie().CongregationId;
       });
 
-      this.adminService.createNewFamily(this.parents).subscribe((res) => {
+      this.adminService.createNewFamily(tmpParents).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();
 
