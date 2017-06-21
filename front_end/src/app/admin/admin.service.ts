@@ -62,7 +62,7 @@ export class AdminService {
   }
 
   createNewFamily(parents: Array<NewParent>) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family`;
     return this.http.post(url, parents).map(res => { return res; }).catch(this.handleError);
   }
 
