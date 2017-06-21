@@ -32,12 +32,10 @@ export class HouseholdEditComponent implements OnInit {
  ngOnInit() {
    this.loading = true;
    this.processing = false;
+
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
-
-   this.route.params.forEach((params: Params) => {
-     this.isNewFamily = params['newFamily'];
-   });
+   this.isNewFamily = this.route.snapshot.params['newFamily'];
 
    this.apiService.getEvent(String(this.eventId)).subscribe((event) => {
      this.headerService.announceEvent(event);
