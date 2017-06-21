@@ -158,5 +158,17 @@ namespace SignInCheckIn.Controllers
                 }
             });
         }
+
+        [HttpGet]
+        [ResponseType(typeof(MpUserDto))]
+        [VersionedRoute(template: "user", minimumVersion: "1.0.0")]
+        [Route("user")]
+        public IHttpActionResult CreateNewFamily([FromUri] string email)
+        {
+            return Authorized(token =>
+            {
+                return Ok(_familyService.GetUserByEmailAddress(token, email));
+            });
+        }
     }
 }

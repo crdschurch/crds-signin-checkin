@@ -9,6 +9,6 @@ namespace SignInCheckIn.Services.Interfaces
     {
         List<ContactDto> CreateNewFamily(string token, List<NewParentDto> newParentDtos, string kioskIdentifier);
         List<MpNewParticipantDto> AddFamilyMembers(string token, int householdId, List<ContactDto> newContacts);
-        // List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress);
+        MpUserDto GetUserByEmailAddress(string token, string emailAddress);
     }
 }
