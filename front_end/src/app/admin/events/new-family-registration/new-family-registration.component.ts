@@ -102,7 +102,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
   }
 
-  required(e) {
+  requiredOnBlur(e) {
     this.optionalParentRequired = false;
 
     if (this.parents[1].FirstName || this.parents[1].LastName ||

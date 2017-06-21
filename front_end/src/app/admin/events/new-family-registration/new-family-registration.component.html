@@ -21,21 +21,21 @@
               <div class="form-group" [ngClass]="{'required' : i == 0 || optionalParentRequired}">
                 <label for="firstName" id="firstName" class="control-label">First Name</label>
                 <input type="text" class="form-control" [(ngModel)]="parents[i].FirstName" name="firstName" #firstName="ngModel"
-                  (blur)="required(parent)" required>
+                  (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group" [ngClass]="{'required' : i == 0 || optionalParentRequired}">
                 <label for="lastName" id="lastName" class="control-label">Last Name</label>
                 <input type="text" class="form-control" [(ngModel)]="parents[i].LastName" name="lastName" #lastName="ngModel"
-                  (blur)="required(parent)" required>
+                  (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group" [ngClass]="{'required' : i == 0}">
                 <label for="phoneNumber" id="phoneNumber" class="control-label">Phone Number</label>
                 <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="parents[i].PhoneNumber" name="phoneNumber" #phoneName="ngModel"
-                  (blur)="onPhoneBlur($event, parents[i])" required>
+                  (blur)="requiredOnBlur($event)" [required]="i == 0">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
