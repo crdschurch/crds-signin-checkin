@@ -96,7 +96,7 @@ describe('AdminService', () => {
       (<jasmine.Spy>responseObject.json).and.returnValue(undefined);
 
       fixture.createNewFamily(parents).subscribe((res) => {
-        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`, parents);
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/family`, parents);
       });
 
     });
