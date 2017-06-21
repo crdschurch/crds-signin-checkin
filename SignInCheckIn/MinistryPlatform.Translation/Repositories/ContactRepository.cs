@@ -152,8 +152,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Domain_ID",
                 "User_Name",
                 "Contact_ID",
-                "PasswordResetToken",
-                "Contacts.Household_ID"
+                "PasswordResetToken"
             };
 
             var users = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
