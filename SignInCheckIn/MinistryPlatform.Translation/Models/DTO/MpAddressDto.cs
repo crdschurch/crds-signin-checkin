@@ -7,7 +7,7 @@ namespace MinistryPlatform.Translation.Models.DTO
     public class MpAddressDto
     {
         [JsonProperty(PropertyName = "Address_ID")]
-        public int AddressId { get; set; }
+        public int? AddressId { get; set; }
 
         [JsonProperty(PropertyName = "Address_Line_1")]
         public string AddressLine1 { get; set; }
@@ -18,7 +18,7 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "City")]
         public string City { get; set; }
 
-        [JsonProperty(PropertyName = "State")]
+        [JsonProperty(PropertyName = "[State/Region]")]
         public string State { get; set; }
 
         [JsonProperty(PropertyName = "Postal_Code")]

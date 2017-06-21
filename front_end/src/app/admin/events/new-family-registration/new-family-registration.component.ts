@@ -132,11 +132,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
         let contacts = (<Contact[]>res.json()).map(r => Contact.fromJson(r));
         let householdId = contacts[0].HouseholdId;
 
-        if (editMode) {
-          this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId, 'edit']);
-        } else {
-          this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId]);
-        }
+        this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId, 'edit', {newFamily: true}]);
       }, (error) => {
         switch (error.status) {
           case 412:
