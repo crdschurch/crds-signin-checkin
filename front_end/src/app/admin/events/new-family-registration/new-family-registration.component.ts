@@ -24,8 +24,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private processing: boolean;
   private submitted: boolean;
   private parents: Array<NewParent> = [];
-  private numberOfParents = 1;
-  numberOfParentsSelection: any = Array.apply(null, {length: 2}).map(function (e, i) { return i + 1; }, Number);
+  private optionalParentRequired = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -66,6 +65,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
       newParent = this.newParent();
     }
     this.parents = [newParent];
+    this.parents.push(this.newParent());
   }
 
   get maleGenderId(): number {
@@ -74,20 +74,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
   get femaleGenderId(): number {
     return NewParent.genderIdFemale();
-  }
-
-  updateNumberOfParents(): void {
-    let tmpParents: Array<NewParent> = [];
-
-    for (let i = 0; i < this.numberOfParents; i++) {
-      if (this.parents[i] === undefined) {
-        tmpParents.push(this.newParent());
-      } else {
-        tmpParents.push(this.parents[i]);
-      }
-    }
-
-    this.parents = tmpParents;
   }
 
   needGradeLevel(child: NewChild): boolean {
@@ -113,6 +99,15 @@ export class NewFamilyRegistrationComponent implements OnInit {
     } else {
       delete child.DateOfBirthString;
       e.target.value = '';
+    }
+  }
+
+  required(e) {
+    this.optionalParentRequired = false;
+
+    if (this.parents[1].FirstName || this.parents[1].LastName ||
+        this.parents[1].PhoneNumber || this.parents[1].EmailAddress) {
+      this.optionalParentRequired = true;
     }
   }
 
