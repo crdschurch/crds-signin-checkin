@@ -305,12 +305,12 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto)
         {
-            var columns = new List<string>
+            var householdIdColumn = new List<string>
             {
                 "Households.[Household_ID]"
             };
 
-            var columns2 = new List<string>
+            var addressIdColumn = new List<string>
             {
                 "Addresses.[Address_ID]"
             };
@@ -328,16 +328,18 @@ namespace MinistryPlatform.Translation.Repositories
 
             if (householdDto.AddressId == null)
             {
-                var result = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create<MpAddressDto>(address, columns2);
+                // new address
+                var result = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create<MpAddressDto>(address, addressIdColumn);
                 householdDto.AddressId = result.AddressId;
             }
             else
             {
+                // existing address
                 address.AddressId = householdDto.AddressId.Value;
-                _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, columns2);
+                _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpAddressDto>(address, addressIdColumn);
             }
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, columns);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpHouseholdDto>(householdDto, householdIdColumn);
         }
     }
 }
