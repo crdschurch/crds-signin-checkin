@@ -18,7 +18,7 @@ namespace MinistryPlatform.Translation.Models.DTO
         [JsonProperty(PropertyName = "City")]
         public string City { get; set; }
 
-        [JsonProperty(PropertyName = "State/Region")]
+        [JsonProperty(PropertyName = "[State/Region]")]
         public string State { get; set; }
 
         [JsonProperty(PropertyName = "Postal_Code")]
