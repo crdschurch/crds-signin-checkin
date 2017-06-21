@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models;
@@ -544,7 +545,7 @@ namespace SignInCheckIn.Services
         {
             // check to see if either parent already exists as a user - if so, don't create them. This is to match
             // logic on the family finder
-            foreach (var parent in newParentDtos)
+            foreach (var parent in newParentDtos.Where(r => !String.IsNullOrEmpty(r.EmailAddress)))
             {
                 var existingParents = _contactRepository.GetUserByEmailAddress(token, parent.EmailAddress);
 
@@ -592,36 +593,7 @@ namespace SignInCheckIn.Services
                 var newParticipant = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
                 var newContact = _contactRepository.GetContactById(token, newParticipant.ContactId.GetValueOrDefault());
 
-                var newUserPassword = _passwordService.GetNewUserPassword(16, 2);
-                var newUserPasswordResetToken = _passwordService.GeneratorPasswordResetToken(parent.EmailAddress);
-
-                var mpUserDto = new MpUserDto
-                {
-                    FirstName = parent.FirstName, // contact?
-                    LastName = parent.LastName, // contact?
-                    UserEmail = parent.EmailAddress,
-                    Password = newUserPassword,
-                    Company = false, //contact?
-                    DisplayName = parent.LastName + ", " + parent.FirstName, // contact?
-                    DomainId = 1,
-                    UserName = parent.EmailAddress,
-                    ContactId = newContact.ContactId,
-                    PasswordResetToken = newUserPasswordResetToken
-                };
-
-                var newUserRecord = _contactRepository.CreateUserRecord(token, mpUserDto);
-
-                var mpUserRoleDtos = new List<MpUserRoleDto>
-                {
-                    new MpUserRoleDto
-                    {
-                        UserId = newUserRecord.UserId,
-                        RoleId = _applicationConfiguration.AllPlatformUsersRoleId
-                    }
-                };
-
-                _contactRepository.CreateUserRoles(token, mpUserRoleDtos);
-
+                // by default, new contacts get subscribed to these lists
                 var mpContactPublicationDtos = new List<MpContactPublicationDto>
                 {
                     new MpContactPublicationDto
@@ -639,6 +611,41 @@ namespace SignInCheckIn.Services
                 };
 
                 _contactRepository.CreateContactPublications(token, mpContactPublicationDtos);
+
+                // since the username is an email address, don't create a new user if the new parent doesn't
+                // provide one
+                if (!string.IsNullOrEmpty(parent.EmailAddress))
+                {
+                    var newUserPassword = _passwordService.GetNewUserPassword(16, 2);
+                    var newUserPasswordResetToken = _passwordService.GeneratorPasswordResetToken(parent.EmailAddress);
+
+                    var mpUserDto = new MpUserDto
+                    {
+                        FirstName = parent.FirstName, // contact?
+                        LastName = parent.LastName, // contact?
+                        UserEmail = parent.EmailAddress,
+                        Password = newUserPassword,
+                        Company = false, //contact?
+                        DisplayName = parent.LastName + ", " + parent.FirstName, // contact?
+                        DomainId = 1,
+                        UserName = parent.EmailAddress,
+                        ContactId = newContact.ContactId,
+                        PasswordResetToken = newUserPasswordResetToken
+                    };
+
+                    var newUserRecord = _contactRepository.CreateUserRecord(token, mpUserDto);
+
+                    var mpUserRoleDtos = new List<MpUserRoleDto>
+                    {
+                        new MpUserRoleDto
+                        {
+                            UserId = newUserRecord.UserId,
+                            RoleId = _applicationConfiguration.AllPlatformUsersRoleId
+                        }
+                    };
+
+                    _contactRepository.CreateUserRoles(token, mpUserRoleDtos);
+                }
 
                 parentContactDtos.Add(Mapper.Map<ContactDto>(newContact));
             }
