@@ -29,8 +29,8 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(int))]
-        [VersionedRoute(template: "signin/newfamily", minimumVersion: "1.0.0")]
-        [Route("signin/newfamily")]
+        [VersionedRoute(template: "family", minimumVersion: "1.0.0")]
+        [Route("family")]
         public IHttpActionResult CreateNewFamily(List<NewParentDto> newParents)
         {
             return Authorized(token =>
