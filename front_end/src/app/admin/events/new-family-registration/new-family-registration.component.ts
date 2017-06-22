@@ -25,6 +25,11 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private submitted: boolean;
   private parents: Array<NewParent> = [];
   private optionalParentRequired = false;
+  // this is an array of the indexes of the parents in process of
+  // being checked (so async calls work for all parents)
+  // for instance if second parent is in process of checking for
+  // duplicate email it will be [1]
+  duplicateEmailProcessing = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -120,7 +125,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
       let tmpParents = this.parents.filter((parent: NewParent) => {
         return !(parent.FirstName === '' || parent.FirstName === undefined || parent.FirstName === null);
-      })
+      });
 
       tmpParents.map((parent: NewParent) => {
         parent.CongregationId = this.setupService.getMachineDetailsConfigCookie().CongregationId;
@@ -146,6 +151,33 @@ export class NewFamilyRegistrationComponent implements OnInit {
         this.processing = false;
       });
     }
+  }
+
+  checkIfEmailExists(parent: NewParent, parentIndex: number) {
+    if (parent.EmailAddress && parent.EmailAddress.length) {
+      this.duplicateEmailProcessing.push(parentIndex);
+      this.adminService.getUser(parent.EmailAddress).subscribe(
+        (res: any) => {
+          if (res) {
+            parent.DuplicateEmail = parent.EmailAddress;
+            parent.HouseholdId = res.HouseholdId;
+          } else {
+            parent.DuplicateEmail = undefined;
+            parent.HouseholdId = undefined;
+          }
+          this.duplicateEmailProcessing.splice(this.duplicateEmailProcessing.indexOf(parentIndex), 1);
+        }, (error) => {
+          console.error(error);
+        });
+    }
+  }
+
+  isCheckingEmailExists() {
+    return this.duplicateEmailProcessing.length > 0;
+  }
+
+  areDuplicateEmails() {
+    return _.find(this.parents, (o) => { return o.DuplicateEmail; });
   }
 
   private newParent(firstName = '', lastName = '', phone = '', email = ''): NewParent {

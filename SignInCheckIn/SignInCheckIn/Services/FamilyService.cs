@@ -183,9 +183,10 @@ namespace SignInCheckIn.Services
             return parentContactDtos;
         }
 
-        //List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress)
-        //{
-
-        //}
+        public UserDto GetUserByEmailAddress(string token, string emailAddress)
+        {
+            var mpUser = _contactRepository.GetUserByEmailAddress(token, emailAddress);
+            return Mapper.Map<UserDto>(mpUser.FirstOrDefault());
+        }
     }
 }

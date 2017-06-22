@@ -170,6 +170,13 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  getUser(email: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/user?email=${email}`;
+    return this.http.get(url)
+                    .map((res) => res.json())
+                    .catch(this.handleError);
+  }
+
   private handleError (error: any) {
     return Observable.throw(error.json().error || error.json().errors[0] || 'Server error');
   }
