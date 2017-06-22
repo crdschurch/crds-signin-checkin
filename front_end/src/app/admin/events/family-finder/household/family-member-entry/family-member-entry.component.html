@@ -1,0 +1,118 @@
+<header-event></header-event>
+
+<preloader *ngIf="processing"></preloader>
+<div class="wrapper" *ngIf="!processing">
+  <div class="container my-3">
+    <div class="Xadd-child-guest">
+      <div class="px-0">
+        <h3>Add New Family Member</h3>
+      </div>
+
+      <div *ngFor="let contact of contacts, let i = index;" class="px-0">
+        <div class="row my-2">
+          <div class="col-sm-6">
+            <fieldset class="form-group">
+              <input type="text" class="form-control form-control-lg" id="formGroupExampleInput" placeholder="First Name" [(ngModel)]="contact.Nickname">
+            </fieldset>
+          </div>
+          <div class="col-sm-6">
+            <fieldset class="form-group">
+              <input type="text" class="form-control form-control-lg" id="formGroupExampleInput2" placeholder="Last Name" [(ngModel)]="contact.LastName">
+            </fieldset>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <div class="form-group required text-xs-left">
+              <label for="guestChildBirthDate" class="control-label">Birth Date</label>
+              <br/>
+              <div class="row datepicker">
+                <div class="col-xs-12 col-sm-6">
+                  <div class="row">
+                    <div class="col-sm-4 col-md-5 col-sm-12 mb-1 wrapper">
+                      <select class="form-control form-control-lg" id="dob-month" (change)="datePickerBlur(contact)" [(ngModel)]="guestDOB.month">
+                        <option disabled value="0">Month</option>
+                        <option role="menuitem" *ngFor="let num of numberOfMonthsSelection" value="{{num}}">
+                          {{num | monthName }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-sm-4 col-md-3 col-sm-12 mb-1 wrapper">
+                      <select class="form-control form-control-lg" id="dob-day" (change)="datePickerBlur(contact)" [(ngModel)]="guestDOB.day">
+                        <option disabled value="0">Day</option>
+                        <option role="menuitem" *ngFor="let num of numberOfDaysSelection">
+                          {{num}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-sm-4 col-md-4 col-sm-12 mb-1 wrapper">
+                      <select class="form-control form-control-lg" id="dob-year" (change)="datePickerBlur(contact)" [(ngModel)]="guestDOB.year">
+                        <option disabled value="0">Year</option>
+                        <option role="menuitem" *ngFor="let num of yearsSelection">
+                          {{num}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required text-xs-left" *ngIf="needGradeLevel(contact)">
+              <label for="childGrade" class="control-label">Year / Grade</label>
+              <select class="form-control form-control-lg" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
+                <option value="-1">Select a Grade</option>
+                <option value="0" [attr.selected]="contact.YearGrade === 0 ? '' : null">Has not started Kindergarten yet</option>
+                <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}" [attr.selected]="contact.YearGrade === grade.Id ? '' : null">{{ grade.Name }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group required text-xs-left">
+              <label for="childGrade" class="control-label">Gender</label>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio2" value="{{femaleGenderId}}" [checked]="contact.isFemale()" (change)="contact.GenderId = femaleGenderId">
+                  Female
+                </label>
+              </div>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio1" value="{{maleGenderId}}" [checked]="contact.isMale()" (change)="contact.GenderId = maleGenderId">
+                  Male
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6" *ngIf="!editMode">
+            <div class="form-group required text-xs-left">
+              <label for="childGrade" class="control-label">Special Needs?</label>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="specialNeedsRadio" id="specialNeedsRadio1" value="1" [checked]="contact.IsSpecialNeeds" (change)="contact.IsSpecialNeeds = true">
+                  Yes
+                </label>
+              </div>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="specialNeedsRadio" id="specialNeedsRadio2" value="0" [checked]="contact.IsSpecialNeeds === false" (change)="contact.IsSpecialNeeds = false">
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-0 text-xs-right">
+        <button type="button" class="btn btn-secondary" [routerLink]="['..']">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveNewFamilyMember(newFamilyMemberModal)" [disabled]="processingAddFamilyMember">
+          <span *ngIf="!processingAddFamilyMember">Add</span>
+          <span *ngIf="processingAddFamilyMember">Adding...</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

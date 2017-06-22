@@ -174,57 +174,6 @@ export class HouseholdComponent implements OnInit {
    contact.YearGrade = groupId;
  }
 
- saveNewFamilyMember(modal) {
-  try {
-    this.processingAddFamilyMember = true;
-    this.contact.Nickname.trim();
-    this.contact.LastName.trim();
-    this.contact.FirstName = this.contact.Nickname;
-    this.contact.DisplayName = `${this.contact.LastName}, ${this.contact.Nickname}`;
-  } finally {
-    if (!this.contact.Nickname || !this.contact.LastName) {
-      this.processingAddFamilyMember = false;
-      return this.rootService.announceEvent('echeckChildSigninAddGuestFormInvalid');
-    } else if (!this.contact.DateOfBirth || !moment(this.contact.DateOfBirth).isValid()) {
-      this.processingAddFamilyMember = false;
-      return this.rootService.announceEvent('echeckChildSigninBadDateOfBirth');
-    } else if (this.contact.YearGrade === -1) {
-      this.processingAddFamilyMember = false;
-      return this.rootService.announceEvent('echeckNeedValidGradeSelection');
-    } else if (this.contact.GenderId !== Contact.genderIdMale() && this.contact.GenderId !== Contact.genderIdFemale()) {
-      this.processingAddFamilyMember = false;
-      return this.rootService.announceEvent('echeckNeedValidGenderSelection');
-    } else if (!this.contact.ContactId && this.contact.IsSpecialNeeds === undefined) {
-      // only check this for new contacts
-      this.processingAddFamilyMember = false;
-      return this.rootService.announceEvent('echeckNeedSpecialNeedsSelection');
-    } else {
-      if (+this.contact.YearGrade < 1) {
-        this.contact.YearGrade = undefined;
-      }
-      if (this.contact.ContactId) {
-        this.adminService.updateFamilyMember(this.contact).subscribe(
-          (response: EventParticipants) => {
-            this.announceSuccess(modal);
-            this.rootService.announceEvent('echeckEditFamilyMemberSuccess');
-          }, (err) => {
-            this.announceError();
-          }
-        );
-      } else {
-        this.adminService.addFamilyMember(this.contact, this.householdId).subscribe(
-          (response: EventParticipants) => {
-            this.announceSuccess(modal);
-            this.rootService.announceEvent('echeckAddFamilyMemberSuccess');
-          }, (err) => {
-            this.announceError();
-          }
-        );
-      }
-    }
-  }
- }
-
  announceSuccess(modal) {
    this.processingAddFamilyMember = false;
    this.getChildren();

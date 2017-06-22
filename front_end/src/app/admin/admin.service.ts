@@ -126,9 +126,9 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  addFamilyMember(contact: Contact, householdId: number) {
+  addFamilyMembers(contacts: Array<Contact>, householdId: number) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/${householdId}/member`;
-    return this.http.post(url, contact)
+    return this.http.post(url, contacts)
                     .map(res => {})
                     .catch(this.handleError);
   }
