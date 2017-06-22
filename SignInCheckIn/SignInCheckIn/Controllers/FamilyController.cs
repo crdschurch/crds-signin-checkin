@@ -160,7 +160,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof(MpUserDto))]
+        [ResponseType(typeof(UserDto))]
         [VersionedRoute(template: "user", minimumVersion: "1.0.0")]
         [Route("user")]
         public IHttpActionResult CreateNewFamily([FromUri] string email)
