@@ -120,7 +120,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
       let tmpParents = this.parents.filter((parent: NewParent) => {
         return !(parent.FirstName === '' || parent.FirstName === undefined || parent.FirstName === null);
-      })
+      });
 
       tmpParents.map((parent: NewParent) => {
         parent.CongregationId = this.setupService.getMachineDetailsConfigCookie().CongregationId;
