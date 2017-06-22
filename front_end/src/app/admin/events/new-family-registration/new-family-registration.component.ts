@@ -154,20 +154,22 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   checkIfEmailExists(parent: NewParent, parentIndex: number) {
-    this.duplicateEmailProcessing.push(parentIndex);
-    this.adminService.getUser(parent.EmailAddress).subscribe(
-      (res: any) => {
-        if (res) {
-          parent.DuplicateEmail = parent.EmailAddress;
-          parent.HouseholdId = res.Household_ID;
-        } else {
-          parent.DuplicateEmail = undefined;
-          parent.HouseholdId = undefined;
-        }
-        this.duplicateEmailProcessing.splice(this.duplicateEmailProcessing.indexOf(parentIndex), 1);
-      }, (error) => {
-        console.error(error);
-      });
+    if (parent.EmailAddress && parent.EmailAddress.length) {
+      this.duplicateEmailProcessing.push(parentIndex);
+      this.adminService.getUser(parent.EmailAddress).subscribe(
+        (res: any) => {
+          if (res) {
+            parent.DuplicateEmail = parent.EmailAddress;
+            parent.HouseholdId = res.HouseholdId;
+          } else {
+            parent.DuplicateEmail = undefined;
+            parent.HouseholdId = undefined;
+          }
+          this.duplicateEmailProcessing.splice(this.duplicateEmailProcessing.indexOf(parentIndex), 1);
+        }, (error) => {
+          console.error(error);
+        });
+    }
   }
 
   isCheckingEmailExists() {

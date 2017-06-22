@@ -66,7 +66,7 @@
           <div class="row" *ngIf="parent.DuplicateEmail && !isCheckingEmailExists()">
             <div class="col-xs-12">
               <div class="alert grey">
-                The email {{parent.DuplicateEmail}} is a registered account - <a [routerLink]="['/admin/events', eventId, 'family-finder', parent.HouseholdId, 'edit']">View the household record</a>
+                The email {{parent.DuplicateEmail}} is a registered account - <a [routerLink]="['/admin/events', eventId, 'family-finder', parent.HouseholdId]">View the household record</a>
               </div>
             </div>
           </div>
