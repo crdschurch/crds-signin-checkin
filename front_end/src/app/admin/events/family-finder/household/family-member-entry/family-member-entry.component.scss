@@ -1,0 +1,7 @@
+@import '../../../../../../assets/scss/_variables.scss';
+
+.new-family-members {
+  .new-family-member:not(:first-child) {
+    border-top: 3px solid darken($table-border-color, 5%);
+  }
+}
