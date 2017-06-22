@@ -90,7 +90,7 @@ describe('HouseholdComponent', () => {
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(adminService.addFamilyMembers).toHaveBeenCalledWith(newContact, undefined);
+        expect(adminService.addFamilyMembers).toHaveBeenCalledWith([ newContact ], undefined);
       });
     });
     it('edits existing family member if valid form', () => {
