@@ -10,7 +10,7 @@ const event = {
 };
 let router;
 let apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
-let adminService = jasmine.createSpyObj('adminService', [, 'createNewFamily']);
+let adminService = jasmine.createSpyObj('adminService', [, 'createNewFamily', 'getUser']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
 let setupService = jasmine.createSpyObj('setupService', ['getMachineDetailsConfigCookie']);
@@ -65,6 +65,31 @@ describe('NewFamilyRegistrationComponent', () => {
     };
     fixture.onSubmit(form);
     expect(rootService.announceEvent).toHaveBeenCalledWith('generalError');
+  });
+  describe('#checkIfEmailExists', () => {
+    beforeEach(() => {
+    });
+    it('should show error and disable button if email exists', () => {
+      (<jasmine.Spy>(adminService.getUser)).and.returnValue(Observable.of({HouseholdId: 123}));
+      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+      let p = new NewParent();
+      p.EmailAddress = 'exists@email.com';
+      fixture.checkIfEmailExists(p, 0);
+      expect(p.DuplicateEmail).toBeTruthy();
+      expect(p.HouseholdId).toBeTruthy();
+      expect(fixture.duplicateEmailProcessing.length).toEqual(0);
+
+    });
+    it('should not show error if email doesnt exist', () => {
+      (<jasmine.Spy>(adminService.getUser)).and.returnValue(Observable.of(null));
+      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+      let p = new NewParent();
+      p.EmailAddress = 'new@email.com';
+      fixture.checkIfEmailExists(p, 0);
+      expect(p.DuplicateEmail).toBeFalsy();
+      expect(p.HouseholdId).toBeFalsy();
+      expect(fixture.duplicateEmailProcessing.length).toEqual(0);
+    });
   });
   it('should return true when child > 5 years old', () => {
     fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
