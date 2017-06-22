@@ -104,11 +104,6 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    //List<ContactDto> newContacts = new List<ContactDto>
-                    //{
-                    //    newFamilyContact
-                    //};
-
                     var newParticipants = _familyService.AddFamilyMembers(token, householdId, newFamilyContacts);
                     _childSigninService.CreateGroupParticipants(token, newParticipants);
                     return Ok();
