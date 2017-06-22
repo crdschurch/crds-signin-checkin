@@ -48,7 +48,9 @@ namespace SignInCheckIn.Services
                                                                      childContactDto.DateOfBirth,
                                                                      childContactDto.YearGrade,
                                                                      householdId,
-                                                                     _applicationConfiguration.MinorChildId
+                                                                     _applicationConfiguration.MinorChildId,
+                                                                     childContactDto.IsSpecialNeeds,
+                                                                     childContactDto.GenderId
                 );
 
                 mpNewChildParticipantDtos.Add(newParticipant);
