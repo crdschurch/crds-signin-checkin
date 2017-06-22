@@ -11,6 +11,8 @@ export class NewParent {
   EmailAddress: string;
   GenderId: number = NewParent.GENDER.FEMALE;
   CongregationId: number;
+  DuplicateEmail: string;
+  HouseholdId: string;
   public static genderIdMale(): number {
     return NewParent.GENDER.MALE;
   }

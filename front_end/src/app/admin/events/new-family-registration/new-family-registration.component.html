@@ -41,7 +41,7 @@
             <div class="col-xs-12 col-sm-6">
               <div class="form-group">
                 <label for="emailAddress{{i}}" class="control-label">Email</label>
-                <input type="email" id="emailAddress" class="form-control" [(ngModel)]="parents[i].EmailAddress" name="emailAddress{{i}}">
+                <input type="email" id="emailAddress" class="form-control" [(ngModel)]="parents[i].EmailAddress" name="emailAddress{{i}}" (blur)="checkIfEmailExists(parent, i)">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
@@ -63,12 +63,18 @@
               </div>
             </div>
           </div>
+          <div class="row" *ngIf="parent.DuplicateEmail && !isCheckingEmailExists()">
+            <div class="col-xs-12">
+              <div class="alert grey">
+                The email {{parent.DuplicateEmail}} is a registered account - <a [routerLink]="['/admin/events', eventId, 'family-finder', parent.HouseholdId, 'edit']">View the household record</a>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="col-xs-12 mb-3">
           <div class="float-sm-right">
-            <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Next" loadingText="Saving..." [loading]="processing"></loading-button>
-            <!--<loading-button buttonType="button" buttonClasses="btn btn-secondary float-xs-right push-half-right" normalText="Save and Add Address" loadingText="Saving..." [loading]="processing" (click)="onSubmit(newFamilyRegistrationForm, true)"></loading-button>-->
+            <loading-button buttonType="submit" buttonClasses="btn btn-primary float-xs-right" normalText="Next" loadingText="Next" [loading]="processing || isCheckingEmailExists() || areDuplicateEmails()"></loading-button>
           </div>
         </div>
       </form>
