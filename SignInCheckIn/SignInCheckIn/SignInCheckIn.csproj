@@ -227,7 +227,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ChildCheckinController.cs" />
     <Compile Include="Controllers\ChildSigninController.cs" />
-    <Compile Include="Controllers\FamilyController.cs" />
     <Compile Include="Controllers\LookupController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\HelloWorldController.cs" />
@@ -235,6 +234,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
+    <Compile Include="Controllers\FamilyController.cs" />
     <Compile Include="Exceptions\Models\ApiErrorDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -273,8 +273,8 @@
     </Compile>
     <Compile Include="Security\MPAuth.cs" />
     <Compile Include="Services\ChildCheckinService.cs" />
-    <Compile Include="Services\FamilyService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
+    <Compile Include="Services\FamilyService.cs" />
     <Compile Include="Services\LookupService.cs" />
     <Compile Include="Services\Interfaces\ILookupService.cs" />
     <Compile Include="Services\Interfaces\ISiteService.cs" />
