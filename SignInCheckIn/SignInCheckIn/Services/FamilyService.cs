@@ -183,9 +183,9 @@ namespace SignInCheckIn.Services
             return parentContactDtos;
         }
 
-        //List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress)
-        //{
-
-        //}
+        List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress)
+        {
+            return _contactRepository.GetUserByEmailAddress(token, emailAddress);
+        }
     }
 }

@@ -129,14 +129,14 @@ export class AdminService {
   }
 
   addFamilyMember(contact: Contact, householdId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/${householdId}/member`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family/${householdId}/member`;
     return this.http.post(url, contact)
                     .map(res => {})
                     .catch(this.handleError);
   }
 
   updateFamilyMember(contact: Contact) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member/${contact.ContactId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family/member/${contact.ContactId}`;
     return this.http.put(url, contact)
                     .map(res => {})
                     .catch(this.handleError);
