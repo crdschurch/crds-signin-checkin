@@ -13,7 +13,7 @@
           <div class="form-group">
             <label for="search" class="control-label">Search</label>
             <div class="input-group child-search-input">
-              <input #box type="text" id="search" class="form-control" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()">
+              <input #box type="text" id="search" class="form-control" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()" autocomplete="off">
               <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
               <span [hidden]="!box.value.length">&times;</span>
             </span>
@@ -23,14 +23,14 @@
           </div>
         </div>
         <div class="col-sm-6 text-sm-right">
-          <a [routerLink]="['/admin/events',eventId,'new-family-registration']">Register a New Family</a>
+          <a [routerLink]="['/admin/events',eventId,'new-family-registration']" [queryParams]="getSearchParams()">Register a New Family</a>
         </div>
       </div>
       <br/>
       <div class="row">
         <div class="col-xs-12">
           <preloader *ngIf="searched && processing"></preloader>
-          <div class="text-xs-center my-3" *ngIf="searched && !processing && contacts?.length === 0">No results found for "{{ search }}".</div>
+          <div class="text-xs-center my-3" *ngIf="searched && !processing && contacts?.length === 0">No results found for "{{ search }}" search again or <a [routerLink]="['/admin/events',eventId,'new-family-registration']" [queryParams]="getSearchParams()">Register a New Family</a>.</div>
           <div>
             <table class="table hidden-print col-xs-12" *ngIf="searched && !processing && contacts?.length > 0">
               <thead>
@@ -65,5 +65,3 @@
     </form>
   </div>
 </div>
-
-

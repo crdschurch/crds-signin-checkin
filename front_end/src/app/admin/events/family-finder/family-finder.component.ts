@@ -1,4 +1,5 @@
 // tslint:disable:no-unused-variable
+/* tslint:disable:max-line-length */
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -7,6 +8,9 @@ import { Contact } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { HeaderService } from '../../header/header.service';
 import { ApiService } from '../../../shared/services';
+const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+const nameRegex = /^[a-zA-Z]*$/;
+const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 @Component({
   styleUrls: ['family-finder.component.scss'],
@@ -34,6 +38,31 @@ export class FamilyFinderComponent implements OnInit {
     this.apiService.getEvent(this.eventId).subscribe((event) => {
       this.headerService.announceEvent(event);
     }, error => console.error(error));
+  }
+
+  getSearchParams() {
+    if (!this.search || !this.search.length) {
+      return;
+    }
+    this.search.trim();
+    let parentParams = {
+      first: '',
+      last: '',
+      phone: '',
+      email: ''
+    };
+
+    if (this.search.indexOf(',') > -1) {
+      parentParams.last = this.search.split(',')[0].trim();
+      parentParams.first = this.search.split(',')[1].trim();
+    } else if (phoneRegex.test(this.search)) {
+      parentParams.phone = this.search;
+    } else if (nameRegex.test(this.search)) {
+      parentParams.last = this.search;
+    } else if (emailRegex.test(this.search)) {
+      parentParams.email = this.search;
+    }
+    return parentParams;
   }
 
   setSearchValue(search) {

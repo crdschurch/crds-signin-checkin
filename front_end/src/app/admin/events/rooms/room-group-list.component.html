@@ -53,6 +53,18 @@
       </div>
     </div>
 
+    <div class="container" *ngIf="duplicateAgeGroupsList?.length">
+      <div class="alert alert-danger alert alert-danger col-lg-6 offset-lg-3" role="alert">
+        <p>
+          The following groups are already assigned to another room for this event:
+        </p>
+        <ul>
+          <li *ngFor="let ageGroup of duplicateAgeGroupsList">
+            {{ageGroup.Name}}
+          </li>
+        </ul>
+      </div>
+    </div>
     <div class="row my-2">
       <tabset class="col-xs-12">
         <tab heading='Age Ranges' [active]="!alternateRoomsSelected" (select)="roomGroupsSelect()">

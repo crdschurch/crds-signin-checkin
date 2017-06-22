@@ -64,5 +64,47 @@ namespace MinistryPlatform.Translation.Test.Repositories
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
         }
+
+        [Test]
+        public void ShouldCreateUserRecord()
+        {
+            // Arrange
+            var token = "123abc";
+
+            var columnList = new List<string>
+            {
+                "User_ID",
+                "User_Email",
+                "Password",
+                "Display_Name",
+                "Domain_ID",
+                "User_Name",
+                "Contact_ID",
+                "PasswordResetToken"
+            };
+
+            var mpUserDto = new MpUserDto
+            {
+                FirstName = "test_first", // contact?
+                LastName = "test_last", // contact?
+                UserEmail = "test@test.com",
+                Password = "test_password",
+                Company = false, //contact?
+                DisplayName = "test_first",
+                DomainId = 1,
+                UserName = "test@test.com",
+                ContactId = 1234567,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
+            _ministryPlatformRestRepository.Setup(mocked => mocked.Create<MpUserDto>(mpUserDto, columnList));
+
+            // Act
+            _fixture.CreateUserRecord(token, mpUserDto);
+
+            // Assert
+            _ministryPlatformRestRepository.VerifyAll();
+        }
     }
 }

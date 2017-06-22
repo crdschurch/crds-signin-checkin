@@ -24,8 +24,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private processing: boolean;
   private submitted: boolean;
   private parents: Array<NewParent> = [];
-  private numberOfParents = 1;
-  numberOfParentsSelection: any = Array.apply(null, {length: 2}).map(function (e, i) { return i + 1; }, Number);
+  private optionalParentRequired = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -44,7 +43,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
     this.processing = false;
     this.submitted = false;
     this.eventId = this.route.snapshot.params['eventId'];
-    this.parents = [this.newParent()];
+    this.createParents();
 
     this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.headerService.announceEvent(event);
@@ -53,26 +52,28 @@ export class NewFamilyRegistrationComponent implements OnInit {
     );
   }
 
+  createParents() {
+    let newParent;
+    if (this.route.snapshot.queryParams) {
+      newParent = this.newParent(
+        this.route.snapshot.queryParams['first'],
+        this.route.snapshot.queryParams['last'],
+        this.route.snapshot.queryParams['phone'],
+        this.route.snapshot.queryParams['email']
+      );
+    } else {
+      newParent = this.newParent();
+    }
+    this.parents = [newParent];
+    this.parents.push(this.newParent());
+  }
+
   get maleGenderId(): number {
     return NewParent.genderIdMale();
   }
 
   get femaleGenderId(): number {
     return NewParent.genderIdFemale();
-  }
-
-  updateNumberOfParents(): void {
-    let tmpParents: Array<NewParent> = [];
-
-    for (let i = 0; i < this.numberOfParents; i++) {
-      if (this.parents[i] === undefined) {
-        tmpParents.push(this.newParent());
-      } else {
-        tmpParents.push(this.parents[i]);
-      }
-    }
-
-    this.parents = tmpParents;
   }
 
   needGradeLevel(child: NewChild): boolean {
@@ -101,27 +102,38 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
   }
 
+  requiredOnBlur(e) {
+    this.optionalParentRequired = false;
+
+    if (!(this.parents[1].FirstName === '' || this.parents[1].FirstName === undefined || this.parents[1].FirstName === null) ||
+          !(this.parents[1].LastName === '' || this.parents[1].LastName === undefined || this.parents[1].LastName === null) ||
+          !(this.parents[1].PhoneNumber === '' || this.parents[1].PhoneNumber === undefined || this.parents[1].PhoneNumber === null) ||
+          !(this.parents[1].EmailAddress === '' || this.parents[1].EmailAddress === undefined || this.parents[1].EmailAddress === null)) {
+      this.optionalParentRequired = true;
+    }
+  }
+
   onSubmit(form: NgForm, editMode = false) {
     this.submitted = true;
     if (!form.pristine && form.valid) {
       this.processing = true;
 
-      _.forEach(this.parents, (parent: NewParent): void => {
+      let tmpParents = this.parents.filter((parent: NewParent) => {
+        return !(parent.FirstName === '' || parent.FirstName === undefined || parent.FirstName === null);
+      });
+
+      tmpParents.map((parent: NewParent) => {
         parent.CongregationId = this.setupService.getMachineDetailsConfigCookie().CongregationId;
       });
 
-      this.adminService.createNewFamily(this.parents).subscribe((res) => {
+      this.adminService.createNewFamily(tmpParents).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();
 
         let contacts = (<Contact[]>res.json()).map(r => Contact.fromJson(r));
         let householdId = contacts[0].HouseholdId;
 
-        if (editMode) {
-          this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId, 'edit']);
-        } else {
-          this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId]);
-        }
+        this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId, 'edit', {newFamily: true}]);
       }, (error) => {
         switch (error.status) {
           case 412:
@@ -136,8 +148,8 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
   }
 
-  private newParent(): NewParent {
-    return new NewParent();
+  private newParent(firstName = '', lastName = '', phone = '', email = ''): NewParent {
+    return new NewParent(firstName, lastName, phone, email);
   }
 
 }

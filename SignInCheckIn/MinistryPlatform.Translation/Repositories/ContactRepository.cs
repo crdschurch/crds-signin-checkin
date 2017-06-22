@@ -100,5 +100,65 @@ namespace MinistryPlatform.Translation.Repositories
 
             return contact;
         }
+
+        public MpUserDto CreateUserRecord(string token, MpUserDto mpUserDto)
+        {
+            var columnList = new List<string>
+            {
+                "User_ID",
+                "User_Email",
+                "Password",
+                "Display_Name",
+                "Domain_ID",
+                "User_Name",
+                "Contact_ID",
+                "PasswordResetToken"
+            };
+
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpUserDto, columnList);
+        }
+
+        public void CreateUserRoles(string token, List<MpUserRoleDto> mpUserRoleDtos)
+        {
+            var columnList = new List<string>
+            {
+                "User_ID",
+                "Role_ID"
+            };
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpUserRoleDtos, columnList);
+        }
+
+        public void CreateContactPublications(string token, List<MpContactPublicationDto> contactPublicationDtos)
+        {
+            var columnList = new List<string>
+            {
+                "Contact_ID",
+                "Publication_ID",
+                "Unsubscribed"
+            };
+
+            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(contactPublicationDtos, columnList);
+        }
+
+        public List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress)
+        {
+            var columnList = new List<string>
+            {
+                "User_ID",
+                "User_Email",
+                "Password",
+                "Display_Name",
+                "Domain_ID",
+                "User_Name",
+                "Contact_ID",
+                "PasswordResetToken"
+            };
+
+            var users = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+                .Search<MpUserDto>($"dp_Users.User_Name='{emailAddress}'", columnList);
+
+            return users;
+        }
     }
 }

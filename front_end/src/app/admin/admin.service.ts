@@ -49,7 +49,9 @@ export class AdminService {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
     return this.http.put(url, room)
                     .map(res => Room.fromJson(res.json()))
-                    .catch(this.handleError);
+                    .catch(err => {
+                      return Observable.throw(JSON.parse(err.json().errors[0]));
+                    });
   }
 
   importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {
@@ -60,7 +62,7 @@ export class AdminService {
   }
 
   createNewFamily(parents: Array<NewParent>) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family`;
     return this.http.post(url, parents).map(res => { return res; }).catch(this.handleError);
   }
 
@@ -127,14 +129,14 @@ export class AdminService {
   }
 
   addFamilyMembers(contacts: Array<Contact>, householdId: number) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/${householdId}/member`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family/${householdId}/member`;
     return this.http.post(url, contacts)
                     .map(res => {})
                     .catch(this.handleError);
   }
 
   updateFamilyMember(contact: Contact) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member/${contact.ContactId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family/member/${contact.ContactId}`;
     return this.http.put(url, contact)
                     .map(res => {})
                     .catch(this.handleError);

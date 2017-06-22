@@ -133,6 +133,7 @@
     <Compile Include="Models\DTO\MpBumpingRoomsDto.cs" />
     <Compile Include="Models\DTO\MpBumpingRuleDto.cs" />
     <Compile Include="Models\DTO\MpConfigDto.cs" />
+    <Compile Include="Models\DTO\MpContactPublicationDto.cs" />
     <Compile Include="Models\DTO\MpContactRelationshipDto.cs" />
     <Compile Include="Models\DTO\MpCountyDto.cs" />
     <Compile Include="Models\DTO\MpAddressDto.cs" />
@@ -156,6 +157,8 @@
     <Compile Include="Models\DTO\MpPrinterMapDto.cs" />
     <Compile Include="Models\DTO\MpRoomDto.cs" />
     <Compile Include="Models\DTO\MpAgeRangeDto.cs" />
+    <Compile Include="Models\DTO\MpUserDto.cs" />
+    <Compile Include="Models\DTO\MpUserRoleDto.cs" />
     <Compile Include="Repositories\AttributeRepository.cs" />
     <Compile Include="Repositories\ChildCheckinRepository.cs" />
     <Compile Include="Repositories\ChildSigninRepository.cs" />

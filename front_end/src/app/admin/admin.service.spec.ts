@@ -5,7 +5,7 @@ import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
 import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact, Household, State, Country } from '../shared/models';
 import { Observable } from 'rxjs';
-import {NewParent} from "../shared/models/new-parent";
+import {NewParent} from '../shared/models/new-parent';
 
 describe('AdminService', () => {
   let fixture: AdminService;
@@ -96,7 +96,7 @@ describe('AdminService', () => {
       (<jasmine.Spy>responseObject.json).and.returnValue(undefined);
 
       fixture.createNewFamily(parents).subscribe((res) => {
-        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`, parents);
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/family`, parents);
       });
 
     });

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Script.Serialization;
 using System.Xml.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Common.Extensions;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Extensions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using Newtonsoft.Json.Linq;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
 
@@ -500,15 +503,26 @@ namespace SignInCheckIn.Services
             }
 
             XElement groupXml = new XElement("Groups", nurseryGroupXml, yearGroupXml, gradeGroupXml);
+            try { 
+                var result = _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventRoom.EventId, roomId, groupXml.ToString());
+                var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
+                var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
 
-            var result = _roomRepository.SaveSingleRoomGroupsData(authenticationToken, eventRoom.EventId, roomId, groupXml.ToString());
-            var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
-            var eventRooms = Mapper.Map<List<MpEventRoomDto>, List<EventRoomDto>>(mpEventRooms);
-
-            // stored proc is supposed to do this but doesnt seem to be working...
-            _eventService.UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), authenticationToken);
-
-            return eventRooms.First(); 
+                // stored proc is supposed to do this but doesnt seem to be working...
+                _eventService.UpdateAdventureClubStatusIfNecessary(_eventRepository.GetEventById(eventId), authenticationToken);
+                return eventRooms.First();
+            }
+            catch (RestResponseException e)
+            {
+                // This is a custom error thrown from stored proc to return group id's
+                // that fail the unique key constraint (age group is already on another
+                // room for this event)
+                var errorMsg = JObject.Parse(e.Response.Content);
+                var groupIds = errorMsg.GetValue("Message").ToString().TrimEnd(','); // "173999,171883"
+                var groupIdsArray = groupIds.Split(',').Select(x => int.Parse(x));
+                var duplicateGroups = _groupRepository.GetGroups(authenticationToken, groupIdsArray);
+                throw new Exception(new JavaScriptSerializer().Serialize(duplicateGroups));
+            }
         }
 
         [Obsolete("Replaced by the new stored proc - left here for reference")]
