@@ -275,7 +275,6 @@
     <Compile Include="Services\ChildCheckinService.cs" />
     <Compile Include="Services\FamilyService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
-    <Compile Include="Services\Interfaces\IFamilyService.cs" />
     <Compile Include="Services\LookupService.cs" />
     <Compile Include="Services\Interfaces\ILookupService.cs" />
     <Compile Include="Services\Interfaces\ISiteService.cs" />
@@ -285,6 +284,7 @@
     <Compile Include="Services\HelloWorldService.cs" />
     <Compile Include="Services\Interfaces\IChildCheckinService.cs" />
     <Compile Include="Services\Interfaces\IChildSigninService.cs" />
+    <Compile Include="Services\Interfaces\IFamilyService.cs" />
     <Compile Include="Services\Interfaces\IWebsocketService.cs" />
     <Compile Include="Services\Interfaces\IEventService.cs" />
     <Compile Include="Services\Interfaces\IHelloWorldService.cs" />
