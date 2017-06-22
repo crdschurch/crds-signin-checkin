@@ -210,7 +210,7 @@ export class FamilyMemberEntryComponent implements OnInit {
 
   announceSuccess() {
     this.processingAddFamilyMember = false;
-    this.router.navigate(['..']);
+    this.router.navigate(['/admin/events', this.eventId, 'family-finder', this.householdId]);
   }
 
   announceError() {
