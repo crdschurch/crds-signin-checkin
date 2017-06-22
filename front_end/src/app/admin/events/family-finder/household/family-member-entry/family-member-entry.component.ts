@@ -12,7 +12,8 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'family-member-entry',
-  templateUrl: 'family-member-entry.component.html'
+  templateUrl: 'family-member-entry.component.html',
+  styleUrls: ['family-member-entry.component.scss']
 })
 export class FamilyMemberEntryComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
@@ -20,13 +21,18 @@ export class FamilyMemberEntryComponent implements OnInit {
   private processing: boolean;
   private processingAddFamilyMember: boolean;
   private _contacts: Array<Contact>;
+  private birthdates: Array<DateOfBirth>;
+  private numberOfChildren = 1;
+  private numberOfChildrenSelection: any = Array.apply(null, {length: 15}).map(function (e, i) { return i + 1; }, Number);
+
   private gradeGroups: Array<Group> = [];
   private eventId: number;
   private numberOfMonthsSelection: Array<number>;
   private numberOfDaysSelection: Array<number>;
   private yearsSelection: Array<number>;
   private householdId: number;
-  guestDOB: DateOfBirth = new DateOfBirth();
+  private household: Household;
+  private householdName = '';
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -41,9 +47,17 @@ export class FamilyMemberEntryComponent implements OnInit {
     this.eventId = +this.route.snapshot.params['eventId'];
     this.householdId = +this.route.snapshot.params['householdId'];
 
-    this.guestDOB = new DateOfBirth();
+    this.birthdates = [ new DateOfBirth() ];
     this.contacts = [ new Contact() ];
     this.contacts[0].HouseholdId = +this.householdId;
+
+    this.adminService.getHouseholdInformation(this.householdId).subscribe((household) => {
+      this.household = household;
+      this.householdName = household.HouseholdName;
+      this.contacts[0].LastName = this.householdName;
+
+      this.loading = false;
+    }, error => console.error(error));
 
     this.apiService.getEvent(String(this.eventId)).subscribe((event) => {
       this.headerService.announceEvent(event);
@@ -88,9 +102,32 @@ export class FamilyMemberEntryComponent implements OnInit {
     );
   }
 
-  datePickerBlur(contact) {
-    if (this.guestDOB.year && this.guestDOB.month && this.guestDOB.day) {
-      contact.DateOfBirth = moment(`${this.guestDOB.year}-${this.guestDOB.month}-${this.guestDOB.day}`, 'YYYY-M-DD').toDate();
+  updateNumberOfChildren(): void {
+    let tmpChildren: Array<Contact> = [];
+    let tmpBirthdates: Array<DateOfBirth> = [];
+
+    for (let i = 0; i < this.numberOfChildren; i++) {
+      if (this.contacts[i] === undefined) {
+        let contact = new Contact();
+        contact.LastName = this.householdName;
+
+        tmpChildren.push(contact);
+        tmpBirthdates.push(new DateOfBirth());
+      } else {
+        tmpChildren.push(this.contacts[i]);
+        tmpBirthdates.push(this.birthdates[i]);
+      }
+    }
+
+    this.contacts = tmpChildren;
+    this.birthdates = tmpBirthdates;
+  }
+
+  datePickerBlur(contact, i) {
+    let guestDOB = this.birthdates[i];
+
+    if (guestDOB.year && guestDOB.month && guestDOB.day) {
+      contact.DateOfBirth = moment(`${guestDOB.year}-${guestDOB.month}-${guestDOB.day}`, 'YYYY-M-DD').toDate();
     }
     let needGradeLevelValue = moment(contact.DateOfBirth).isBefore(moment().startOf('day').subtract(3, 'y'));
 

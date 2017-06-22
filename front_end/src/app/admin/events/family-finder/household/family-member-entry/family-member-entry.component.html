@@ -2,117 +2,124 @@
 
 <preloader *ngIf="processing"></preloader>
 <div class="wrapper" *ngIf="!processing">
-  <div class="container my-3">
-    <div class="Xadd-child-guest">
+  <form (ngSubmit)="saveNewFamilyMember(newFamilyMemberModal)" #newFamilyMemberForm="ngForm">
+    <div class="container my-3">
       <div class="px-0">
-        <h3>Add New Family Member</h3>
+        <h3>Add New Family Member - Household: {{householdName}}</h3>
       </div>
 
-      <div *ngFor="let contact of contacts, let i = index;" class="px-0">
-        <div class="row my-2">
-          <div class="col-sm-6">
-            <fieldset class="form-group">
-              <input type="text" class="form-control form-control-lg" id="formGroupExampleInput" placeholder="First Name" [(ngModel)]="contact.Nickname">
-            </fieldset>
+      <div class="form-group required mb-2">
+        <label class="control-label">Number of Household Children</label>
+        <select class="form-control form-control-lg col-sm-3" name="numberOfChildren" [(ngModel)]="numberOfChildren" (change)="updateNumberOfChildren()">
+          <option *ngFor="let num of numberOfChildrenSelection" [attr.selected]="numberOfChildren == num">{{num}}</option>
+        </select>
+      </div>
+
+      <div class="new-family-members">
+        <div *ngFor="let contact of contacts, let i = index;" class="new-family-member px-0 pb-2 pt-2 border-bottom-0">
+          <div class="row">
+            <div class="col-sm-6">
+              <fieldset class="form-group">
+                <label for="nickname" class="control-label">First Name</label>
+                <input type="text" class="form-control form-control-lg" id="formGroupExampleInput" name="nickname" [(ngModel)]="contact.Nickname">
+              </fieldset>
+            </div>
+            <div class="col-sm-6">
+              <fieldset class="form-group">
+                <label for="lastName" class="control-label">Last Name</label>
+                <input type="text" class="form-control form-control-lg" id="formGroupExampleInput2" name="lastName" [(ngModel)]="contact.LastName">
+              </fieldset>
+            </div>
           </div>
-          <div class="col-sm-6">
-            <fieldset class="form-group">
-              <input type="text" class="form-control form-control-lg" id="formGroupExampleInput2" placeholder="Last Name" [(ngModel)]="contact.LastName">
-            </fieldset>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12 col-md-6">
-            <div class="form-group required text-xs-left">
-              <label for="guestChildBirthDate" class="control-label">Birth Date</label>
-              <br/>
-              <div class="row datepicker">
-                <div class="col-xs-12 col-sm-6">
-                  <div class="row">
-                    <div class="col-sm-4 col-md-5 col-sm-12 mb-1 wrapper">
-                      <select class="form-control form-control-lg" id="dob-month" (change)="datePickerBlur(contact)" [(ngModel)]="guestDOB.month">
-                        <option disabled value="0">Month</option>
-                        <option role="menuitem" *ngFor="let num of numberOfMonthsSelection" value="{{num}}">
-                          {{num | monthName }}
-                        </option>
-                      </select>
-                    </div>
-                    <div class="col-sm-4 col-md-3 col-sm-12 mb-1 wrapper">
-                      <select class="form-control form-control-lg" id="dob-day" (change)="datePickerBlur(contact)" [(ngModel)]="guestDOB.day">
-                        <option disabled value="0">Day</option>
-                        <option role="menuitem" *ngFor="let num of numberOfDaysSelection">
-                          {{num}}
-                        </option>
-                      </select>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-sm-12 mb-1 wrapper">
-                      <select class="form-control form-control-lg" id="dob-year" (change)="datePickerBlur(contact)" [(ngModel)]="guestDOB.year">
-                        <option disabled value="0">Year</option>
-                        <option role="menuitem" *ngFor="let num of yearsSelection">
-                          {{num}}
-                        </option>
-                      </select>
-                    </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-6">
+              <div class="form-group required text-xs-left">
+                <label for="guestChildBirthDate" class="control-label">Birth Date</label>
+                <br/>
+                <div class="row datepicker">
+                  <div class="col-sm-4 col-md-5 col-sm-12 mb-1">
+                    <select class="form-control form-control-lg" id="dob-month" (change)="datePickerBlur(contact, i)" name="dobMonth" [(ngModel)]="birthdates[i].month">
+                      <option disabled value="0">Month</option>
+                      <option role="menuitem" *ngFor="let num of numberOfMonthsSelection" value="{{num}}">
+                        {{num | monthName }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-sm-4 col-md-3 col-sm-12 mb-1">
+                    <select class="form-control form-control-lg" id="dob-day" (change)="datePickerBlur(contact, i)" name="dobDay" [(ngModel)]="birthdates[i].day">
+                      <option disabled value="0">Day</option>
+                      <option role="menuitem" *ngFor="let num of numberOfDaysSelection">
+                        {{num}}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-sm-4 col-md-4 col-sm-12 mb-1">
+                    <select class="form-control form-control-lg" id="dob-year" (change)="datePickerBlur(contact, i)" name="dobYear" [(ngModel)]="birthdates[i].year">
+                      <option disabled value="0">Year</option>
+                      <option role="menuitem" *ngFor="let num of yearsSelection">
+                        {{num}}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="col-xs-12 col-sm-6">
-            <div class="form-group required text-xs-left" *ngIf="needGradeLevel(contact)">
-              <label for="childGrade" class="control-label">Year / Grade</label>
-              <select class="form-control form-control-lg" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
-                <option value="-1">Select a Grade</option>
-                <option value="0" [attr.selected]="contact.YearGrade === 0 ? '' : null">Has not started Kindergarten yet</option>
-                <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}" [attr.selected]="contact.YearGrade === grade.Id ? '' : null">{{ grade.Name }}</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-xs-12 col-sm-6">
-            <div class="form-group required text-xs-left">
-              <label for="childGrade" class="control-label">Gender</label>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio2" value="{{femaleGenderId}}" [checked]="contact.isFemale()" (change)="contact.GenderId = femaleGenderId">
-                  Female
-                </label>
-              </div>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="genderRadio" id="genderRadio1" value="{{maleGenderId}}" [checked]="contact.isMale()" (change)="contact.GenderId = maleGenderId">
-                  Male
-                </label>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required text-xs-left" *ngIf="needGradeLevel(contact)">
+                <label for="childGrade" class="control-label">Year / Grade</label>
+                <select class="form-control form-control-lg" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
+                  <option value="-1">Select a Grade</option>
+                  <option value="0" [attr.selected]="contact.YearGrade === 0 ? '' : null">Has not started Kindergarten yet</option>
+                  <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}" [attr.selected]="contact.YearGrade === grade.Id ? '' : null">{{ grade.Name }}</option>
+                </select>
               </div>
             </div>
-          </div>
-          <div class="col-xs-12 col-sm-6" *ngIf="!editMode">
-            <div class="form-group required text-xs-left">
-              <label for="childGrade" class="control-label">Special Needs?</label>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="specialNeedsRadio" id="specialNeedsRadio1" value="1" [checked]="contact.IsSpecialNeeds" (change)="contact.IsSpecialNeeds = true">
-                  Yes
-                </label>
+            <div class="col-xs-12 col-sm-6">
+              <div class="form-group required text-xs-left">
+                <label for="childGrade" class="control-label">Gender</label>
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="{{ 'genderRadio' + i + 2 }}" id="{{ 'genderRadio' + i + 2 }}" value="{{femaleGenderId}}" [checked]="contact.isFemale()" (change)="contact.GenderId = femaleGenderId">
+                    Female
+                  </label>
+                </div>
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="{{ 'genderRadio' + i + 1 }}" id="{{ 'genderRadio' + i + 1 }}" value="{{maleGenderId}}" [checked]="contact.isMale()" (change)="contact.GenderId = maleGenderId">
+                    Male
+                  </label>
+                </div>
               </div>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="specialNeedsRadio" id="specialNeedsRadio2" value="0" [checked]="contact.IsSpecialNeeds === false" (change)="contact.IsSpecialNeeds = false">
-                  No
-                </label>
+            </div>
+            <div class="col-xs-12 col-sm-6" *ngIf="!editMode">
+              <div class="form-group required text-xs-left">
+                <label for="childGrade" class="control-label">Special Needs?</label>
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="{{ 'specialNeedsRadio' + i + 1 }}" id="{{ 'specialNeedsRadio' + i + 1 }}" value="1" [checked]="contact.IsSpecialNeeds" (change)="contact.IsSpecialNeeds = true">
+                    Yes
+                  </label>
+                </div>
+                <div class="form-check-inline">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="{{ 'specialNeedsRadio' + i + 2 }}" id="{{ 'specialNeedsRadio' + i + 2 }}" value="0" [checked]="contact.IsSpecialNeeds === false" (change)="contact.IsSpecialNeeds = false">
+                    No
+                  </label>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="px-0 text-xs-right">
+      <div class="pt-1 px-0 text-xs-right">
         <button type="button" class="btn btn-secondary" [routerLink]="['..']">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="saveNewFamilyMember(newFamilyMemberModal)" [disabled]="processingAddFamilyMember">
+        <button type="submit" class="btn btn-primary" [disabled]="processingAddFamilyMember">
           <span *ngIf="!processingAddFamilyMember">Add</span>
           <span *ngIf="processingAddFamilyMember">Adding...</span>
         </button>
       </div>
 
     </div>
-  </div>
+  </form>
 </div>
