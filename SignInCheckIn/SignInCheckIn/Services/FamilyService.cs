@@ -186,8 +186,7 @@ namespace SignInCheckIn.Services
         public UserDto GetUserByEmailAddress(string token, string emailAddress)
         {
             var mpUser = _contactRepository.GetUserByEmailAddress(token, emailAddress);
-            var user = Mapper.Map<UserDto>(mpUser);
-            return user;
+            return Mapper.Map<UserDto>(mpUser.FirstOrDefault());
         }
     }
 }
