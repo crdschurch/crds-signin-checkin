@@ -24,7 +24,7 @@ describe('HouseholdComponent', () => {
   beforeEach(() => {
     apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
     adminService = jasmine.createSpyObj('adminService', ['getChildrenByHousehold', 'findFamilySigninAndPrint',
-      'addFamilyMember', 'updateFamilyMember']);
+      'addFamilyMembers', 'updateFamilyMember']);
     rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
     headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
     router = jasmine.createSpyObj<Router>('router', ['navigate']);
@@ -37,7 +37,7 @@ describe('HouseholdComponent', () => {
 
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getChildrenByHousehold)).and.returnValue(Observable.of(eventParticipants));
-    (<jasmine.Spy>(adminService.addFamilyMember)).and.returnValue(Observable.of());
+    (<jasmine.Spy>(adminService.addFamilyMembers)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.updateFamilyMember)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
 
@@ -90,7 +90,7 @@ describe('HouseholdComponent', () => {
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(adminService.addFamilyMember).toHaveBeenCalledWith(newContact, undefined);
+        expect(adminService.addFamilyMembers).toHaveBeenCalledWith(newContact, undefined);
       });
     });
     it('edits existing family member if valid form', () => {
@@ -119,9 +119,9 @@ describe('HouseholdComponent', () => {
         invalidContact.LastName = '';
         fixture.contact = invalidContact;
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(this.processingAddFamilyMember).toBeFalsy();
+        expect(this.processingaddFamilyMembers).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninAddGuestFormInvalid');
-        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMembers).not.toHaveBeenCalled();
       });
       it('shows error if bad DOB', () => {
         let invalidContact: Contact = new Contact();
@@ -135,9 +135,9 @@ describe('HouseholdComponent', () => {
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(this.processingAddFamilyMember).toBeFalsy();
+        expect(this.processingaddFamilyMembers).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
-        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMembers).not.toHaveBeenCalled();
       });
       it('shows error if invalid no valid dob', () => {
         let invalidContact: Contact = new Contact();
@@ -147,9 +147,9 @@ describe('HouseholdComponent', () => {
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(this.processingAddFamilyMember).toBeFalsy();
+        expect(this.processingaddFamilyMembers).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
-        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMembers).not.toHaveBeenCalled();
       });
       it('shows error if invalid no valid group selected', () => {
         let invalidContact: Contact = new Contact();
@@ -163,9 +163,9 @@ describe('HouseholdComponent', () => {
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(this.processingAddFamilyMember).toBeFalsy();
+        expect(this.processingaddFamilyMembers).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedValidGradeSelection');
-        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMembers).not.toHaveBeenCalled();
       });
       it('shows error if no gender selected', () => {
         let invalidContact: Contact = new Contact();
@@ -180,9 +180,9 @@ describe('HouseholdComponent', () => {
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(this.processingAddFamilyMember).toBeFalsy();
+        expect(this.processingaddFamilyMembers).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedValidGenderSelection');
-        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMembers).not.toHaveBeenCalled();
       });
       it('shows error if no special needs selected', () => {
         let invalidContact: Contact = new Contact();
@@ -197,9 +197,9 @@ describe('HouseholdComponent', () => {
         // ui event after you pick a date
         fixture.datePickerBlur();
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(this.processingAddFamilyMember).toBeFalsy();
+        expect(this.processingaddFamilyMembers).toBeFalsy();
         expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedSpecialNeedsSelection');
-        expect(adminService.addFamilyMember).not.toHaveBeenCalled();
+        expect(adminService.addFamilyMembers).not.toHaveBeenCalled();
       });
     });
   });
