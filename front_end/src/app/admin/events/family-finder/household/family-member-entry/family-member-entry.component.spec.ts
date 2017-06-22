@@ -76,9 +76,9 @@ describe('FamilyMemberEntryComponent', () => {
 
         fixture.household = householdId;
         // ui event after you pick a date
-        fixture.datePickerBlur();
+        fixture.datePickerBlur(newContact, 0);
         let c = fixture.saveNewFamilyMember(fakeModal);
-        expect(adminService.addFamilyMembers).toHaveBeenCalledWith(newContact, undefined);
+        expect(adminService.addFamilyMembers).toHaveBeenCalledWith([ newContact ], undefined);
       });
     });
   });
@@ -87,7 +87,7 @@ describe('FamilyMemberEntryComponent', () => {
       let invalidContact: Contact = new Contact();
       invalidContact.Nickname = 'Pacman';
       invalidContact.LastName = '';
-      fixture.contact = invalidContact;
+      fixture.contacts = [ invalidContact ];
       let c = fixture.saveNewFamilyMember(fakeModal);
       expect(this.processingaddFamilyMembers).toBeFalsy();
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninAddGuestFormInvalid');
@@ -106,7 +106,7 @@ describe('FamilyMemberEntryComponent', () => {
 
       fixture.contacts = [ invalidContact ];
       // ui event after you pick a date
-      fixture.datePickerBlur();
+      fixture.datePickerBlur(invalidContact, 0);
       let c = fixture.saveNewFamilyMember(fakeModal);
       expect(this.processingaddFamilyMembers).toBeFalsy();
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
@@ -117,8 +117,10 @@ describe('FamilyMemberEntryComponent', () => {
       invalidContact.Nickname = 'Pacman';
       invalidContact.LastName = 'Jones';
       fixture.contacts = [ invalidContact ];
+      fixture.birthdates = [ new DateOfBirth() ];
+
       // ui event after you pick a date
-      fixture.datePickerBlur();
+      fixture.datePickerBlur(invalidContact, 0);
       let c = fixture.saveNewFamilyMember(fakeModal);
       expect(this.processingaddFamilyMembers).toBeFalsy();
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckChildSigninBadDateOfBirth');
@@ -132,12 +134,12 @@ describe('FamilyMemberEntryComponent', () => {
       let guestDOB = new DateOfBirth();
       guestDOB.month = 4;
       guestDOB.day = 4;
-      guestDOB.year = moment().subtract(1, 'year').year();
+      guestDOB.year = moment().subtract(7, 'year').year();
       fixture.birthdates = [ guestDOB ];
 
       fixture.contacts = [ invalidContact ];
       // ui event after you pick a date
-      fixture.datePickerBlur();
+      fixture.datePickerBlur(invalidContact, 0);
       let c = fixture.saveNewFamilyMember(fakeModal);
       expect(this.processingaddFamilyMembers).toBeFalsy();
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedValidGradeSelection');
@@ -157,7 +159,7 @@ describe('FamilyMemberEntryComponent', () => {
 
       fixture.contacts = [ invalidContact ];
       // ui event after you pick a date
-      fixture.datePickerBlur();
+      fixture.datePickerBlur(invalidContact, 0);
       let c = fixture.saveNewFamilyMember(fakeModal);
       expect(this.processingaddFamilyMembers).toBeFalsy();
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedValidGenderSelection');
@@ -177,7 +179,7 @@ describe('FamilyMemberEntryComponent', () => {
 
       fixture.contacts = [ invalidContact ];
       // ui event after you pick a date
-      fixture.datePickerBlur();
+      fixture.datePickerBlur(invalidContact, 0);
       let c = fixture.saveNewFamilyMember(fakeModal);
       expect(this.processingaddFamilyMembers).toBeFalsy();
       expect(rootService.announceEvent).toHaveBeenCalledWith('echeckNeedSpecialNeedsSelection');
