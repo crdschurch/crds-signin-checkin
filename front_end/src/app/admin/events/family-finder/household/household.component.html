@@ -26,7 +26,7 @@
         <div class="eqWrap mt-2">
           <div class="card" *ngFor="let kid of eventParticipants.Participants">
             <div class="text-xs-right mt-1 mr-1">
-              <a class="pull-xs-right pointer" (click)="openNewFamilyMemberModal(newFamilyMemberModal, kid)">Edit</a>
+              <a class="pull-xs-right pointer" (click)="openNewFamilyMemberModal(newFamilyMemberModal, kid)" *ngIf="!kid.GuestSignin">Edit</a>
             </div>
             <div>
               <child-signin-card [child]="kid" [allowSignin]="kid.CanCheckIn">
