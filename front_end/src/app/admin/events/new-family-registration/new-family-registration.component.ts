@@ -71,6 +71,10 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
     this.parents = [newParent];
     this.parents.push(this.newParent());
+    // be sure to validate email if passed in
+    if (this.parents[0].EmailAddress) {
+      this.checkIfEmailExists(this.parents[0], 0);
+    }
   }
 
   get maleGenderId(): number {

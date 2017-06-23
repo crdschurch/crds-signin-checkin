@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, RootService } from '../../../../shared/services';
 import { AdminService } from '../../../admin.service';
-import { DateOfBirth, Child, EventParticipants, Contact, Group } from '../../../../shared/models';
+import { DateOfBirth, Child, EventParticipants, Contact, Group, Household } from '../../../../shared/models';
 import { HeaderService } from '../../../header/header.service';
 
 import * as moment from 'moment';
@@ -21,6 +21,7 @@ export class HouseholdComponent implements OnInit {
   private gradeGroups: Array<Group> = [];
   private eventId: number;
   private eventTypeId: number;
+  household: Household;
   numberOfMonthsSelection: Array<number>;
   numberOfDaysSelection: Array<number>;
   yearsSelection: Array<number>;
@@ -43,6 +44,10 @@ export class HouseholdComponent implements OnInit {
      this.eventTypeId = event.EventTypeId;
      this.headerService.announceEvent(event);
      this.getChildren();
+   }, error => console.error(error));
+
+   this.adminService.getHouseholdInformation(this.householdId).subscribe((household) => {
+     this.household = household;
    }, error => console.error(error));
 
    this.populateGradeGroups();
