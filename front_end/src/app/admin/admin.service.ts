@@ -143,7 +143,7 @@ export class AdminService {
   }
 
   getHouseholdInformation(householdId: number): Observable<Household> {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/household/${householdId}`;
     return this.http.get(url)
                     .map((res) => Household.fromJson(res.json()))
                     .catch(this.handleError);

@@ -2,6 +2,11 @@
 
 <preloader *ngIf="processing"></preloader>
 <div class="container mt-3 pb-3 mb-3" *ngIf="!processing">
+  <div class="row" *ngIf="household">
+    <div class="col-md-12 h3">
+      Household: {{household.HouseholdName}}
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-12">
       <div class="eqWrap">

@@ -90,18 +90,12 @@
 
         <div class="row mt-2">
           <div class="col-xs-12 mb-3">
-            <section *ngIf="!isNewFamily">
+            <section>
               <div class="float-sm-left">
                 <button type="button" class="btn btn-secondary" [disabled]="processing" [routerLink]="['/admin/events', eventId, 'family-finder']">Cancel</button>
               </div>
               <div class="float-sm-right">
-                <button type="button" class="btn btn-info float-xs-right" [disabled]="processing || updateFamilyForm.pristine" (click)="onSave(updateFamilyForm)">Save and View Children</button>
-                <button type="submit" style="margin-right: 8px;" class="btn btn-primary float-xs-right" [disabled]="processing || updateFamilyForm.pristine" >Save</button>
-              </div>
-            </section>
-            <section *ngIf="isNewFamily">
-              <div class="float-sm-right">
-                <button type="submit" class="btn btn-info float-xs-right" [disabled]="processing || updateFamilyForm.pristine" (click)="onSave(updateFamilyForm)">Save</button>
+                <button type="submit" class="btn btn-info float-xs-right" [disabled]="processing || updateFamilyForm.pristine" (click)="onSave(updateFamilyForm)">Save &amp; View Children</button>
                 <button type="button" class="btn btn-primary float-xs-right mr-1" [disabled]="processing" (click)="onSkip()">Skip</button>
               </div>
             </section>

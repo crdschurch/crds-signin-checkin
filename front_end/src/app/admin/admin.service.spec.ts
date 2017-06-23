@@ -211,7 +211,7 @@ describe('AdminService', () => {
       (<jasmine.Spy>responseObject.json).and.returnValue(household);
 
       let result = fixture.getHouseholdInformation(householdId);
-      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/household/${householdId}`);
       expect(result).toBeDefined();
       expect(result).toEqual(jasmine.any(Observable));
       result.subscribe((r) => {

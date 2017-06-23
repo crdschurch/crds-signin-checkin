@@ -24,7 +24,7 @@ describe('HouseholdComponent', () => {
   beforeEach(() => {
     apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
     adminService = jasmine.createSpyObj('adminService', ['getChildrenByHousehold', 'findFamilySigninAndPrint',
-      'addFamilyMembers', 'updateFamilyMember']);
+      'addFamilyMembers', 'updateFamilyMember', 'getHouseholdInformation']);
     rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
     headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
     router = jasmine.createSpyObj<Router>('router', ['navigate']);
@@ -39,6 +39,7 @@ describe('HouseholdComponent', () => {
     (<jasmine.Spy>(adminService.getChildrenByHousehold)).and.returnValue(Observable.of(eventParticipants));
     (<jasmine.Spy>(adminService.addFamilyMembers)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.updateFamilyMember)).and.returnValue(Observable.of());
+    (<jasmine.Spy>(adminService.getHouseholdInformation)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
 
     fixture = new HouseholdComponent(apiService, adminService, rootService, route, router, headerService);
@@ -49,6 +50,7 @@ describe('HouseholdComponent', () => {
       (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
       fixture.ngOnInit();
       expect(apiService.getEvent).toHaveBeenCalled();
+      expect(adminService.getHouseholdInformation).toHaveBeenCalled();
     });
   });
 
