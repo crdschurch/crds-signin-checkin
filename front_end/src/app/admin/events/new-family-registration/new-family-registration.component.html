@@ -20,28 +20,28 @@
             <div class="col-xs-12 col-sm-6">
               <div class="form-group" [ngClass]="{'required' : i == 0 || optionalParentRequired}">
                 <label for="firstName{{i}}" id="firstName{{i}}" class="control-label">First Name</label>
-                <input type="text" class="form-control" [(ngModel)]="parents[i].FirstName" name="firstName{{i}}"
+                <input type="text" id="firstNameText{{i}}" class="form-control" [(ngModel)]="parents[i].FirstName" name="firstName{{i}}"
                   (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group" [ngClass]="{'required' : i == 0 || optionalParentRequired}">
                 <label for="lastName{{i}}" id="lastName{{i}}" class="control-label">Last Name</label>
-                <input type="text" class="form-control" [(ngModel)]="parents[i].LastName" name="lastName{{i}}"
+                <input type="text" class="form-control" [(ngModel)]="parents[i].LastName" id="lastNameText{{i}}" name="lastName{{i}}"
                   (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group" [ngClass]="{'required' : i == 0}">
                 <label for="phoneNumber{{i}}" id="phoneNumber{{i}}" class="control-label">Phone Number</label>
-                <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="parents[i].PhoneNumber" name="phoneNumber{{i}}"
+                <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="parents[i].PhoneNumber" id="phoneNumberText{{i}}" name="phoneNumber{{i}}"
                   (blur)="requiredOnBlur($event)" [required]="i == 0">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group">
                 <label for="emailAddress{{i}}" class="control-label">Email</label>
-                <input type="email" id="emailAddress" class="form-control" [(ngModel)]="parents[i].EmailAddress" name="emailAddress{{i}}" (blur)="checkIfEmailExists(parent, i)">
+                <input type="email" id="emailAddress{{i}}" class="form-control" [(ngModel)]="parents[i].EmailAddress" name="emailAddress{{i}}" (blur)="checkIfEmailExists(parent, i)">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
