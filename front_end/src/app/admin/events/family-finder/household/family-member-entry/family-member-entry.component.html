@@ -67,7 +67,7 @@
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required text-xs-left" *ngIf="needGradeLevel(contact)">
                 <label for="childGrade" class="control-label">Year / Grade</label>
-                <select class="form-control form-control-lg" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
+                <select class="form-control form-control-lg" id="grade{{i}}" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
                   <option value="-1">Select a Grade</option>
                   <option value="0" [attr.selected]="contact.YearGrade === 0 ? '' : null">Has not started Kindergarten yet</option>
                   <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}" [attr.selected]="contact.YearGrade === grade.Id ? '' : null">{{ grade.Name }}</option>
