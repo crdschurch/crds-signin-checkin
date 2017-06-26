@@ -4,12 +4,13 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { NewFamily, NewParent, NewChild, Group } from '../../../shared/models';
+import { NewParent, NewChild, Contact } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
-import { ApiService, RootService } from '../../../shared/services';
+import { ApiService, RootService, SetupService } from '../../../shared/services';
 import { HeaderService } from '../../header/header.service';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
   styleUrls: ['new-family-registration.component.scss'],
@@ -20,11 +21,15 @@ export class NewFamilyRegistrationComponent implements OnInit {
   private maskPhoneNumber: any = [/[1-9]/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/];
   private maskDate: any = [/[0-1]/, /[0-9]/, '/', /[0-3]/, /\d/, '/', /[1,2]/, /[0,9]/, /[0,1,2,8,9]/, /\d/];
   private eventId: string;
-  private family: NewFamily;
-  private gradeGroups: Array<Group> = [];
   private processing: boolean;
   private submitted: boolean;
-  numberOfKidsSelection: any = Array.apply(null, {length: 12}).map(function (e, i) { return i + 1; }, Number);
+  private parents: Array<NewParent> = [];
+  private optionalParentRequired = false;
+  // this is an array of the indexes of the parents in process of
+  // being checked (so async calls work for all parents)
+  // for instance if second parent is in process of checking for
+  // duplicate email it will be [1]
+  duplicateEmailProcessing = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -32,6 +37,7 @@ export class NewFamilyRegistrationComponent implements OnInit {
     private headerService: HeaderService,
     private adminService: AdminService,
     private rootService: RootService,
+    private setupService: SetupService,
     private router: Router) {}
 
   ngOnInit() {
@@ -39,39 +45,44 @@ export class NewFamilyRegistrationComponent implements OnInit {
   }
 
   setUp() {
-   this.processing = false;
-   this.submitted = false;
-   this.eventId = this.route.snapshot.params['eventId'];
-   this.family = new NewFamily();
-   this.family.parent = new NewParent();
-   this.family.children = [this.newChild()];
-   this.family.numberOfKids = 1;
+    this.processing = false;
+    this.submitted = false;
+    this.eventId = this.route.snapshot.params['eventId'];
+    this.createParents();
 
-   this.apiService.getEvent(this.eventId).subscribe((event) => {
-        this.family.event = event;
+    this.apiService.getEvent(this.eventId).subscribe((event) => {
         this.headerService.announceEvent(event);
-        this.apiService.getGradeGroups(this.eventId).subscribe((groups) => {
-            this.gradeGroups = groups;
-          },
-          error => console.error(error)
-        );
       },
       error => console.error(error)
     );
   }
 
-  updateNumberOfKids(): void {
-    let tmpChildren: Array<NewChild> = [];
-
-    for (let i = 0; i < this.family.numberOfKids; i++) {
-      if (this.family.children[i] === undefined) {
-        tmpChildren.push(this.newChild());
-      } else {
-        tmpChildren.push(this.family.children[i]);
-      }
+  createParents() {
+    let newParent;
+    if (this.route.snapshot.queryParams) {
+      newParent = this.newParent(
+        this.route.snapshot.queryParams['first'],
+        this.route.snapshot.queryParams['last'],
+        this.route.snapshot.queryParams['phone'],
+        this.route.snapshot.queryParams['email']
+      );
+    } else {
+      newParent = this.newParent();
     }
+    this.parents = [newParent];
+    this.parents.push(this.newParent());
+    // be sure to validate email if passed in
+    if (this.parents[0].EmailAddress) {
+      this.checkIfEmailExists(this.parents[0], 0);
+    }
+  }
 
-    this.family.children = tmpChildren;
+  get maleGenderId(): number {
+    return NewParent.genderIdMale();
+  }
+
+  get femaleGenderId(): number {
+    return NewParent.genderIdFemale();
   }
 
   needGradeLevel(child: NewChild): boolean {
@@ -100,21 +111,38 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
   }
 
-  onSubmit(form: NgForm) {
-    // ensure all children have birthdates
-    // https://rally1.rallydev.com/#/27593764268d/detail/defect/100109967564
-    if (!this.family.allChildrenHaveBirthdays()) {
-      return;
+  requiredOnBlur(e) {
+    this.optionalParentRequired = false;
+
+    if (!(this.parents[1].FirstName === '' || this.parents[1].FirstName === undefined || this.parents[1].FirstName === null) ||
+          !(this.parents[1].LastName === '' || this.parents[1].LastName === undefined || this.parents[1].LastName === null) ||
+          !(this.parents[1].PhoneNumber === '' || this.parents[1].PhoneNumber === undefined || this.parents[1].PhoneNumber === null) ||
+          !(this.parents[1].EmailAddress === '' || this.parents[1].EmailAddress === undefined || this.parents[1].EmailAddress === null)) {
+      this.optionalParentRequired = true;
     }
+  }
+
+  onSubmit(form: NgForm, editMode = false) {
     this.submitted = true;
     if (!form.pristine && form.valid) {
       this.processing = true;
-      this.adminService.createNewFamily(this.family).subscribe((res) => {
+
+      let tmpParents = this.parents.filter((parent: NewParent) => {
+        return !(parent.FirstName === '' || parent.FirstName === undefined || parent.FirstName === null);
+      });
+
+      tmpParents.map((parent: NewParent) => {
+        parent.CongregationId = this.setupService.getMachineDetailsConfigCookie().CongregationId;
+      });
+
+      this.adminService.createNewFamily(tmpParents).subscribe((res) => {
         this.rootService.announceEvent('echeckNewFamilyCreated');
         form.resetForm();
-        setTimeout(() => {
-          this.setUp();
-        });
+
+        let contacts = (<Contact[]>res.json()).map(r => Contact.fromJson(r));
+        let householdId = contacts[0].HouseholdId;
+
+        this.router.navigate(['/admin/events', this.eventId, 'family-finder', householdId, 'edit', {newFamily: true}]);
       }, (error) => {
         switch (error.status) {
           case 412:
@@ -129,7 +157,35 @@ export class NewFamilyRegistrationComponent implements OnInit {
     }
   }
 
-  private newChild(): NewChild {
-    return new NewChild();
+  checkIfEmailExists(parent: NewParent, parentIndex: number) {
+    if (parent.EmailAddress && parent.EmailAddress.length) {
+      this.duplicateEmailProcessing.push(parentIndex);
+      this.adminService.getUser(parent.EmailAddress).subscribe(
+        (res: any) => {
+          if (res) {
+            parent.DuplicateEmail = parent.EmailAddress;
+            parent.HouseholdId = res.HouseholdId;
+          } else {
+            parent.DuplicateEmail = undefined;
+            parent.HouseholdId = undefined;
+          }
+          this.duplicateEmailProcessing.splice(this.duplicateEmailProcessing.indexOf(parentIndex), 1);
+        }, (error) => {
+          console.error(error);
+        });
+    }
   }
+
+  isCheckingEmailExists() {
+    return this.duplicateEmailProcessing.length > 0;
+  }
+
+  areDuplicateEmails() {
+    return _.find(this.parents, (o) => { return o.DuplicateEmail; });
+  }
+
+  private newParent(firstName = '', lastName = '', phone = '', email = ''): NewParent {
+    return new NewParent(firstName, lastName, phone, email);
+  }
+
 }

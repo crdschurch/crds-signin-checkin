@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
 import { ApiService, RootService } from '../../../../../shared/services';
@@ -20,6 +20,7 @@ export class HouseholdEditComponent implements OnInit {
   private household: Household = new Household();
   private states: Array<State> = [];
   private countries: Array<Country> = [];
+  isNewFamily: boolean;
 
   constructor( private apiService: ApiService,
                private adminService: AdminService,
@@ -31,8 +32,10 @@ export class HouseholdEditComponent implements OnInit {
  ngOnInit() {
    this.loading = true;
    this.processing = false;
+
    this.eventId = +this.route.snapshot.params['eventId'];
    this.householdId = +this.route.snapshot.params['householdId'];
+   this.isNewFamily = this.route.snapshot.params['newFamily'];
 
    this.apiService.getEvent(String(this.eventId)).subscribe((event) => {
      this.headerService.announceEvent(event);
@@ -46,6 +49,10 @@ export class HouseholdEditComponent implements OnInit {
 
         this.adminService.getHouseholdInformation(this.householdId).subscribe((household) => {
          this.household = household;
+         // default to USA
+         if (!this.household.CountryCode) {
+           this.household.CountryCode = 'USA';
+         }
          this.loading = false;
         }, error => console.error(error));
      }, error => console.error(error));
@@ -67,6 +74,10 @@ export class HouseholdEditComponent implements OnInit {
 
   updateCountry(newCountry) {
     this.household.CountryCode = newCountry;
+  }
+
+  onSkip() {
+    this.router.navigate(['/admin/events', this.eventId, 'family-finder', this.householdId]);
   }
 
   onSave(form: NgForm) {

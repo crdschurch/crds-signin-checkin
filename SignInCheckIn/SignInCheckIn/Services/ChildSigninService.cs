@@ -47,7 +47,8 @@ namespace SignInCheckIn.Services
                                   IRoomRepository roomRepository,
                                   IConfigRepository configRepository,
                                   IAttributeRepository attributeRepository,
-                                  ISignInLogic signInLogic)
+                                  ISignInLogic signInLogic,
+                                  IPasswordService passwordService)
         {
             _childSigninRepository = childSigninRepository;
             _eventRepository = eventRepository;
@@ -63,7 +64,7 @@ namespace SignInCheckIn.Services
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
             _signInLogic = signInLogic;
-
+            
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
@@ -537,87 +538,9 @@ namespace SignInCheckIn.Services
             return participantEventMapDto;
         }
 
-        public ParticipantEventMapDto CreateNewFamily(string token, NewFamilyDto newFamilyDto, string kioskIdentifier)
-        {
-            var newFamilyParticipants = SaveNewFamilyData(token, newFamilyDto);
-            CreateGroupParticipants(token, newFamilyParticipants);
-
-            // note that the events are drawn from the context that the new family is being edited in - 
-            // i.e. if accessed via a KC event, the kids will be checked into KC, etc.
-            var participantEventMapDto = GetChildrenAndEventByPhoneNumber(newFamilyDto.ParentContactDto.PhoneNumber, newFamilyDto.EventDto.EventSiteId, newFamilyDto.EventDto, true);
-
-            // mark all as selected so they get signed in, but guard against an exception with no participants
-            if (participantEventMapDto.Participants.Any())
-            {
-                participantEventMapDto.Participants.ForEach(p => p.Selected = true);
-
-                // sign them all into a room
-                participantEventMapDto = SigninParticipants(participantEventMapDto, true);
-
-                // print labels
-                PrintParticipants(participantEventMapDto, kioskIdentifier);
-            }
-
-            return participantEventMapDto;
-        }
-
-        public List<MpNewParticipantDto> SaveNewFamilyData(string token, NewFamilyDto newFamilyDto)
-        {
-            // Step 1 - create the household
-            MpHouseholdDto mpHouseholdDto = new MpHouseholdDto
-            {
-                HouseholdName = newFamilyDto.ParentContactDto.LastName,
-                HomePhone = newFamilyDto.ParentContactDto.PhoneNumber,
-                CongregationId = newFamilyDto.EventDto.EventSiteId,
-                HouseholdSourceId = _applicationConfiguration.KidsClubRegistrationSourceId
-            };
-
-            mpHouseholdDto = _contactRepository.CreateHousehold(token, mpHouseholdDto);
-
-            // Step 2 - create the parent contact w/participant
-            MpNewParticipantDto parentNewParticipantDto = new MpNewParticipantDto
-            {
-                ParticipantTypeId = _applicationConfiguration.AttendeeParticipantType,
-                ParticipantStartDate = DateTime.Now,
-                Contact = new MpContactDto
-                {
-                    FirstName = newFamilyDto.ParentContactDto.FirstName,
-                    Nickname = newFamilyDto.ParentContactDto.FirstName,
-                    LastName = newFamilyDto.ParentContactDto.LastName,
-                    DisplayName = newFamilyDto.ParentContactDto.LastName + ", " + newFamilyDto.ParentContactDto.FirstName,
-                    HouseholdId = mpHouseholdDto.HouseholdId,
-                    HouseholdPositionId = _applicationConfiguration.HeadOfHouseholdId,
-                    Company = false
-                }
-            };
-
-            // parentNewParticipantDto.Contact.DateOfBirth = null;
-            _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
-
-            // Step 3 create the children contacts
-            List<MpNewParticipantDto> mpNewChildParticipantDtos = new List<MpNewParticipantDto>();
-
-            foreach (var childContactDto in newFamilyDto.ChildContactDtos)
-            {
-                var newParticipant = CreateNewParticipantWithContact(childContactDto.FirstName,
-                                                childContactDto.LastName,
-                                                childContactDto.DateOfBirth,
-                                                childContactDto.YearGrade,
-                                                mpHouseholdDto.HouseholdId,
-                                                _applicationConfiguration.MinorChildId
-                    );
-
-                mpNewChildParticipantDtos.Add(newParticipant);
-
-            }
-
-            return mpNewChildParticipantDtos;
-        }
-
         // this really can just return void, but we need to get the grade group id on the mp new participant dto
         public List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
         {
-            // Step 4 - create the group participants
             List<MpGroupParticipantDto> groupParticipantDtos = new List<MpGroupParticipantDto>();
 
             foreach (var tempItem in mpParticipantDtos)
@@ -681,23 +604,32 @@ namespace SignInCheckIn.Services
 
             // if admin type or event being signed into is not MSM, then we should exclude MSM event typse
             bool excludeIds = (kioskTypeId == 1 || !msmEventTypes.Contains(participantEventMapDto.CurrentEvent.EventTypeId));
-
+            
             dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, excludeIds)
                 .Where(r => CheckEventTimeValidity(r, allowLateSignin)).OrderBy(r => r.EventStartDate).ToList();
 
             var eligibleEvents = new List<MpEventDto>();
 
             // pull off (at most) the top 2 service events
-            var serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).Take(2).ToList();
+            List<MpEventDto> serviceEventSet;
+            if (allowLateSignin)
+            {
+                var currentEvent = dailyEvents.First(r => r.EventId == participantEventMapDto.CurrentEvent.EventId);
+                serviceEventSet = dailyEvents.Where(r => r.EventId == currentEvent.EventId || (r.EventStartDate >= currentEvent.EventStartDate && r.ParentEventId == null)).Take(2).ToList();
+            }
+            else
+            {
+                serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).Take(2).ToList();
+            }
 
             // we need to get first two event services, and then the matching ac events
-            for (int i = 0; i < serviceEventSet.Count; i++)
+            foreach (var serviceEvent in serviceEventSet)
             {
-                eligibleEvents.Add(serviceEventSet[i]);
+                eligibleEvents.Add(serviceEvent);
 
-                if (dailyEvents.Any(r => r.ParentEventId == serviceEventSet[i].EventId))
+                if (dailyEvents.Any(r => r.ParentEventId == serviceEvent.EventId))
                 {
-                    eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == serviceEventSet[i].EventId));
+                    eligibleEvents.Add(dailyEvents.First(r => r.ParentEventId == serviceEvent.EventId));
                 }
             }
 

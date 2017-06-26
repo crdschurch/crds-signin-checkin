@@ -236,8 +236,8 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(HouseholdDto))]
-        [VersionedRoute(template: "getHouseholdByID/{householdId}", minimumVersion: "1.0.0")]
-        [Route("getHouseholdByID/{householdId}")]
+        [VersionedRoute(template: "household/{householdId}", minimumVersion: "1.0.0")]
+        [Route("household/{householdId}")]
         public IHttpActionResult GetHouseholdById([FromUri] int householdId)
         {
             try

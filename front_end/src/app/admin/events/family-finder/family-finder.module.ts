@@ -7,6 +7,7 @@ import { ChildSigninCardModule } from '../../../shared/components/child-signin-c
 import { FamilyFinderComponent } from './family-finder.component';
 import { HouseholdComponent } from './household/household.component';
 import { HouseholdEditComponent } from './household/edit/household-edit.component';
+import { FamilyMemberEntryComponent } from './household/family-member-entry/family-member-entry.component';
 import { ServingToggleModule } from '../../../child-signin/serving/serving-toggle.module';
 import { GuestModalModule } from '../../../child-signin/guest/guest-modal.module';
 import { familyFinderRouting } from './family-finder.routes';
@@ -14,6 +15,7 @@ import { familyFinderRouting } from './family-finder.routes';
 @NgModule({
   declarations: [
     FamilyFinderComponent,
+    FamilyMemberEntryComponent,
     HouseholdComponent,
     HouseholdEditComponent
   ],

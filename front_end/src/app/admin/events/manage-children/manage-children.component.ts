@@ -136,6 +136,22 @@ export class ManageChildrenComponent implements OnInit {
     this.childrenByRoom = Object.keys(groupedChildren).map(k => groupedChildren[k]);
   }
 
+  get childrenByRoomCheckedIn() {
+    let checkedInChildrenByRoom: Array<Array<Child>> = [];
+    if (this.childrenByRoom &&   this.childrenByRoom.length) {
+      this.childrenByRoom.forEach(cbr => {
+          let checkInChildren = [];
+          cbr.forEach((c: Child) => {
+            if (c.checkedIn()) {
+              checkInChildren.push(c);
+            }
+          });
+          checkedInChildrenByRoom.push(checkInChildren);
+      });
+    }
+    return checkedInChildrenByRoom;
+  }
+
   get children(){
     return this._children;
   }
