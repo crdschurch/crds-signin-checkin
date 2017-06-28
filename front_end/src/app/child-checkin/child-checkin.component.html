@@ -39,7 +39,7 @@
   <footer class="footer py-1 sticky-footer">
     <div class="container-fluid">
       <div>
-        <a (click)="showServiceSelectModal()" class="btn btn-primary float-md-left"  [ngClass]="{'disabled': !selectedEvent }">
+        <a (click)="showServiceSelectModal()" id="selectEvent" class="btn btn-primary float-md-left"  [ngClass]="{'disabled': !selectedEvent }">
           <span [hidden]="ready">...</span>
           <span [hidden]="!ready">
             <span [hidden]="!selectedEvent">
