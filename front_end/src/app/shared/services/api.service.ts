@@ -44,6 +44,22 @@ export class ApiService {
                     .catch(this.handleError);
   }
 
+  getEventTemplates(site?: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/templates`;
+    if (!site) { site = this.getSite(); }
+    let options = new RequestOptions({
+        search: new URLSearchParams(`site=${site}`)
+    });
+    return this.http.get(url, options)
+                    .map(res => {
+                      let events = res.json();
+                      return events.sort((a: Event, b: Event) => {
+                        return a.EventStartDate.localeCompare(b.EventStartDate);
+                      });
+                    })
+                    .catch(this.handleError);
+  }
+
   getGradeGroups(eventId = null) {
     let url = `${process.env.ECHECK_API_ENDPOINT}/grade-groups`;
     url += (eventId === null ? '' : `?eventId=${eventId}`);
