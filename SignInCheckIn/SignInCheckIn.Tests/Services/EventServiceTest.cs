@@ -107,7 +107,7 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual("Oakley", result[0].EventSite);
             Assert.AreEqual(1234567, result[0].EventId);
-            Assert.AreEqual(false, result[0].Template);
+            Assert.IsNull(result[0].Template);
         }
 
         [Test]
