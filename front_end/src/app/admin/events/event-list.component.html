@@ -20,7 +20,10 @@
           <thead>
             <tr>
               <th>Event Type</th>
-              <th>Day</th>
+              <th>
+                <span *ngIf="!isEventTemplates">Day</span>
+                <span *ngIf="isEventTemplates">Event</span>
+              </th>
               <th>Date</th>
               <th>Time</th>
               <th>Site</th>
@@ -30,7 +33,10 @@
           <tbody>
             <tr *ngFor="let event of events">
               <td>{{event.type}}</td>
-              <td>{{event.EventStartDate | amDateFormat :'dddd'}}</td>
+              <td>
+                <span *ngIf="!isEventTemplates">{{event.EventStartDate | amDateFormat :'dddd'}}</span>
+                <span *ngIf="isEventTemplates">{{event.EventTitle}}</span>
+              </td>
               <td>{{event.EventStartDate | amDateFormat :'M/D/YYYY'}}</td>
               <td>{{event.EventStartDate | amDateFormat :'h:mma'}}</td>
               <td>{{event.EventSite}}</td>
@@ -41,7 +47,8 @@
           </tbody>
         </table>
         <div class="text-xs-center py-2" *ngIf="!events || !events.length">
-          No Events
+          <span *ngIf="!isEventTemplates">No Event Templates</span>
+          <span *ngIf="isEventTemplates">No Events</span>
         </div>
       </div>
       <div class="col-md-3 col-sm-4 col-xs-12 px-3">
