@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import '../rxjs-operators';
 import { HttpClientService } from '../shared/services';
-import { EventParticipants, Room, NewFamily, Child, Group, Contact, Household, State, Country } from '../shared/models';
+import { EventParticipants, Room, Child, Group, Contact, Household, State, Country, NewParent } from '../shared/models';
 
 @Injectable()
 export class AdminService {
@@ -49,7 +49,9 @@ export class AdminService {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/rooms/${roomId}/groups`;
     return this.http.put(url, room)
                     .map(res => Room.fromJson(res.json()))
-                    .catch(this.handleError);
+                    .catch(err => {
+                      return Observable.throw(JSON.parse(err.json().errors[0]));
+                    });
   }
 
   importEvent(destinationEventId: number, sourceEventId: number): Observable<Room[]> {
@@ -59,9 +61,9 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  createNewFamily(family: NewFamily) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`;
-    return this.http.post(url, family).map(res => { return res; }).catch(this.handleError);
+  createNewFamily(parents: Array<NewParent>) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family`;
+    return this.http.post(url, parents).map(res => { return res; }).catch(this.handleError);
   }
 
   getChildrenForEvent(eventId: number, searchString?: string) {
@@ -126,22 +128,22 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
-  addFamilyMember(contact: Contact) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member`;
-    return this.http.post(url, contact)
+  addFamilyMembers(contacts: Array<Contact>, householdId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family/${householdId}/member`;
+    return this.http.post(url, contacts)
                     .map(res => {})
                     .catch(this.handleError);
   }
 
   updateFamilyMember(contact: Contact) {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/signin/family/member/${contact.ContactId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/family/member/${contact.ContactId}`;
     return this.http.put(url, contact)
                     .map(res => {})
                     .catch(this.handleError);
   }
 
   getHouseholdInformation(householdId: number): Observable<Household> {
-    const url = `${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`;
+    const url = `${process.env.ECHECK_API_ENDPOINT}/household/${householdId}`;
     return this.http.get(url)
                     .map((res) => Household.fromJson(res.json()))
                     .catch(this.handleError);
@@ -165,6 +167,13 @@ export class AdminService {
     const url = `${process.env.ECHECK_API_ENDPOINT}/getCountries`;
     return this.http.get(url)
                     .map((res) => (<any[]>res.json()).map(c => Country.fromJson(c)))
+                    .catch(this.handleError);
+  }
+
+  getUser(email: string) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/user?email=${email}`;
+    return this.http.get(url)
+                    .map((res) => res.json())
                     .catch(this.handleError);
   }
 

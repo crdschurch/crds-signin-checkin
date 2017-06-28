@@ -234,6 +234,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Controllers\SiteController.cs" />
+    <Compile Include="Controllers\FamilyController.cs" />
     <Compile Include="Exceptions\Models\ApiErrorDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -244,6 +245,7 @@
     <Compile Include="Models\Authentication\LoginReturn.cs" />
     <Compile Include="Models\DTO\CapacityDto.cs" />
     <Compile Include="Models\DTO\CountryDto.cs" />
+    <Compile Include="Models\DTO\UserDto.cs" />
     <Compile Include="Models\DTO\StateDto.cs" />
     <Compile Include="Models\DTO\HouseholdDto.cs" />
     <Compile Include="Models\DTO\ContactDto.cs" />
@@ -273,6 +275,7 @@
     <Compile Include="Security\MPAuth.cs" />
     <Compile Include="Services\ChildCheckinService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
+    <Compile Include="Services\FamilyService.cs" />
     <Compile Include="Services\LookupService.cs" />
     <Compile Include="Services\Interfaces\ILookupService.cs" />
     <Compile Include="Services\Interfaces\ISiteService.cs" />
@@ -282,6 +285,7 @@
     <Compile Include="Services\HelloWorldService.cs" />
     <Compile Include="Services\Interfaces\IChildCheckinService.cs" />
     <Compile Include="Services\Interfaces\IChildSigninService.cs" />
+    <Compile Include="Services\Interfaces\IFamilyService.cs" />
     <Compile Include="Services\Interfaces\IWebsocketService.cs" />
     <Compile Include="Services\Interfaces\IEventService.cs" />
     <Compile Include="Services\Interfaces\IHelloWorldService.cs" />

@@ -10,9 +10,10 @@ const event = {
 };
 let router;
 let apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
-let adminService = jasmine.createSpyObj('adminService', [, 'createNewFamily']);
+let adminService = jasmine.createSpyObj('adminService', [, 'createNewFamily', 'getUser']);
 let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
+let setupService = jasmine.createSpyObj('setupService', ['getMachineDetailsConfigCookie']);
 let route: ActivatedRoute;
 route = new ActivatedRoute();
 route.snapshot = new ActivatedRouteSnapshot();
@@ -25,7 +26,9 @@ describe('NewFamilyRegistrationComponent', () => {
     (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
-    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+    (<jasmine.Spy>(setupService.getMachineDetailsConfigCookie)).and.returnValue({});
+
+    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
     fixture.family = new NewFamily();
     fixture.family.children = [];
     fixture.family.children[0] = new Child();
@@ -40,24 +43,10 @@ describe('NewFamilyRegistrationComponent', () => {
   });
   it('#setUp', () => {
     fixture.setUp();
-    expect(fixture.family).toBeDefined();
-    expect(fixture.family.parent).toBeDefined(1);
-    expect(fixture.family.children.length).toEqual(1);
+    expect(fixture.parents).toBeDefined(2);
     (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
     expect(apiService.getEvent).toHaveBeenCalledWith(event.EventId);
-    expect(apiService.getGradeGroups).toHaveBeenCalled();
     expect(headerService.announceEvent).toHaveBeenCalledWith(event);
-  });
-  it('#onSubmit should not submit form with a missing child DOB', () => {
-    let form = {
-      pristine: false,
-      valid: true
-    };
-    (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
-    // this child has no DOB
-    fixture.family.children[2] = new Child();
-    fixture.onSubmit(form);
-    expect(adminService.createNewFamily).not.toHaveBeenCalled();
   });
   it('#onSubmit success', () => {
     let form = {
@@ -77,15 +66,40 @@ describe('NewFamilyRegistrationComponent', () => {
     fixture.onSubmit(form);
     expect(rootService.announceEvent).toHaveBeenCalledWith('generalError');
   });
+  describe('#checkIfEmailExists', () => {
+    beforeEach(() => {
+    });
+    it('should show error and disable button if email exists', () => {
+      (<jasmine.Spy>(adminService.getUser)).and.returnValue(Observable.of({HouseholdId: 123}));
+      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+      let p = new NewParent();
+      p.EmailAddress = 'exists@email.com';
+      fixture.checkIfEmailExists(p, 0);
+      expect(p.DuplicateEmail).toBeTruthy();
+      expect(p.HouseholdId).toBeTruthy();
+      expect(fixture.duplicateEmailProcessing.length).toEqual(0);
+
+    });
+    it('should not show error if email doesnt exist', () => {
+      (<jasmine.Spy>(adminService.getUser)).and.returnValue(Observable.of(null));
+      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+      let p = new NewParent();
+      p.EmailAddress = 'new@email.com';
+      fixture.checkIfEmailExists(p, 0);
+      expect(p.DuplicateEmail).toBeFalsy();
+      expect(p.HouseholdId).toBeFalsy();
+      expect(fixture.duplicateEmailProcessing.length).toEqual(0);
+    });
+  });
   it('should return true when child > 5 years old', () => {
-    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
     let child = new NewChild();
     child.DateOfBirth = moment().subtract(5, 'years').subtract(1, 'day').toDate();
     expect(fixture.needGradeLevel(child)).toBeTruthy();
   });
 
   it('should return false when child < 3 years old', () => {
-    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
     let child = new NewChild();
     child.DateOfBirth = moment().subtract(3, 'years').add(1, 'day').toDate();
     expect(fixture.needGradeLevel(child)).toBeFalsy();
@@ -94,7 +108,7 @@ describe('NewFamilyRegistrationComponent', () => {
     let child;
     let parent;
     beforeEach(() => {
-      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, router);
+      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
       child = new NewChild();
       parent = new NewParent();
     });

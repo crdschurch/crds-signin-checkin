@@ -5,6 +5,7 @@ import { HttpClientService } from '../shared/services';
 import { Response } from '@angular/http';
 import { Event, EventParticipants, Room, NewFamily, Child, Group, Contact, Household, State, Country } from '../shared/models';
 import { Observable } from 'rxjs';
+import {NewParent} from '../shared/models/new-parent';
 
 describe('AdminService', () => {
   let fixture: AdminService;
@@ -89,13 +90,13 @@ describe('AdminService', () => {
 
   describe('#createNewFamily', () => {
     it('should return list of rooms imported', () => {
-      let family = new NewFamily();
+      let parents: Array<NewParent> = [ new NewParent() ];
 
       (<jasmine.Spy>httpClientService.post).and.returnValue(response);
       (<jasmine.Spy>responseObject.json).and.returnValue(undefined);
 
-      fixture.createNewFamily(family).subscribe((res) => {
-        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/signin/newfamily`, family);
+      fixture.createNewFamily(parents).subscribe((res) => {
+        expect(httpClientService.post).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/family`, parents);
       });
 
     });
@@ -210,7 +211,7 @@ describe('AdminService', () => {
       (<jasmine.Spy>responseObject.json).and.returnValue(household);
 
       let result = fixture.getHouseholdInformation(householdId);
-      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/getHouseholdByID/${householdId}`);
+      expect(httpClientService.get).toHaveBeenCalledWith(`${process.env.ECHECK_API_ENDPOINT}/household/${householdId}`);
       expect(result).toBeDefined();
       expect(result).toEqual(jasmine.any(Observable));
       result.subscribe((r) => {

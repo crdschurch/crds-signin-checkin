@@ -2,11 +2,16 @@
 
 <preloader *ngIf="processing"></preloader>
 <div class="container mt-3 pb-3 mb-3" *ngIf="!processing">
+  <div class="row" *ngIf="household">
+    <div class="col-md-12 h3">
+      Household: {{household.HouseholdName}}
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-12">
       <div class="eqWrap">
         <div class="card xl text-xs-center pointer">
-          <a (click)="openNewFamilyMemberModal(newFamilyMemberModal)">
+          <a [routerLink]="['entry']">
             <div class="card-block">
               <span class="round-plus">+</span>
               <h5 class="card-title guest-title">
@@ -26,7 +31,7 @@
         <div class="eqWrap mt-2">
           <div class="card" *ngFor="let kid of eventParticipants.Participants">
             <div class="text-xs-right mt-1 mr-1">
-              <a class="pull-xs-right pointer" (click)="openNewFamilyMemberModal(newFamilyMemberModal, kid)">Edit</a>
+              <a class="pull-xs-right pointer" (click)="openNewFamilyMemberModal(newFamilyMemberModal, kid)" *ngIf="!kid.GuestSignin">Edit</a>
             </div>
             <div>
               <child-signin-card [child]="kid" [allowSignin]="kid.CanCheckIn">

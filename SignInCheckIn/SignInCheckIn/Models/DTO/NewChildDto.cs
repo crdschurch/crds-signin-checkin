@@ -8,5 +8,6 @@ namespace SignInCheckIn.Models.DTO
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int? YearGrade { get; set; }
+        public int? HouseholdId { get; set; }
     }
 }

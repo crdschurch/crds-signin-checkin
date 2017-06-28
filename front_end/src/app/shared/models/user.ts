@@ -3,6 +3,14 @@ export class User {
   refreshToken: string;
   roles: Array<string>;
 
+  static fromJson(json: any): User {
+     let u = new User();
+     if (json) {
+       Object.assign(u, json);
+     }
+     return u;
+   }
+
   isLoggedIn(): boolean {
     return this.token !== null && this.token !== undefined && this.token.length > 0;
   }
