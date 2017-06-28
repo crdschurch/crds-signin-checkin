@@ -107,6 +107,44 @@ namespace SignInCheckIn.Tests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual("Oakley", result[0].EventSite);
             Assert.AreEqual(1234567, result[0].EventId);
+            Assert.AreEqual(false, result[0].Template);
+        }
+
+        [Test]
+        public void ShouldGetEventTemplates()
+        {
+            // Arrange
+            var kioskConfig = new MpKioskConfigDto
+            {
+                KioskTypeId = 1
+            };
+
+            var mpEventDtos = new List<MpEventDto>();
+
+            var testMpEventDto = new MpEventDto
+            {
+                CongregationName = "Oakley",
+                EventStartDate = new DateTime(2016, 10, 10),
+                EventId = 1234567,
+                EventTitle = "Test Event",
+                EventType = "Oakley Service",
+                Template = true
+            };
+
+            mpEventDtos.Add(testMpEventDto);
+
+            const int site = 1;
+            _eventRepository.Setup(m => m.GetEventTemplates(site)).Returns(mpEventDtos);
+
+            // Act
+            var result = _fixture.GetCheckinEventTemplates(site);
+            _eventRepository.VerifyAll();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Oakley", result[0].EventSite);
+            Assert.AreEqual(1234567, result[0].EventId);
+            Assert.AreEqual(true, result[0].Template);
         }
 
         [Test]
