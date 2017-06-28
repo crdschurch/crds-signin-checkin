@@ -19,10 +19,10 @@ describe('EventTemplatesListComponent', () => {
   });
 
   describe('#ngOnInit', () => {
-    it('should call getEventTemplates', () => {
-      (<jasmine.Spy>(apiService.getEventTemplates)).and.returnValue(Observable.of([]));
+    it('should call getThisMachineConfiguration', () => {
+      (<jasmine.Spy>(setupService.getThisMachineConfiguration)).and.returnValue(Observable.of());
       fixture.ngOnInit();
-      expect(apiService.getEventTemplates).toHaveBeenCalled();
+      expect(setupService.getThisMachineConfiguration).toHaveBeenCalled();
       expect(fixture.isReady).toBeTruthy();
     });
   });
