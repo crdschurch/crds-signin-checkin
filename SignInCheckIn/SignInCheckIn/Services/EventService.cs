@@ -52,8 +52,7 @@ namespace SignInCheckIn.Services
                 excludeEventTypeIds.Add(_applicationConfiguration.BigEventTypeId);
             }
 
-            var mpEvents = _eventRepository.GetEvents(startDate, endDate, site);
-            var events = Mapper.Map<List<MpEventDto>, List<EventDto>>(mpEvents);
+            var events = Mapper.Map<List<MpEventDto>, List<EventDto>>(_eventRepository.GetEvents(startDate, endDate, site));
 
             foreach (var eventDto in events)
             {
