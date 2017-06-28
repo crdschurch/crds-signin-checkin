@@ -17,6 +17,7 @@ import { ComponentsHelper } from 'ng2-bootstrap/ng2-bootstrap';
 export class AppComponent implements OnInit {
 
   private viewContainerRef: ViewContainerRef;
+  private needKioskSetup: boolean;
 
   public customToasterConfig: ToasterConfig =
     new ToasterConfig({
@@ -53,6 +54,13 @@ export class AppComponent implements OnInit {
     this.channelService.start();
 
     this.contentService.loadData();
+
+    // Using windows.location as using ActiveRouter did not give the params
+    this.needKioskSetup = !window.location.href.includes('machine=');
+    this.needKioskSetup = this.needKioskSetup && (this.setupService.getMachineIdConfigCookie() === undefined);
+    if (this.needKioskSetup) {
+      this.router.navigate(['/setup']);
+    }
   }
 
   inRoom() {
