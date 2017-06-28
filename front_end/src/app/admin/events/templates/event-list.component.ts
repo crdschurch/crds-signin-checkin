@@ -22,6 +22,7 @@ export class EventTemplatesListComponent implements OnInit {
       this.ready = false;
       this.setupService.getThisMachineConfiguration().subscribe((setupCookie) => {
         const configurationSiteId = setupCookie && setupCookie.CongregationId ? setupCookie.CongregationId : 1;
+        console.log('calling get e t')
         this.apiService.getEventTemplates(configurationSiteId).subscribe(
           events => {
             this.events = Event.fromJsons(events);
