@@ -40,7 +40,15 @@
         </div>
       </div>
       <div class="col-md-3 col-sm-4 col-xs-12 px-3">
-        <section class="sidebar-section mb-2" *ngIf="weekFilters && weekFilters.length">
+        <section class="sidebar-section mb-2">
+          <a [routerLink]="['templates']" class="btn btn-default" *ngIf="!isEventTemplates">
+            Templates
+          </a>
+          <a [routerLink]="['/']" class="btn btn-default" *ngIf="isEventTemplates">
+            Back to Events
+          </a>
+        </section>
+        <section class="sidebar-section mb-2" *ngIf="!isEventTemplates && weekFilters && weekFilters.length">
           <strong>Date Range</strong>
           <select class="form-control" [(ngModel)]="currentWeekFilterId">
             <option *ngFor="let wf of weekFilters" value="{{wf.id}}" [attr.selected]="currentWeekFilterId === wf.id">
@@ -48,7 +56,7 @@
             </option>
           </select>
         </section>
-        <section class="sidebar-section site-filter" *ngIf="allSites && allSites.length">
+        <section class="sidebar-section site-filter" *ngIf="!isEventTemplates && allSites && allSites.length">
           <strong>Site</strong>
           <select class="form-control" [(ngModel)]="selectedSiteId">
             <option *ngFor="let s of allSites" value="{{s.CongregationId}}" [attr.selected]="selectedSiteId == s.CongregationId">
