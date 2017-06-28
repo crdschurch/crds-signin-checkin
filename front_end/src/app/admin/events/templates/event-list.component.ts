@@ -9,8 +9,7 @@ import * as moment from 'moment';
 })
 export class EventTemplatesListComponent implements OnInit {
   // private _selectedSiteId: number;
-  // private _currentWeekFilter: any;
-  ready: boolean;
+  private ready = false;
   events: Event[];
   // allSites: Congregation[];
   configurationSiteId: number;
@@ -22,17 +21,16 @@ export class EventTemplatesListComponent implements OnInit {
   }
 
   ngOnInit() {
-      // this.configurationSiteId = config && config.CongregationId ? config.CongregationId : 1;
-      // this.apiService.getEventTemplates(this._selectedSiteId).subscribe(
-      //   events => {
-      //     this.events = Event.fromJsons(events);
-      //     this.ready = true;
-      //   },
-      //   error => { console.error(error); this.rootService.announceEvent('generalError'); }
-      // );
-      console.log("templates event list init")
+      this.ready = false;
+      this.apiService.getEventTemplates(13).subscribe(
+        events => {
+          this.events = Event.fromJsons(events);
+          this.ready = true;
+        },
+        error => { console.error(error); this.rootService.announceEvent('generalError'); }
+      );
   }
   public isReady(): boolean {
-    return true;
+    return this.ready;
   }
 }

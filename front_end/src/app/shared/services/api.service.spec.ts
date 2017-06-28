@@ -52,6 +52,12 @@ describe('ApiService', () => {
         expect(res).toEqual(r);
       });
     });
+    it('should successfully get list of template events', () => {
+      let r = responseData;
+      fixture.getEventTemplates(3).subscribe((res: Response) => {
+        expect(res).toEqual(r);
+      });
+    });
   });
 
   describe('#getEvent', () => {
