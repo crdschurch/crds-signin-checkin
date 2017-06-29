@@ -3,7 +3,6 @@ import { HeaderModule } from './header';
 import { SharedModule } from '../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
 
-// import { HeaderComponent } from './header/header.component';
 import { AdminComponent } from './admin.component';
 import { SignInComponent } from './sign-in';
 import { ReportsComponent } from './reports';
