@@ -20,6 +20,7 @@ export class EventImportComponent implements OnInit {
   sourceEventId: number;
   import: { processing: boolean } = { processing: false };
   ready = false;
+  isTemplatePage = false;
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
@@ -28,7 +29,7 @@ export class EventImportComponent implements OnInit {
     private router: Router) {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     let eventId = this.route.snapshot.params['eventId'];
 
     this.ready = false;
