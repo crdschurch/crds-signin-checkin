@@ -60,5 +60,8 @@ namespace MinistryPlatform.Translation.Models.DTO
 
         [JsonProperty(PropertyName = "Allow_Check-in")]
         public bool AllowCheckIn { get; set; }
+
+        [JsonProperty(PropertyName = "Template")]
+        public bool? Template { get; set; }
     }
 }
