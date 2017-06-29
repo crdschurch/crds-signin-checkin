@@ -116,8 +116,12 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     return this.rooms ? this.rooms.length : ' ';
   }
 
+  public goToImportTemplate(): void {
+    this.goToImportOrReset('import/templates');
+  }
+
   public goToImport(): void {
-    this.goToImportOrReset('import');
+    this.goToImportOrReset('import/events');
   }
 
   public goToReset(): void {

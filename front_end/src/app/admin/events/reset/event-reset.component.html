@@ -1,12 +1,20 @@
 <header-event></header-event>
 
-<div class="wrapper">
-  <div class="container-fluid admin-content py-1">
-
+<preloader *ngIf="!isReady()"></preloader>
+<div class="wrapper" *ngIf="isReady()">
+  <div class="container admin-content py-1">
     <div class="row">
-      <div class="col-md-12 mb-2">
-        <h3>TODO - Reset Event Settings</h3>
-        This may actually be a modal instead of a separate page, just putting it here as a placeholder so we can route to it.
+      <div class="card col-xs-6 offset-xs-3">
+        <div class="card-block text-xs-center" *ngIf="targetEvent">
+          <h3 class="card-title">Clear Event Data</h3>
+          <p class="card-text">Warning: This will clear event data for the following event:</p>
+          <p class="card-text">
+            <strong>
+              {{targetEvent.EventSite}} {{targetEvent.EventStartDate | amDateFormat :'dddd'}} {{targetEvent.EventStartDate | amDateFormat :'M/D/YYYY'}} {{targetEvent.EventStartDate | amDateFormat :'h:mma'}}
+            </strong>
+          </p>
+          <button class="btn btn-danger mt-2" (click)="clearEvent()">Clear All Event Data</button>
+        </div>
       </div>
     </div>
   </div>
