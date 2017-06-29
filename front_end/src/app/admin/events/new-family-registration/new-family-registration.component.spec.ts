@@ -9,9 +9,7 @@ const event = {
   'EventId': '92398420398',
 };
 let router;
-let apiService = jasmine.createSpyObj('apiService', ['getEvent', 'getGradeGroups']);
 let adminService = jasmine.createSpyObj('adminService', [, 'createNewFamily', 'getUser']);
-let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
 let setupService = jasmine.createSpyObj('setupService', ['getMachineDetailsConfigCookie']);
 let route: ActivatedRoute;
@@ -22,13 +20,11 @@ let fixture;
 
 describe('NewFamilyRegistrationComponent', () => {
   beforeEach(() => {
-    (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
-    (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.createNewFamily)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(setupService.getMachineDetailsConfigCookie)).and.returnValue({});
 
-    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+    fixture = new NewFamilyRegistrationComponent(route, adminService, rootService, setupService, router);
     fixture.family = new NewFamily();
     fixture.family.children = [];
     fixture.family.children[0] = new Child();
@@ -44,9 +40,6 @@ describe('NewFamilyRegistrationComponent', () => {
   it('#setUp', () => {
     fixture.setUp();
     expect(fixture.parents).toBeDefined(2);
-    (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
-    expect(apiService.getEvent).toHaveBeenCalledWith(event.EventId);
-    expect(headerService.announceEvent).toHaveBeenCalledWith(event);
   });
   it('#onSubmit success', () => {
     let form = {
@@ -71,7 +64,7 @@ describe('NewFamilyRegistrationComponent', () => {
     });
     it('should show error and disable button if email exists', () => {
       (<jasmine.Spy>(adminService.getUser)).and.returnValue(Observable.of({HouseholdId: 123}));
-      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+      fixture = new NewFamilyRegistrationComponent(route, adminService, rootService, setupService, router);
       let p = new NewParent();
       p.EmailAddress = 'exists@email.com';
       fixture.checkIfEmailExists(p, 0);
@@ -82,7 +75,7 @@ describe('NewFamilyRegistrationComponent', () => {
     });
     it('should not show error if email doesnt exist', () => {
       (<jasmine.Spy>(adminService.getUser)).and.returnValue(Observable.of(null));
-      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+      fixture = new NewFamilyRegistrationComponent(route, adminService, rootService, setupService, router);
       let p = new NewParent();
       p.EmailAddress = 'new@email.com';
       fixture.checkIfEmailExists(p, 0);
@@ -92,14 +85,14 @@ describe('NewFamilyRegistrationComponent', () => {
     });
   });
   it('should return true when child > 5 years old', () => {
-    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+    fixture = new NewFamilyRegistrationComponent(route, adminService, rootService, setupService, router);
     let child = new NewChild();
     child.DateOfBirth = moment().subtract(5, 'years').subtract(1, 'day').toDate();
     expect(fixture.needGradeLevel(child)).toBeTruthy();
   });
 
   it('should return false when child < 3 years old', () => {
-    fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+    fixture = new NewFamilyRegistrationComponent(route, adminService, rootService, setupService, router);
     let child = new NewChild();
     child.DateOfBirth = moment().subtract(3, 'years').add(1, 'day').toDate();
     expect(fixture.needGradeLevel(child)).toBeFalsy();
@@ -108,7 +101,7 @@ describe('NewFamilyRegistrationComponent', () => {
     let child;
     let parent;
     beforeEach(() => {
-      fixture = new NewFamilyRegistrationComponent(route, apiService, headerService, adminService, rootService, setupService, router);
+      fixture = new NewFamilyRegistrationComponent(route, adminService, rootService, setupService, router);
       child = new NewChild();
       parent = new NewParent();
     });

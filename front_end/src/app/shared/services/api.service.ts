@@ -9,6 +9,8 @@ import { Congregation, Event, Group } from '../models';
 
 @Injectable()
 export class ApiService {
+  private cachedEvent: Event;
+
   constructor(private http: HttpClientService, private setupService: SetupService) {
   }
 
@@ -19,10 +21,17 @@ export class ApiService {
                     .catch(this.handleError);
   }
 
-  getEvent(eventId: string) {
+  getEvent(eventId: string, fromCache = false) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}`;
+    if (fromCache && this.cachedEvent && (this.cachedEvent.EventId === parseInt(eventId, 10))) {
+      return Observable.of(this.cachedEvent);
+    }
     return this.http.get(url)
-                    .map(res => Event.fromJson(res.json()))
+                    .map(res => {
+                      const e = Event.fromJson(res.json());
+                      this.cachedEvent = e;
+                      return e;
+                    })
                     .catch(this.handleError);
   }
 

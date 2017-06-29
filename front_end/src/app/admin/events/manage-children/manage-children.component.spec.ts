@@ -1,7 +1,6 @@
 import { ManageChildrenComponent } from './manage-children.component';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Child } from '../../../shared/models';
-import { HeaderService } from '../../header/header.service';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
 import { Observable } from 'rxjs';
@@ -14,7 +13,6 @@ describe('ManageChildrenComponent', () => {
 
   let apiService: ApiService;
   let adminService: AdminService;
-  let headerService: HeaderService;
   let router: Router;
   let rootService: RootService;
 
@@ -28,10 +26,9 @@ describe('ManageChildrenComponent', () => {
 
     adminService = <AdminService>jasmine.createSpyObj('adminService', ['reverseSignin', 'getChildrenForEvent']);
     apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent']);
-    headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
     router = <Router>jasmine.createSpyObj('router', ['navigate']);
     rootService = <RootService>jasmine.createSpyObj('rootService', ['announceEvent']);
-    fixture = new ManageChildrenComponent(route, apiService, headerService, rootService, adminService, router);
+    fixture = new ManageChildrenComponent(route, apiService, rootService, adminService, router);
   });
 
   describe('#reverseSignin', () => {

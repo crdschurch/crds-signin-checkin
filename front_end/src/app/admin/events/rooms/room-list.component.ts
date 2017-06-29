@@ -6,7 +6,6 @@ import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
 import { Event, Room, Group } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { ApiService } from '../../../shared/services';
-import { HeaderService } from '../../header/header.service';
 import { RootService } from '../../../shared/services/root.service';
 
 import * as moment from 'moment';
@@ -37,7 +36,6 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     private route: ActivatedRoute,
     private adminService: AdminService,
     private apiService: ApiService,
-    private headerService: HeaderService,
     private router: Router,
     private rootService: RootService) {}
 
@@ -59,7 +57,6 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     this.apiService.getEvent(this.eventId).subscribe(
       event => {
         this.event = event;
-        this.headerService.announceEvent(event);
       },
       error => console.error(error)
     );
