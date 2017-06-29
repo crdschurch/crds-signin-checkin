@@ -9,7 +9,7 @@ import { Congregation, Event, Group } from '../models';
 
 @Injectable()
 export class ApiService {
-  private cachedEvent: Event;
+  cachedEvent: Event;
 
   constructor(private http: HttpClientService, private setupService: SetupService) {
   }
