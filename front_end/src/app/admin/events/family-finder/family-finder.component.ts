@@ -63,11 +63,6 @@ export class FamilyFinderComponent implements OnInit {
     return parentParams;
   }
 
-  setSearchValue(search) {
-    this.searched = false;
-    this.search = search;
-  }
-
   onClearSearch(box) {
     this.search = '';
     this.contacts = [];

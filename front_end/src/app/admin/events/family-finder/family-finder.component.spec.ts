@@ -36,11 +36,6 @@ describe('FamilyFinderComponent', () => {
     expect(fixture.search).toEqual('test');
   });
 
-  it('#setSearchValue(search)', () => {
-    fixture.setSearchValue('hi');
-    expect(fixture.search).toEqual('hi');
-  });
-
   it('#onClearSearch(box)', () => {
     fixture.search = 'hi';
     expect(fixture.search).toEqual('hi');
