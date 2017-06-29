@@ -13,9 +13,9 @@
           <div class="form-group">
             <label for="search" class="control-label">Search</label>
             <div class="input-group child-search-input">
-              <input #box type="text" id="search" class="form-control" (keyup)="setSearchValue(box.value)" (keyup.enter)="onSearch()" autocomplete="off">
-              <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch(box)">
-              <span [hidden]="!box.value.length">&times;</span>
+              <input type="text" id="search" name="search" class="form-control" [(ngModel)]="search"  (keyup.enter)="onSearch()" autocomplete="off">
+              <span class="input-group-addon input-group-addon-unstyled pointer" (click)="onClearSearch()">
+              <span [hidden]="!search.length">&times;</span>
             </span>
               <button type="submit" class="btn btn-primary input-group-addon" (click)="onSearch()">Search</button>
             </div>
@@ -53,8 +53,8 @@
                 <td>{{contact.HomePhone}}</td>
                 <td>{{contact.MobilePhone}}</td>
                 <td>
-                  <a class="btn btn-primary btn-sm" [routerLink]="[contact.HouseholdId, 'edit']">Edit</a>
-                  <a class="btn btn-primary btn-sm" [routerLink]="[contact.HouseholdId]">Sign In</a>
+                  <a class="btn btn-primary btn-sm" [routerLink]="['/admin/events', this.eventId, 'family-finder', contact.HouseholdId, 'edit']">Edit</a>
+                  <a class="btn btn-primary btn-sm" [routerLink]="['/admin/events', this.eventId, 'family-finder', contact.HouseholdId]">Sign In</a>
                 </td>
               </tr>
               </tbody>

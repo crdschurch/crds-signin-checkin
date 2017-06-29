@@ -2,7 +2,7 @@
 /* tslint:disable:max-line-length */
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 
 import { Contact } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
@@ -24,12 +24,18 @@ export class FamilyFinderComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private adminService: AdminService) {}
+    private adminService: AdminService,
+    private router: Router) {}
 
   ngOnInit() {
     this.processing = false;
     this.searched = false;
     this.eventId = this.route.snapshot.params['eventId'];
+
+    this.search = (this.route.snapshot.queryParams['search'] || '').trim();
+    if (this.search.length > 0) {
+      this.executeSearch();
+    }
   }
 
   getSearchParams() {
@@ -57,19 +63,14 @@ export class FamilyFinderComponent implements OnInit {
     return parentParams;
   }
 
-  setSearchValue(search) {
-    this.searched = false;
-    this.search = search;
-  }
-
   onClearSearch(box) {
     this.search = '';
-    box.value = '';
     this.contacts = [];
     this.searched = false;
   }
 
   onSearch() {
+    this.router.navigate(['/admin/events', this.eventId, 'family-finder'], {queryParams: {search: this.search}});
     this.executeSearch();
   }
 
