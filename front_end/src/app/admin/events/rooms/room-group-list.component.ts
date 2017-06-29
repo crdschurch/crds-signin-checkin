@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { HeaderService } from '../../header/header.service';
 import { Group, Room, Event } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { ApiService, RootService } from '../../../shared/services';
@@ -33,7 +32,6 @@ export class RoomGroupListComponent implements OnInit {
                private adminService: AdminService,
                private rootService: RootService,
                private route: ActivatedRoute,
-               private headerService: HeaderService,
                private location: Location) {
   }
 
@@ -66,7 +64,6 @@ export class RoomGroupListComponent implements OnInit {
 
       event => {
         this.event = event;
-        this.headerService.announceEvent(event);
       },
       error =>  {
         console.error(error);

@@ -4,7 +4,6 @@ import { NgForm } from '@angular/forms';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
 import { Event, Room } from '../../../shared/models';
-import { HeaderService } from '../../header/header.service';
 import { Observable } from 'rxjs';
 
 import * as moment from 'moment';
@@ -16,7 +15,6 @@ describe('RoomListComponent', () => {
 
   let route: ActivatedRoute;
   let apiService: ApiService;
-  let headerService: HeaderService;
   let rootService: RootService;
   let adminService: AdminService;
   let router: Router;
@@ -30,12 +28,11 @@ describe('RoomListComponent', () => {
     };
 
     apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEvents']);
-    headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
     adminService = jasmine.createSpyObj<AdminService>('adminService', ['importEvent']);
     router = jasmine.createSpyObj<Router>('router', ['navigate']);
 
-    fixture = new EventImportComponent(route, apiService, headerService, rootService, adminService, router);
+    fixture = new EventImportComponent(route, apiService, rootService, adminService, router);
     fixture.targetEvent = null;
     fixture.events = null;
     fixture.sourceEventDate = null;
@@ -58,7 +55,6 @@ describe('RoomListComponent', () => {
 
       expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
       expect(fixture.getSourceEventList).toHaveBeenCalled();
-      expect(headerService.announceEvent).toHaveBeenCalledWith(targetEvent);
 
       expect(fixture.targetEvent).toBe(targetEvent);
       expect(fixture.sourceEventDate).toEqual(sourceEventDate);

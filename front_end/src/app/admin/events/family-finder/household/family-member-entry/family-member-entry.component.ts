@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
 import { ApiService, RootService } from '../../../../../shared/services';
-import { HeaderService } from '../../../../header/header.service';
 import { AdminService } from '../../../../admin.service';
 import { Group, Household, State, Country, Contact, DateOfBirth, EventParticipants } from '../../../../../shared/models';
 
@@ -37,7 +36,6 @@ export class FamilyMemberEntryComponent implements OnInit {
   constructor( private apiService: ApiService,
                private adminService: AdminService,
                private route: ActivatedRoute,
-               private headerService: HeaderService,
                private rootService: RootService,
                private router: Router) {}
 
@@ -57,10 +55,6 @@ export class FamilyMemberEntryComponent implements OnInit {
       this.contacts[0].LastName = this.householdName;
 
       this.loading = false;
-    }, error => console.error(error));
-
-    this.apiService.getEvent(String(this.eventId)).subscribe((event) => {
-      this.headerService.announceEvent(event);
     }, error => console.error(error));
 
     this.populateGradeGroups();
