@@ -182,8 +182,8 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(List<EventRoomDto>))]
-        [VersionedRoute(template: "event/{destinationEventId:int}/resets", minimumVersion: "1.0.0")]
-        [Route("events/{destinationEventId:int}/reset")]
+        [VersionedRoute(template: "events/{eventId:int}/reset", minimumVersion: "1.0.0")]
+        [Route("events/{eventId:int}/reset")]
         [RequiresAuthorization]
         public IHttpActionResult ResetEventSetup(int eventId)
         {
