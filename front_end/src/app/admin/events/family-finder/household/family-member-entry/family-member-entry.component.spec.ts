@@ -11,7 +11,6 @@ const participantId = 6542;
 let apiService;
 let adminService;
 let rootService;
-let headerService;
 let router;
 let route;
 let eventParticipants = new EventParticipants();
@@ -26,7 +25,6 @@ describe('FamilyMemberEntryComponent', () => {
     adminService = jasmine.createSpyObj('adminService', ['getChildrenByHousehold', 'findFamilySigninAndPrint',
       'addFamilyMembers', 'updateFamilyMember', 'getHouseholdInformation']);
     rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
-    headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
     router = jasmine.createSpyObj<Router>('router', ['navigate']);
     route = new ActivatedRoute();
     route.snapshot = new ActivatedRouteSnapshot();
@@ -35,22 +33,13 @@ describe('FamilyMemberEntryComponent', () => {
       householdId: householdId
     };
 
-    (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getChildrenByHousehold)).and.returnValue(Observable.of(eventParticipants));
     (<jasmine.Spy>(adminService.addFamilyMembers)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.updateFamilyMember)).and.returnValue(Observable.of());
     (<jasmine.Spy>(adminService.getHouseholdInformation)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
 
-    fixture = new FamilyMemberEntryComponent(apiService, adminService, route, headerService, rootService, router);
-  });
-
-  describe('#ngOnInit', () => {
-    it('should initialize data', () => {
-      (<jasmine.Spy>(apiService.getGradeGroups)).and.returnValue(Observable.of());
-      fixture.ngOnInit();
-      expect(apiService.getEvent).toHaveBeenCalled();
-    });
+    fixture = new FamilyMemberEntryComponent(apiService, adminService, route, rootService, router);
   });
 
   describe('#saveNewFamilyMember', () => {

@@ -6,8 +6,6 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Contact } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
-import { HeaderService } from '../../header/header.service';
-import { ApiService } from '../../../shared/services';
 const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 const nameRegex = /^[a-zA-Z]*$/;
 const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -26,18 +24,12 @@ export class FamilyFinderComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private adminService: AdminService,
-    private headerService: HeaderService,
-    private apiService: ApiService) {}
+    private adminService: AdminService) {}
 
   ngOnInit() {
     this.processing = false;
     this.searched = false;
     this.eventId = this.route.snapshot.params['eventId'];
-
-    this.apiService.getEvent(this.eventId).subscribe((event) => {
-      this.headerService.announceEvent(event);
-    }, error => console.error(error));
   }
 
   getSearchParams() {

@@ -3,7 +3,6 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router'
 import { AdminService } from '../../admin.service';
 import { Event, Room } from '../../../shared/models';
 import { ApiService } from '../../../shared/services';
-import { HeaderService } from '../../header/header.service';
 import { RootService } from '../../../shared/services/root.service';
 import { Observable } from 'rxjs';
 
@@ -17,7 +16,6 @@ describe('RoomListComponent', () => {
 
   let apiService: ApiService;
   let adminService: AdminService;
-  let headerService: HeaderService;
   let router: Router;
   let rootService: RootService;
 
@@ -31,10 +29,9 @@ describe('RoomListComponent', () => {
 
     adminService = <AdminService>jasmine.createSpyObj('adminService', ['getRooms', 'getUnassignedGroups']);
     apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent']);
-    headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
     router = <Router>jasmine.createSpyObj('router', ['navigate']);
     rootService = <RootService>jasmine.createSpyObj('rootService', ['announceEvent']);
-    fixture = new RoomListComponent(route, adminService, apiService, headerService, router, rootService);
+    fixture = new RoomListComponent(route, adminService, apiService, router, rootService);
     fixture.event = new Event();
   });
 
@@ -58,7 +55,6 @@ describe('RoomListComponent', () => {
       expect(adminService.getRooms).toHaveBeenCalledWith(eventId);
       expect(adminService.getUnassignedGroups).toHaveBeenCalled();
       expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
-      expect(headerService.announceEvent).toHaveBeenCalledWith(event);
 
       expect(fixture.eventId).toEqual(eventId);
       expect(fixture.rooms).toBe(rooms);

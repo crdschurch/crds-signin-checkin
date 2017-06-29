@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, RootService } from '../../../../shared/services';
 import { AdminService } from '../../../admin.service';
 import { DateOfBirth, Child, EventParticipants, Contact, Group, Household } from '../../../../shared/models';
-import { HeaderService } from '../../../header/header.service';
 
 import * as moment from 'moment';
 
@@ -33,8 +32,7 @@ export class HouseholdComponent implements OnInit {
                private adminService: AdminService,
                private rootService: RootService,
                private route: ActivatedRoute,
-               private router: Router,
-               private headerService: HeaderService) {}
+               private router: Router) {}
 
  ngOnInit() {
    this.eventId = +this.route.snapshot.params['eventId'];
@@ -42,7 +40,6 @@ export class HouseholdComponent implements OnInit {
 
    this.apiService.getEvent(String(this.eventId)).subscribe((event) => {
      this.eventTypeId = event.EventTypeId;
-     this.headerService.announceEvent(event);
      this.getChildren();
    }, error => console.error(error));
 
