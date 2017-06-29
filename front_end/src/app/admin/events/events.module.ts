@@ -8,6 +8,7 @@ import { NewFamilyRegistrationModule } from './new-family-registration';
 import { FamilyFinderModule } from './family-finder';
 import { ManageChildrenComponent } from './manage-children/manage-children.component';
 import { EventImportComponent } from './import/event-import.component';
+import { EventImportTemplateComponent } from './import/templates/event-import.component';
 import { EventListComponent } from './event-list.component';
 import { EventTemplatesListComponent } from './templates/event-list.component';
 import { EventResetComponent } from './reset/event-reset.component';
@@ -23,6 +24,7 @@ import { CanDeactivateGuard } from '../../shared/guards';
 @NgModule({
   declarations: [
     EventImportComponent,
+    EventImportTemplateComponent,
     EventListComponent,
     EventTemplatesListComponent,
     EventResetComponent,
