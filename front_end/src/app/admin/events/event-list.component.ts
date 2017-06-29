@@ -15,6 +15,7 @@ export class EventListComponent implements OnInit {
   allSites: Congregation[];
   configurationSiteId: number;
   weekFilters: Timeframe[];
+  isEventTemplates = false;
 
   constructor(private apiService: ApiService,
               private rootService: RootService,

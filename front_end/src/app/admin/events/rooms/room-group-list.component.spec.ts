@@ -4,13 +4,11 @@ import { Location } from '@angular/common';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
 import { Room } from '../../../shared/models';
-import { HeaderService } from '../../header/header.service';
 import { Observable } from 'rxjs';
 
 describe('RoomGroupListComponent', () => {
   let fixture: RoomGroupListComponent;
   let apiService: ApiService;
-  let headerService: HeaderService;
   let rootService: RootService;
   let adminService: AdminService;
   let location: Location;
@@ -26,10 +24,9 @@ describe('RoomGroupListComponent', () => {
     apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEventMaps', 'getEvent']);
     adminService = jasmine.createSpyObj<AdminService>('adminService',
       ['getRoomGroups', 'getBumpingRooms', 'updateBumpingRooms', 'updateRoomGroups']);
-    headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
 
-    fixture = new RoomGroupListComponent(apiService, adminService, rootService, route, headerService, location);
+    fixture = new RoomGroupListComponent(apiService, adminService, rootService, route, location);
 
     fixture.allAlternateRooms = [new Room(), new Room()];
   });

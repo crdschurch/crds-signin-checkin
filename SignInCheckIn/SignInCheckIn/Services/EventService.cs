@@ -33,6 +33,11 @@ namespace SignInCheckIn.Services
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
 
+        public List<EventDto> GetCheckinEventTemplates(int site)
+        {
+            return Mapper.Map<List<MpEventDto>, List<EventDto>>(_eventRepository.GetEventTemplates(site));
+        }
+
         public List<EventDto> GetCheckinEvents(DateTime startDate, DateTime endDate, int site, string kioskId)
         {
             // filter events we don't want to show on the checkin kiosk

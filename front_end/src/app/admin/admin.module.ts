@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { HeaderModule } from './header';
 import { SharedModule } from '../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
 
@@ -20,6 +21,7 @@ import { adminRouting } from './admin.routes';
   // other modules whose exported classes are needed
   // by component templates declared in this module.
   imports: [
+    HeaderModule,
     adminRouting,
     SharedModule,
     EventsModule,

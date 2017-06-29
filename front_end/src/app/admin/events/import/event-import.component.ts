@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Event } from '../../../shared/models';
-import { HeaderService } from '../../header/header.service';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
 
@@ -24,7 +23,6 @@ export class EventImportComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private apiService: ApiService,
-    private headerService: HeaderService,
     private rootService: RootService,
     private adminService: AdminService,
     private router: Router) {
@@ -36,7 +34,6 @@ export class EventImportComponent implements OnInit {
     this.ready = false;
     this.apiService.getEvent(eventId).subscribe((event: Event) => {
       this.targetEvent = event;
-      this.headerService.announceEvent(event);
       this.sourceEventDate = moment(event.EventStartDate).startOf('day').subtract(7, 'days').toDate();
       this.getSourceEventList();
     });

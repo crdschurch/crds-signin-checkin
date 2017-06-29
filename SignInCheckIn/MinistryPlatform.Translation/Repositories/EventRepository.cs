@@ -43,6 +43,7 @@ namespace MinistryPlatform.Translation.Repositories
             {
                 "Event_ID",
                 "Parent_Event_ID",
+                "Template",
                 "Event_Title",
                 "Program_ID",
                 "Primary_Contact",
@@ -77,6 +78,7 @@ namespace MinistryPlatform.Translation.Repositories
 
             var queryString =
                 $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}";
+            queryString += " AND ([Template]=0 OR [Template] IS NULL)";
 
             if (excludeIds == true && eventTypeIds != null)
             {
@@ -96,7 +98,16 @@ namespace MinistryPlatform.Translation.Repositories
                 .Search<MpEventDto>(queryString, _eventColumns);
         }
 
-        public MpEventDto GetEventById(int eventId)
+        public List<MpEventDto> GetEventTemplates(int site)
+        {
+            var apiUserToken = _apiUserRepository.GetToken();
+            var queryString =
+                $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Template]=1 AND Events.[Congregation_ID] = {site}";
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                .Search<MpEventDto>(queryString, _eventColumns);
+        }
+
+            public MpEventDto GetEventById(int eventId)
         {
             var apiUserToken = _apiUserRepository.GetToken();
 
