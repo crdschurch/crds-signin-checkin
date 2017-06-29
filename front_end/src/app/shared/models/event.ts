@@ -9,7 +9,7 @@ export class Event {
   EventStartDate: string;
   EventTypeId: number;
   EventSite: string;
-  Template: boolean;
+  IsCurrentEvent: boolean;
   Template: boolean;
   EventSiteId: number;
   ParentEventId: number;

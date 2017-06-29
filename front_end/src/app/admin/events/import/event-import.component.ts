@@ -31,8 +31,10 @@ export class EventImportComponent implements OnInit {
 
   ngOnInit() {
     let eventId = this.route.snapshot.params['eventId'];
-
     this.ready = false;
+    if (this.route.snapshot.data['template']) {
+      this.isTemplatePage = true;
+    }
     this.apiService.getEvent(eventId).subscribe((event: Event) => {
       this.targetEvent = event;
       this.sourceEventDate = moment(event.EventStartDate).startOf('day').subtract(7, 'days').toDate();
@@ -40,21 +42,35 @@ export class EventImportComponent implements OnInit {
     });
   }
 
-  public getSourceEventList(): void {
+  public getSourceEventList() {
     this.ready = false;
-    this.apiService
-      .getEvents(this.sourceEventDate, this.sourceEventDate, this.targetEvent.EventSiteId)
-      .subscribe((events: Event[]) => {
-        // Sort the source events by date & time, and strip off the target event if in the list
-        this.events = events.filter(e => {
-          return e.EventId !== this.targetEvent.EventId;
-        }).sort((a: Event, b: Event) => {
-          return a.EventStartDate.localeCompare(b.EventStartDate);
+    if (this.isTemplatePage) {
+      this.apiService
+        .getEventTemplates(this.targetEvent.EventSiteId)
+        .subscribe((events: Event[]) => {
+          this.sortEvents(events);
+          this.ready = true;
+        }, (error) => {
+          this.ready = true;
         });
-        this.ready = true;
-      }, (error) => {
-        this.ready = true;
-      });
+    } else {
+      this.apiService
+        .getEvents(this.sourceEventDate, this.sourceEventDate, this.targetEvent.EventSiteId)
+        .subscribe((events: Event[]) => {
+          this.sortEvents(events);
+          this.ready = true;
+        }, (error) => {
+          this.ready = true;
+        });
+    }
+  }
+
+  sortEvents(events) {
+    this.events = events.filter(e => {
+      return e.EventId !== this.targetEvent.EventId;
+    }).sort((a: Event, b: Event) => {
+      return a.EventStartDate.localeCompare(b.EventStartDate);
+    });
   }
 
   public submitForm(importForm: NgForm): boolean {

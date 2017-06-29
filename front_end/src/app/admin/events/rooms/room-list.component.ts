@@ -121,7 +121,7 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
   }
 
   public goToImport(): void {
-    this.goToImportOrReset('import');
+    this.goToImportOrReset('import/events');
   }
 
   public goToReset(): void {
