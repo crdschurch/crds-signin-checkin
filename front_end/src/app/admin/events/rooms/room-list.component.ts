@@ -39,9 +39,8 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     private router: Router,
     private rootService: RootService) {}
 
-  private getData(): void {
-    this.eventId = this.route.snapshot.params['eventId'];
-
+  private getData() {
+    console.log("getData getrooms", this.eventId)
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
         // sort by KcSortOrder ascending, if null, put at end
@@ -69,8 +68,14 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     );
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.setRouteData();
     this.getData();
+  }
+
+  setRouteData() {
+    this.eventId = this.route.snapshot.params['eventId'];
+    console.log("setRouteData this.eventId", this.eventId)
   }
 
   onNotifyDirty(message) {
@@ -133,7 +138,8 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
       this.rootService.announceEvent('echeckCannotOverwritePastEvent');
       return;
     }
-    this.router.navigate([`/admin/events/${this.event.EventId}/${target}`]);
+    console.log('this.eventId . . . . .', this.eventId)
+    this.router.navigate([`/admin/events/${this.eventId}/${target}`]);
   }
 
   public toggleDropdown($event: MouseEvent): void {

@@ -46,19 +46,26 @@ describe('RoomListComponent', () => {
       let event = new Event();
       event.EventId = eventId;
       (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
-
-      fixture.eventId = null;
-      fixture.rooms = null;
-      fixture.event = null;
+      spyOn(fixture, 'setRouteData').and.callFake(() => { });
+      fixture.eventId = eventId.toString();
+      // fixture.rooms = null;
+      // fixture.event = null;
 
       fixture.ngOnInit();
-      expect(adminService.getRooms).toHaveBeenCalledWith(eventId);
+      expect(adminService.getRooms).toHaveBeenCalledWith(fixture.eventId);
       expect(adminService.getUnassignedGroups).toHaveBeenCalled();
-      expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
+      expect(apiService.getEvent).toHaveBeenCalledWith(fixture.eventId);
+      expect(fixture.setRouteData).toHaveBeenCalled();
 
-      expect(fixture.eventId).toEqual(eventId);
       expect(fixture.rooms).toBe(rooms);
       expect(fixture.event).toBe(event);
+    });
+  });
+
+  describe('#setRouteData', () => {
+    it('should set eventId', () => {
+      fixture.setRouteData();
+      expect(fixture.eventId).toBe(eventId);
     });
   });
 
@@ -82,6 +89,7 @@ describe('RoomListComponent', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
       fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToImport();
 
       expect(router.navigate).not.toHaveBeenCalled();
@@ -92,6 +100,7 @@ describe('RoomListComponent', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
       fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToImport();
 
       expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import/events`]);
@@ -104,6 +113,7 @@ describe('RoomListComponent', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
       fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToImportTemplate();
 
       expect(router.navigate).not.toHaveBeenCalled();
@@ -114,6 +124,7 @@ describe('RoomListComponent', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
       fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToImportTemplate();
 
       expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import/templates`]);
@@ -126,6 +137,7 @@ describe('RoomListComponent', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
       fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToReset();
 
       expect(router.navigate).not.toHaveBeenCalled();
@@ -136,6 +148,7 @@ describe('RoomListComponent', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
       fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToReset();
 
       expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/reset`]);
