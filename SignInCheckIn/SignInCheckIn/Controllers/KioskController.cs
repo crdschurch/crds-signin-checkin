@@ -9,6 +9,7 @@ using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
+using log4net.Repository.Hierarchy;
 
 namespace SignInCheckIn.Controllers
 {
@@ -31,10 +32,15 @@ namespace SignInCheckIn.Controllers
             try
             {
                 var kioskList = _kioskService.GetKioskConfigByIdentifier(kioskId);
+                if (kioskList == null)
+                {
+                    Logger.Error($"Kiosk config error for kiosk guid: {kioskId}");
+                }
                 return Ok(kioskList);
             }
             catch (Exception e)
             {
+                Logger.Error($"Kiosk config error for kiosk guid: {kioskId}", e);
                 var apiError = new ApiErrorDto("Get Kiosks", e);
                 throw new HttpResponseException(apiError.HttpResponseMessage);
             }
