@@ -35,7 +35,7 @@
               <div class="form-group" [ngClass]="{'required' : i == 0}">
                 <label for="phoneNumber{{i}}" id="phoneNumber{{i}}" class="control-label">Phone Number</label>
                 <input type="text" class="form-control" [textMask]="{mask: maskPhoneNumber}" [(ngModel)]="parents[i].PhoneNumber" id="phoneNumberText{{i}}" name="phoneNumber{{i}}"
-                  (blur)="requiredOnBlur($event)" [required]="i == 0">
+                  (blur)="onPhoneBlur($event, parents[i])" (blur)=" requiredOnBlur($event)" [required]="i == 0">
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
