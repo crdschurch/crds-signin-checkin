@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 import * as moment from 'moment';
 
-describe('RoomListComponent', () => {
+describe('Event Import Component', () => {
   let fixture: EventImportComponent;
   let eventId: 54321;
   let eventSiteId: 90210;
@@ -26,8 +26,11 @@ describe('RoomListComponent', () => {
     route.snapshot.params = {
       eventId: eventId
     };
+    route.snapshot.data = {
+      template: false
+    };
 
-    apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEvents']);
+    apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEvents', 'getEventTemplates']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
     adminService = jasmine.createSpyObj<AdminService>('adminService', ['importEvent']);
     router = jasmine.createSpyObj<Router>('router', ['navigate']);
@@ -39,7 +42,7 @@ describe('RoomListComponent', () => {
   });
 
   describe('#ngOnInit', () => {
-    it('should get target event and list of source events', () => {
+    it('should get target event and list of events', () => {
       let targetEventStartDate = moment().add(1, 'days');
       let sourceEventDate = moment(targetEventStartDate).startOf('day').subtract(7, 'days').toDate();
 
@@ -55,9 +58,26 @@ describe('RoomListComponent', () => {
 
       expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
       expect(fixture.getSourceEventList).toHaveBeenCalled();
-
       expect(fixture.targetEvent).toBe(targetEvent);
       expect(fixture.sourceEventDate).toEqual(sourceEventDate);
+      expect(fixture.isTemplatePage).toBeFalsy();
+    });
+
+    it('should get target event and list of template events if on template page', () => {
+      route.snapshot.data = {
+        template: true
+      };
+      apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEventTemplates']);
+      fixture = new EventImportComponent(route, apiService, rootService, adminService, router);
+      (<jasmine.Spy>apiService.getEvent).and.returnValue(Observable.of({}));
+      (<jasmine.Spy>apiService.getEventTemplates).and.returnValue(Observable.of([new Event(), new Event()]));
+      spyOn(fixture, 'getSourceEventList').and.callFake(() => { });
+
+      fixture.ngOnInit();
+
+      expect(apiService.getEvent).toHaveBeenCalled();
+      expect(fixture.getSourceEventList).toHaveBeenCalled();
+      expect(fixture.isTemplatePage).toBeTruthy();
     });
   });
 
