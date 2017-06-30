@@ -10,7 +10,7 @@ import * as moment from 'moment';
 
 describe('RoomListComponent', () => {
   let fixture: RoomListComponent;
-  let eventId: 54321;
+  const eventId = 54321;
 
   let route: ActivatedRoute;
 
@@ -81,6 +81,7 @@ describe('RoomListComponent', () => {
     it('should not navigate if event is in the past', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
       fixture.goToImport();
 
       expect(router.navigate).not.toHaveBeenCalled();
@@ -90,9 +91,32 @@ describe('RoomListComponent', () => {
     it('should navigate if event is in the future', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
       fixture.goToImport();
 
-      expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import`]);
+      expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import/events`]);
+      expect(rootService.announceEvent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('#goToImportTemplate', () => {
+    it('should not navigate if event is in the past', () => {
+      fixture.event = new Event();
+      fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.goToImportTemplate();
+
+      expect(router.navigate).not.toHaveBeenCalled();
+      expect(rootService.announceEvent).toHaveBeenCalledWith('echeckCannotOverwritePastEvent');
+    });
+
+    it('should navigate if event is in the future', () => {
+      fixture.event = new Event();
+      fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.goToImportTemplate();
+
+      expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import/templates`]);
       expect(rootService.announceEvent).not.toHaveBeenCalled();
     });
   });
@@ -101,6 +125,7 @@ describe('RoomListComponent', () => {
     it('should not navigate if event is in the past', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
       fixture.goToReset();
 
       expect(router.navigate).not.toHaveBeenCalled();
@@ -110,6 +135,7 @@ describe('RoomListComponent', () => {
     it('should navigate if event is in the future', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
       fixture.goToReset();
 
       expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/reset`]);

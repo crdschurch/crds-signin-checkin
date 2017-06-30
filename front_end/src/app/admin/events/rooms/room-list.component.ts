@@ -133,8 +133,7 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
       this.rootService.announceEvent('echeckCannotOverwritePastEvent');
       return;
     }
-
-    this.router.navigate([`/admin/events/${this.eventId}/${target}`]);
+    this.router.navigate([`/admin/events/${this.event.EventId}/${target}`]);
   }
 
   public toggleDropdown($event: MouseEvent): void {
