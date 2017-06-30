@@ -11,8 +11,7 @@ import { Congregation, Event, Group } from '../models';
 export class ApiService {
   cachedEvent: Event;
 
-  constructor(private http: HttpClientService, private setupService: SetupService) {
-  }
+  constructor(private http: HttpClientService, private setupService: SetupService) {}
 
   getEventMaps(eventId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/maps`;

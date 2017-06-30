@@ -42,10 +42,12 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     const eventId = this.route.snapshot.params['eventId'];
-    this.apiService.getEvent(eventId, true).subscribe((event) => {
-      this.headerService.announceEvent(event);
-      this.event = event;
-    }, error => console.error(error));
+    if (eventId) {
+      this.apiService.getEvent(eventId, true).subscribe((event) => {
+        this.headerService.announceEvent(event);
+        this.event = event;
+      }, error => console.error(error));
+    }
   }
 
   click() {
