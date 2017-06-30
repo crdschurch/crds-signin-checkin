@@ -18,6 +18,8 @@ namespace MinistryPlatform.Translation.Repositories
         private const string ResetEventStoredProcedureName = "api_crds_ResetEcheckEvent";
         private const string ImportEventStoredProcedureName = "api_crds_ImportEcheckEvent";
 
+        private const string nonEventTemplatesQueryString = "([Template]=0 OR [Template] IS NULL)";
+
         public EventRepository(IApiUserRepository apiUserRepository,
             IMinistryPlatformRestRepository ministryPlatformRestRepository)
         {
@@ -80,7 +82,7 @@ namespace MinistryPlatform.Translation.Repositories
             var queryString =
                 $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Event_Start_Date] >= '{startTimeString}' AND [Event_Start_Date] <= '{endTimeString}' AND Events.[Congregation_ID] = {site}";
             // only pull non-template events
-            queryString = $"{queryString} AND [Template] != 1";
+            queryString = $"{queryString} AND {nonEventTemplatesQueryString}";
 
             if (excludeIds == true && eventTypeIds != null)
             {
@@ -181,7 +183,7 @@ namespace MinistryPlatform.Translation.Repositories
             var token = authenticationToken ?? _apiUserRepository.GetToken();
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token)
-                .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1 AND [Template] != 1", _eventColumns);
+                .Search<MpEventDto>($"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1 AND {nonEventTemplatesQueryString}", _eventColumns);
         }
 
         public MpEventDto GetSubeventByParentEventId(int eventId, int eventTypeId)
