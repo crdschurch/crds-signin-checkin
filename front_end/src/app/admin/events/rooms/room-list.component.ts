@@ -40,7 +40,6 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     private rootService: RootService) {}
 
   private getData() {
-    console.log("getData getrooms", this.eventId)
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
         // sort by KcSortOrder ascending, if null, put at end
@@ -75,7 +74,6 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
 
   setRouteData() {
     this.eventId = this.route.snapshot.params['eventId'];
-    console.log("setRouteData this.eventId", this.eventId)
   }
 
   onNotifyDirty(message) {
@@ -138,7 +136,6 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
       this.rootService.announceEvent('echeckCannotOverwritePastEvent');
       return;
     }
-    console.log('this.eventId . . . . .', this.eventId)
     this.router.navigate([`/admin/events/${this.eventId}/${target}`]);
   }
 
