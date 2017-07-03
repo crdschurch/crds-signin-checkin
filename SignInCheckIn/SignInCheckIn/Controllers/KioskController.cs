@@ -35,6 +35,7 @@ namespace SignInCheckIn.Controllers
                 if (kioskList == null)
                 {
                     Logger.Error($"Kiosk config error for kiosk guid: {kioskId}");
+                    return NotFound();
                 }
                 return Ok(kioskList);
             }
