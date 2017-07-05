@@ -34,7 +34,7 @@ export class InputTrimDirective extends DefaultValueAccessor {
    *
    */
   @HostListener( 'blur', [ '$event.target.value' ] )
-  onBlur ( value: string ): void {
+  onBlur ( value: string ) {
     this.trimValue( value );
   }
 

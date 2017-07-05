@@ -51,7 +51,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // Start the signalr connection up!
-    this.channelService.start();
+    if (process.env.DISABLE_WEBSOCKETS != 'true') {
+      this.channelService.start();
+    }
 
     this.contentService.loadData();
 
