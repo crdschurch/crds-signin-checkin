@@ -21,14 +21,14 @@
               <div class="form-group" [ngClass]="{'required' : i == 0 || optionalParentRequired}">
                 <label for="firstName{{i}}" id="firstName{{i}}" class="control-label">First Name</label>
                 <input type="text" id="firstNameText{{i}}" class="form-control" [(ngModel)]="parents[i].FirstName" name="firstName{{i}}"
-                  (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired">
+                  (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired" trim>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
               <div class="form-group" [ngClass]="{'required' : i == 0 || optionalParentRequired}">
                 <label for="lastName{{i}}" id="lastName{{i}}" class="control-label">Last Name</label>
                 <input type="text" class="form-control" [(ngModel)]="parents[i].LastName" id="lastNameText{{i}}" name="lastName{{i}}"
-                  (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired">
+                  (blur)="requiredOnBlur($event)" [required]="i == 0 || optionalParentRequired" trim>
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
