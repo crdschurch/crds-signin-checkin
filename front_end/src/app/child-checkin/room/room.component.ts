@@ -66,7 +66,7 @@ export class RoomComponent implements OnInit {
                 child.AssignedRoomId = comp.roomId;
                 comp.children.push(child);
               }
-            } else if (x.Name === 'Remove') {
+            } else if (x.Name === 'RemoveSignIn' || x.Name === 'RemoveCheckIn') {
               let data = x.Data;
               if (data.OriginalRoomId !== data.OverRideRoomId) {
                 comp.children = comp.children.filter( (obj: Child) => { return obj.EventParticipantId !== data.EventParticipantId; } );
