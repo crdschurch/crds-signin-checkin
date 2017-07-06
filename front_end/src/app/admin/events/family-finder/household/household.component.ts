@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, RootService } from '../../../../shared/services';
@@ -32,7 +33,8 @@ export class HouseholdComponent implements OnInit {
                private adminService: AdminService,
                private rootService: RootService,
                private route: ActivatedRoute,
-               private router: Router) {}
+               private router: Router,
+               private location: Location) {}
 
  ngOnInit() {
    this.eventId = +this.route.snapshot.params['eventId'];
@@ -137,6 +139,10 @@ export class HouseholdComponent implements OnInit {
      this.contact.HouseholdId = +this.householdId;
    }
    modal.show();
+ }
+
+ back() {
+   this.location.back();
  }
 
  get maleGenderId(): number {

@@ -13,6 +13,7 @@ let adminService;
 let rootService;
 let router;
 let route;
+let location;
 let eventParticipants = new EventParticipants();
 eventParticipants['Participants'] = [new Child()];
 eventParticipants.Participants[0].ParticipantId = participantId;
@@ -40,7 +41,7 @@ describe('HouseholdComponent', () => {
     (<jasmine.Spy>(adminService.getHouseholdInformation)).and.returnValue(Observable.of());
     (<jasmine.Spy>(rootService.announceEvent)).and.returnValue(Observable.of());
 
-    fixture = new HouseholdComponent(apiService, adminService, rootService, route, router);
+    fixture = new HouseholdComponent(apiService, adminService, rootService, route, router, location);
   });
 
   describe('#ngOnInit', () => {
