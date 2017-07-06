@@ -27,8 +27,8 @@
           <serving-toggle (setServingHours)="setServingHours($event)"></serving-toggle>
         </div>
       </div>
-      <div *ngIf="eventParticipants && eventParticipants.hasParticipants()">
-        <div class="eqWrap mt-2">
+      <div>
+        <div class="eqWrap mt-2" *ngIf="eventParticipants && eventParticipants.hasParticipants()">
           <div class="card" *ngFor="let kid of eventParticipants.Participants">
             <div class="text-xs-right mt-1 mr-1">
               <a class="pull-xs-right pointer" (click)="openNewFamilyMemberModal(newFamilyMemberModal, kid)" *ngIf="!kid.GuestSignin">Edit</a>
@@ -41,11 +41,11 @@
         </div>
         <footer class="eqWrap mt-2">
           <div class="col-sm-6">
-            <a class="btn btn-secondary float-xs-left" [routerLink]="['/admin/events', eventId, 'family-finder']">
+            <a class="btn btn-secondary float-xs-left" (click)="back()">
               Back
             </a>
           </div>
-          <div class="col-sm-6">
+          <div class="col-sm-6" *ngIf="eventParticipants && eventParticipants.hasParticipants()">
             <a class="btn btn-primary float-xs-right" (click)="signIn()">Sign In Children
               <svg height="12" viewBox="0 0 9 12" width="9" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 0l-1.4 1.4 4.6 4.6-4.6 4.6 1.4 1.4 6-6-6-6z" /></svg>
             </a>
