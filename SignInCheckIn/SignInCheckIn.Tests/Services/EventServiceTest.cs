@@ -444,7 +444,7 @@ namespace SignInCheckIn.Tests.Services
                 EventTypeId = 20
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(events);
             _eventRepository.Setup(m => m.CreateSubEvent(token, It.IsAny<MpEventDto>())).Returns(childEvent);
             _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
@@ -481,7 +481,7 @@ namespace SignInCheckIn.Tests.Services
 
             events.Add(childEvent);
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId)).Returns(events);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(events);
             _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
             // Act

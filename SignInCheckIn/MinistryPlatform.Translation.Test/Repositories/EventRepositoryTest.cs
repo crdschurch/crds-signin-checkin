@@ -107,7 +107,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventDto>(It.IsAny<string>(), It.IsAny<List<string>>(), null, false)).Returns(mpEventDtos);
 
             // Act
-            _fixture.GetEventAndCheckinSubevents(token, eventId);
+            _fixture.GetEventAndCheckinSubevents(token, eventId, false);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
