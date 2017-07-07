@@ -781,7 +781,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, false)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
@@ -871,7 +871,7 @@ namespace SignInCheckIn.Tests.Services
                 RoomName = "name"
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, false)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns((MpEventRoomDto) null);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
@@ -976,7 +976,7 @@ namespace SignInCheckIn.Tests.Services
 
 
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, false)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesByRoomId(1000)).Returns(mpBumpingRuleDtos);
