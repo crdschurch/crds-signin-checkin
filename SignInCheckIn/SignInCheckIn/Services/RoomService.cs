@@ -179,7 +179,7 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto GetEventRoomAgesAndGrades(string authenticationToken, int eventId, int roomId)
         {
-            var events = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId, true);
             var result = _roomRepository.GetSingleRoomGroupsData(eventId, roomId);
 
             var mpEventRooms = result[0].Select(r => r.ToObject<MpEventRoomDto>()).ToList();
@@ -628,7 +628,7 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> GetAvailableRooms(string token, int roomId, int eventId)
         {
-            var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId, true);
 
             if (events.Count == 0)
             {
@@ -689,7 +689,7 @@ namespace SignInCheckIn.Services
 
         public List<EventRoomDto> UpdateAvailableRooms(string authenticationToken, int eventId, int roomId, List<EventRoomDto> eventRoomDtos)
         {
-            var events = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId);
+            var events = _eventRepository.GetEventAndCheckinSubevents(authenticationToken, eventId, true);
             var sourceEventRoom = _roomRepository.GetEventRoomForEventMaps(events.Select(e => e.EventId).ToList(), roomId);
 
             if (sourceEventRoom == null)
