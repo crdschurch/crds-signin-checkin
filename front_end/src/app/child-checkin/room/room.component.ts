@@ -66,7 +66,7 @@ export class RoomComponent implements OnInit {
                 // TODO: backend should probably do this
                 child.Selected = true;
                 child.AssignedRoomId = comp.roomId;
-                comp.children.push(child);
+                comp._children.push(child);
               }
             } else if (x.Name === 'RemoveSignIn' || x.Name === 'RemoveCheckIn') {
               let data = x.Data;
@@ -104,7 +104,7 @@ export class RoomComponent implements OnInit {
     return _.sortBy(this._children, ['Nickname', 'LastName', 'CallNumber']);
   }
 
-  set children(child: Array<Child>) {
-    this._children = child;
+  set children(children: Array<Child>) {
+    this._children = children;
   }
 }
