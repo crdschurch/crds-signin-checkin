@@ -10,6 +10,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { ChannelEvent, ChannelService } from '../../shared/services';
 import { Constants } from '../../shared/constants';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'room',
   templateUrl: 'room.component.html',
@@ -99,7 +101,7 @@ export class RoomComponent implements OnInit {
   }
 
   get children(): Array<Child> {
-    return this._children;
+    return _.sortBy(this._children, ['Nickname', 'LastName', 'CallNumber']);
   }
 
   set children(child: Array<Child>) {
