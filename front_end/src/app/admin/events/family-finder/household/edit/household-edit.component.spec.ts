@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { HouseholdEditComponent } from './household-edit.component';
+import { Location } from '@angular/common';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Household, State, Country } from '../../../../../shared/models';
 
@@ -10,6 +11,7 @@ const participantId = 6542;
 let adminService = jasmine.createSpyObj('adminService', ['getHouseholdInformation', 'getStates', 'getCountries', 'updateHousehold']);
 let rootService = jasmine.createSpyObj('rootService', ['announceEvent']);
 let router = jasmine.createSpyObj<Router>('router', ['navigate']);
+let location = jasmine.createSpyObj<Location>('location', ['back']);
 let route: ActivatedRoute = new ActivatedRoute();
 route.snapshot = new ActivatedRouteSnapshot();
 route.snapshot.params = {
@@ -36,7 +38,7 @@ describe('HouseholdEditComponent', () => {
     (<jasmine.Spy>(adminService.updateHousehold)).and.returnValue(Observable.of(household));
     (<jasmine.Spy>(adminService.getStates)).and.returnValue(Observable.of(states));
     (<jasmine.Spy>(adminService.getCountries)).and.returnValue(Observable.of(countries));
-    fixture = new HouseholdEditComponent(adminService, route, rootService, router);
+    fixture = new HouseholdEditComponent(adminService, route, rootService, router, location);
     fixture.household = household;
   });
 
