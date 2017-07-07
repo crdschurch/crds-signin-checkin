@@ -178,11 +178,11 @@ namespace MinistryPlatform.Translation.Repositories
                 .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"@DestinationEventId", destinationEventId}, {"@SourceEventId", sourceEventId}});
         }
 
-        public List<MpEventDto> GetEventAndCheckinSubevents(string authenticationToken, int eventId, bool excludeTemplates = true)
+        public List<MpEventDto> GetEventAndCheckinSubevents(string authenticationToken, int eventId, bool includeTemplates = false)
         {
             var token = authenticationToken ?? _apiUserRepository.GetToken();
             var query = $"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1";
-            if (excludeTemplates == false)
+            if (includeTemplates == false)
             {
                 query = $"{query} AND {nonEventTemplatesQueryString}";
             }

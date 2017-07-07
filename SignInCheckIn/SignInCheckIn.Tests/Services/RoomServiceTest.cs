@@ -374,7 +374,7 @@ namespace SignInCheckIn.Tests.Services
 
             var checkinEvents = new List<MpEventDto>();
             checkinEvents.Add(mpEventDto);
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
 
             _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
 
@@ -498,7 +498,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
 
             _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
             _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
@@ -561,7 +561,7 @@ namespace SignInCheckIn.Tests.Services
             var checkinEvents = new List<MpEventDto>();
             checkinEvents.Add(mpEventDto);
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
 
             _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
 
@@ -643,7 +643,7 @@ namespace SignInCheckIn.Tests.Services
             _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
                 .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), true)).Returns(new List<MpEventDto>());
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(new List<MpEventDto>());
 
             MpEventDto mpEventDto = new MpEventDto
             {
@@ -656,7 +656,7 @@ namespace SignInCheckIn.Tests.Services
             var checkinEvents = new List<MpEventDto>();
             checkinEvents.Add(mpEventDto);
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
 
             var events = new List<MpEventGroupDto>
             {
@@ -781,7 +781,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, false)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
@@ -871,7 +871,7 @@ namespace SignInCheckIn.Tests.Services
                 RoomName = "name"
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, false)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns((MpEventRoomDto) null);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
@@ -976,7 +976,7 @@ namespace SignInCheckIn.Tests.Services
 
 
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, false)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesByRoomId(1000)).Returns(mpBumpingRuleDtos);
