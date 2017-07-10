@@ -9,6 +9,7 @@ import { FamilyFinderModule } from './family-finder';
 import { ManageChildrenComponent } from './manage-children/manage-children.component';
 import { EventImportComponent } from './import/event-import.component';
 import { EventListComponent } from './event-list.component';
+import { EventTemplatesListComponent } from './templates/event-list.component';
 import { EventResetComponent } from './reset/event-reset.component';
 import { RoomListComponent } from './rooms/room-list.component';
 import { RoomGroupListComponent } from './rooms/room-group-list.component';
@@ -23,6 +24,7 @@ import { CanDeactivateGuard } from '../../shared/guards';
   declarations: [
     EventImportComponent,
     EventListComponent,
+    EventTemplatesListComponent,
     EventResetComponent,
     RoomListComponent,
     RoomGroupListComponent,

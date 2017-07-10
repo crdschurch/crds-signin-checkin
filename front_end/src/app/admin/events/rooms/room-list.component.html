@@ -49,11 +49,9 @@
             </span>
           </button>
           <ul dropdownMenu role="menu" aria-labelledby="single-button" class="dropdown-menu-right">
-            <li role="menuitem"><a class="dropdown-item pointer" (click)="goToImport()">Import Event Settings</a></li>
-            <li role="menuitem"><a class="dropdown-item pointer" (click)="goToReset()">Reset Event Settings</a></li>
-            <!-- TODO: Can add separator like this -->
-            <!-- li class="divider dropdown-divider"></li -->
-            <!-- li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li -->
+            <li role="menuitem"><a class="dropdown-item pointer" (click)="goToImportTemplate()">Import from Templates</a></li>
+            <li role="menuitem"><a class="dropdown-item pointer" (click)="goToImport()">Import from Events</a></li>
+            <li role="menuitem"><a class="dropdown-item pointer" (click)="goToReset()">Clear Event</a></li>
           </ul>
         </div>
         <button class="btn btn-default" onClick="window.print();">

@@ -9,8 +9,9 @@ import { Congregation, Event, Group } from '../models';
 
 @Injectable()
 export class ApiService {
-  constructor(private http: HttpClientService, private setupService: SetupService) {
-  }
+  cachedEvent: Event;
+
+  constructor(private http: HttpClientService, private setupService: SetupService) {}
 
   getEventMaps(eventId: string) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/maps`;
@@ -19,10 +20,17 @@ export class ApiService {
                     .catch(this.handleError);
   }
 
-  getEvent(eventId: string) {
+  getEvent(eventId: string, fromCache = false) {
     const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}`;
+    if (fromCache && this.cachedEvent && (this.cachedEvent.EventId === parseInt(eventId, 10))) {
+      return Observable.of(this.cachedEvent);
+    }
     return this.http.get(url)
-                    .map(res => Event.fromJson(res.json()))
+                    .map(res => {
+                      const e = Event.fromJson(res.json());
+                      this.cachedEvent = e;
+                      return e;
+                    })
                     .catch(this.handleError);
   }
 
@@ -33,6 +41,22 @@ export class ApiService {
     let formattedEndDate = moment(endDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
     let options = new RequestOptions({
         search: new URLSearchParams(`site=${site}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`)
+    });
+    return this.http.get(url, options)
+                    .map(res => {
+                      let events = res.json();
+                      return events.sort((a: Event, b: Event) => {
+                        return a.EventStartDate.localeCompare(b.EventStartDate);
+                      });
+                    })
+                    .catch(this.handleError);
+  }
+
+  getEventTemplates(site?: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/templates`;
+    if (!site) { site = this.getSite(); }
+    let options = new RequestOptions({
+        search: new URLSearchParams(`site=${site}`)
     });
     return this.http.get(url, options)
                     .map(res => {

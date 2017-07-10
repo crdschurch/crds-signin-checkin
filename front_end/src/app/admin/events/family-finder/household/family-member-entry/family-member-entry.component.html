@@ -21,13 +21,13 @@
             <div class="col-sm-6">
               <fieldset class="form-group required">
                 <label for="nickname" class="control-label">First Name</label>
-                <input type="text" class="form-control form-control-lg" id="formGroupExampleInput" name="nickname" [(ngModel)]="contact.Nickname">
+                <input type="text" class="form-control form-control-lg" id="FirstName{{i}}" name="nickname" [(ngModel)]="contact.Nickname">
               </fieldset>
             </div>
             <div class="col-sm-6">
               <fieldset class="form-group required">
                 <label for="lastName" class="control-label">Last Name</label>
-                <input type="text" class="form-control form-control-lg" id="formGroupExampleInput2" name="lastName" [(ngModel)]="contact.LastName" (click)="$event.target.select()">
+                <input type="text" class="form-control form-control-lg" id="LastName{{i}}" name="lastName" [(ngModel)]="contact.LastName" (click)="$event.target.select()">
               </fieldset>
             </div>
           </div>
@@ -38,7 +38,7 @@
                 <br/>
                 <div class="row datepicker">
                   <div class="col-sm-4 col-md-5 col-sm-12 mb-1">
-                    <select class="form-control form-control-lg" id="dob-month" (change)="datePickerBlur(contact, i)" name="dobMonth" [(ngModel)]="birthdates[i].month">
+                    <select class="form-control form-control-lg" id="dob-month{{i}}" (change)="datePickerBlur(contact, i)" name="dobMonth" [(ngModel)]="birthdates[i].month">
                       <option disabled value="0">Month</option>
                       <option role="menuitem" *ngFor="let num of numberOfMonthsSelection" value="{{num}}">
                         {{num | monthName }}
@@ -46,7 +46,7 @@
                     </select>
                   </div>
                   <div class="col-sm-4 col-md-3 col-sm-12 mb-1">
-                    <select class="form-control form-control-lg" id="dob-day" (change)="datePickerBlur(contact, i)" name="dobDay" [(ngModel)]="birthdates[i].day">
+                    <select class="form-control form-control-lg" id="dob-day{{i}}" (change)="datePickerBlur(contact, i)" name="dobDay" [(ngModel)]="birthdates[i].day">
                       <option disabled value="0">Day</option>
                       <option role="menuitem" *ngFor="let num of numberOfDaysSelection">
                         {{num}}
@@ -54,7 +54,7 @@
                     </select>
                   </div>
                   <div class="col-sm-4 col-md-4 col-sm-12 mb-1">
-                    <select class="form-control form-control-lg" id="dob-year" (change)="datePickerBlur(contact, i)" name="dobYear" [(ngModel)]="birthdates[i].year">
+                    <select class="form-control form-control-lg" id="dob-year{{i}}" (change)="datePickerBlur(contact, i)" name="dobYear" [(ngModel)]="birthdates[i].year">
                       <option disabled value="0">Year</option>
                       <option role="menuitem" *ngFor="let num of yearsSelection">
                         {{num}}
@@ -67,7 +67,7 @@
             <div class="col-xs-12 col-sm-6">
               <div class="form-group required text-xs-left" *ngIf="needGradeLevel(contact)">
                 <label for="childGrade" class="control-label">Year / Grade</label>
-                <select class="form-control form-control-lg" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
+                <select class="form-control form-control-lg" id="grade{{i}}" (change)="updateContactYearGradeGroup(contact, $event.target.value)" required>
                   <option value="-1">Select a Grade</option>
                   <option value="0" [attr.selected]="contact.YearGrade === 0 ? '' : null">Has not started Kindergarten yet</option>
                   <option *ngFor="let grade of gradeGroups;" value="{{grade.Id}}" [attr.selected]="contact.YearGrade === grade.Id ? '' : null">{{ grade.Name }}</option>

@@ -6,8 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { NewParent, NewChild, Contact } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
-import { ApiService, RootService, SetupService } from '../../../shared/services';
-import { HeaderService } from '../../header/header.service';
+import { RootService, SetupService } from '../../../shared/services';
 
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -33,8 +32,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService,
-    private headerService: HeaderService,
     private adminService: AdminService,
     private rootService: RootService,
     private setupService: SetupService,
@@ -49,12 +46,6 @@ export class NewFamilyRegistrationComponent implements OnInit {
     this.submitted = false;
     this.eventId = this.route.snapshot.params['eventId'];
     this.createParents();
-
-    this.apiService.getEvent(this.eventId).subscribe((event) => {
-        this.headerService.announceEvent(event);
-      },
-      error => console.error(error)
-    );
   }
 
   createParents() {

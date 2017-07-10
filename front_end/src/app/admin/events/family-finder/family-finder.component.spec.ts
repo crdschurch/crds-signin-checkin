@@ -1,38 +1,39 @@
 import { Observable } from 'rxjs';
 import { FamilyFinderComponent } from './family-finder.component';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 
 const event = {
   'EventTitle': 'Cool Event 83',
   'EventId': '92398420398',
 };
 
-let apiService = jasmine.createSpyObj('apiService', ['getEvent']);
 let adminService = jasmine.createSpyObj('adminService', [, 'findFamilies']);
-let headerService = jasmine.createSpyObj('headerService', ['announceEvent']);
 let route: ActivatedRoute = new ActivatedRoute();
+let router = jasmine.createSpyObj('router', ['navigate']);
 route.snapshot = new ActivatedRouteSnapshot();
 route.snapshot.params = { eventId: event.EventId };
+route.snapshot.queryParams = { };
 let fixture;
 
 describe('FamilyFinderComponent', () => {
   beforeEach(() => {
-    (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
     (<jasmine.Spy>(adminService.findFamilies)).and.returnValue(Observable.of());
-    fixture = new FamilyFinderComponent(route, adminService, headerService, apiService);
+    (<jasmine.Spy>(router.navigate)).and.returnValue(Observable.of());
+    fixture = new FamilyFinderComponent(route, adminService, router);
   });
 
   it('#ngOnInit', () => {
     fixture.ngOnInit();
     expect(fixture.processing).toBeFalsy;
     expect(fixture.searched).toBeFalsy;
-    expect(apiService.getEvent).toHaveBeenCalledWith(event.EventId);
-    expect(headerService.announceEvent).toHaveBeenCalledWith(event);
   });
 
-  it('#setSearchValue(search)', () => {
-    fixture.setSearchValue('hi');
-    expect(fixture.search).toEqual('hi');
+  it('#ngOnInit', () => {
+    route.snapshot.queryParams = { search: 'test' };
+    fixture.ngOnInit();
+    expect(fixture.processing).toBeFalsy;
+    expect(fixture.searched).toBeFalsy;
+    expect(fixture.search).toEqual('test');
   });
 
   it('#onClearSearch(box)', () => {

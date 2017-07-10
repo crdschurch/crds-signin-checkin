@@ -10,6 +10,7 @@ export class Event {
   EventTypeId: number;
   EventSite: string;
   IsCurrentEvent: boolean;
+  Template: boolean;
   EventSiteId: number;
   ParentEventId: number;
 
@@ -21,6 +22,7 @@ export class Event {
     e.EventTypeId = json.EventTypeId;
     e.EventSite = json.EventSite;
     e.IsCurrentEvent = json.IsCurrentEvent;
+    e.Template = json.Template;
     e.EventSiteId = json.EventSiteId;
     e.ParentEventId = json.ParentEventId;
     return e;

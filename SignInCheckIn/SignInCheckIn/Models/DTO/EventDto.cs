@@ -16,5 +16,6 @@ namespace SignInCheckIn.Models.DTO
         public int? EarlyCheckinPeriod { get; set; }
         public int? LateCheckinPeriod { get; set; }
         public bool? IsCurrentEvent { get; set; }
+        public bool? Template { get; set; }
     }
 }

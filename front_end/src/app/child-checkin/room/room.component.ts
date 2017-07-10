@@ -10,6 +10,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { ChannelEvent, ChannelService } from '../../shared/services';
 import { Constants } from '../../shared/constants';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'room',
   templateUrl: 'room.component.html',
@@ -64,9 +66,9 @@ export class RoomComponent implements OnInit {
                 // TODO: backend should probably do this
                 child.Selected = true;
                 child.AssignedRoomId = comp.roomId;
-                comp.children.push(child);
+                comp._children.push(child);
               }
-            } else if (x.Name === 'Remove') {
+            } else if (x.Name === 'RemoveSignIn' || x.Name === 'RemoveCheckIn') {
               let data = x.Data;
               if (data.OriginalRoomId !== data.OverRideRoomId) {
                 comp.children = comp.children.filter( (obj: Child) => { return obj.EventParticipantId !== data.EventParticipantId; } );
@@ -99,10 +101,10 @@ export class RoomComponent implements OnInit {
   }
 
   get children(): Array<Child> {
-    return this._children;
+    return _.sortBy(this._children, ['Nickname', 'LastName', 'CallNumber']);
   }
 
-  set children(child: Array<Child>) {
-    this._children = child;
+  set children(children: Array<Child>) {
+    this._children = children;
   }
 }

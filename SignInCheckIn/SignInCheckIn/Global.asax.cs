@@ -17,6 +17,8 @@ namespace SignInCheckIn
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             AutoMapperConfig.RegisterMappings();
+
+            log4net.Config.XmlConfigurator.Configure();  // must be done before ClientApiKeys
             DomainLockedClientApiKeyConfig.Register(GlobalConfiguration.Configuration);
         }
     }

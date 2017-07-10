@@ -4,7 +4,8 @@ import { Child, NewChild } from '../../models';
 
 @Component({
   selector: 'child-signin-card',
-  templateUrl: 'child-signin-card.component.html'
+  templateUrl: 'child-signin-card.component.html',
+  styleUrls: ['child-signin-card.component.scss'],
 })
 
 export class ChildSigninCardComponent {

@@ -19,6 +19,10 @@ export class Guest extends Child {
     return this.LocalId;
   }
 
+  get CanCheckIn(): boolean {
+    return true;
+  }
+
   constructor() {
     super();
     // generate an id so inputs can be attached to label in html

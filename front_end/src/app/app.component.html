@@ -1,6 +1,9 @@
 <div class="crossroads-growl">
   <toaster-container [toasterconfig]="customToasterConfig"></toaster-container>
 </div>
+<div *ngIf="needKioskSetup" class="alert alert-warning" role="alert" style="text-align: center">
+  Please reset your kiosk config.
+</div>
 
 <div *ngIf="networkError()">
   <div class="network-error">

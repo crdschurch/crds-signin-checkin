@@ -4,19 +4,17 @@ import { NgForm } from '@angular/forms';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
 import { Event, Room } from '../../../shared/models';
-import { HeaderService } from '../../header/header.service';
 import { Observable } from 'rxjs';
 
 import * as moment from 'moment';
 
-describe('RoomListComponent', () => {
+describe('Event Import Component', () => {
   let fixture: EventImportComponent;
   let eventId: 54321;
   let eventSiteId: 90210;
 
   let route: ActivatedRoute;
   let apiService: ApiService;
-  let headerService: HeaderService;
   let rootService: RootService;
   let adminService: AdminService;
   let router: Router;
@@ -28,21 +26,23 @@ describe('RoomListComponent', () => {
     route.snapshot.params = {
       eventId: eventId
     };
+    route.snapshot.data = {
+      template: false
+    };
 
-    apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEvents']);
-    headerService = jasmine.createSpyObj<HeaderService>('headerService', ['announceEvent']);
+    apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEvents', 'getEventTemplates']);
     rootService = jasmine.createSpyObj<RootService>('rootService', ['announceEvent']);
     adminService = jasmine.createSpyObj<AdminService>('adminService', ['importEvent']);
     router = jasmine.createSpyObj<Router>('router', ['navigate']);
 
-    fixture = new EventImportComponent(route, apiService, headerService, rootService, adminService, router);
+    fixture = new EventImportComponent(route, apiService, rootService, adminService, router);
     fixture.targetEvent = null;
     fixture.events = null;
     fixture.sourceEventDate = null;
   });
 
   describe('#ngOnInit', () => {
-    it('should get target event and list of source events', () => {
+    it('should get target event and list of events', () => {
       let targetEventStartDate = moment().add(1, 'days');
       let sourceEventDate = moment(targetEventStartDate).startOf('day').subtract(7, 'days').toDate();
 
@@ -58,10 +58,26 @@ describe('RoomListComponent', () => {
 
       expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
       expect(fixture.getSourceEventList).toHaveBeenCalled();
-      expect(headerService.announceEvent).toHaveBeenCalledWith(targetEvent);
-
       expect(fixture.targetEvent).toBe(targetEvent);
       expect(fixture.sourceEventDate).toEqual(sourceEventDate);
+      expect(fixture.isTemplatePage).toBeFalsy();
+    });
+
+    it('should get target event and list of template events if on template page', () => {
+      route.snapshot.data = {
+        template: true
+      };
+      apiService = jasmine.createSpyObj<ApiService>('apiService', ['getEvent', 'getEventTemplates']);
+      fixture = new EventImportComponent(route, apiService, rootService, adminService, router);
+      (<jasmine.Spy>apiService.getEvent).and.returnValue(Observable.of({}));
+      (<jasmine.Spy>apiService.getEventTemplates).and.returnValue(Observable.of([new Event(), new Event()]));
+      spyOn(fixture, 'getSourceEventList').and.callFake(() => { });
+
+      fixture.ngOnInit();
+
+      expect(apiService.getEvent).toHaveBeenCalled();
+      expect(fixture.getSourceEventList).toHaveBeenCalled();
+      expect(fixture.isTemplatePage).toBeTruthy();
     });
   });
 

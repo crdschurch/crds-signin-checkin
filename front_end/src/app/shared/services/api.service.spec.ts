@@ -52,6 +52,12 @@ describe('ApiService', () => {
         expect(res).toEqual(r);
       });
     });
+    it('should successfully get list of template events', () => {
+      let r = responseData;
+      fixture.getEventTemplates(3).subscribe((res: Response) => {
+        expect(res).toEqual(r);
+      });
+    });
   });
 
   describe('#getEvent', () => {
@@ -65,10 +71,19 @@ describe('ApiService', () => {
       };
       fixture = new ApiService(httpClientServiceStub, setupServiceStub);
     });
-    it('should successfully get event', () => {
+    it('should successfully get event from api when not specifying cache', () => {
       let r = responseData;
       fixture.getEvent('453').subscribe((res: Response) => {
         expect(res).toEqual(Event.fromJson(r));
+      });
+    });
+    it('should successfully get event from cache', () => {
+      let r = responseData;
+      fixture.cachedEvent = new Event();
+      fixture.cachedEvent.EventId = 54343;
+      fixture.cachedEvent.EventSite = '12';
+      fixture.getEvent('54343', true).subscribe((res) => {
+        expect(res.EventSite).toEqual(fixture.cachedEvent.EventSite);
       });
     });
   });

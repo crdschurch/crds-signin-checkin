@@ -3,7 +3,6 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router'
 import { AdminService } from '../../admin.service';
 import { Event, Room } from '../../../shared/models';
 import { ApiService } from '../../../shared/services';
-import { HeaderService } from '../../header/header.service';
 import { RootService } from '../../../shared/services/root.service';
 import { Observable } from 'rxjs';
 
@@ -11,13 +10,12 @@ import * as moment from 'moment';
 
 describe('RoomListComponent', () => {
   let fixture: RoomListComponent;
-  let eventId: 54321;
+  const eventId = 54321;
 
   let route: ActivatedRoute;
 
   let apiService: ApiService;
   let adminService: AdminService;
-  let headerService: HeaderService;
   let router: Router;
   let rootService: RootService;
 
@@ -31,10 +29,9 @@ describe('RoomListComponent', () => {
 
     adminService = <AdminService>jasmine.createSpyObj('adminService', ['getRooms', 'getUnassignedGroups']);
     apiService = <ApiService>jasmine.createSpyObj('apiService', ['getEvent']);
-    headerService = <HeaderService>jasmine.createSpyObj('headerService', ['announceEvent']);
     router = <Router>jasmine.createSpyObj('router', ['navigate']);
     rootService = <RootService>jasmine.createSpyObj('rootService', ['announceEvent']);
-    fixture = new RoomListComponent(route, adminService, apiService, headerService, router, rootService);
+    fixture = new RoomListComponent(route, adminService, apiService, router, rootService);
     fixture.event = new Event();
   });
 
@@ -49,20 +46,26 @@ describe('RoomListComponent', () => {
       let event = new Event();
       event.EventId = eventId;
       (<jasmine.Spy>(apiService.getEvent)).and.returnValue(Observable.of(event));
-
-      fixture.eventId = null;
-      fixture.rooms = null;
-      fixture.event = null;
+      spyOn(fixture, 'setRouteData').and.callFake(() => { });
+      fixture.eventId = eventId.toString();
+      // fixture.rooms = null;
+      // fixture.event = null;
 
       fixture.ngOnInit();
-      expect(adminService.getRooms).toHaveBeenCalledWith(eventId);
+      expect(adminService.getRooms).toHaveBeenCalledWith(fixture.eventId);
       expect(adminService.getUnassignedGroups).toHaveBeenCalled();
-      expect(apiService.getEvent).toHaveBeenCalledWith(eventId);
-      expect(headerService.announceEvent).toHaveBeenCalledWith(event);
+      expect(apiService.getEvent).toHaveBeenCalledWith(fixture.eventId);
+      expect(fixture.setRouteData).toHaveBeenCalled();
 
-      expect(fixture.eventId).toEqual(eventId);
       expect(fixture.rooms).toBe(rooms);
       expect(fixture.event).toBe(event);
+    });
+  });
+
+  describe('#setRouteData', () => {
+    it('should set eventId', () => {
+      fixture.setRouteData();
+      expect(fixture.eventId).toBe(eventId);
     });
   });
 
@@ -85,6 +88,8 @@ describe('RoomListComponent', () => {
     it('should not navigate if event is in the past', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToImport();
 
       expect(router.navigate).not.toHaveBeenCalled();
@@ -94,9 +99,35 @@ describe('RoomListComponent', () => {
     it('should navigate if event is in the future', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToImport();
 
-      expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import`]);
+      expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import/events`]);
+      expect(rootService.announceEvent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('#goToImportTemplate', () => {
+    it('should not navigate if event is in the past', () => {
+      fixture.event = new Event();
+      fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.setRouteData();
+      fixture.goToImportTemplate();
+
+      expect(router.navigate).not.toHaveBeenCalled();
+      expect(rootService.announceEvent).toHaveBeenCalledWith('echeckCannotOverwritePastEvent');
+    });
+
+    it('should navigate if event is in the future', () => {
+      fixture.event = new Event();
+      fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.setRouteData();
+      fixture.goToImportTemplate();
+
+      expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/import/templates`]);
       expect(rootService.announceEvent).not.toHaveBeenCalled();
     });
   });
@@ -105,6 +136,8 @@ describe('RoomListComponent', () => {
     it('should not navigate if event is in the past', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().subtract(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToReset();
 
       expect(router.navigate).not.toHaveBeenCalled();
@@ -114,6 +147,8 @@ describe('RoomListComponent', () => {
     it('should navigate if event is in the future', () => {
       fixture.event = new Event();
       fixture.event.EventStartDate = moment().add(1, 'days').toISOString();
+      fixture.event.EventId = eventId;
+      fixture.setRouteData();
       fixture.goToReset();
 
       expect(router.navigate).toHaveBeenCalledWith([`/admin/events/${eventId}/reset`]);
