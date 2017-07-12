@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderService } from './header.service';
 import { Event } from '../../shared/models';
-import { UserService, SetupService } from '../../shared/services';
+import { ApiService, SetupService, UserService } from '../../shared/services';
 import * as moment from 'moment';
 
 @Component({
@@ -10,7 +10,7 @@ import * as moment from 'moment';
   templateUrl: 'header.component.html',
   styleUrls: ['header.component.scss'],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   event: Event;
   private kioskDisplay: Array<string> = [];
   private loggedInDisplay: string;
@@ -31,11 +31,23 @@ export class HeaderComponent {
   constructor(private headerService: HeaderService,
               private userService: UserService,
               private setupService: SetupService,
+              private apiService: ApiService,
+              private route: ActivatedRoute,
               private router: Router) {
     headerService.eventAnnounced$.subscribe(
       event => {
         this.event = event;
       });
+  }
+
+  ngOnInit() {
+    const eventId = this.route.snapshot.params['eventId'];
+    if (eventId) {
+      this.apiService.getEvent(eventId, true).subscribe((event) => {
+        this.headerService.announceEvent(event);
+        this.event = event;
+      }, error => console.error(error));
+    }
   }
 
   click() {

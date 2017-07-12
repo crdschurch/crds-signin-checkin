@@ -6,7 +6,6 @@ import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
 import { Event, Room, Group } from '../../../shared/models';
 import { AdminService } from '../../admin.service';
 import { ApiService } from '../../../shared/services';
-import { HeaderService } from '../../header/header.service';
 import { RootService } from '../../../shared/services/root.service';
 
 import * as moment from 'moment';
@@ -37,13 +36,10 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     private route: ActivatedRoute,
     private adminService: AdminService,
     private apiService: ApiService,
-    private headerService: HeaderService,
     private router: Router,
     private rootService: RootService) {}
 
-  private getData(): void {
-    this.eventId = this.route.snapshot.params['eventId'];
-
+  private getData() {
     this.adminService.getRooms(this.eventId).subscribe(
       (rooms: Room[]) => {
         // sort by KcSortOrder ascending, if null, put at end
@@ -59,7 +55,6 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     this.apiService.getEvent(this.eventId).subscribe(
       event => {
         this.event = event;
-        this.headerService.announceEvent(event);
       },
       error => console.error(error)
     );
@@ -72,8 +67,13 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     );
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.setRouteData();
     this.getData();
+  }
+
+  setRouteData() {
+    this.eventId = this.route.snapshot.params['eventId'];
   }
 
   onNotifyDirty(message) {
@@ -119,8 +119,12 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
     return this.rooms ? this.rooms.length : ' ';
   }
 
+  public goToImportTemplate(): void {
+    this.goToImportOrReset('import/templates');
+  }
+
   public goToImport(): void {
-    this.goToImportOrReset('import');
+    this.goToImportOrReset('import/events');
   }
 
   public goToReset(): void {
@@ -132,7 +136,6 @@ export class RoomListComponent implements OnInit, AfterViewChecked {
       this.rootService.announceEvent('echeckCannotOverwritePastEvent');
       return;
     }
-
     this.router.navigate([`/admin/events/${this.eventId}/${target}`]);
   }
 

@@ -9,7 +9,7 @@ export class NewParent {
   LastName: string;
   PhoneNumber: string;
   EmailAddress: string;
-  GenderId: number = NewParent.GENDER.FEMALE;
+  GenderId: number;
   CongregationId: number;
   DuplicateEmail: string;
   HouseholdId: string;

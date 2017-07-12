@@ -177,6 +177,13 @@ export class AdminService {
                     .catch(this.handleError);
   }
 
+  clearEventData(eventId: number) {
+    const url = `${process.env.ECHECK_API_ENDPOINT}/events/${eventId}/reset`;
+    return this.http.put(url, {})
+                    .map((res) => res.json())
+                    .catch(this.handleError);
+  }
+
   private handleError (error: any) {
     return Observable.throw(error.json().error || error.json().errors[0] || 'Server error');
   }

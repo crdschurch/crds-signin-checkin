@@ -51,6 +51,24 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
+        [ResponseType(typeof(List<EventDto>))]
+        [VersionedRoute(template: "events/templates", minimumVersion: "1.0.0")]
+        [Route("events/templates")]
+        public IHttpActionResult GetEventTemplates(
+            [FromUri(Name = "site")] int site)
+        {
+            try
+            {
+                return Ok(_eventService.GetCheckinEventTemplates(site));
+            }
+            catch (Exception e)
+            {
+                var apiError = new ApiErrorDto("Get Event Templates", e);
+                throw new HttpResponseException(apiError.HttpResponseMessage);
+            }
+        }
+
+        [HttpGet]
         [ResponseType(typeof (EventRoomDto))]
         [VersionedRoute(template: "events/{eventid}", minimumVersion: "1.0.0")]
         [Route("events/{eventid}")]
@@ -164,8 +182,8 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(List<EventRoomDto>))]
-        [VersionedRoute(template: "event/{destinationEventId:int}/resets", minimumVersion: "1.0.0")]
-        [Route("events/{destinationEventId:int}/reset")]
+        [VersionedRoute(template: "events/{eventId:int}/reset", minimumVersion: "1.0.0")]
+        [Route("events/{eventId:int}/reset")]
         [RequiresAuthorization]
         public IHttpActionResult ResetEventSetup(int eventId)
         {
