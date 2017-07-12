@@ -92,7 +92,7 @@
           <div class="col-xs-12 mb-3">
             <section>
               <div class="float-sm-left">
-                <button type="button" class="btn btn-secondary" [disabled]="processing" [routerLink]="['/admin/events', eventId, 'family-finder']">Cancel</button>
+                <button type="button" class="btn btn-secondary" [disabled]="processing" (click)="back()">Cancel</button>
               </div>
               <div class="float-sm-right">
                 <button type="submit" class="btn btn-info float-xs-right" [disabled]="processing || updateFamilyForm.pristine" (click)="onSave(updateFamilyForm)">Save &amp; View Children</button>
