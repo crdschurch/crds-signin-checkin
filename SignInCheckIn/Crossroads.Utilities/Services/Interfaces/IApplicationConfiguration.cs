@@ -66,6 +66,8 @@ namespace Crossroads.Utilities.Services.Interfaces
 
         int ChildOfRelationshipId { get; }
 
+        int MarriedToRelationshipId { get; }
+
         int AllPlatformUsersRoleId { get; }
 
         int GeneralPublicationId { get; }

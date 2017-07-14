@@ -37,6 +37,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.Setup(m => m.KidsClubPublicationId).Returns(3);
             _applicationConfiguration.Setup(m => m.AllPlatformUsersRoleId).Returns(39);
             _applicationConfiguration.Setup(m => m.GeneralPublicationId).Returns(2);
+            _applicationConfiguration.Setup(m => m.MarriedToRelationshipId).Returns(1);
 
             _fixture = new FamilyService(_contactRepository.Object, _participantRepository.Object, _applicationConfiguration.Object, _passwordService.Object, _childSigninSerivce.Object);
         }
@@ -126,6 +127,177 @@ namespace SignInCheckIn.Tests.Services
             // Assert
             Assert.IsNotNull(result[0].HouseholdId);
             Assert.AreNotEqual(0, result.Count);
+        }
+
+        [Test]
+        public void ShouldSaveNewFamilyWithTwoParents()
+        {
+            // Arrange
+            var token = "123abc";
+            var kioskId = "aaa";
+            var passwordResetToken = "abcdefgh12345678";
+
+            var mpHouseholdDto = new MpHouseholdDto
+            {
+                HouseholdId = 1234567
+            };
+
+            var newParentDtos = new List<NewParentDto>
+            {
+                new NewParentDto
+                {
+                    CongregationId = 1,
+                    FirstName = "first_one",
+                    LastName = "last",
+                    PhoneNumber = "555-555-0987",
+                    EmailAddress = "test1@test.com"
+                },
+                new NewParentDto
+                {
+                    CongregationId = 1,
+                    FirstName = "first_two",
+                    LastName = "last",
+                    PhoneNumber = "555-555-0986",
+                    EmailAddress = "test2@test.com"
+                }
+            };
+
+            //////////////////////
+
+            var mpNewParticipantDtoFromRepo_1 = new MpNewParticipantDto
+            {
+                FirstName = "first_one",
+                LastName = "last",
+                ContactId = 5544555,
+                Contact = new MpContactDto
+                {
+                    HouseholdId = 1234567,
+                    ContactId = 5544555
+                }
+            };
+
+            var mpNewParticipantDtoFromRepo_2 = new MpNewParticipantDto
+            {
+                FirstName = "first_two",
+                LastName = "last",
+                ContactId = 4433444,
+                Contact = new MpContactDto
+                {
+                    HouseholdId = 1234567,
+                    ContactId = 4433444
+                }
+            };
+
+            //////////////////////
+
+            var mpNewContactDto_1 = new MpContactDto
+            {
+                ContactId = 5544555
+            };
+
+            var mpNewContactDto_2 = new MpContactDto
+            {
+                ContactId = 4433444
+            };
+
+            /////////////////////
+
+            var mpUserDtoSave_1 = new MpUserDto
+            {
+                FirstName = "first_one", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test1@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test1@test.com",
+                ContactId = 5544555,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            var mpNewUserDtoReturn_1 = new MpUserDto
+            {
+                UserId = 6677667,
+                FirstName = "first_one", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test1@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test1@test.com",
+                ContactId = 5544555,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            var mpUserDtoSave_2 = new MpUserDto
+            {
+                FirstName = "first_two", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test2@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test2@test.com",
+                ContactId = 4433444,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            var mpNewUserDtoReturn_2 = new MpUserDto
+            {
+                UserId = 8877887,
+                FirstName = "first_two", // contact?
+                LastName = "last", // contact?
+                UserEmail = "test2@test.com",
+                Password = "abcdefghijklmnopq",
+                Company = false, //contact?
+                DisplayName = "last, first",
+                DomainId = 1,
+                UserName = "test2@test.com",
+                ContactId = 4433444,
+                PasswordResetToken = "abcdefgh12345678"
+            };
+
+            // one password is fine in the test
+            _passwordService.Setup(r => r.GetNewUserPassword(16, 2)).Returns("abcdefghijklmnopq");
+
+            // the same token is fine in a test
+            _passwordService.Setup(r => r.GeneratorPasswordResetToken("test1@test.com")).Returns("abcdefgh12345678");
+            _passwordService.Setup(r => r.GeneratorPasswordResetToken("test2@test.com")).Returns("abcdefgh12345678");
+
+            // these need to return an empty list, as we expect that no parents will be found if they're new
+            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test1@test.com")).Returns(new List<MpUserDto>());
+            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test2@test.com")).Returns(new List<MpUserDto>());
+
+            // only one household gets created
+            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+
+            // the new contact is created as part of creating the participant - would be nice if we can pass down the first name as an arg?
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_one"), token)).Returns(mpNewParticipantDtoFromRepo_1);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_two"), token)).Returns(mpNewParticipantDtoFromRepo_2);
+
+            // these are created off of the new participant object - the contact id is on the new participant object
+            _contactRepository.Setup(m => m.GetContactById(token, 5544555)).Returns(mpNewContactDto_1);
+            _contactRepository.Setup(m => m.GetContactById(token, 4433444)).Returns(mpNewContactDto_2);
+
+            // test creating the actual user records - the email address is the comparator
+            _contactRepository.Setup(m => m.CreateUserRecord(token, It.Is<MpUserDto>(r => r.UserEmail == "test1@test.com"))).Returns(mpNewUserDtoReturn_1);
+            _contactRepository.Setup(m => m.CreateUserRecord(token, It.Is<MpUserDto>(r => r.UserEmail == "test2@test.com"))).Returns(mpNewUserDtoReturn_2);
+
+            _contactRepository.Setup(m => m.CreateUserRoles(token, It.IsAny<List<MpUserRoleDto>>()));
+            _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
+            _contactRepository.Setup(m => m.CreateContactRelationships(token, It.IsAny<List<MpContactRelationshipDto>>()));
+            
+            // Act
+            var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
+
+            // Assert
+            _contactRepository.VerifyAll();
+
+            Assert.IsNotNull(result[0].HouseholdId);
+            Assert.AreEqual(2, result.Count);
         }
 
         [Test]
