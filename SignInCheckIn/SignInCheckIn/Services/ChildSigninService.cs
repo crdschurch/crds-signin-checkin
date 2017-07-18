@@ -208,6 +208,8 @@ namespace SignInCheckIn.Services
             return new List<int>();
         }
 
+        // look to see where the event in the map dto is, then start with that event, not the current one which is getting pulled
+        // back
         public ParticipantEventMapDto SigninParticipants(ParticipantEventMapDto participantEventMapDto, bool allowLateSignin = false)
         {
             // create participant records for guests, and assign to a group
@@ -285,137 +287,140 @@ namespace SignInCheckIn.Services
             participant.CallNumber = callNumber.Substring(callNumber.Length - 4);
         }
 
-        // need to be able to assign to two rooms - which is what signing into AC is
-        private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
-        {
-            // JPC - need to handle already-assigned event participants here
+        //// JPC - 7/17/17 - Commented out all this code, but left in place for the time being, in case it needs to be uncommented
+        //// need to be able to assign to two rooms - which is what signing into AC is
+        //private IEnumerable<MpEventParticipantDto> SetParticipantsAssignedRoom(ParticipantEventMapDto participantEventMapDto, bool checkEventTime)
+        //{
+        //    // JPC - need to handle already-assigned event participants here
 
-            // Get Event and make sure it occures at a valid time
-            var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
+        //    // Get Event and make sure it occures at a valid time
+        //    var eventDto = GetEvent(participantEventMapDto.CurrentEvent.EventId, checkEventTime);
 
-            // Get groups that are configured for the event
-            var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
+        //    // Get groups that are configured for the event
+        //    var eventGroups = _eventRepository.GetEventGroupsForEvent(participantEventMapDto.CurrentEvent.EventId);
 
-            // Get a list of participants with their groups and expected rooms - maps groups onto participants
-            var mpEventParticipantDtoList = SetParticipantsGroupsAndExpectedRooms(eventGroups, participantEventMapDto);
+        //    // Get a list of participants with their groups and expected rooms - maps groups onto participants
+        //    var mpEventParticipantDtoList = SetParticipantsGroupsAndExpectedRooms(eventGroups, participantEventMapDto);
 
-            foreach (var eventParticipant in participantEventMapDto.Participants)
-            {
-                if (!eventParticipant.Selected)
-                {
-                    continue;
-                }
+        //    foreach (var eventParticipant in participantEventMapDto.Participants)
+        //    {
+        //        if (!eventParticipant.Selected)
+        //        {
+        //            continue;
+        //        }
 
-                if (eventParticipant.DuplicateSignIn == true)
-                {
-                    eventParticipant.SignInErrorMessage = $"{eventParticipant.Nickname} is already signed in for this event.";
-                    continue;
-                }
+        //        if (eventParticipant.DuplicateSignIn == true)
+        //        {
+        //            eventParticipant.SignInErrorMessage = $"{eventParticipant.Nickname} is already signed in for this event.";
+        //            continue;
+        //        }
 
-                var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
+        //        var mpEventParticipant = mpEventParticipantDtoList.Find(r => r.ParticipantId == eventParticipant.ParticipantId);
 
-                if (!mpEventParticipant.HasKidsClubGroup)
-                {
-                    eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.Nickname} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
-                }
+        //        if (!mpEventParticipant.HasKidsClubGroup)
+        //        {
+        //            eventParticipant.SignInErrorMessage = $"Age/Grade Group Not Assigned. {eventParticipant.Nickname} is not in a Kids Club Group (DOB: {eventParticipant.DateOfBirth.ToShortDateString() })";
+        //        }
 
-                else if (!mpEventParticipant.HasRoomAssignment)
-                {
-                    var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
-                    eventParticipant.SignInErrorMessage = $"There are no '{@group?.Name}' rooms open during the {eventDto.EventTitle} for {eventParticipant.Nickname}";
-                }
-                else
-                {
-                    SetParticipantsRoomAssignment(eventParticipant, mpEventParticipant, eventGroups);
-                }
-            }
+        //        else if (!mpEventParticipant.HasRoomAssignment)
+        //        {
+        //            var group = mpEventParticipant.GroupId.HasValue ? _groupRepository.GetGroup(null, mpEventParticipant.GroupId.Value) : null;
+        //            eventParticipant.SignInErrorMessage = $"There are no '{@group?.Name}' rooms open during the {eventDto.EventTitle} for {eventParticipant.Nickname}";
+        //        }
+        //        else
+        //        {
+        //            SetParticipantsRoomAssignment(eventParticipant, mpEventParticipant, eventGroups);
+        //        }
+        //    }
 
-            return mpEventParticipantDtoList;
-        }
+        //    return mpEventParticipantDtoList;
+        //}
 
-        private EventDto GetEvent(int eventId,  bool checkEventTime)
-        {
-            // Get Event and make sure it occures at a valid time
-            var eventDto = _eventService.GetEvent(eventId);
-            if (checkEventTime && _eventService.CheckEventTimeValidity(eventDto) == false)
-            {
-                throw new Exception("Sign-In Not Available For Event " + eventDto.EventId);
-            }
+        //private EventDto GetEvent(int eventId,  bool checkEventTime)
+        //{
+        //    // Get Event and make sure it occures at a valid time
+        //    var eventDto = _eventService.GetEvent(eventId);
+        //    if (checkEventTime && _eventService.CheckEventTimeValidity(eventDto) == false)
+        //    {
+        //        throw new Exception("Sign-In Not Available For Event " + eventDto.EventId);
+        //    }
 
-            return eventDto;
-        }
+        //    return eventDto;
+        //}
 
-        private static List<MpEventParticipantDto> SetParticipantsGroupsAndExpectedRooms(List<MpEventGroupDto> eventGroupsForEvent, ParticipantEventMapDto participantEventMapDto)
-        {
-            var mpEventParticipantDtoList = (
-                // Get selected participants
-                from participant in participantEventMapDto.Participants.Where(r => r.Selected && r.DuplicateSignIn == false)
+        //private static List<MpEventParticipantDto> SetParticipantsGroupsAndExpectedRooms(List<MpEventGroupDto> eventGroupsForEvent, ParticipantEventMapDto participantEventMapDto)
+        //{
+        //    var mpEventParticipantDtoList = (
+        //        // Get selected participants
+        //        from participant in participantEventMapDto.Participants.Where(r => r.Selected && r.DuplicateSignIn == false)
 
-                // Get the event group id that they belong to
-                let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
+        //        // Get the event group id that they belong to
+        //        let eventGroup = participant.GroupId == null ? null : eventGroupsForEvent.Find(eg => eg.GroupId == participant.GroupId)
 
-                // Create the Event Participant
-                select new MpEventParticipantDto
-                {
-                    EventId = participantEventMapDto.CurrentEvent.EventId,
-                    ParticipantId = participant.ParticipantId,
-                    ParticipantStatusId = 3, // Status ID of 3 = "Attended"
-                    FirstName = participant.FirstName,
-                    LastName = participant.LastName,
-                    Nickname = participant.Nickname,
-                    TimeIn = DateTime.Now,
-                    OpportunityId = null,
-                    RoomId = eventGroup?.RoomReservation.RoomId,
-                    GroupId = participant.GroupId
-                }
-            ).ToList();
+        //        // Create the Event Participant
+        //        select new MpEventParticipantDto
+        //        {
+        //            EventId = participantEventMapDto.CurrentEvent.EventId,
+        //            ParticipantId = participant.ParticipantId,
+        //            ParticipantStatusId = 3, // Status ID of 3 = "Attended"
+        //            FirstName = participant.FirstName,
+        //            LastName = participant.LastName,
+        //            Nickname = participant.Nickname,
+        //            TimeIn = DateTime.Now,
+        //            OpportunityId = null,
+        //            RoomId = eventGroup?.RoomReservation.RoomId,
+        //            GroupId = participant.GroupId
+        //        }
+        //    ).ToList();
 
-            return mpEventParticipantDtoList;
-        }
+        //    return mpEventParticipantDtoList;
+        //}
 
-        private void SetParticipantsRoomAssignment(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, IEnumerable<MpEventGroupDto> eventGroups)
-        {
-            var assignedRoomId = mpEventParticipant.RoomId;
-            if (assignedRoomId == null) return;
+        //private void SetParticipantsRoomAssignment(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, IEnumerable<MpEventGroupDto> eventGroups)
+        //{
+        //    var assignedRoomId = mpEventParticipant.RoomId;
+        //    if (assignedRoomId == null) return;
 
-            var assignedRoom = eventGroups.First(eg => eg.RoomReservation.RoomId == assignedRoomId.Value).RoomReservation;
-            var signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
+        //    var assignedRoom = eventGroups.First(eg => eg.RoomReservation.RoomId == assignedRoomId.Value).RoomReservation;
+        //    var signedAndCheckedIn = (assignedRoom.CheckedIn ?? 0) + (assignedRoom.SignedIn ?? 0);
 
-            mpEventParticipant.RoomId = null;
+        //    mpEventParticipant.RoomId = null;
 
-            if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn) {
-                ProcessBumpingRules(eventParticipant, mpEventParticipant, assignedRoom);
-                return;
-            }
+        //    if (!assignedRoom.AllowSignIn || assignedRoom.Capacity <= signedAndCheckedIn) {
+        //        ProcessBumpingRules(eventParticipant, mpEventParticipant, assignedRoom);
+        //        return;
+        //    }
 
-            assignedRoom.SignedIn = (assignedRoom.SignedIn ?? 0) + 1;
-            eventParticipant.AssignedRoomId = assignedRoom.RoomId;
-            mpEventParticipant.RoomId = assignedRoom.RoomId;
-            mpEventParticipant.RoomName = assignedRoom.RoomName;
-        }
+        //    assignedRoom.SignedIn = (assignedRoom.SignedIn ?? 0) + 1;
+        //    eventParticipant.AssignedRoomId = assignedRoom.RoomId;
+        //    mpEventParticipant.RoomId = assignedRoom.RoomId;
+        //    mpEventParticipant.RoomName = assignedRoom.RoomName;
+        //}
 
-        private void ProcessBumpingRules(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, MpEventRoomDto expectedRoomDto)
-        {
-            if (expectedRoomDto.EventRoomId == null) return;
-            var bumpingRooms = _roomRepository.GetBumpingRoomsForEventRoom(mpEventParticipant.EventId, expectedRoomDto.EventRoomId ?? 0);
+        //private void ProcessBumpingRules(ParticipantDto eventParticipant, MpEventParticipantDto mpEventParticipant, MpEventRoomDto expectedRoomDto)
+        //{
+        //    if (expectedRoomDto.EventRoomId == null) return;
+        //    var bumpingRooms = _roomRepository.GetBumpingRoomsForEventRoom(mpEventParticipant.EventId, expectedRoomDto.EventRoomId ?? 0);
 
-            // go through the bumping rooms in priority order and get the first one that is open and has capacity
-            if (bumpingRooms == null)
-            {
-                return;
-            }
-            foreach (var bumpingRoom in bumpingRooms)
-            {
-                // check if open and has capacity
-                var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
-                if (!bumpingRoom.AllowSignIn || bumpingRoom.Capacity <= signedAndCheckedIn) continue;
+        //    // go through the bumping rooms in priority order and get the first one that is open and has capacity
+        //    if (bumpingRooms == null)
+        //    {
+        //        return;
+        //    }
+        //    foreach (var bumpingRoom in bumpingRooms)
+        //    {
+        //        // check if open and has capacity
+        //        var signedAndCheckedIn = bumpingRoom.CheckedIn + bumpingRoom.SignedIn;
+        //        if (!bumpingRoom.AllowSignIn || bumpingRoom.Capacity <= signedAndCheckedIn) continue;
 
-                eventParticipant.AssignedRoomId = bumpingRoom.RoomId;
-                mpEventParticipant.RoomId = bumpingRoom.RoomId;
-                mpEventParticipant.RoomName = bumpingRoom.RoomName;
-                return;
-            }
-        }
+        //        eventParticipant.AssignedRoomId = bumpingRoom.RoomId;
+        //        mpEventParticipant.RoomId = bumpingRoom.RoomId;
+        //        mpEventParticipant.RoomName = bumpingRoom.RoomName;
+        //        return;
+        //    }
+        //}
+
+        //// JPC 7/17/17 - End the big block of obsolete code
 
         public ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier, string token)
         {
@@ -591,6 +596,8 @@ namespace SignInCheckIn.Services
         // solution here might be to pass down the event type on the PEM Dto and use that in the get events function
         public List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto, int kioskTypeId, bool allowLateSignin = false)
         {
+            // note: "allowLateSignin" is to permit signin from family finder
+
             var dateToday = DateTime.Parse(DateTime.Now.ToShortDateString());
 
             List<MpEventDto> dailyEvents;
@@ -619,8 +626,15 @@ namespace SignInCheckIn.Services
             }
             else
             {
-                serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null).Take(2).ToList();
+                // return all events that occur after the selected event, including the selected event - this is to address DE3859,
+                // where a kid would be signed into the current service, and not the upcoming service
+                serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null && 
+                    r.EventStartDate >= participantEventMapDto.CurrentEvent.EventStartDate).Take(2).ToList();
             }
+
+            Func<int, int> triple = x => x * 3;
+            var range = Enumerable.Range(1, 3);
+            var triples = range.Select(triple);
 
             // we need to get first two event services, and then the matching ac events
             foreach (var serviceEvent in serviceEventSet)
@@ -635,6 +649,7 @@ namespace SignInCheckIn.Services
 
             return eligibleEvents;
         }
+
 
         public bool CheckEventTimeValidity(MpEventDto mpEventDto, bool allowLateSignin)
         {
