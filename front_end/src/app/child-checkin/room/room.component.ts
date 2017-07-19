@@ -105,6 +105,15 @@ export class RoomComponent implements OnInit {
   }
 
   set children(children: Array<Child>) {
+    children.forEach(c => {
+      c.FirstName = this.capitalize(c.FirstName);
+      c.LastName = this.capitalize(c.LastName);
+      c.Nickname = this.capitalize(c.Nickname);
+    });
     this._children = children;
+  }
+
+  capitalize(word: string) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
   }
 }
