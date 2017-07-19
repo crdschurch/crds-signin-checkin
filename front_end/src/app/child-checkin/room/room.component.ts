@@ -114,6 +114,8 @@ export class RoomComponent implements OnInit {
   }
 
   capitalize(word: string) {
-    return word.charAt(0).toUpperCase() + word.slice(1);
+    try {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    } catch (e) {}
   }
 }
