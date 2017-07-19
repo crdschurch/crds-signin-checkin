@@ -201,6 +201,7 @@
   <ItemGroup>
     <Compile Include="BuildTester.cs" />
     <Compile Include="Controllers\EventControllerTest.cs" />
+    <Compile Include="Controllers\FamilyControllerTest.cs" />
     <Compile Include="Controllers\MPAuthTestExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ChildCheckinServiceTest.cs" />
