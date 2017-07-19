@@ -11,9 +11,9 @@ export class Child {
   HouseholdPositionId: number;
   GenderId: number;
   YearGrade: number;
-  _Nickname: string;
-  _FirstName: string;
-  _LastName: string;
+  Nickname: string;
+  FirstName: string;
+  LastName: string;
   DateOfBirth: Date;
   Selected: boolean;
   ParticipationStatusId: number;
@@ -151,35 +151,5 @@ export class Child {
 
   get CanCheckIn(): boolean {
     return this._CanCheckIn;
-  }
-
-  set FirstName(x) {
-    this._FirstName = x;
-  }
-
-  set Nickname(x) {
-    this._Nickname = x;
-  }
-
-  set LastName(x) {
-    this._LastName = x;
-  }
-
-  get FirstName() {
-    try {
-      return this._FirstName.charAt(0).toUpperCase() + this._FirstName.slice(1);
-    } catch (e) {}
-  }
-
-  get Nickname() {
-    try {
-      return this._Nickname.charAt(0).toUpperCase() + this._Nickname.slice(1);
-    } catch (e) {}
-  }
-
-  get LastName() {
-    try {
-      return this._LastName.charAt(0).toUpperCase() + this._LastName.slice(1);
-    } catch (e) {}
   }
 }
