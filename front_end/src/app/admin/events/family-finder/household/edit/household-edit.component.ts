@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { NgForm } from '@angular/forms';
@@ -24,7 +25,8 @@ export class HouseholdEditComponent implements OnInit {
   constructor( private adminService: AdminService,
                private route: ActivatedRoute,
                private rootService: RootService,
-               private router: Router) {}
+               private router: Router,
+               private location: Location) {}
 
  ngOnInit() {
    this.loading = true;
@@ -102,5 +104,9 @@ export class HouseholdEditComponent implements OnInit {
         this.processing = false;
       });
     }
+  }
+
+  back() {
+    this.location.back();
   }
 }
