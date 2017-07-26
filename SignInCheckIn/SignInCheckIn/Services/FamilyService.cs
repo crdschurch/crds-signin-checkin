@@ -182,6 +182,24 @@ namespace SignInCheckIn.Services
                 parentContactDtos.Add(Mapper.Map<ContactDto>(newContact));
             }
 
+            if (parentContactDtos.Count == 2)
+            {
+                var mpContactRelationshipDto = new MpContactRelationshipDto
+                {
+                    ContactId = parentContactDtos[1].ContactId,
+                    RelationshipId = _applicationConfiguration.MarriedToRelationshipId,
+                    RelatedContactId = parentContactDtos[0].ContactId,
+                    StartDate = System.DateTime.Now
+                };
+
+                var mpContactRelationshipDtos = new List<MpContactRelationshipDto>
+                {
+                    mpContactRelationshipDto
+                };
+
+                _contactRepository.CreateContactRelationships(token, mpContactRelationshipDtos);
+            }
+
             return parentContactDtos;
         }
 

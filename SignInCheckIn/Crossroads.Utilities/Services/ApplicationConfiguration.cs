@@ -62,6 +62,8 @@ namespace Crossroads.Utilities.Services
 
         public int ChildOfRelationshipId { get; }
 
+        public int MarriedToRelationshipId { get; }
+
         public int AllPlatformUsersRoleId { get; }
 
         public int GeneralPublicationId { get; }
@@ -364,6 +366,8 @@ namespace Crossroads.Utilities.Services
             ChildcareGroupTypeId = configurationWrapper.GetConfigIntValue("ChildcareGroupTypeId");
 
             ChildOfRelationshipId = configurationWrapper.GetConfigIntValue("ChildOfRelationshipId");
+
+            MarriedToRelationshipId = configurationWrapper.GetConfigIntValue("MarriedToRelationshipId");
 
             AllPlatformUsersRoleId = configurationWrapper.GetConfigIntValue("AllPlatformUsersRoleId");
 

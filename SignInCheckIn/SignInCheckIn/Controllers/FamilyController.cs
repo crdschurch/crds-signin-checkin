@@ -50,8 +50,8 @@ namespace SignInCheckIn.Controllers
                 {
                     kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
                     var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
-                    // must be kiosk type admin and have a printer set up
-                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    // must be kiosk type admin
+                    if (kioskConfig.KioskTypeId != 3)
                     {
                         throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
                     }
@@ -91,8 +91,8 @@ namespace SignInCheckIn.Controllers
                 {
                     kioskIdentifier = Request.Headers.GetValues("Crds-Kiosk-Identifier").First();
                     var kioskConfig = _kioskRepository.GetMpKioskConfigByIdentifier(Guid.Parse(kioskIdentifier));
-                    // must be kiosk type admin and have a printer set up
-                    if (kioskConfig.PrinterMapId == null || kioskConfig.KioskTypeId != 3)
+                    // must be kiosk type admin
+                    if (kioskConfig.KioskTypeId != 3)
                     {
                         throw new HttpResponseException(System.Net.HttpStatusCode.PreconditionFailed);
                     }
