@@ -501,8 +501,7 @@ namespace SignInCheckIn.Services
                 {
                     mpGroupDto = _groupRepository.GetGroup(null, participant.GroupId.GetValueOrDefault(), false);
                 }
-
-                SetCallNumber(participant, participant.EventParticipantId);
+                
                 var printValues = new Dictionary<string, string>
                 {
                     {"ChildName", participant.Nickname},
