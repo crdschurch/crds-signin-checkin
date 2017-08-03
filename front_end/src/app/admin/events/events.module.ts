@@ -3,6 +3,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { MomentModule } from 'angular2-moment';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { VerificationModalModule } from './manage-children/verification/verification-modal.module';
 import { HeaderModule } from '../header';
 import { NewFamilyRegistrationModule } from './new-family-registration';
 import { FamilyFinderModule } from './family-finder';
@@ -41,7 +42,8 @@ import { CanDeactivateGuard } from '../../shared/guards';
     HeaderModule,
     NewFamilyRegistrationModule,
     FamilyFinderModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    VerificationModalModule
   ],
   exports: [ ],
   providers: [ CanDeactivateGuard ]
