@@ -43,7 +43,7 @@ export class ManageChildrenComponent implements OnInit {
     return this.ready;
   }
 
-  public parentAndPhoneNumbers(child: Child, phoneNumber: boolean = false): string {
+  public parentAndPhoneNumbers(child: Child, phoneNumber = false): string {
     let parents = '';
 
     child.HeadsOfHousehold.forEach(hoh => {

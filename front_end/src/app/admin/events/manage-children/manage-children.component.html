@@ -80,7 +80,7 @@
                 <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)">Reverse</button>
               </td>
               <td>
-                <a class="btn btn-primary btn-sm" (click)="reprint(child)">Reprint</a>
+                <verification-modal [child]="child"></verification-modal>
               </td>
             </tr>
           </tbody>
