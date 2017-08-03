@@ -43,18 +43,18 @@ export class ManageChildrenComponent implements OnInit {
     return this.ready;
   }
 
-  public parentAndPhoneNumbers(child: Child): string {
+  public parentAndPhoneNumbers(child: Child, phoneNumber: boolean = false): string {
     let parents = '';
 
     child.HeadsOfHousehold.forEach(hoh => {
       if (parents === '') {
         parents = `${hoh.Nickname}`;
-        if (hoh.MobilePhone) {
+        if (hoh.MobilePhone && phoneNumber) {
           parents = `${parents} (${hoh.MobilePhone})`;
         }
       } else {
         parents = `${parents}, ${hoh.Nickname}`;
-        if (hoh.MobilePhone) {
+        if (hoh.MobilePhone && phoneNumber) {
           parents = `${parents} (${hoh.MobilePhone})`;
         }
       }
