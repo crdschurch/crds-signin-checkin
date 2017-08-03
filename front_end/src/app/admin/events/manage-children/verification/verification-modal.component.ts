@@ -38,8 +38,8 @@ export class VerificationModalComponent implements OnInit {
     modal.hide();
   }
 
-  setupParents() {
-    if (this.child.HeadsOfHousehold !== undefined) {
+  private setupParents() {
+    if (this.child !== undefined && this.child.HeadsOfHousehold !== undefined) {
       this.parent1 = this.child.HeadsOfHousehold[0];
       this.parent2 = this.child.HeadsOfHousehold[3];
     }
