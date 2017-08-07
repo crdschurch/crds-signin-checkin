@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Practices.ObjectBuilder2;
-using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json;
 
 namespace SignInCheckIn.Models.DTO
@@ -54,7 +51,20 @@ namespace SignInCheckIn.Models.DTO
 
         public int EventIdSecondary { get; set; }
 
-        public string CallNumber { get; set; }
+        private string _callNumber;
+        public string CallNumber
+        {
+            get
+            {
+                var callNumber = $"0000{_callNumber}";
+                return callNumber.Substring(callNumber.Length - 4);
+            }
+            set
+            {
+                _callNumber = value;
+            }
+        }
+
 
         public string SignInErrorMessage { get; set; }
 
