@@ -21,34 +21,34 @@ yarn install
 #### Run locally
 
 ```sh
-npm start
+yarn start
 ```
 
 #### Clean and reinstall dependencies
 
 ```sh
-npm run refresh
+yarn run refresh
 ```
 
 
 #### Run locally with Hot Module Replacement (not sure if this works)
 
 ```sh
-npm run server:dev:hmr
+yarn run server:dev:hmr
 
 ```
 
 #### Run tests
 
 ```sh
-npm test
-npm e2e # no e2e yet
+yarn test
+yarn e2e # no e2e yet
 ```
 
 #### Run linter
 
 ```sh
-npm run lint
+yarn run lint
 ```
 
 ## Deployment
@@ -56,5 +56,5 @@ npm run lint
 #### Build
 
 ```sh
-npm run build
+yarn run build
 ```
