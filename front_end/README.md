@@ -14,7 +14,7 @@ yarn install
 #### Set Environment Variables using [dotenv](https://github.com/bkeepers/dotenv)
 
   * Create a .env file in the project root with the following values (copy _.env.example_ to _.env_ and fill out values).
-  * see an [example](README_env.md)
+  * environment variables [explained](README_env.md)
 
 
 
