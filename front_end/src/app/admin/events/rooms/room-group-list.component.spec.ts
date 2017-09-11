@@ -36,7 +36,7 @@ describe('RoomGroupListComponent', () => {
       const serviceEvent = {
         'EventTitle': 'Cool Event 83',
         'EventId': serviceEventId,
-        'EventTypeId': 20,
+        'EventTypeId': 20
       };
       const adventureClubSubevent = {
         'EventTitle': 'Cool Event 84',
