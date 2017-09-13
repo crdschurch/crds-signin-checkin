@@ -27,7 +27,7 @@ yarn start
 #### Clean and reinstall dependencies
 
 ```sh
-yarn run refresh
+yarn upgrade
 ```
 
 
