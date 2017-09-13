@@ -124,7 +124,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Participant_ID_Table_Contact_ID_Table.[First_Name]",
                 "Participant_ID_Table_Contact_ID_Table.[Last_Name]",
                 "Participant_ID_Table_Contact_ID_Table.[Nickname]",
-                "Participant_ID_Table_Contact_ID_Table.[Date_of_Birth]",
+                "Participant_ID_Table_Contact_ID_Table.[Date_of_Birth]"
             };
 
             var groupParticipants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
