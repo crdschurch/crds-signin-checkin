@@ -128,7 +128,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var groupParticipants = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
-                        Search<MpGroupParticipantDto>($"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId} and Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_Participants.[End_Date] IS NULL", columnList).ToList();
+                        Search<MpGroupParticipantDto>($"Participant_ID_Table_Contact_ID_Table_Household_ID_Table.[Household_ID] = {householdId} AND Participant_ID_Table_Contact_ID_Table_Household_Position_ID_Table.[Household_Position_ID] = {_applicationConfiguration.MinorChildId} and Group_ID_Table_Group_Type_ID_Table.[Group_Type_ID] = {_applicationConfiguration.KidsClubGroupTypeId} AND Group_Participants.[End_Date] IS NULL AND Participant_ID_Table_Contact_ID_Table.[Contact_Status_ID] = 1", columnList).ToList();
 
             foreach (var g in groupParticipants)
             {

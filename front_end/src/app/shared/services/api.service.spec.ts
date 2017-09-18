@@ -48,13 +48,13 @@ describe('ApiService', () => {
     });
     it('should successfully get list of events', () => {
       let r = responseData;
-      fixture.getEvents('10-11-16', '10-15-16').subscribe((res: Response) => {
+      fixture.getEvents('10-11-16', '10-15-16').subscribe((res: any) => {
         expect(res).toEqual(r);
       });
     });
     it('should successfully get list of template events', () => {
       let r = responseData;
-      fixture.getEventTemplates(3).subscribe((res: Response) => {
+      fixture.getEventTemplates(3).subscribe((res: any) => {
         expect(res).toEqual(r);
       });
     });
@@ -73,7 +73,7 @@ describe('ApiService', () => {
     });
     it('should successfully get event from api when not specifying cache', () => {
       let r = responseData;
-      fixture.getEvent('453').subscribe((res: Response) => {
+      fixture.getEvent('453').subscribe((res: any) => {
         expect(res).toEqual(Event.fromJson(r));
       });
     });

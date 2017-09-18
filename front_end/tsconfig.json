@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": "es6",
+    "lib": ["es6","dom"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -11,10 +11,6 @@
     "noImplicitAny": false,
     "suppressImplicitAnyIndexErrors": true
   },
-  "exclude": [
-    "node_modules",
-    "typings"
-  ],
   "compileOnSave": false,
   "buildOnSave": false
 }

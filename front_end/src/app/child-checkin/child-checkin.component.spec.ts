@@ -7,7 +7,7 @@ let fixture: ChildCheckinComponent;
 
 const event = { EventId: '123', EventStartDate: '2016-11-22 10:00:00', IsCurrentEvent: false };
 const event2 = { EventId: '456', EventStartDate: '2016-11-22 09:00:00', IsCurrentEvent: false };
-const eventCurrent = { EventId: '789', EventStartDate: '2016-11-22 08:00:00', IsCurrentEvent: true };
+const eventCurrent = { EventId: 789, EventStartDate: '2016-11-22 08:00:00', IsCurrentEvent: true };
 let setupService = jasmine.createSpyObj('setupService', ['getMachineDetailsConfigCookie']);
 setupService.getMachineDetailsConfigCookie.and.returnValue({RoomId: 123});
 
