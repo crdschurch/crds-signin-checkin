@@ -65,7 +65,7 @@ describe('RoomListComponent', () => {
   describe('#setRouteData', () => {
     it('should set eventId', () => {
       fixture.setRouteData();
-      expect(fixture.eventId).toBe(eventId);
+      expect(parseInt(fixture.eventId, 10)).toBe(eventId);
     });
   });
 
