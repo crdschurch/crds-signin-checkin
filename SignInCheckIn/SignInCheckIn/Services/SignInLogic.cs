@@ -168,9 +168,12 @@ namespace SignInCheckIn.Services
             // return all event rooms which match up to groups on the events
             var eventGroups = _eventRepository.GetEventGroupsByGroupIdAndEventIds(groupId, eventIds);
             var eventRoomIds = eventGroups.Select(r => r.RoomReservationId.GetValueOrDefault()).ToList();
-            var eventRooms = _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).ToList();
+            if (eventRoomIds.Count > 0)
+            {
+                return _roomRepository.GetEventRoomsByEventRoomIds(eventRoomIds).ToList();
+            }
 
-            return eventRooms;
+            return new List<MpEventRoomDto>();
         }
 
         // set assignments for non-ac rooms here -- this is not picking up when a partici
