@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Crossroads.Web.Common.MinistryPlatform;
+using log4net;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json.Linq;
@@ -14,6 +16,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly List<string> _eventGroupsColumns;
         private readonly List<string> _eventColumns;
+        protected readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private const string ResetEventStoredProcedureName = "api_crds_ResetEcheckEvent";
         private const string ImportEventStoredProcedureName = "api_crds_ImportEcheckEvent";
@@ -98,8 +101,13 @@ namespace MinistryPlatform.Translation.Repositories
                 // do not include subevents
                 queryString = $"{queryString} AND [Parent_Event_ID] IS NULL";
             }
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+            var events = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>(queryString, _eventColumns);
+            if (!events.Any()) {
+                // log query when no events are returned for debugging purposes
+                Logger.Info($"No events found at {DateTime.Now} for query: ${queryString}");
+            }
+            return events;
         }
 
         public List<MpEventDto> GetEventTemplates(int site)
