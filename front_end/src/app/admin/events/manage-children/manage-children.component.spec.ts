@@ -95,7 +95,7 @@ describe('ManageChildrenComponent', () => {
 
   describe('#childrenByRoomCheckedIn', () => {
     it('not student ministry', () => {
-      let event: Event = new Event({});
+      let event: Event = new Event();
       event.EventTypeId = Constants.ChildCareEventType;
       fixture.event = event;
 
@@ -117,7 +117,7 @@ describe('ManageChildrenComponent', () => {
       expect(reportedChildren[0].length).toBe(1);
     });
     it('student ministry', () => {
-      let event: Event = new Event({});
+      let event: Event = new Event();
       event.EventTypeId = Constants.StudentMinistry6through8EventType;
       fixture.event = event;
 
