@@ -95,6 +95,14 @@ export class ManageChildrenComponent implements OnInit {
     }, error => (this.handleError(error)));
   }
 
+  public isStudentMinistry(): boolean {
+    if (this.event === undefined || this.event === null) {
+      return false;
+    }
+
+    return this.event.isStudentMinistry;
+  }
+
   onSearchType(searchString) {
     this.searchString = searchString;
   }
@@ -139,7 +147,7 @@ export class ManageChildrenComponent implements OnInit {
       this.childrenByRoom.forEach(cbr => {
           let checkInChildren = [];
           cbr.forEach((c: Child) => {
-            if (c.checkedIn()) {
+            if (c.checkedIn() || this.event.isStudentMinistry) {
               checkInChildren.push(c);
             }
           });
