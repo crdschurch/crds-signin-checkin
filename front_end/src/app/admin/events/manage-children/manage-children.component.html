@@ -36,13 +36,13 @@
               <th>First Name</th>
               <th>Last Name</th>
               <th></th>
-              <th>Call Number</th>
-              <th>Room Assigned</th>
+              <th *ngIf="!isStudentMinistry()">Call Number</th>
+              <th *ngIf="!isStudentMinistry()">Room Assigned</th>
               <th>Time Signed In</th>
-              <th>Time Checked In</th>
+              <th *ngIf="!isStudentMinistry()">Time Checked In</th>
               <th>Guardians</th>
               <th>Reverse Sign In</th>
-              <th>Label</th>
+              <th *ngIf="!isStudentMinistry()">Label</th>
             </tr>
           </thead>
           <tbody *ngFor="let cbr of childrenByRoom">
@@ -61,16 +61,16 @@
               <td>
                 <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
               </td>
-              <td>
+              <td *ngIf="!isStudentMinistry()">
                 {{child.CallNumber}}
               </td>
-              <td>
+              <td *ngIf="!isStudentMinistry()">
                 {{child.AssignedRoomName}}
               </td>
               <td>
                 {{child.TimeIn | amDateFormat:'h:mma'}}
               </td>
-              <td>
+              <td *ngIf="!isStudentMinistry()">
                 {{child.TimeConfirmed | amDateFormat:'h:mma'}}
               </td>
               <td>
@@ -79,7 +79,7 @@
               <td>
                 <button class="btn btn-primary btn-sm" type="button" (click)="reverseSignin(child)">Reverse</button>
               </td>
-              <td>
+              <td *ngIf="!isStudentMinistry()">
                 <verification-modal (reprint)="reprint($event)" [child]="child"></verification-modal>
               </td>
             </tr>
@@ -122,13 +122,13 @@
     <div class="row">
       <div class="col-xs-4">First Name</div>
       <div class="col-xs-4">Last Name</div>
-      <div class="col-xs-2">Call #</div>
+      <div class="col-xs-2" *ngIf="!isStudentMinistry()">Call #</div>
       <div class="col-xs-2"></div>
     </div>
     <div *ngFor="let child of cbr" class="row">
       <div class="col-xs-4">{{child.Nickname}}</div>
       <div class="col-xs-4">{{child.LastName}}</div>
-      <div class="col-xs-2">{{child.CallNumber}}</div>
+      <div class="col-xs-2" *ngIf="!isStudentMinistry()">{{child.CallNumber}}</div>
       <div class="col-xs-2">
         <span *ngIf="child.guest()" class="tag tag-pill tag-default">Guest</span>
       </div>
