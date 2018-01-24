@@ -1,6 +1,7 @@
 import { ManageChildrenComponent } from './manage-children.component';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { Child } from '../../../shared/models';
+import { Child, Event } from '../../../shared/models';
+import { Constants } from '../../../shared/constants';
 import { ApiService, RootService } from '../../../shared/services';
 import { AdminService } from '../../admin.service';
 import { Observable } from 'rxjs';
@@ -89,6 +90,52 @@ describe('ManageChildrenComponent', () => {
       expect(fixture.children[1].AssignedRoomName).toBe(unsortedChildren[1].AssignedRoomName);
       expect(fixture.children[2].AssignedRoomName).toBe(unsortedChildren[2].AssignedRoomName);
       expect(fixture.children[3].AssignedRoomName).toBe(unsortedChildren[3].AssignedRoomName);
+    });
+  });
+
+  describe('#childrenByRoomCheckedIn', () => {
+    it('not student ministry', () => {
+      let event: Event = new Event();
+      event.EventTypeId = Constants.ChildCareEventType;
+      fixture.event = event;
+
+      let kids: Array<any> = [];
+      let child = new Child();
+      child.AssignedRoomName = 'one';
+      child.ParticipationStatusId = Constants.SignedInParticipationStatusId;
+      kids.push(child);
+
+      child = new Child();
+      child.AssignedRoomName = 'one';
+      child.ParticipationStatusId = Constants.CheckedInParticipationStatusId;
+      kids.push(child);
+
+      fixture.children = kids;
+      let reportedChildren = fixture.childrenByRoomCheckedIn;
+      console.log(reportedChildren);
+
+      expect(reportedChildren[0].length).toBe(1);
+    });
+    it('student ministry', () => {
+      let event: Event = new Event();
+      event.EventTypeId = Constants.StudentMinistry6through8EventType;
+      fixture.event = event;
+
+      let kids: Array<any> = [];
+      let child = new Child();
+      child.AssignedRoomName = 'one';
+      child.ParticipationStatusId = Constants.SignedInParticipationStatusId;
+      kids.push(child);
+
+      child = new Child();
+      child.AssignedRoomName = 'one';
+      child.ParticipationStatusId = Constants.CheckedInParticipationStatusId;
+      kids.push(child);
+
+      fixture.children = kids;
+      let reportedChildren = fixture.childrenByRoomCheckedIn;
+
+      expect(reportedChildren[0].length).toBe(2);
     });
   });
 });
