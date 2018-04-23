@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using System.Web.Script.Serialization;
+//using System.Web.Script.Serialization;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
