@@ -51,10 +51,6 @@
       <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Crossroads.ApiVersioning, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Crossroads.ApiVersioning.1.0.4\lib\net45\Crossroads.ApiVersioning.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Crossroads.ClientApiKeys, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Crossroads.ClientApiKeys.1.0.10\lib\net45\Crossroads.ClientApiKeys.dll</HintPath>
       <Private>True</Private>

@@ -4,7 +4,7 @@ using System.Web.Http.Description;
 using System.Web.Http.ModelBinding;
 using SignInCheckIn.Models;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 
 namespace SignInCheckIn.Controllers
 {
@@ -18,7 +18,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(HelloWorldOutputDto))]
-        [VersionedRoute(template: "hello/greet", minimumVersion: "1.0.0", maximumVersion: "2.0.0", deprecated: true)]
+        //[VersionedRoute(template: "hello/greet", minimumVersion: "1.0.0", maximumVersion: "2.0.0", deprecated: true)]
         [Route("hello/greet")]
         public IHttpActionResult Greet([FromBody] HelloWorldInputDto input)
         {
@@ -37,7 +37,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(HelloWorldOutputDto))]
-        [VersionedRoute("hello/greet", "2.0.0")]
+        //[VersionedRoute("hello/greet", "2.0.0")]
         public IHttpActionResult Greet([FromBody] HelloWorldV2InputDto input)
         {
             if (input == null)

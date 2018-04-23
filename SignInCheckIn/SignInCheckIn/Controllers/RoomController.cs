@@ -10,7 +10,7 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
@@ -30,7 +30,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
-        [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         [RequiresAuthorization]
         public IHttpActionResult GetAvailableRooms(
@@ -54,7 +54,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(List<RoomDto>))]
-        [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         [RequiresAuthorization]
         public IHttpActionResult UpdateAvailableRoomsByLocation(
@@ -77,7 +77,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
-        [VersionedRoute(template: "grade-groups", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "grade-groups", minimumVersion: "1.0.0")]
         [Route("grade-groups")]
         public IHttpActionResult GetGradeGroups([FromUri] int? eventId = null)
         {

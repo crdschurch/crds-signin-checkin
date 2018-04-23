@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using MinistryPlatform.Translation.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
 
@@ -19,7 +19,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<MpCongregationDto>))]
-        [VersionedRoute(template: "sites", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "sites", minimumVersion: "1.0.0")]
         [Route("sites")]
         public IHttpActionResult GetSites()
         {

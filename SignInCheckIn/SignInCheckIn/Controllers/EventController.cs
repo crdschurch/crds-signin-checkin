@@ -7,7 +7,7 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
@@ -25,7 +25,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<EventDto>))]
-        [VersionedRoute(template: "events", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events", minimumVersion: "1.0.0")]
         [Route("events")]
         public IHttpActionResult GetEvents(
             [FromUri(Name = "startDate")] DateTime startDate,
@@ -52,7 +52,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<EventDto>))]
-        [VersionedRoute(template: "events/templates", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/templates", minimumVersion: "1.0.0")]
         [Route("events/templates")]
         public IHttpActionResult GetEventTemplates(
             [FromUri(Name = "site")] int site)
@@ -70,7 +70,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof (EventRoomDto))]
-        [VersionedRoute(template: "events/{eventid}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventid}", minimumVersion: "1.0.0")]
         [Route("events/{eventid}")]
         public IHttpActionResult GetEvent([FromUri] int eventId)
         {
@@ -87,7 +87,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<EventRoomDto>))]
-        [VersionedRoute(template: "events/{eventid}/rooms", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventid}/rooms", minimumVersion: "1.0.0")]
         [Route("events/{eventid}/rooms")]
         [RequiresAuthorization]
         public IHttpActionResult GetRoomsByEvent(int eventid)
@@ -109,7 +109,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof (EventRoomDto))]
-        [VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
         [RequiresAuthorization]
         public IHttpActionResult GetEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId)
@@ -128,7 +128,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(EventRoomDto))]
-        [VersionedRoute(template: "events/{eventId:int}/groups/unassigned", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId:int}/groups/unassigned", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/groups/unassigned")]
         [RequiresAuthorization]
         public IHttpActionResult GetEventUnassignedGroups([FromUri] int eventId)
@@ -146,7 +146,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(EventRoomDto))]
-        [VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
         [RequiresAuthorization]
         public IHttpActionResult UpdateEventRoomAgesAndGrades([FromUri] int eventId, [FromUri] int roomId, [FromBody] EventRoomDto eventRoom)
@@ -164,7 +164,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(List<EventRoomDto>))]
-        [VersionedRoute(template: "events/{destinationEventId:int}/import/{sourceEventId:int}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{destinationEventId:int}/import/{sourceEventId:int}", minimumVersion: "1.0.0")]
         [Route("events/{destinationEventId:int}/import/{sourceEventId:int}")]
         [RequiresAuthorization]
         public IHttpActionResult ImportEventSetup(int destinationEventId, int sourceEventId)
@@ -182,7 +182,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(List<EventRoomDto>))]
-        [VersionedRoute(template: "events/{eventId:int}/reset", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId:int}/reset", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/reset")]
         [RequiresAuthorization]
         public IHttpActionResult ResetEventSetup(int eventId)
@@ -200,7 +200,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(EventRoomDto))]
-        [VersionedRoute(template: "events/{eventId:int}/maps", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId:int}/maps", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/maps")]
         [RequiresAuthorization]
         public IHttpActionResult GetEventsAndSubEvents([FromUri] int eventId)
@@ -218,7 +218,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantDto))]
-        [VersionedRoute(template: "events/{eventId:int}/children", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId:int}/children", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/children")]
         public IHttpActionResult GetChildrenForEvent([FromUri] int eventId, [FromUri] string search = null)
         {
@@ -236,7 +236,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantDto))]
-        [VersionedRoute(template: "findFamily", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "findFamily", minimumVersion: "1.0.0")]
         [Route("findFamily")]
         public IHttpActionResult FindFamilies([FromUri] string search)
         {
@@ -254,7 +254,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(HouseholdDto))]
-        [VersionedRoute(template: "household/{householdId}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "household/{householdId}", minimumVersion: "1.0.0")]
         [Route("household/{householdId}")]
         public IHttpActionResult GetHouseholdById([FromUri] int householdId)
         {
@@ -271,7 +271,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPut]
-        [VersionedRoute(template: "updateFamily", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "updateFamily", minimumVersion: "1.0.0")]
         [Route("updateFamily")]
         public IHttpActionResult UpdateFamily(HouseholdDto householdDto)
         {
@@ -291,7 +291,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [VersionedRoute(template: "events/getCapacity/{siteId}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/getCapacity/{siteId}", minimumVersion: "1.0.0")]
         [Route("events/getCapacity/{siteId}")]
         public IHttpActionResult GetCapacity([FromUri] int siteId)
         {
