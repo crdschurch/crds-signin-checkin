@@ -38,14 +38,31 @@ namespace SignInCheckIn
             //    container.LoadConfiguration(section);
             //}
 
+            container.RegisterType<IAttributeRepository, AttributeRepository>();
+            container.RegisterType<IChildCheckinRepository, ChildCheckinRepository>();
+            container.RegisterType<IChildSigninRepository, ChildSigninRepository>();
+            container.RegisterType<IConfigRepository, ConfigRepository>();
+            container.RegisterType<IContactRepository, ContactRepository>();
+            container.RegisterType<IEventRepository, EventRepository>();
+            container.RegisterType<IGroupLookupRepository, GroupLookupRepository>();
+            container.RegisterType<IGroupRepository, GroupRepository>();
+            container.RegisterType<IKioskRepository, KioskRepository>();
+            container.RegisterType<ILookupRepository, LookupRepository>();
+            container.RegisterType<IParticipantRepository, ParticipantRepository>();
+            container.RegisterType<IRoomRepository, RoomRepository>();
             container.RegisterType<ISiteRepository, SiteRepository>();
 
-            container.RegisterType<IHelloWorldService, HelloWorldService>();
+            container.RegisterType<IChildCheckinService, ChildCheckinService>();
+            container.RegisterType<IChildSigninService, ChildSigninService>();
+            container.RegisterType<IEventService, EventService>();
             container.RegisterType<IFamilyService, FamilyService>();
+            container.RegisterType<IHelloWorldService, HelloWorldService>();
+            container.RegisterType<IKioskService, KioskService>();
+            container.RegisterType<ILoginService, LoginService>();
+            container.RegisterType<ILookupService, LookupService>();
+            container.RegisterType<IRoomService, RoomService>();
             container.RegisterType<ISiteService, SiteService>();
-
             
-
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
     }
