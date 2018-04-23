@@ -23,7 +23,15 @@ namespace SignInCheckIn.Controllers
         [Route("sites")]
         public IHttpActionResult GetSites()
         {
-            return Ok(_siteService.GetAll());
+            try
+            {
+                return Ok(_siteService.GetAll());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }
