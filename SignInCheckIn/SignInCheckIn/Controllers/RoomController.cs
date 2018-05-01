@@ -15,6 +15,7 @@ using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
 {
+    [Route("api/[controller]")]
     public class RoomController : MpAuth
     {
         private readonly IWebsocketService _websocketService;

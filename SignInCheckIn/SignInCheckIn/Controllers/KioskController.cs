@@ -13,6 +13,7 @@ using log4net.Repository.Hierarchy;
 
 namespace SignInCheckIn.Controllers
 {
+    [Route("api/[controller]")]
     public class KioskController : MpAuth
     {
         private readonly IKioskService _kioskService;

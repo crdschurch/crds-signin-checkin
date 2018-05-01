@@ -8,6 +8,7 @@ using SignInCheckIn.Services.Interfaces;
 
 namespace SignInCheckIn.Controllers
 {
+    [Route("api/[controller]")]
     public class HelloWorldController : ApiController
     {
         private readonly IHelloWorldService _helloWorldService;

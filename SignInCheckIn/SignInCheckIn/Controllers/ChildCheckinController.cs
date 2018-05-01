@@ -15,6 +15,7 @@ using SignInCheckIn.Security;
 
 namespace SignInCheckIn.Controllers
 {
+    [Route("api/[controller]")]
     public class ChildCheckinController : MpAuth
     {
         private readonly IChildCheckinService _childCheckinService;

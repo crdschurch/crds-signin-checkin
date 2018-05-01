@@ -11,6 +11,7 @@ using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
 {
+    [Route("api/[controller]")]
     public class LookupController : MpAuth
     {
         private readonly ILookupService _lookupService;
