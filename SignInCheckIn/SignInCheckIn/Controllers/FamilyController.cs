@@ -16,7 +16,7 @@ using SignInCheckIn.Services;
 
 namespace SignInCheckIn.Controllers
 {
-    [Route("api")]
+    [RoutePrefix("api")]
     public class FamilyController : MpAuth
     {
         private readonly IKioskRepository _kioskRepository;
