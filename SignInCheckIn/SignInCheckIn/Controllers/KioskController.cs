@@ -7,7 +7,7 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
 using log4net.Repository.Hierarchy;
 
@@ -24,7 +24,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<KioskConfigDto>))]
-        [VersionedRoute(template: "kiosks/{kioskid}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "kiosks/{kioskid}", minimumVersion: "1.0.0")]
         [Route("kiosks/{kioskid}")]
         public IHttpActionResult GetEvents(
             [FromUri(Name = "kioskid")] Guid kioskId)

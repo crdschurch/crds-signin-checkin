@@ -8,7 +8,7 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -37,7 +37,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(int))]
-        [VersionedRoute(template: "family", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "family", minimumVersion: "1.0.0")]
         [Route("family")]
         public IHttpActionResult CreateNewFamily(List<NewParentDto> newParents)
         {
@@ -78,7 +78,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(int))]
-        [VersionedRoute(template: "family/{householdid}/member", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "family/{householdid}/member", minimumVersion: "1.0.0")]
         [Route("family/{householdid}/member")]
         public IHttpActionResult AddNewFamilyMember([FromUri(Name = "householdid")] int householdId, [FromBody] List<ContactDto> newFamilyContacts)
         {
@@ -118,7 +118,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(int))]
-        [VersionedRoute(template: "family/member/{contactId}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "family/member/{contactId}", minimumVersion: "1.0.0")]
         [Route("family/member/{contactId}")]
         public IHttpActionResult UpdateFamilyMember(ContactDto newFamilyContactDto)
         {
@@ -156,7 +156,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(UserDto))]
-        [VersionedRoute(template: "user", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "user", minimumVersion: "1.0.0")]
         [Route("user")]
         public IHttpActionResult CreateNewFamily([FromUri] string email)
         {

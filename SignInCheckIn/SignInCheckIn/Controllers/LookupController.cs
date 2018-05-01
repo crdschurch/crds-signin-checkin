@@ -6,7 +6,7 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
@@ -22,7 +22,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<StateDto>))]
-        [VersionedRoute(template: "getStates", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "getStates", minimumVersion: "1.0.0")]
         [Route("getStates")]
         public IHttpActionResult GetStates()
         {
@@ -43,7 +43,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<CountryDto>))]
-        [VersionedRoute(template: "getCountries", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "getCountries", minimumVersion: "1.0.0")]
         [Route("getCountries")]
         public IHttpActionResult GetCountries()
         {

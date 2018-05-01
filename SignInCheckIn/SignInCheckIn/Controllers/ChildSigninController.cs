@@ -9,7 +9,7 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Models.DTO;
@@ -36,7 +36,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "events/{eventId}/signin/children/household/{householdId}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId}/signin/children/household/{householdId}", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/signin/children/household/{householdId}")]
         public IHttpActionResult GetChildrenAndEventByHousehold(int eventId, int householdId)
         {
@@ -72,7 +72,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/children/{phoneNumber}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "signin/children/{phoneNumber}", minimumVersion: "1.0.0")]
         [Route("signin/children/{phoneNumber}")]
         public IHttpActionResult GetChildrenAndEvent(string phoneNumber)
         {
@@ -108,7 +108,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/children", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "signin/children", minimumVersion: "1.0.0")]
         [Route("signin/children")]
         public IHttpActionResult SigninParticipants(ParticipantEventMapDto participantEventMapDto)
         {
@@ -127,7 +127,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/familyfinder", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "signin/familyfinder", minimumVersion: "1.0.0")]
         [Route("signin/familyfinder")]
         public IHttpActionResult SigninFamilyFinder(ParticipantEventMapDto participantEventMapDto)
         {
@@ -154,7 +154,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/participants/print", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "signin/participants/print", minimumVersion: "1.0.0")]
         [Route("signin/participants/print")]
         public IHttpActionResult PrintParticipants(ParticipantEventMapDto participantEventMapDto)
         {
@@ -182,7 +182,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/participant/{eventParticipantId}/print", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "signin/participant/{eventParticipantId}/print", minimumVersion: "1.0.0")]
         [Route("signin/participant/{eventParticipantId}/print")]
         public IHttpActionResult PrintParticipant(int eventParticipantId)
         {
@@ -220,7 +220,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "signin/event/{eventId}/room/{roomId}/reverse/{eventparticipantId}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "signin/event/{eventId}/room/{roomId}/reverse/{eventparticipantId}", minimumVersion: "1.0.0")]
         [Route("signin/event/{eventId}/room/{roomId}/reverse/{eventparticipantId}")]
         public IHttpActionResult ReverseSignin(int eventId, int roomId, int eventparticipantId)
         {
