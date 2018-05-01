@@ -12,7 +12,7 @@ using Crossroads.Web.Common.Security;
 
 namespace SignInCheckIn.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     public class EventController : MpAuth
     {
         private readonly IEventService _eventService;
