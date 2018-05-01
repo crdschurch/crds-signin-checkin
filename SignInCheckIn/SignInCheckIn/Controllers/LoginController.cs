@@ -10,6 +10,7 @@ using SignInCheckIn.Util;
 
 namespace SignInCheckIn.Controllers
 {
+    [Route("api")]
     public class LoginController : ApiController
     {
         private readonly ILoginService _loginService;

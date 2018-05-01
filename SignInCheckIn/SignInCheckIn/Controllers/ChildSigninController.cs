@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 
 namespace SignInCheckIn.Controllers
 {
+    [Route("api")]
     public class ChildSigninController : MpAuth
     {
         private readonly IWebsocketService _websocketService;
