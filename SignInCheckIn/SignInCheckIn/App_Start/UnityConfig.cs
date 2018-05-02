@@ -62,7 +62,9 @@ namespace SignInCheckIn
             container.RegisterType<ILookupService, LookupService>();
             container.RegisterType<IRoomService, RoomService>();
             container.RegisterType<ISiteService, SiteService>();
-            
+            container.RegisterType<IWebsocketService, WebsocketService>();
+
+
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
     }

@@ -22,7 +22,7 @@ namespace SignInCheckIn.Controllers
         private readonly IRoomService _roomService;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public RoomController(IWebsocketService websocketService, IRoomService roomService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
         {
             _websocketService = websocketService;
             _roomService = roomService;

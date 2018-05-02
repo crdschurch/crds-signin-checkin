@@ -14,11 +14,11 @@ namespace SignInCheckIn.Security
     public class MpAuth : ApiController
     {
         protected readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IAuthenticationRepository _authenticationRepository;
+        protected readonly IAuthenticationRepository AuthenticationRepository;
 
         public MpAuth(IAuthenticationRepository authenticationRepository)
         {
-            _authenticationRepository = authenticationRepository;
+            AuthenticationRepository = authenticationRepository;
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace SignInCheckIn.Security
                     : null;
                 if (refreshTokenHeader != null)
                 {
-                    var authData = _authenticationRepository.RefreshToken(refreshTokenHeader);
+                    var authData = AuthenticationRepository.RefreshToken(refreshTokenHeader);
                     if (authData != null)
                     {
                         var authToken = authData.AccessToken;
