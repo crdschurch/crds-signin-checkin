@@ -41,7 +41,7 @@ namespace SignInCheckIn.Tests.Services
                 "Kids Club Tools - CRDS"
             };
 
-            _authenticationRepository.Setup(m => m.Authenticate(username, password)).Returns(authData);
+            _authenticationRepository.Setup(m => m.AuthenticateUser(username, password, true)).Returns(authData);
             _authenticationRepository.Setup(m => m.GetUserRolesFromToken(authData.AccessToken)).Returns(authRoles);
 
             // Act

@@ -20,7 +20,7 @@ namespace SignInCheckIn.Services
 
         public LoginReturn Login(string username, string password)
         {
-            var authData = _authenticationRepository.Authenticate(username, password);
+            var authData = _authenticationRepository.AuthenticateUser(username, password, true);
 
             if (authData == null)
             {

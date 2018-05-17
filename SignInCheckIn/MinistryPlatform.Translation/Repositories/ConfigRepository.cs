@@ -34,7 +34,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpConfigDto GetMpConfigByKey(string key)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
 
             var mpConfigs = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpConfigDto>($"[Key_Name]='{key}'", _mpConfigColumns);
