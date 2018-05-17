@@ -23,7 +23,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpParticipantDto> GetChildrenByEventAndRoom(int eventId, int roomId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
 
             var columnList = new List<string>
             {
@@ -45,7 +45,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventParticipantDto GetEventParticipantByCallNumber(List<int> eventIds, int callNumber)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
 
             var columnList = new List<string>
             {
@@ -83,7 +83,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void CheckinChildrenForCurrentEventAndRoom(int checkinStatusId, int eventParticipantId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
             
             var updateObject = new Dictionary<string, object>
             {
@@ -97,7 +97,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void OverrideChildIntoRoom(int eventParticipantId, int roomId, int newEventId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
 
             var updateObject = new Dictionary<string, object>
             {

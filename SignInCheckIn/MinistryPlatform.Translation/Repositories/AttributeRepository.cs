@@ -29,19 +29,19 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpAttributeDto> GetAttributesByAttributeTypeId(int attributeTypeId, string authenticationToken = null)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiUserToken();
 
             return GetAttributesByAttributeTypeId(new[] {attributeTypeId}, token);
         }
 
         public List<MpAttributeDto> GetAttributesByAttributeTypeId(IEnumerable<int> attributeTypeIds, string authenticationToken = null)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken ?? _apiUserRepository.GetToken()).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken ?? _apiUserRepository.GetDefaultApiUserToken()).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
         }
 
         public MpContactAttributeDto CreateContactAttribute(MpContactAttributeDto attribute)
         {
-            var token = _apiUserRepository.GetToken();
+            var token = _apiUserRepository.GetDefaultApiUserToken();
             var attributeColumns = new List<string>
                     {
                         "Contact_ID",
