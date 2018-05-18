@@ -84,7 +84,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const int groupId = 456;
             var group = new MpGroupDto();
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiUserToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpGroupDto>(groupId, _groupColumns)).Returns(group);
 
@@ -205,7 +205,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 },
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiUserToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpGroupDto>(groupId, _groupColumns)).Returns(group);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpAttributeDto>("Group_Attributes", $"Group_Attributes.Group_ID = {group.Id}", _attributeColumns, null, false))
@@ -288,7 +288,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             }
 
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiUserToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpGroupDto>("Group_Attributes", expectedSearchString, _groupAttributeColumns, null, false))
                 .Returns(new List<MpGroupDto> {group});

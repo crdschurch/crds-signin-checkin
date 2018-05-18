@@ -22,7 +22,7 @@ namespace MinistryPlatform.Translation.Repositories
         {
             try
             {
-                var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
+                var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
                 var congregationColumnList = new List<string>
                 {

@@ -23,7 +23,7 @@ namespace MinistryPlatform.Translation.Repositories
         /// <returns></returns>
         public List<MpStateDto> GetStates()
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columns = new List<string>
             {
@@ -43,7 +43,7 @@ namespace MinistryPlatform.Translation.Repositories
         /// <returns></returns>
         public List<MpCountryDto> GetCountries()
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columns = new List<string>
             {
