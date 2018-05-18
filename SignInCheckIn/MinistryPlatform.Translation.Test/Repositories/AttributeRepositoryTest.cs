@@ -60,7 +60,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const int typeId = 123;
             const string token = "456";
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiUserToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
 
             var attrs = new List<MpAttributeDto>();
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
@@ -97,7 +97,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             var typeIds = new[] { 123, 456 };
             const string token = "456";
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiUserToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
 
             var attrs = new List<MpAttributeDto>();
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
@@ -125,7 +125,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 Contact_ID = 44
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiUserToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Create(contractAttributeDto, attributeColumns)).Returns(contractAttributeDto);
 

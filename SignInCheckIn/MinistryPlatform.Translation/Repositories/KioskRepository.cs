@@ -48,7 +48,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpKioskConfigDto GetMpKioskConfigByIdentifier(Guid kioskIdentifier)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var configs = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpKioskConfigDto>($"[_Kiosk_Identifier]='{kioskIdentifier}' AND cr_Kiosk_Configs.[End_Date] IS NULL", _kioskColumns);
@@ -58,7 +58,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpPrinterMapDto GetPrinterMapById(int printerMapId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiUserToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var configs = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpPrinterMapDto>($"[Printer_Map_ID]={printerMapId}", _printerMapColumns);
