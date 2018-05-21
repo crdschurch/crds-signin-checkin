@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SignInCheckIn.Controllers;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Tests.Controllers
 {
@@ -17,6 +18,7 @@ namespace SignInCheckIn.Tests.Controllers
         private Mock<IEventService> _eventService;
         private Mock<IRoomService> _roomService;
         private Mock<IAuthenticationRepository> _authenticationRepository;
+        private Mock<IAuthTokenExpiryService> _authTokenExpiryService;
 
         private const string AuthType = "abc";
         private const string AuthToken = "123";
@@ -26,11 +28,12 @@ namespace SignInCheckIn.Tests.Controllers
         [SetUp]
         public void SetUp()
         {
+            _authTokenExpiryService = new Mock<IAuthTokenExpiryService>();
             _eventService = new Mock<IEventService>(MockBehavior.Strict);
             _roomService = new Mock<IRoomService>(MockBehavior.Strict);
             _authenticationRepository = new Mock<IAuthenticationRepository>(MockBehavior.Strict);
 
-            _fixture = new EventController(_eventService.Object, _roomService.Object, _authenticationRepository.Object);
+            _fixture = new EventController(_authTokenExpiryService.Object, _eventService.Object, _roomService.Object, _authenticationRepository.Object);
             _fixture.SetupAuthorization(AuthType, AuthToken);
         }
 
