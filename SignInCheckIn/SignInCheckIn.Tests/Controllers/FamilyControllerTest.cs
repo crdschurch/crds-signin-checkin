@@ -13,6 +13,7 @@ using NUnit.Framework;
 using SignInCheckIn.Controllers;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Tests.Controllers
 {
@@ -25,6 +26,7 @@ namespace SignInCheckIn.Tests.Controllers
         private Mock<IKioskRepository> _kioskRepository;
         private Mock<IFamilyService> _familyService;
         private Mock<IChildSigninService> _childSigninService;
+        private Mock<IAuthTokenExpiryService> _authTokenExpiryService;
 
         private Mock<HttpRequestMessage> _httpRequest;
 
@@ -36,12 +38,13 @@ namespace SignInCheckIn.Tests.Controllers
         public void SetUp()
         {
             _authenticationRepository = new Mock<IAuthenticationRepository>(MockBehavior.Strict);
+            _authTokenExpiryService = new Mock<IAuthTokenExpiryService>();
             _contactRepository = new Mock<IContactRepository>();
             _kioskRepository = new Mock<IKioskRepository>();
             _familyService = new Mock<IFamilyService>(MockBehavior.Strict);
             _childSigninService = new Mock<IChildSigninService>();
 
-            _fixture = new FamilyController(_authenticationRepository.Object, _contactRepository.Object, _kioskRepository.Object,
+            _fixture = new FamilyController(_authTokenExpiryService.Object, _authenticationRepository.Object, _contactRepository.Object, _kioskRepository.Object,
                 _familyService.Object, _childSigninService.Object);
             _fixture.SetupAuthorization(AuthType, AuthToken);
         }

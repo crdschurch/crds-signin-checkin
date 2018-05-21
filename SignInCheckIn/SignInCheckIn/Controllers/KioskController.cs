@@ -10,6 +10,7 @@ using SignInCheckIn.Services.Interfaces;
 //using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
 using log4net.Repository.Hierarchy;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
@@ -18,7 +19,7 @@ namespace SignInCheckIn.Controllers
     {
         private readonly IKioskService _kioskService;
         
-        public KioskController(IKioskService kioskService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
+        public KioskController(IAuthTokenExpiryService authTokenExpiryService, IKioskService kioskService, IAuthenticationRepository authenticationRepository) : base(authTokenExpiryService, authenticationRepository)
         {
             _kioskService = kioskService;
         }

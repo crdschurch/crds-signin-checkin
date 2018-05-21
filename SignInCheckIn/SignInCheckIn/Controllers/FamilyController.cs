@@ -13,6 +13,7 @@ using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Services;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
@@ -24,11 +25,12 @@ namespace SignInCheckIn.Controllers
         private readonly IFamilyService _familyService;
         private readonly IChildSigninService _childSigninService;
 
-        public FamilyController(IAuthenticationRepository authenticationRepository,
+        public FamilyController(IAuthTokenExpiryService authTokenExpiryService,
+                                IAuthenticationRepository authenticationRepository,
                                 IContactRepository contactRepository,
                                 IKioskRepository kioskRepository,
                                 IFamilyService familyService,
-                                IChildSigninService childSigninService) : base(authenticationRepository)
+                                IChildSigninService childSigninService) : base(authTokenExpiryService, authenticationRepository)
         {
             _kioskRepository = kioskRepository;
             _contactRepository = contactRepository;

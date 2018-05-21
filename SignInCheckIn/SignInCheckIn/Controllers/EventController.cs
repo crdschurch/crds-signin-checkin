@@ -9,6 +9,7 @@ using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 //using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
@@ -18,7 +19,7 @@ namespace SignInCheckIn.Controllers
         private readonly IEventService _eventService;
         private readonly IRoomService _roomService;
 
-        public EventController(IEventService eventService, IRoomService roomService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
+        public EventController(IAuthTokenExpiryService authTokenExpiryService, IEventService eventService, IRoomService roomService, IAuthenticationRepository authenticationRepository) : base(authTokenExpiryService, authenticationRepository)
         {
             _eventService = eventService;
             _roomService = roomService;
