@@ -2,11 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
-using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
 using log4net;
-using Microsoft.AspNet.SignalR;
-using SignInCheckIn.Hubs;
 using SignInCheckIn.Util;
 using System.Collections.Generic;
 using Crossroads.Web.Common.Services;

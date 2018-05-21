@@ -12,6 +12,7 @@ using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 //using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
@@ -22,7 +23,7 @@ namespace SignInCheckIn.Controllers
         private readonly IRoomService _roomService;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public RoomController(IAuthTokenExpiryService authTokenExpiryService, IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authTokenExpiryService, authenticationRepository)
         {
             _websocketService = websocketService;
             _roomService = roomService;

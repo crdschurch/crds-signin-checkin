@@ -12,6 +12,7 @@ using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json.Linq;
 using SignInCheckIn.Security;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
@@ -23,7 +24,7 @@ namespace SignInCheckIn.Controllers
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IParticipantRepository _participantRepository;
 
-        public ChildCheckinController(IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository, IWebsocketService websocketService, IParticipantRepository participantRepository) : base(authenticationRepository)
+        public ChildCheckinController(IAuthTokenExpiryService authTokenExpiryService, IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository, IWebsocketService websocketService, IParticipantRepository participantRepository) : base(authTokenExpiryService, authenticationRepository)
         {
             _childCheckinService = childCheckinService;
             _applicationConfiguration = applicationConfiguration;

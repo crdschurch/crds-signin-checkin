@@ -8,6 +8,7 @@ using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 //using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
@@ -16,7 +17,7 @@ namespace SignInCheckIn.Controllers
     {
         private readonly ILookupService _lookupService;
 
-        public LookupController(ILookupService lookupService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository)
+        public LookupController(IAuthTokenExpiryService authTokenExpiryService, ILookupService lookupService, IAuthenticationRepository authenticationRepository) : base(authTokenExpiryService, authenticationRepository)
         {
             _lookupService = lookupService;
         }
