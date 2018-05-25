@@ -198,7 +198,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var returnDto = new MpNewParticipantDto();
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
@@ -244,7 +244,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
@@ -279,7 +279,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventParticipantDto>(
                 $"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL AND Participation_Status_ID IN (3, 4)", _eventParticipantColumns, null, false)).Returns(mpEventParticipantDtos);
@@ -338,7 +338,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpGroupParticipantDto>(
                 $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) AND End_Date IS NULL", groupParticipantColumns, null, false)).Returns(mpGroupParticipantDtos);
@@ -379,7 +379,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 mpGroupParticipantDto
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpGroupParticipantDto>(
                  $"Group_Participants.Participant_ID = {mpGroupParticipantDto.ParticipantId}" + "AND Group_Participants.End_Date IS NULL", groupParticipantColumns, null, false)).Returns(list);
@@ -407,7 +407,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 mpGroupParticipantDto
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Delete<MpGroupParticipantDto>(It.IsAny<IEnumerable<int>>()));
 
@@ -457,7 +457,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpContactDto>($"(Contacts.[Display_Name] LIKE '%{search}%' OR Contacts.[Email_Address] = '{search}' OR Household_ID_Table.Home_Phone = '{search}' OR Contacts.[Mobile_Phone] = '{search}') AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns, "Contacts.Last_Name ASC, Contacts.Nickname ASC", false)).Returns(contacts);
 
@@ -509,7 +509,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpHouseholdDto>(householdId, columns)).Returns(household);
 

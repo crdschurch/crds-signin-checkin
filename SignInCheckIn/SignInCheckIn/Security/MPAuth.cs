@@ -2,22 +2,24 @@
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
-using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
 using log4net;
-using Microsoft.AspNet.SignalR;
-using SignInCheckIn.Hubs;
 using SignInCheckIn.Util;
+using System.Collections.Generic;
+using Crossroads.Web.Common.Services;
+using System.Net.Http.Headers;
 
 namespace SignInCheckIn.Security
 {
     public class MpAuth : ApiController
     {
+        private readonly IAuthTokenExpiryService _authTokenExpiryService;
         protected readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IAuthenticationRepository _authenticationRepository;
 
-        public MpAuth(IAuthenticationRepository authenticationRepository)
+        public MpAuth(IAuthTokenExpiryService authTokenExpiryService, IAuthenticationRepository authenticationRepository)
         {
+            _authTokenExpiryService = authTokenExpiryService;
             _authenticationRepository = authenticationRepository;
         }
 
@@ -45,31 +47,34 @@ namespace SignInCheckIn.Security
         {
             try
             {
-                var refreshTokenHeader = Request.Headers.Contains(HttpAuthResult.RefreshTokenHeaderName)
-                    ? Request.Headers.GetValues(HttpAuthResult.RefreshTokenHeaderName).FirstOrDefault()
-                    : null;
-                if (refreshTokenHeader != null)
+                IEnumerable<string> refreshTokens;
+                var authorized = "";
+
+                bool authTokenCloseToExpiry = _authTokenExpiryService.IsAuthTokenCloseToExpiry(Request.Headers);
+                bool isRefreshTokenPresent =
+                    Request.Headers.TryGetValues("RefreshToken", out refreshTokens) && refreshTokens.Any();
+
+                HttpRequestHeaders headers = Request.Headers;
+
+                if (authTokenCloseToExpiry && isRefreshTokenPresent)
                 {
-                    var authData = _authenticationRepository.RefreshToken(refreshTokenHeader);
+                    var authData = _authenticationRepository.RefreshToken(refreshTokens.FirstOrDefault());
                     if (authData != null)
                     {
-                        var authToken = authData.AccessToken;
+                        authorized = authData.AccessToken;
                         var refreshToken = authData.RefreshToken;
-                        var result = new HttpAuthResult(actionWhenAuthorized(authToken), authToken, refreshToken);
-                        return result;
+                        return new HttpAuthResult(actionWhenAuthorized(authorized), authorized, refreshToken);
                     }
                 }
 
-                var authorized = Request.Headers.Contains(HttpAuthResult.AuthorizationTokenHeaderName)
-                    ? Request.Headers.GetValues(HttpAuthResult.AuthorizationTokenHeaderName).FirstOrDefault()
-                    : null;
-                if (!string.IsNullOrEmpty(authorized) && !authorized.Equals("null"))
+                authorized = Request.Headers.GetValues("Authorization").FirstOrDefault();
+                if (authorized != null && (authorized != "null" || authorized != ""))
                 {
                     return actionWhenAuthorized(authorized);
                 }
                 return actionWhenNotAuthorized();
             }
-            catch (InvalidOperationException)
+            catch (System.InvalidOperationException e)
             {
                 return actionWhenNotAuthorized();
             }

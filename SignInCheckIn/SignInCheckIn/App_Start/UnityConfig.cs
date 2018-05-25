@@ -4,6 +4,11 @@ using Microsoft.Practices.Unity;
 using System.Web.Http;
 using Microsoft.Practices.Unity.Configuration;
 using Unity.WebApi;
+using Crossroads.Web.Common.Configuration;
+using MinistryPlatform.Translation.Repositories.Interfaces;
+using SignInCheckIn.Services;
+using SignInCheckIn.Services.Interfaces;
+using MinistryPlatform.Translation.Repositories;
 
 namespace SignInCheckIn
 {
@@ -11,8 +16,11 @@ namespace SignInCheckIn
     {
         public static void RegisterComponents()
         {
+            // this register unity config content that was previous registered in the unity sections area
             var container = new UnityContainer();
-            var unitySections = new[] { "crossroadsCommonUnity", "crossroadsClientApiKeysUnity", "unity" };
+            CrossroadsWebCommonConfig.Register(container);
+
+            var unitySections = new[] { "unity" };
 
             foreach (var section in unitySections.Select(sectionName => (UnityConfigurationSection)ConfigurationManager.GetSection(sectionName)))
             {

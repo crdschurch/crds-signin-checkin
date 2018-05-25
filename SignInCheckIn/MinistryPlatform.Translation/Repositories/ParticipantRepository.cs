@@ -87,7 +87,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto, string userToken = null)
         {
-            var token = userToken ?? _apiUserRepository.GetToken();
+            var token = userToken ?? _apiUserRepository.GetDefaultApiClientToken();
 
             List<string> participantColumns = new List<string>
             {
@@ -102,7 +102,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupParticipantDto> CreateGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> mpGroupParticipantDtos)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
 
             List<string> groupParticipantColumns = new List<string>
             {
@@ -120,13 +120,13 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void DeleteGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> groupParticipants)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
         }
 
         public void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columnList = new List<string>
             {
@@ -162,14 +162,14 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventParticipantDto GetEventParticipantByEventParticipantId(int eventParticipantId, string authenticationToken = null)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpEventParticipantDto>(eventParticipantId, _eventParticipantColumns);
         }
 
         // this returns only "valid" participants in the system - not ones that could not get in, or were reversed
         public List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columnList = new List<string>
             {
@@ -209,7 +209,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantAndGroupId(int groupId, List<int> participantIds)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             List<string> groupParticipantColumns = new List<string>
             {
@@ -232,7 +232,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantId(int participantId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             List<string> groupParticipantColumns = new List<string>
             {

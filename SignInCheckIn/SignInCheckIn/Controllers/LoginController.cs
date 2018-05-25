@@ -6,10 +6,11 @@ using log4net;
 using SignInCheckIn.Models.Authentication;
 using SignInCheckIn.Services.Interfaces;
 using SignInCheckIn.Util;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 
 namespace SignInCheckIn.Controllers
 {
+    [RoutePrefix("api")]
     public class LoginController : ApiController
     {
         private readonly ILoginService _loginService;
@@ -22,7 +23,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(LoginReturn))]
-        [VersionedRoute(template: "authenticate", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "authenticate", minimumVersion: "1.0.0")]
         [Route("authenticate")]
         public IHttpActionResult Authenticate([FromBody] Credentials cred)
         {

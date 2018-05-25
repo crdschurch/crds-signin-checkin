@@ -6,15 +6,17 @@ using System.Web.Script.Serialization;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json.Linq;
 using SignInCheckIn.Security;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
+    [RoutePrefix("api")]
     public class ChildCheckinController : MpAuth
     {
         private readonly IChildCheckinService _childCheckinService;
@@ -22,7 +24,7 @@ namespace SignInCheckIn.Controllers
         private readonly IApplicationConfiguration _applicationConfiguration;
         private readonly IParticipantRepository _participantRepository;
 
-        public ChildCheckinController(IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository, IWebsocketService websocketService, IParticipantRepository participantRepository) : base(authenticationRepository)
+        public ChildCheckinController(IAuthTokenExpiryService authTokenExpiryService, IChildCheckinService childCheckinService, IApplicationConfiguration applicationConfiguration, IAuthenticationRepository authenticationRepository, IWebsocketService websocketService, IParticipantRepository participantRepository) : base(authTokenExpiryService, authenticationRepository)
         {
             _childCheckinService = childCheckinService;
             _applicationConfiguration = applicationConfiguration;
@@ -32,7 +34,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "checkin/children/{roomId:int}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "checkin/children/{roomId:int}", minimumVersion: "1.0.0")]
         [Route("checkin/children/{roomId:int}")]
         public IHttpActionResult GetCheckedInChildrenForEventAndRoom(int roomId, [FromUri(Name = "eventId")] int? eventId = null)
         {
@@ -68,7 +70,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPut]
         [ResponseType(typeof(ParticipantEventMapDto))]
-        [VersionedRoute(template: "checkin/event/{eventId}/participant", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "checkin/event/{eventId}/participant", minimumVersion: "1.0.0")]
         [Route("checkin/event/{eventId}/participant")]
         public IHttpActionResult CheckinChildrenForCurrentEventAndRoom([FromUri(Name = "eventId")] int eventId, ParticipantDto participant)
         {
@@ -87,7 +89,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ParticipantDto))]
-        [VersionedRoute(template: "checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}", minimumVersion: "1.0.0")]
         [Route("checkin/events/{eventId}/child/{callNumber}/rooms/{roomId}")]
         public IHttpActionResult GetEventParticipantByCallNumber(
              [FromUri(Name = "eventId")] int eventId,
@@ -106,7 +108,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpPut]
-        [VersionedRoute(template: "checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override/{overRideRoomId}", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override/{overRideRoomId}", minimumVersion: "1.0.0")]
         [Route("checkin/events/{eventId}/child/{eventParticipantId}/rooms/{roomId}/override/{overRideRoomId}")]
         public IHttpActionResult OverrideChildIntoRoom(
              [FromUri(Name = "eventId")] int eventId,
