@@ -10,18 +10,20 @@ using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.ApiVersioning;
+//using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
+    [RoutePrefix("api")]
     public class RoomController : MpAuth
     {
         private readonly IWebsocketService _websocketService;
         private readonly IRoomService _roomService;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository)
+        public RoomController(IAuthTokenExpiryService authTokenExpiryService, IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authTokenExpiryService, authenticationRepository)
         {
             _websocketService = websocketService;
             _roomService = roomService;
@@ -30,7 +32,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
-        [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         [RequiresAuthorization]
         public IHttpActionResult GetAvailableRooms(
@@ -54,7 +56,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpPost]
         [ResponseType(typeof(List<RoomDto>))]
-        [VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "events/{eventId}/rooms/{roomId}/bumping", minimumVersion: "1.0.0")]
         [Route("events/{eventId}/rooms/{roomId}/bumping")]
         [RequiresAuthorization]
         public IHttpActionResult UpdateAvailableRoomsByLocation(
@@ -77,7 +79,7 @@ namespace SignInCheckIn.Controllers
 
         [HttpGet]
         [ResponseType(typeof(List<RoomDto>))]
-        [VersionedRoute(template: "grade-groups", minimumVersion: "1.0.0")]
+        //[VersionedRoute(template: "grade-groups", minimumVersion: "1.0.0")]
         [Route("grade-groups")]
         public IHttpActionResult GetGradeGroups([FromUri] int? eventId = null)
         {

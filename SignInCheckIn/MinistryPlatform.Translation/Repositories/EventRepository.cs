@@ -76,7 +76,7 @@ namespace MinistryPlatform.Translation.Repositories
         /// <returns></returns>
         public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site, bool? includeSubevents = false, List<int> eventTypeIds = null, bool excludeIds = true)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var startTimeString = startDate.ToString();
             // make sure end time is end of day
@@ -112,7 +112,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventDto> GetEventTemplates(int site)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
             var queryString =
                 $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Template]=1 AND Events.[Congregation_ID] = {site}";
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
@@ -121,7 +121,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventDto GetEventById(int eventId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Get<MpEventDto>(eventId, _eventColumns);
@@ -145,32 +145,32 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventGroupDto> GetEventGroupsForEventByGroupTypeId(int eventId, int groupTypeId)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
                 .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId} AND Group_ID_Table.[Group_Type_ID] = {groupTypeId}", _eventGroupsColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEvent(List<int> eventIds)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
                 .Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEventRoom(int eventId, int roomId)
         {
             return
-                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
                     .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId} AND Event_Room_ID_Table_Room_ID_Table.Room_ID = {roomId}", _eventGroupsColumns);
         }
 
         public void DeleteEventGroups(string authenticationToken, IEnumerable<int> eventGroupIds)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpEventGroupDto>(eventGroupIds);
         }
 
         public List<MpEventGroupDto> CreateEventGroups(string authenticationToken, List<MpEventGroupDto> eventGroups)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventGroups, _eventGroupsColumns);
         }
 
@@ -188,7 +188,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventDto> GetEventAndCheckinSubevents(string authenticationToken, int eventId, bool includeTemplates = false)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetToken();
+            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
             var query = $"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1";
             if (includeTemplates == false)
             {
@@ -202,7 +202,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventDto GetSubeventByParentEventId(int eventId, int eventTypeId)
         {
-            var token = _apiUserRepository.GetToken();
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             return GetSubeventByParentEventId(token, eventId, eventTypeId);
         }
 
@@ -215,7 +215,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var queryString = eventIds.Aggregate("(", (current, id) => current + (id + ","));
 
@@ -231,7 +231,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventGroupDto> GetEventGroupsByGroupIdAndEventIds(int groupId, List<int> eventIds)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken())
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
                 .Search<MpEventGroupDto>($"Event_Groups.Group_ID ={groupId} AND Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
 
@@ -242,7 +242,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"EventID", eventId},
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpCapacityDto>("api_crds_Capacity_App_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<MpCapacityDto>("api_crds_Capacity_App_Data", parms);
             return result[0];
         }
     }

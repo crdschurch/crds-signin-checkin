@@ -20,18 +20,28 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpCongregationDto> GetAll()
         {
-            var apiUserToken = _apiUserRepository.GetToken();
-
-            var congregationColumnList = new List<string>
+            try
             {
-                "Congregation_ID",
-                "Congregation_Name"
-            };
+                var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
-            var congregations = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpCongregationDto>($"Available_Online = 1 AND (End_Date IS NULL OR End_Date > '{DateTime.Now:yyyy-MM-dd}')", congregationColumnList);
+                var congregationColumnList = new List<string>
+                {
+                    "Congregation_ID",
+                    "Congregation_Name"
+                };
 
-            return congregations;
+                var congregations = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
+                    .Search<MpCongregationDto>($"Available_Online = 1 AND (End_Date IS NULL OR End_Date > '{DateTime.Now:yyyy-MM-dd}')", congregationColumnList);
+
+                return congregations;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            
+
+            
         }
     }
 }

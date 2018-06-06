@@ -121,7 +121,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 {"Phone_Number", phoneNumber},
                 {"Include_Other_Household", includeOtherHousehold}
             };
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("token");
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("token");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("token")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms))
                 .Returns(new List<List<MpParticipantDto>>());
@@ -145,7 +145,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 {"Phone_Number", phoneNumber},
                 {"Include_Other_Household", includeOtherHousehold}
             };
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("token");
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("token");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("token")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms))
                 .Returns(new List<List<MpParticipantDto>>
@@ -196,7 +196,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                     new MpParticipantDto()
                 }
             };
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("token");
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("token");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("token")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.GetFromStoredProc<MpParticipantDto>("api_crds_Child_Signin_Search", parms)).Returns(repoResponse);
 
@@ -332,7 +332,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             mpEventGroupDtos[2].GroupId = 12345;
             var headsOfHousehold = new List<MpContactDto>();
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubMinistryId).Returns(2);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubCongregationId).Returns(5);
@@ -460,7 +460,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             mpEventGroupDtos[2].GroupId = 12345;
             var headsOfHousehold = new List<MpContactDto>();
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubMinistryId).Returns(2);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubCongregationId).Returns(5);
@@ -510,7 +510,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             List<MpGroupParticipantDto> groupParticipants = new List<MpGroupParticipantDto>();
             List<MpParticipantDto> participants = new List<MpParticipantDto>();
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns("auth");
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("auth");
             _applicationConfiguration.Setup(mocked => mocked.KidsClubGroupTypeId).Returns(4);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubMinistryId).Returns(2);
             _applicationConfiguration.Setup(mocked => mocked.KidsClubCongregationId).Returns(5);

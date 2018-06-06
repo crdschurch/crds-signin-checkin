@@ -55,7 +55,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             );
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpCongregationDto>($"Available_Online = 1 AND (End_Date IS NULL OR End_Date > '{DateTime.Now:yyyy-MM-dd}')", _congregationColumnList, null, false)).Returns(mpCongregationDtos);
 

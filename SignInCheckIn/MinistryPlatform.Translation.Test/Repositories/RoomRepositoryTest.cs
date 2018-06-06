@@ -162,7 +162,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const string token = "token 123";
             var eventRoom = new MpEventRoomDto();
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventId} AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns, null, false))
                 .Returns(new List<MpEventRoomDto>
@@ -183,7 +183,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const string token = "token 123";
             var room = new MpRoomDto();
 
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpRoomDto>(roomId, _roomColumns))
                 .Returns(room);
@@ -263,7 +263,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             };
 
             _applicationConfiguration.Setup(m => m.BumpingRoomTypeVacancyId).Returns(2);
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns, null, false)).Returns(mpBumpingRooms);
 
@@ -345,7 +345,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             };
 
             _applicationConfiguration.Setup(m => m.BumpingRoomTypeVacancyId).Returns(2);
-            _apiUserRepository.Setup(mocked => mocked.GetToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns, null, false)).Returns(mpBumpingRooms);
 

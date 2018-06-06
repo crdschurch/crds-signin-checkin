@@ -39,7 +39,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var spResults =
-                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
             var result = new MpHouseholdParticipantsDto();
 
             // This check indicates that no household was found
@@ -110,7 +110,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         private List<MpParticipantDto> GetChildParticipantsByPrimaryHousehold(int? householdId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columnList = new List<string>
             {
@@ -141,7 +141,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         private void GetChildParticipantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columnList = new List<string>
             {
@@ -169,7 +169,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         private List<MpEventGroupDto> GetEventGroups(int eventId)
         {
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columnList = new List<string>
             {
@@ -186,7 +186,7 @@ namespace MinistryPlatform.Translation.Repositories
         private List<MpParticipantDto> GetKidsClubAndStudentMinistryChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
         {
             if (children.Count == 0) return new List<MpParticipantDto>();
-            var apiUserToken = _apiUserRepository.GetToken();
+            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
 
             var columnList = new List<string>
             {
@@ -239,7 +239,7 @@ namespace MinistryPlatform.Translation.Repositories
 	            return new List<MpEventParticipantDto>();
 	        }
 
-            var token = _apiUserRepository.GetToken();
+            var token = _apiUserRepository.GetDefaultApiClientToken();
 
             var columnList = new List<string>
             {
@@ -284,7 +284,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var spResults =
-                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetToken()).GetFromStoredProc<MpParticipantDto>(MSMSigninSearchStoredProcName, parms);
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<MpParticipantDto>(MSMSigninSearchStoredProcName, parms);
             var result = new MpHouseholdParticipantsDto();
 
             // This check indicates that no household was found
