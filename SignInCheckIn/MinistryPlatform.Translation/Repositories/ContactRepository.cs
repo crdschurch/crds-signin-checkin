@@ -36,7 +36,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var contacts = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
-                .Search<MpContactDto>($"Contacts.Household_ID={householdId} AND Contacts.Household_Position_ID IN (1, 7)", contactColumnList);
+                .Search<MpContactDto>($"Contacts.Household_ID={householdId} AND Contacts.Household_Position_ID IN (1, 7) AND Contacts.Contact_Status_ID = 1", contactColumnList);
 
             return contacts;
         }
