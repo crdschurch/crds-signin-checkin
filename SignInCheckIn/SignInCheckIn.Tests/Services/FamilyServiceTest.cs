@@ -288,7 +288,7 @@ namespace SignInCheckIn.Tests.Services
 
             _contactRepository.Setup(m => m.CreateUserRoles(token, It.IsAny<List<MpUserRoleDto>>()));
             _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
-            _contactRepository.Setup(m => m.CreateContactRelationships(token, It.IsAny<List<MpContactRelationshipDto>>()));
+            //_contactRepository.Setup(m => m.CreateContactRelationships(token, It.IsAny<List<MpContactRelationshipDto>>()));
             
             // Act
             var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
