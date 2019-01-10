@@ -1,21 +1,16 @@
+//using Crossroads.ApiVersioning;
+using Crossroads.Web.Auth.Controllers;
+using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
+using MinistryPlatform.Translation.Repositories.Interfaces;
+using SignInCheckIn.Exceptions.Models;
+using SignInCheckIn.Models.DTO;
+using SignInCheckIn.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using AutoMapper;
-using MinistryPlatform.Translation.Repositories.Interfaces;
-using SignInCheckIn.Exceptions.Models;
-using SignInCheckIn.Models.DTO;
-using SignInCheckIn.Security;
-using SignInCheckIn.Services.Interfaces;
-//using Crossroads.ApiVersioning;
-using Crossroads.Utilities.Services.Interfaces;
-using Crossroads.Web.Auth.Controllers;
-using Crossroads.Web.Common.Security;
-using MinistryPlatform.Translation.Models.DTO;
-using Newtonsoft.Json.Linq;
-using Crossroads.Web.Common.Services;
 
 namespace SignInCheckIn.Controllers
 {
@@ -27,6 +22,7 @@ namespace SignInCheckIn.Controllers
         private readonly IKioskRepository _kioskRepository;
         private readonly IContactRepository _contactRepository;
         private readonly IFamilyService _familyService;
+        private readonly int _kidsClubTools = 112;
 
         public ChildSigninController(IAuthTokenExpiryService authTokenExpiryService, IChildSigninService childSigninService, IWebsocketService websocketService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IContactRepository contactRepository, IFamilyService familyService) : base(authenticationRepository, authTokenExpiryService)
         {
@@ -211,6 +207,7 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
+                    if (!authDto.Authorization.MpRoles.ContainsKey(_kidsClubTools)) throw new UnauthorizedAccessException();
                     return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier));
                 }
                 catch (Exception e)
@@ -231,6 +228,7 @@ namespace SignInCheckIn.Controllers
             {
                 try
                 {
+                    if (!authDto.Authorization.MpRoles.ContainsKey(_kidsClubTools)) throw new UnauthorizedAccessException();
                     var reverseSuccess = _childSigninService.ReverseSignin(eventparticipantId);
 
                     if (reverseSuccess == true)
@@ -263,7 +261,7 @@ namespace SignInCheckIn.Controllers
                 {
                     // ignores the site id if there is an event id so therefore we can put a random 0 here
                     var updatedParticipants = participants.Participants.Where(pp => pp.AssignedRoomId == p.AssignedRoomId);
-                    _websocketService.PublishCheckinParticipantsAdd(p.EventId, p.AssignedRoomId.Value, new List<ParticipantDto>() {p});
+                    _websocketService.PublishCheckinParticipantsAdd(p.EventId, p.AssignedRoomId.Value, new List<ParticipantDto>() { p });
                 }
 
                 if (p.AssignedSecondaryRoomId != null)
