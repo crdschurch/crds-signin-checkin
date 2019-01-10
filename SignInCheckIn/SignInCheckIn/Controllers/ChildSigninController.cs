@@ -11,6 +11,7 @@ using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 //using Crossroads.ApiVersioning;
 using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Auth.Controllers;
 using Crossroads.Web.Common.Security;
 using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json.Linq;
@@ -19,7 +20,7 @@ using Crossroads.Web.Common.Services;
 namespace SignInCheckIn.Controllers
 {
     [RoutePrefix("api")]
-    public class ChildSigninController : MpAuth
+    public class ChildSigninController : AuthBaseController
     {
         private readonly IWebsocketService _websocketService;
         private readonly IChildSigninService _childSigninService;
@@ -27,7 +28,7 @@ namespace SignInCheckIn.Controllers
         private readonly IContactRepository _contactRepository;
         private readonly IFamilyService _familyService;
 
-        public ChildSigninController(IAuthTokenExpiryService authTokenExpiryService, IChildSigninService childSigninService, IWebsocketService websocketService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IContactRepository contactRepository, IFamilyService familyService) : base(authTokenExpiryService, authenticationRepository)
+        public ChildSigninController(IAuthTokenExpiryService authTokenExpiryService, IChildSigninService childSigninService, IWebsocketService websocketService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IContactRepository contactRepository, IFamilyService familyService) : base(authenticationRepository, authTokenExpiryService)
         {
             _websocketService = websocketService;
             _childSigninService = childSigninService;
@@ -188,7 +189,7 @@ namespace SignInCheckIn.Controllers
         [Route("signin/participant/{eventParticipantId}/print")]
         public IHttpActionResult PrintParticipant(int eventParticipantId)
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 string kioskIdentifier;
 
@@ -210,7 +211,7 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier, token));
+                    return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier));
                 }
                 catch (Exception e)
                 {
@@ -226,11 +227,11 @@ namespace SignInCheckIn.Controllers
         [Route("signin/event/{eventId}/room/{roomId}/reverse/{eventparticipantId}")]
         public IHttpActionResult ReverseSignin(int eventId, int roomId, int eventparticipantId)
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 try
                 {
-                    var reverseSuccess = _childSigninService.ReverseSignin(token, eventparticipantId);
+                    var reverseSuccess = _childSigninService.ReverseSignin(eventparticipantId);
 
                     if (reverseSuccess == true)
                     {

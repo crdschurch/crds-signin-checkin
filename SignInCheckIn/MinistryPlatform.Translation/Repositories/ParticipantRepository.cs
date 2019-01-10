@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -15,7 +12,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly IContactRepository _contactRepository;
-        private List<string> _eventParticipantColumns; 
+        private List<string> _eventParticipantColumns;
 
         public ParticipantRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IContactRepository contactRepository)
         {
@@ -160,9 +157,9 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<MpEventParticipantDto>(mpEventParticipantDtos, columnList);
         }
 
-        public MpEventParticipantDto GetEventParticipantByEventParticipantId(int eventParticipantId, string authenticationToken = null)
+        public MpEventParticipantDto GetEventParticipantByEventParticipantId(int eventParticipantId)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpEventParticipantDto>(eventParticipantId, _eventParticipantColumns);
         }
 
