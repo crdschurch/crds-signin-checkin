@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
@@ -10,6 +7,9 @@ using Printing.Utilities.Models;
 using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SignInCheckIn.Services
 {
@@ -64,7 +64,7 @@ namespace SignInCheckIn.Services
             _roomRepository = roomRepository;
             _attributeRepository = attributeRepository;
             _signInLogic = signInLogic;
-            
+
             _defaultEarlyCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultEarlyCheckIn").Value);
             _defaultLateCheckinPeriod = int.Parse(configRepository.GetMpConfigByKey("DefaultLateCheckIn").Value);
         }
@@ -236,7 +236,8 @@ namespace SignInCheckIn.Services
             };
 
             // set checkin household data on the participants
-            response.Participants.ForEach(r => {
+            response.Participants.ForEach(r =>
+            {
                 r.CheckinHouseholdId = participantEventMapDto.HouseholdId;
                 r.CheckinPhone = participantEventMapDto.HouseholdPhoneNumber;
             });
@@ -422,17 +423,17 @@ namespace SignInCheckIn.Services
 
         //// JPC 7/17/17 - End the big block of obsolete code
 
-        public ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier, string token)
+        public ParticipantEventMapDto PrintParticipant(int eventParticipantId, string kioskIdentifier)
         {
-            var participantEventMapDto = GetParticipantEventMapDtoByEventParticipant(eventParticipantId, token);
+            var participantEventMapDto = GetParticipantEventMapDtoByEventParticipant(eventParticipantId);
             return PrintParticipants(participantEventMapDto, kioskIdentifier);
         }
 
-        private ParticipantEventMapDto GetParticipantEventMapDtoByEventParticipant(int eventParticipantId, string token)
+        private ParticipantEventMapDto GetParticipantEventMapDtoByEventParticipant(int eventParticipantId)
         {
             // Get participant from event participant id
             var participants = new List<ParticipantDto>();
-            var participant = Mapper.Map<ParticipantDto>(_participantRepository.GetEventParticipantByEventParticipantId(eventParticipantId, token));
+            var participant = Mapper.Map<ParticipantDto>(_participantRepository.GetEventParticipantByEventParticipantId(eventParticipantId));
             participant.Selected = true;
             participants.Add(participant);
 
@@ -501,7 +502,7 @@ namespace SignInCheckIn.Services
                 {
                     mpGroupDto = _groupRepository.GetGroup(null, participant.GroupId.GetValueOrDefault(), false);
                 }
-                
+
                 var printValues = new Dictionary<string, string>
                 {
                     {"ChildName", participant.Nickname},
@@ -610,7 +611,7 @@ namespace SignInCheckIn.Services
 
             // if admin type or event being signed into is not MSM, then we should exclude MSM event typse
             bool excludeIds = (kioskTypeId == 1 || !msmEventTypes.Contains(participantEventMapDto.CurrentEvent.EventTypeId));
-            
+
             dailyEvents = _eventRepository.GetEvents(dateToday, dateToday, participantEventMapDto.CurrentEvent.EventSiteId, true, msmEventTypes, excludeIds)
                 .Where(r => CheckEventTimeValidity(r, allowLateSignin)).OrderBy(r => r.EventStartDate).ToList();
 
@@ -627,7 +628,7 @@ namespace SignInCheckIn.Services
             {
                 // return all events that occur after the selected event, including the selected event - this is to address DE3859,
                 // where a kid would be signed into the current service, and not the upcoming service
-                serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null && 
+                serviceEventSet = dailyEvents.Where(r => r.ParentEventId == null &&
                     r.EventStartDate >= participantEventMapDto.CurrentEvent.EventStartDate).Take(2).ToList();
             }
 
@@ -761,10 +762,10 @@ namespace SignInCheckIn.Services
             }
         }
 
-        public bool ReverseSignin(string token, int eventParticipantId)
+        public bool ReverseSignin(int eventParticipantId)
         {
             // load the event participant, check their status
-            var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(eventParticipantId, token);
+            var mpEventParticipantDto = _participantRepository.GetEventParticipantByEventParticipantId(eventParticipantId);
 
             if (mpEventParticipantDto.ParticipantStatusId == _applicationConfiguration.CheckedInParticipationStatusId)
             {
@@ -814,6 +815,6 @@ namespace SignInCheckIn.Services
                 _applicationConfiguration.StudentMinistryGradesSixToEightEventTypeId,
                 _applicationConfiguration.StudentMinistryGradesNineToTwelveEventTypeId
             };
-        } 
+        }
     }
 }

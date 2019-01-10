@@ -1176,7 +1176,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantStatusId = attendedParticipantStatusId
             };
 
-            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(eventParticipantId, token))
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(eventParticipantId))
                 .Returns(mpEventParticipantDto);
             _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
@@ -1184,7 +1184,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.Setup(r => r.CancelledParticipationStatusId).Returns(cancelledParticipantStatusId);
 
             // Act
-            _fixture.ReverseSignin(token, eventParticipantId);
+            _fixture.ReverseSignin(eventParticipantId);
 
             // Assert
             Assert.AreNotEqual(mpEventParticipantDto.EndDate, null);
@@ -1208,7 +1208,7 @@ namespace SignInCheckIn.Tests.Services
                 ParticipantStatusId = checkedInParticipantStatusId
             };
 
-            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(eventParticipantId, token))
+            _participantRepository.Setup(r => r.GetEventParticipantByEventParticipantId(eventParticipantId))
                 .Returns(mpEventParticipantDto);
             _participantRepository.Setup(r => r.UpdateEventParticipants(It.IsAny<List<MpEventParticipantDto>>()));
             _applicationConfiguration.Setup(r => r.AttendeeParticipantType).Returns(attendedParticipantStatusId);
@@ -1216,7 +1216,7 @@ namespace SignInCheckIn.Tests.Services
             _applicationConfiguration.Setup(r => r.CancelledParticipationStatusId).Returns(cancelledParticipantStatusId);
 
             // Act
-            var result =_fixture.ReverseSignin(token, eventParticipantId);
+            var result =_fixture.ReverseSignin(eventParticipantId);
 
             // Assert
             Assert.AreEqual(result, false);
@@ -1279,7 +1279,7 @@ namespace SignInCheckIn.Tests.Services
                 Name = "test group"
             };
 
-            _participantRepository.Setup(m => m.GetEventParticipantByEventParticipantId(765, token)).Returns(participant);
+            _participantRepository.Setup(m => m.GetEventParticipantByEventParticipantId(765)).Returns(participant);
             _eventService.Setup(m => m.GetEvent(123)).Returns(currentEvent);
             _contactRepository.Setup(m => m.GetHeadsOfHouseholdByHouseholdId(4)).Returns(contacts);
             _kioskRepository.Setup(m => m.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
@@ -1288,7 +1288,7 @@ namespace SignInCheckIn.Tests.Services
             _printingService.Setup(m => m.SendPrintRequest(It.IsAny<PrintRequestDto>())).Returns(1);
             _groupRepository.Setup(m => m.GetGroup(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(mpGroupDto);
 
-            var participantEventMapDto = _fixture.PrintParticipant(765, "1a11a1a1-a11a-1a1a-11a1-a111a111a11a", "abcd");
+            var participantEventMapDto = _fixture.PrintParticipant(765, "1a11a1a1-a11a-1a1a-11a1-a111a111a11a");
 
             Assert.AreEqual(participantEventMapDto.Participants.Count, 1);
             Assert.AreEqual(participantEventMapDto.Participants[0].EventId, participant.EventId);
