@@ -22,7 +22,7 @@ namespace SignInCheckIn.Controllers
         private readonly IKioskRepository _kioskRepository;
         private readonly IContactRepository _contactRepository;
         private readonly IFamilyService _familyService;
-        private readonly int _kidsClubTools = 112;
+        private const int KidsClubTools = 112;
 
         public ChildSigninController(IAuthTokenExpiryService authTokenExpiryService, IChildSigninService childSigninService, IWebsocketService websocketService, IAuthenticationRepository authenticationRepository, IKioskRepository kioskRepository, IContactRepository contactRepository, IFamilyService familyService) : base(authenticationRepository, authTokenExpiryService)
         {
@@ -207,7 +207,7 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    if (!authDto.Authorization.MpRoles.ContainsKey(_kidsClubTools)) throw new UnauthorizedAccessException();
+                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools)) throw new UnauthorizedAccessException();
                     return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier));
                 }
                 catch (Exception e)
@@ -228,7 +228,7 @@ namespace SignInCheckIn.Controllers
             {
                 try
                 {
-                    if (!authDto.Authorization.MpRoles.ContainsKey(_kidsClubTools)) throw new UnauthorizedAccessException();
+                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools)) throw new UnauthorizedAccessException();
                     var reverseSuccess = _childSigninService.ReverseSignin(eventparticipantId);
 
                     if (reverseSuccess == true)
