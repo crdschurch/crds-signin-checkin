@@ -207,7 +207,11 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools)) throw new UnauthorizedAccessException();
+                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools))
+                    {
+                        throw new UnauthorizedAccessException();
+                    }
+
                     return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier));
                 }
                 catch (Exception e)
@@ -228,7 +232,11 @@ namespace SignInCheckIn.Controllers
             {
                 try
                 {
-                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools)) throw new UnauthorizedAccessException();
+                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools))
+                    {
+                        throw new UnauthorizedAccessException();
+                    }
+
                     var reverseSuccess = _childSigninService.ReverseSignin(eventparticipantId);
 
                     if (reverseSuccess == true)
