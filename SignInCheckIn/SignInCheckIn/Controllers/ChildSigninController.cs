@@ -5,6 +5,7 @@ using Crossroads.Web.Common.Services;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
+using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -207,10 +208,7 @@ namespace SignInCheckIn.Controllers
 
                 try
                 {
-                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools))
-                    {
-                        throw new UnauthorizedAccessException();
-                    }
+                    VerifyRoles.KidsClubTools(authDto);
 
                     return Ok(_childSigninService.PrintParticipant(eventParticipantId, kioskIdentifier));
                 }
@@ -232,10 +230,7 @@ namespace SignInCheckIn.Controllers
             {
                 try
                 {
-                    if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools))
-                    {
-                        throw new UnauthorizedAccessException();
-                    }
+                    VerifyRoles.KidsClubTools(authDto);
 
                     var reverseSuccess = _childSigninService.ReverseSignin(eventparticipantId);
 
