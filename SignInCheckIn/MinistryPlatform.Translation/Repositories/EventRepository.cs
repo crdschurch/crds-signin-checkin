@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using log4net;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
-using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -63,7 +62,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Congregation_ID_Table.Location_ID",
                 "[Allow_Check-in]"
             };
-            
+
         }
 
         /// <summary>
@@ -103,7 +102,8 @@ namespace MinistryPlatform.Translation.Repositories
             }
             var events = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpEventDto>(queryString, _eventColumns);
-            if (!events.Any()) {
+            if (!events.Any())
+            {
                 // log query when no events are returned for debugging purposes
                 Logger.Info($"No events found at {DateTime.Now} for query: ${queryString}");
             }
@@ -127,19 +127,21 @@ namespace MinistryPlatform.Translation.Repositories
                 .Get<MpEventDto>(eventId, _eventColumns);
         }
 
-        public MpEventDto CreateSubEvent(string token, MpEventDto mpEventDto)
+        public MpEventDto CreateSubEvent(MpEventDto mpEventDto)
         {
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventDto, _eventColumns);
         }
 
-        public MpEventDto UpdateEvent(string token, MpEventDto mpEventDto)
+        public MpEventDto UpdateEvent(MpEventDto mpEventDto)
         {
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(mpEventDto, _eventColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEvent(int eventId)
         {
-            var eventIds = new List<int> {eventId};
+            var eventIds = new List<int> { eventId };
             return GetEventGroupsForEvent(eventIds);
         }
 
@@ -174,40 +176,38 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventGroups, _eventGroupsColumns);
         }
 
-        public void ResetEventSetup(string authenticationToken, int eventId)
+        public void ResetEventSetup(int eventId)
         {
+            var authenticationToken = _apiUserRepository.GetDefaultApiClientToken();
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
-                .PostStoredProc(ResetEventStoredProcedureName, new Dictionary<string, object> {{"@EventId", eventId}});
+                .PostStoredProc(ResetEventStoredProcedureName, new Dictionary<string, object> { { "@EventId", eventId } });
         }
 
-        public void ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId)
+        public void ImportEventSetup(int destinationEventId, int sourceEventId)
         {
+            var authenticationToken = _apiUserRepository.GetDefaultApiClientToken();
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
-                .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> {{"@DestinationEventId", destinationEventId}, {"@SourceEventId", sourceEventId}});
+                .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> { { "@DestinationEventId", destinationEventId }, { "@SourceEventId", sourceEventId } });
         }
 
-        public List<MpEventDto> GetEventAndCheckinSubevents(string authenticationToken, int eventId, bool includeTemplates = false)
+        public List<MpEventDto> GetEventAndCheckinSubevents(int eventId, bool includeTemplates = false)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             var query = $"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1";
             if (includeTemplates == false)
             {
                 query = $"{query} AND {nonEventTemplatesQueryString}";
             }
-                
+
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token)
                 .Search<MpEventDto>(query, _eventColumns);
         }
 
-        public MpEventDto GetSubeventByParentEventId(int eventId, int eventTypeId)
+
+        public MpEventDto GetSubeventByParentEventId(int serviceEventId, int eventTypeId)
         {
             var token = _apiUserRepository.GetDefaultApiClientToken();
-            return GetSubeventByParentEventId(token, eventId, eventTypeId);
-        }
-
-        public MpEventDto GetSubeventByParentEventId(string token, int serviceEventId, int eventTypeId)
-        {
             var events = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
                  .Search<MpEventDto>($"Events.Parent_Event_ID = {serviceEventId} AND Events.[Event_Type_ID] = {eventTypeId}", _eventColumns);
             return events.FirstOrDefault();

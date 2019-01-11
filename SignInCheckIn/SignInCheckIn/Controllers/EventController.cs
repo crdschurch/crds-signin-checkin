@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
-using System.Web.Http.Description;
+﻿using Crossroads.Web.Auth.Controllers;
+//using Crossroads.ApiVersioning;
+using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-//using Crossroads.ApiVersioning;
-using Crossroads.Web.Common.Security;
-using Crossroads.Web.Common.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace SignInCheckIn.Controllers
 {
     [RoutePrefix("api")]
-    public class EventController : MpAuth
+    public class EventController : AuthBaseController
     {
         private readonly IEventService _eventService;
         private readonly IRoomService _roomService;
 
-        public EventController(IAuthTokenExpiryService authTokenExpiryService, IEventService eventService, IRoomService roomService, IAuthenticationRepository authenticationRepository) : base(authTokenExpiryService, authenticationRepository)
+        public EventController(IAuthTokenExpiryService authTokenExpiryService, IEventService eventService, IRoomService roomService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository, authTokenExpiryService)
         {
             _eventService = eventService;
             _roomService = roomService;
@@ -32,7 +33,7 @@ namespace SignInCheckIn.Controllers
         public IHttpActionResult GetEvents(
             [FromUri(Name = "startDate")] DateTime startDate,
             [FromUri(Name = "endDate")] DateTime endDate,
-            [FromUri(Name = "site")] int site )
+            [FromUri(Name = "site")] int site)
         {
             try
             {
@@ -71,7 +72,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof (EventRoomDto))]
+        [ResponseType(typeof(EventRoomDto))]
         //[VersionedRoute(template: "events/{eventid}", minimumVersion: "1.0.0")]
         [Route("events/{eventid}")]
         public IHttpActionResult GetEvent([FromUri] int eventId)
@@ -94,11 +95,12 @@ namespace SignInCheckIn.Controllers
         [RequiresAuthorization]
         public IHttpActionResult GetRoomsByEvent(int eventid)
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 try
                 {
-                    var roomList = _roomService.GetLocationRoomsByEventId(token, eventid);
+                    VerifyRoles.KidsClubTools(authDto);
+                    var roomList = _roomService.GetLocationRoomsByEventId(eventid);
                     return Ok(roomList);
                 }
                 catch (Exception e)
@@ -110,7 +112,7 @@ namespace SignInCheckIn.Controllers
         }
 
         [HttpGet]
-        [ResponseType(typeof (EventRoomDto))]
+        [ResponseType(typeof(EventRoomDto))]
         //[VersionedRoute(template: "events/{eventId:int}/rooms/{roomId:int}/groups", minimumVersion: "1.0.0")]
         [Route("events/{eventId:int}/rooms/{roomId:int}/groups")]
         [RequiresAuthorization]
@@ -118,8 +120,11 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token => Ok(_roomService.GetEventRoomAgesAndGrades(token, eventId, roomId)),
-                                  () => Ok(_roomService.GetEventRoomAgesAndGrades(null, eventId, roomId)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_roomService.GetEventRoomAgesAndGrades(eventId, roomId));
+                });
             }
             catch (Exception e)
             {
@@ -137,7 +142,11 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token => Ok(_roomService.GetEventUnassignedGroups(token, eventId)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_roomService.GetEventUnassignedGroups(eventId));
+                });
             }
             catch (Exception e)
             {
@@ -155,7 +164,11 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token => Ok(_roomService.UpdateEventRoomAgesAndGrades(token, eventId, roomId, eventRoom)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_roomService.UpdateEventRoomAgesAndGrades(eventId, roomId, eventRoom));
+                });
             }
             catch (Exception e)
             {
@@ -173,7 +186,11 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token => Ok(_eventService.ImportEventSetup(token, destinationEventId, sourceEventId)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_eventService.ImportEventSetup(destinationEventId, sourceEventId));
+                });
             }
             catch (Exception e)
             {
@@ -191,7 +208,11 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token => Ok(_eventService.ResetEventSetup(token, eventId)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_eventService.ResetEventSetup(eventId));
+                });
             }
             catch (Exception e)
             {
@@ -209,7 +230,11 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token => Ok(_eventService.GetEventMaps(token, eventId)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_eventService.GetEventMaps(eventId));
+                });
             }
             catch (Exception e)
             {
@@ -227,7 +252,11 @@ namespace SignInCheckIn.Controllers
             try
             {
 
-                return Authorized(token => Ok(_eventService.GetListOfChildrenForEvent(token, eventId, search)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_eventService.GetListOfChildrenForEvent(eventId, search));
+                });
             }
             catch (Exception e)
             {
@@ -245,7 +274,11 @@ namespace SignInCheckIn.Controllers
             try
             {
 
-                return Authorized(token => Ok(_eventService.GetFamiliesForSearch(token, search)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_eventService.GetFamiliesForSearch(search));
+                });
             }
             catch (Exception e)
             {
@@ -263,7 +296,11 @@ namespace SignInCheckIn.Controllers
             try
             {
 
-                return Authorized(token => Ok(_eventService.GetHouseholdByHouseholdId(token, householdId)));
+                return Authorized(authDto =>
+                {
+                    VerifyRoles.KidsClubTools(authDto);
+                    return Ok(_eventService.GetHouseholdByHouseholdId(householdId));
+                });
             }
             catch (Exception e)
             {
@@ -279,9 +316,10 @@ namespace SignInCheckIn.Controllers
         {
             try
             {
-                return Authorized(token =>
+                return Authorized(authDto =>
                 {
-                    var updatedHousehold = _eventService.UpdateHouseholdInformation(token, householdDto);
+                    VerifyRoles.KidsClubTools(authDto);
+                    var updatedHousehold = _eventService.UpdateHouseholdInformation(householdDto);
                     return Ok(updatedHousehold);
                 });
             }

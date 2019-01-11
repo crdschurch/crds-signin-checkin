@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Crossroads.Utilities.Services.Interfaces;
+﻿using Crossroads.Utilities.Services.Interfaces;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
-using SignInCheckIn.Services;
 using SignInCheckIn.Models.DTO;
+using SignInCheckIn.Services;
+using System;
+using System.Collections.Generic;
 
 namespace SignInCheckIn.Tests.Services
 {
@@ -381,11 +379,11 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _eventRepository.Setup(mocked => mocked.GetEventById(destinationEventId)).Returns(destinationEvent);
-            _eventRepository.Setup(mocked => mocked.ResetEventSetup(token, destinationEventId));
-            _eventRepository.Setup(mocked => mocked.ImportEventSetup(token, destinationEventId, sourceEventId));
+            _eventRepository.Setup(mocked => mocked.ResetEventSetup(destinationEventId));
+            _eventRepository.Setup(mocked => mocked.ImportEventSetup(destinationEventId, sourceEventId));
             _roomRepository.Setup(mocked => mocked.GetRoomsForEvent(destinationEventId, locationId)).Returns(eventRooms);
 
-            var response = _fixture.ImportEventSetup(token, destinationEventId, sourceEventId);
+            var response = _fixture.ImportEventSetup(destinationEventId, sourceEventId);
             _eventRepository.VerifyAll();
             _roomRepository.VerifyAll();
             response.Should().NotBeNull();
@@ -411,10 +409,10 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _eventRepository.Setup(mocked => mocked.GetEventById(eventId)).Returns(destinationEvent);
-            _eventRepository.Setup(mocked => mocked.ResetEventSetup(token, eventId));
+            _eventRepository.Setup(mocked => mocked.ResetEventSetup(eventId));
             _roomRepository.Setup(mocked => mocked.GetRoomsForEvent(eventId, locationId)).Returns(eventRooms);
 
-            var response = _fixture.ResetEventSetup(token, eventId);
+            var response = _fixture.ResetEventSetup(eventId);
             _eventRepository.VerifyAll();
             _roomRepository.VerifyAll();
             response.Should().NotBeNull();
@@ -444,12 +442,12 @@ namespace SignInCheckIn.Tests.Services
                 EventTypeId = 20
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(events);
-            _eventRepository.Setup(m => m.CreateSubEvent(token, It.IsAny<MpEventDto>())).Returns(childEvent);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(eventId, true)).Returns(events);
+            _eventRepository.Setup(m => m.CreateSubEvent(It.IsAny<MpEventDto>())).Returns(childEvent);
             _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
             // Act
-            var result = _fixture.GetEventMaps(token, eventId);
+            var result = _fixture.GetEventMaps(eventId);
 
             // Assert
             _eventRepository.VerifyAll();
@@ -481,11 +479,11 @@ namespace SignInCheckIn.Tests.Services
 
             events.Add(childEvent);
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(events);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(eventId, true)).Returns(events);
             _applicationConfiguation.Setup(m => m.AdventureClubEventTypeId).Returns(20);
 
             // Act
-            var result = _fixture.GetEventMaps(token, eventId);
+            var result = _fixture.GetEventMaps(eventId);
 
             // Assert
             _eventRepository.VerifyAll();
@@ -568,9 +566,9 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
             var searchString = "bob";
-            _participantRepository.Setup(m => m.GetChildParticipantsByEvent(token, It.IsAny<int>(), searchString)).Returns(children);
+            _participantRepository.Setup(m => m.GetChildParticipantsByEvent(It.IsAny<int>(), searchString)).Returns(children);
 
-            var result =_fixture.GetListOfChildrenForEvent(token, eventId, searchString);
+            var result = _fixture.GetListOfChildrenForEvent(eventId, searchString);
 
             // Assert
             _eventRepository.VerifyAll();
@@ -613,9 +611,9 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _participantRepository.Setup(m => m.GetFamiliesForSearch(token, search)).Returns(contacts);
+            _participantRepository.Setup(m => m.GetFamiliesForSearch(search)).Returns(contacts);
 
-            var result = _fixture.GetFamiliesForSearch(token, search);
+            var result = _fixture.GetFamiliesForSearch(search);
 
             // Assert
             _participantRepository.VerifyAll();
@@ -643,9 +641,9 @@ namespace SignInCheckIn.Tests.Services
                 HouseholdName = "Test"
             };
 
-            _participantRepository.Setup(m => m.GetHouseholdByHouseholdId(token, householdId)).Returns(household);
+            _participantRepository.Setup(m => m.GetHouseholdByHouseholdId(householdId)).Returns(household);
 
-            var result = _fixture.GetHouseholdByHouseholdId(token, householdId);
+            var result = _fixture.GetHouseholdByHouseholdId(householdId);
 
             // Assert
             Assert.AreEqual(result.HouseholdId, household.HouseholdId);
@@ -664,9 +662,9 @@ namespace SignInCheckIn.Tests.Services
                 HouseholdName = "TestUser1"
             };
 
-            _participantRepository.Setup(m => m.UpdateHouseholdInformation(token, It.IsAny<MpHouseholdDto>()));
+            _participantRepository.Setup(m => m.UpdateHouseholdInformation(It.IsAny<MpHouseholdDto>()));
 
-            _fixture.UpdateHouseholdInformation(token, householdDto);
+            _fixture.UpdateHouseholdInformation(householdDto);
 
             // Assert
             _participantRepository.VerifyAll();

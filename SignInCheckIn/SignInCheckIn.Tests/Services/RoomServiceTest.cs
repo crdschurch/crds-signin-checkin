@@ -1,10 +1,7 @@
-using System;
-using FluentAssertions;
-using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.MinistryPlatform;
+using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -14,6 +11,9 @@ using NUnit.Framework;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SignInCheckIn.Tests.Services
 {
@@ -100,7 +100,7 @@ namespace SignInCheckIn.Tests.Services
 
             _fixture = new RoomService(_eventRepository.Object, _eventService.Object, _roomRepository.Object, _attributeRepository.Object, _groupRepository.Object, _applicationConfiguration.Object, _apiUserRepository.Object, _kioskRepository.Object);
         }
-        
+
         [Test]
         public void ShouldGetEventRooms()
         {
@@ -112,7 +112,7 @@ namespace SignInCheckIn.Tests.Services
                 EventId = 1234567,
                 LocationId = 3
             };
-            var events = new List<MpEventDto> {mpEventDto};
+            var events = new List<MpEventDto> { mpEventDto };
 
             var mpEventRoomDtos = new List<MpEventRoomDto>
             {
@@ -181,7 +181,7 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository.Setup(m => m.GetManageRoomsListData(mpEventDto.EventId)).Returns(roomJsonData);
 
             // Act
-            var result = _fixture.GetLocationRoomsByEventId(token, 1234567);
+            var result = _fixture.GetLocationRoomsByEventId(1234567);
 
             // Assert
             Assert.IsNotNull(result);
@@ -190,7 +190,7 @@ namespace SignInCheckIn.Tests.Services
             _roomRepository.VerifyAll();
             _eventRepository.VerifyAll();
         }
-        
+
         public void TestCreateOrUpdateEventRoom()
         {
             var eventRoom = new EventRoomDto
@@ -223,14 +223,14 @@ namespace SignInCheckIn.Tests.Services
 
             var newEventRoom = Mapper.Map<EventRoomDto>(newMpEventRoom);
 
-            _roomRepository.Setup(mocked => mocked.CreateOrUpdateEventRoom("token", It.IsAny<MpEventRoomDto>())).Returns(newMpEventRoom);
-            var result = _fixture.CreateOrUpdateEventRoom("token", eventRoom);
+            _roomRepository.Setup(mocked => mocked.CreateOrUpdateEventRoom(It.IsAny<MpEventRoomDto>())).Returns(newMpEventRoom);
+            var result = _fixture.CreateOrUpdateEventRoom(eventRoom);
             _roomRepository.VerifyAll();
 
             Assert.IsNotNull(result);
             result.ShouldBeEquivalentTo(newEventRoom);
         }
-        
+
         public void TestCreateOrUpdateEventRoomAndSubEventRoom()
         {
             var eventRoom = new EventRoomDto
@@ -288,9 +288,9 @@ namespace SignInCheckIn.Tests.Services
 
             _eventRepository.Setup(mocked => mocked.GetSubeventsForEvents(It.IsAny<List<int>>(), It.IsAny<int>())).Returns(acEvents);
             _roomRepository.Setup(mocked => mocked.GetEventRoom(It.IsAny<int>(), It.IsAny<int>())).Returns(acEventRoom);
-            _roomRepository.Setup(mocked => mocked.CreateOrUpdateEventRoom("token", It.IsAny<MpEventRoomDto>())).Returns(newMpEventRoom);
-            _eventService.Setup(mocked => mocked.UpdateAdventureClubStatusIfNecessary(It.IsAny<MpEventDto>(), It.IsAny<string>()));
-            var result = _fixture.CreateOrUpdateEventRoom("token", eventRoom);
+            _roomRepository.Setup(mocked => mocked.CreateOrUpdateEventRoom(It.IsAny<MpEventRoomDto>())).Returns(newMpEventRoom);
+            _eventService.Setup(mocked => mocked.UpdateAdventureClubStatusIfNecessary(It.IsAny<MpEventDto>()));
+            var result = _fixture.CreateOrUpdateEventRoom(eventRoom);
             _roomRepository.VerifyAll();
 
             Assert.IsNotNull(result);
@@ -303,10 +303,10 @@ namespace SignInCheckIn.Tests.Services
             // arrange
             const string token = "token 123";
             const int eventId = 56465;
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
             var eventGroups = new List<MpEventGroupDto>();
             eventGroups.Add(
                 new MpEventGroupDto
@@ -315,7 +315,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             );
             _eventRepository.Setup(m => m.GetEventGroupsForEvent(eventId)).Returns(eventGroups);
-            var mpGroupDtos =  new List<MpGroupDto>();
+            var mpGroupDtos = new List<MpGroupDto>();
             mpGroupDtos.Add(
                 new MpGroupDto
                 {
@@ -330,17 +330,17 @@ namespace SignInCheckIn.Tests.Services
                     Id = 88
                 }
             );
-           mpGroupDtos.Add(
-                new MpGroupDto
-                {
-                    Name = "Kids Club 1st Grade",
-                    Id = 77
-                }
-            );
-            _groupRepository.Setup(mocked => mocked.GetGroupsByAttribute(token, It.IsAny<IEnumerable<MpAttributeDto>>(), false)).Returns(mpGroupDtos);
+            mpGroupDtos.Add(
+                 new MpGroupDto
+                 {
+                     Name = "Kids Club 1st Grade",
+                     Id = 77
+                 }
+             );
+            _groupRepository.Setup(mocked => mocked.GetGroupsByAttribute(It.IsAny<IEnumerable<MpAttributeDto>>(), false)).Returns(mpGroupDtos);
 
             // act
-            var result = _fixture.GetEventUnassignedGroups(token, eventId);
+            var result = _fixture.GetEventUnassignedGroups(eventId);
 
             // assert
             _roomRepository.VerifyAll();
@@ -352,376 +352,6 @@ namespace SignInCheckIn.Tests.Services
 
         }
 
-        public void TestGetEventRoomAgesAndGradesNoEventGroups()
-        {
-            const string token = "token 123";
-            const int eventId = 12345;
-            const int roomId = 67890;
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
-                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
-                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
-
-            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
-
-            MpEventDto mpEventDto = new MpEventDto
-            {
-                EventId = 12345,
-                EventTypeId = 11
-            };
-
-            var checkinEvents = new List<MpEventDto>();
-            checkinEvents.Add(mpEventDto);
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
-
-            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
-
-            var eventRoom = new MpEventRoomDto
-            {
-                RoomName = "the room"
-            };
-
-            List<int> eventIds = new List<int>
-            {
-                12345
-            };
-            _roomRepository.Setup(mocked => mocked.GetEventRoomForEventMaps(eventIds, roomId)).Returns(eventRoom);
-
-            var mpRoomDto = new MpRoomDto
-            {
-                RoomId = 67890,
-                RoomName = "the room"
-            };
-
-            _roomRepository.Setup(m => m.GetRoom(It.IsAny<int>())).Returns(mpRoomDto);
-
-            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns((List<MpEventGroupDto>) null);
-
-            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            result.Should().NotBeNull();
-            result.RoomName.Should().Be("the room");
-            var assignedGroups = result.AssignedGroups;
-            assignedGroups.Should().NotBeNull();
-            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
-            assignedGroups.ForEach(x =>
-            {
-                Assert.IsFalse(x.HasRanges && x.Ranges.Exists(y => y.Selected));
-                if (x.Id == NurseryAgeAttributeId)
-                {
-                    var i = 0;
-                    Assert.IsTrue(x.HasRanges);
-                    _nurseryMonthList.OrderBy(m => m.SortOrder).ToList().ForEach(m =>
-                    {
-                        Assert.AreEqual(m.Name, x.Ranges[i].Name);
-                        Assert.AreEqual(m.Id, x.Ranges[i].Id);
-                        Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
-                        i++;
-                    });
-                }
-                else if (x.TypeId == AgesAttributeTypeId)
-                {
-                    var i = 0;
-                    Assert.IsTrue(x.HasRanges);
-                    _birthMonthList.OrderBy(m => m.SortOrder).ToList().ForEach(m =>
-                    {
-                        Assert.AreEqual(m.Name.Substring(0, 3), x.Ranges[i].Name);
-                        Assert.AreEqual(m.Id, x.Ranges[i].Id);
-                        Assert.AreEqual(m.SortOrder, x.Ranges[i].SortOrder);
-                        i++;
-                    });
-                }
-                else if (x.TypeId == GradesAttributeTypeId)
-                {
-                    Assert.IsFalse(x.HasRanges);
-                }
-                else
-                {
-                    Assert.Fail($"Unexpected age/grade Id: {x.Id}, Name: {x.Name}");
-                }
-            });
-        }
-        
-        public void TestGetEventRoomAgesAndGradesWithNurseryEventGroups()
-        {
-            const string token = "token 123";
-            const int eventId = 12345;
-            const int roomId = 67890;
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
-                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
-                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
-
-            _applicationConfiguration.Setup(m => m.AdventureClubEventTypeId).Returns(20);
-
-            MpEventDto mpEventDto = new MpEventDto
-            {
-                EventId = 12345,
-                EventTypeId = 11
-            };
-
-            var checkinEvents = new List<MpEventDto>();
-            checkinEvents.Add(mpEventDto);
-            //_eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>())).Returns(checkinEvents);
-
-            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
-
-            var events = new List<MpEventGroupDto>
-            {
-                new MpEventGroupDto
-                {
-                    Event = new MpEventDto
-                    {
-                        EventId = eventId
-                    },
-                    Group = new MpGroupDto
-                    {
-                        Id = 98765,
-                        AgeRange = new MpAttributeDto
-                        {
-                            Id = NurseryAgeAttributeId,
-                            Type = new MpAttributeTypeDto
-                            {
-                                Id = AgesAttributeTypeId
-                            }
-                        },
-                        NurseryMonth = _nurseryMonthList[0]
-                    },
-                    RoomReservation = new MpEventRoomDto
-                    {
-                        RoomId = roomId
-                    }
-                }
-            };
-
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
-
-            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
-            _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
-            {
-                events[0].Group
-            });
-
-            var eventRoom = new MpEventRoomDto
-            {
-                RoomName = "the room"
-            };
-
-            List<int> eventIds = new List<int>
-            {
-                12345
-            };
-            _roomRepository.Setup(mocked => mocked.GetEventRoomForEventMaps(eventIds, roomId)).Returns(eventRoom);
-
-            var mpRoomDto = new MpRoomDto
-            {
-                RoomId = 67890,
-                RoomName = "the room"
-            };
-
-            _roomRepository.Setup(m => m.GetRoom(It.IsAny<int>())).Returns(mpRoomDto);
-
-            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            result.Should().NotBeNull();
-            result.RoomName.Should().Be("the room");
-            var assignedGroups = result.AssignedGroups;
-            assignedGroups.Should().NotBeNull();
-
-            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
-            assignedGroups.Should().NotBeNull();
-            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
-            Assert.IsTrue(assignedGroups.Exists(x => x.Id == NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _nurseryMonthList[0].Id)));
-            Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
-        }
-
-
-        public void TestGetEventRoomAgesAndGradesWithAgeEventGroups()
-        {
-            const string token = "token 123";
-            const int eventId = 12345;
-            const int roomId = 67890;
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
-                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
-                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
-
-            MpEventDto mpEventDto = new MpEventDto
-            {
-                EventId = 12345,
-                EventTypeId = 11
-            };
-
-            var checkinEvents = new List<MpEventDto>();
-            checkinEvents.Add(mpEventDto);
-
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
-
-            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
-
-            var events = new List<MpEventGroupDto>
-            {
-                new MpEventGroupDto
-                {
-                    Event = new MpEventDto
-                    {
-                        EventId = eventId
-                    },
-                    Group = new MpGroupDto
-                    {
-                        Id = 98765,
-                        AgeRange = new MpAttributeDto
-                        {
-                            Id = NurseryAgeAttributeId + 1,
-                            Type = new MpAttributeTypeDto
-                            {
-                                Id = AgesAttributeTypeId
-                            }
-                        },
-                        BirthMonth = _birthMonthList[0]
-                    },
-                    RoomReservation = new MpEventRoomDto
-                    {
-                        RoomId = roomId
-                    }
-                }
-            };
-
-            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
-            _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
-            {
-                events[0].Group
-            });
-
-            var eventRoom = new MpEventRoomDto
-            {
-                RoomName = "the room"
-            };
- 
-            List<int> eventIds = new List<int>
-            {
-                12345
-            };
-            _roomRepository.Setup(mocked => mocked.GetEventRoomForEventMaps(eventIds, roomId)).Returns(eventRoom);
-
-            var mpRoomDto = new MpRoomDto
-            {
-                RoomId = 67890,
-                RoomName = "the room"
-            };
-
-            _roomRepository.Setup(m => m.GetRoom(It.IsAny<int>())).Returns(mpRoomDto);
-
-            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
-            result.Should().NotBeNull();
-            result.RoomName.Should().Be("the room");
-            var assignedGroups = result.AssignedGroups;
-            assignedGroups.Should().NotBeNull();
-
-            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            Assert.IsFalse(assignedGroups.Exists(x => x.Selected));
-            Assert.IsTrue(assignedGroups.Exists(x => x.Id == NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected && y.Id == _birthMonthList[0].Id)));
-            Assert.IsFalse(assignedGroups.Exists(x => x.Id != NurseryAgeAttributeId + 1 && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
-        }
-        
-        public void TestGetEventRoomAgesAndGradesWithGradeEventGroups()
-        {
-            const string token = "token 123";
-            const int eventId = 12345;
-            const int roomId = 67890;
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(AgesAttributeTypeId, token)).Returns(_ageList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(BirthMonthsAttributeTypeId, token))
-                .Returns(_birthMonthList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, token)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(NurseryAgesAttributeTypeId, token))
-                .Returns(_nurseryMonthList.OrderBy(x => x.SortOrder).ToList());
-
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(new List<MpEventDto>());
-
-            MpEventDto mpEventDto = new MpEventDto
-            {
-                EventId = 12345,
-                EventTypeId = 11
-            };
-
-            _eventRepository.Setup(m => m.GetEventById(12345)).Returns(mpEventDto);
-
-            var checkinEvents = new List<MpEventDto>();
-            checkinEvents.Add(mpEventDto);
-
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(It.IsAny<string>(), It.IsAny<int>(), false)).Returns(checkinEvents);
-
-            var events = new List<MpEventGroupDto>
-            {
-                new MpEventGroupDto
-                {
-                    Event = new MpEventDto
-                    {
-                        EventId = eventId
-                    },
-                    Group = new MpGroupDto
-                    {
-                        Id = 98765,
-                        Grade = new MpAttributeDto
-                        {
-                            Id = _gradeList[0].Id,
-                            Type = new MpAttributeTypeDto
-                            {
-                                Id = GradesAttributeTypeId
-                            }
-                        },
-                    },
-                    RoomReservation = new MpEventRoomDto
-                    {
-                        RoomId = roomId
-                    }
-                }
-            };
-
-            _eventRepository.Setup(mocked => mocked.GetEventGroupsForEvent(eventId)).Returns(events);
-            _groupRepository.Setup(mocked => mocked.GetGroups(token, It.IsAny<IEnumerable<int>>(), true)).Returns(new List<MpGroupDto>
-            {
-                events[0].Group
-            });
-
-            var eventRoom = new MpEventRoomDto
-            {
-                RoomName = "the room"
-            };
-
-            List<int> eventIds = new List<int>
-            {
-                12345
-            };
-            _roomRepository.Setup(mocked => mocked.GetEventRoomForEventMaps(eventIds, roomId)).Returns(eventRoom);
-
-            var mpRoomDto = new MpRoomDto
-            {
-                RoomId = 67890,
-                RoomName = "the room"
-            };
-
-            _roomRepository.Setup(m => m.GetRoom(It.IsAny<int>())).Returns(mpRoomDto);
-
-            var result = _fixture.GetEventRoomAgesAndGrades(token, eventId, roomId);
-            _groupRepository.Verify(mocked => mocked.GetGroups(token, It.Is<IEnumerable<int>>(x => x.First() == events[0].Group.Id), true));
-            result.Should().NotBeNull();
-            result.RoomName.Should().Be("the room");
-            var assignedGroups = result.AssignedGroups;
-            assignedGroups.Should().NotBeNull();
-            assignedGroups.Count.Should().Be(_ageList.Count + _gradeList.Count);
-            var selected = assignedGroups.FindAll(x => x.Selected);
-            Assert.IsTrue(selected.Count == 1);
-            Assert.AreEqual(_gradeList[0].Id, selected[0].Id);
-            Assert.IsFalse(assignedGroups.Exists(x => x.Id != _gradeList[0].Id && x.HasRanges && x.Ranges.Exists(y => y.Selected)));
-        }
 
         [Test]
         public void ShouldGetAvailableRooms()
@@ -781,7 +411,7 @@ namespace SignInCheckIn.Tests.Services
                 }
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(eventId, true)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
@@ -796,7 +426,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             // Act
-            var result = _fixture.GetAvailableRooms(token, 1111, eventId);
+            var result = _fixture.GetAvailableRooms(1111, eventId);
 
             // Assert
             _eventRepository.VerifyAll();
@@ -871,11 +501,11 @@ namespace SignInCheckIn.Tests.Services
                 RoomName = "name"
             };
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
-            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns((MpEventRoomDto) null);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(eventId, true)).Returns(checkinEvents);
+            _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), 1111)).Returns((MpEventRoomDto)null);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
-            _roomRepository.Setup(m => m.CreateOrUpdateEventRoom(null, It.IsAny<MpEventRoomDto>())).Returns(returnedNewEventRoom);
+            _roomRepository.Setup(m => m.CreateOrUpdateEventRoom(It.IsAny<MpEventRoomDto>())).Returns(returnedNewEventRoom);
 
             List<EventRoomDto> verifiedDtos = new List<EventRoomDto>()
             {
@@ -887,7 +517,7 @@ namespace SignInCheckIn.Tests.Services
             };
 
             // Act
-            var result = _fixture.GetAvailableRooms(token, 1111, 1234567);
+            var result = _fixture.GetAvailableRooms(1111, 1234567);
 
             // Assert
             _eventRepository.VerifyAll();
@@ -976,15 +606,15 @@ namespace SignInCheckIn.Tests.Services
 
 
 
-            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(token, eventId, true)).Returns(checkinEvents);
+            _eventRepository.Setup(m => m.GetEventAndCheckinSubevents(eventId, true)).Returns(checkinEvents);
             _roomRepository.Setup(m => m.GetEventRoomForEventMaps(It.IsAny<List<int>>(), roomId)).Returns(mpEventRoomFrom);
             _roomRepository.Setup(m => m.GetRoomsForEvent(mpEventDto.EventId, mpEventDto.LocationId)).Returns(mpEventRoomDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesByRoomId(1000)).Returns(mpBumpingRuleDtos);
             _roomRepository.Setup(m => m.GetBumpingRulesForEventRooms(It.IsAny<List<int?>>(), It.IsAny<int?>())).Returns(mpBumpingRuleDtos);
-            _roomRepository.Setup(m => m.DeleteBumpingRules(It.IsAny<string>(), It.IsAny<IEnumerable<int>>()));
+            _roomRepository.Setup(m => m.DeleteBumpingRules(It.IsAny<IEnumerable<int>>()));
 
             // Act
-            var result =_fixture.UpdateAvailableRooms(token, eventId, roomId, eventRoomDtos);
+            var result = _fixture.UpdateAvailableRooms(eventId, roomId, eventRoomDtos);
 
             // Assert
             Assert.AreEqual(result[0].BumpingRuleTypeId, 2);
@@ -1013,9 +643,9 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId)).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId)).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1044,9 +674,9 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId)).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId)).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1075,9 +705,9 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId)).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId)).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1106,9 +736,9 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId)).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId)).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
@@ -1137,9 +767,9 @@ namespace SignInCheckIn.Tests.Services
 
             _kioskRepository.Setup(mocked => mocked.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(kiosk);
             _eventService.Setup(mocked => mocked.GetCurrentEventForSite(It.IsAny<int>(), It.IsAny<string>())).Returns(eventDto);
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId, It.IsAny<string>())).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
-            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId, It.IsAny<string>())).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(GradesAttributeTypeId)).Returns(_gradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMMiddleSchoolGradesAttributeTypeId)).Returns(_sm68GradeList.OrderBy(x => x.SortOrder).ToList());
+            _attributeRepository.Setup(mocked => mocked.GetAttributesByAttributeTypeId(SMHighSchoolGradesAttributeTypeId)).Returns(_sm912GradeList.OrderBy(x => x.SortOrder).ToList());
 
             var result = _fixture.GetGradeAttributes(token, siteId, "dec255cc-615c-4ad2-b6c9-f49d5072d9a0");
             result.Should().NotBeNull();
