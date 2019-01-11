@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web.Http;
-using AutoMapper;
+﻿using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
-using FluentAssertions.Common;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -16,6 +10,9 @@ using Printing.Utilities.Services.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SignInCheckIn.Tests.Services
 {
@@ -1074,7 +1071,7 @@ namespace SignInCheckIn.Tests.Services
                 mpGroupParticipantDto
             };
 
-            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<string>(), It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
 
             // Act
             _fixture.ProcessGuestSignins(participantEventMapDto);
@@ -1144,7 +1141,7 @@ namespace SignInCheckIn.Tests.Services
                 mpGroupParticipantDto
             };
 
-            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<string>(), It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<List<MpGroupParticipantDto>>())).Returns(mpGroupParticipantDtos);
 
             // Act
             _fixture.ProcessGuestSignins(participantEventMapDto);
@@ -2263,10 +2260,10 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _groupLookupRepository.Setup(m => m.GetGroupId(It.IsAny<DateTime>(), null)).Returns(groupId);
-            _participantRepository.Setup(m => m.CreateGroupParticipants(token, It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
 
             // Act
-            var result = _fixture.CreateGroupParticipants(token, mpNewParticipantDtos);
+            var result = _fixture.CreateGroupParticipants(mpNewParticipantDtos);
 
             // Assert
             Assert.AreEqual(173440, result[0].GroupId);
@@ -2301,10 +2298,10 @@ namespace SignInCheckIn.Tests.Services
             };
 
             _groupLookupRepository.Setup(m => m.GetGroupId(It.IsAny<DateTime>(), null)).Returns(gradeGroupAttributeId);
-            _participantRepository.Setup(m => m.CreateGroupParticipants(token, It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
+            _participantRepository.Setup(m => m.CreateGroupParticipants(It.IsAny<List<MpGroupParticipantDto>>())).Returns(newMpGroupParticipantDtos);
 
             // Act
-            var result = _fixture.CreateGroupParticipants(token, mpNewParticipantDtos);
+            var result = _fixture.CreateGroupParticipants(mpNewParticipantDtos);
 
             // Assert
             Assert.AreEqual(173550, result[0].GroupId);

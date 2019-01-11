@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -41,7 +38,7 @@ namespace MinistryPlatform.Translation.Repositories
             return contacts;
         }
 
-        public MpHouseholdDto CreateHousehold(string token, MpHouseholdDto mpHouseholdDto)
+        public MpHouseholdDto CreateHousehold(MpHouseholdDto mpHouseholdDto)
         {
             List<string> householdColumns = new List<string>
             {
@@ -50,10 +47,10 @@ namespace MinistryPlatform.Translation.Repositories
                 "Households.Household_Name"
             };
 
-           return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpHouseholdDto, householdColumns);
+           return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpHouseholdDto, householdColumns);
         }
 
-        public MpContactDto Update(MpContactDto contactDto, string token)
+        public MpContactDto Update(MpContactDto contactDto)
         {
             List<string> columnList = new List<string>
             {
@@ -63,10 +60,10 @@ namespace MinistryPlatform.Translation.Repositories
                 "Gender_ID_Table.[Gender_ID]"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update<MpContactDto>(contactDto, columnList);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Update<MpContactDto>(contactDto, columnList);
         }
 
-        public void CreateContactRelationships(string token, List<MpContactRelationshipDto> contactRelationshipDtos)
+        public void CreateContactRelationships(List<MpContactRelationshipDto> contactRelationshipDtos)
          {
              List<string> columnList = new List<string>
              {
@@ -76,10 +73,10 @@ namespace MinistryPlatform.Translation.Repositories
                  "Start_Date"
              };
  
-             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(contactRelationshipDtos, columnList);
+             _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(contactRelationshipDtos, columnList);
          }
 
-        public MpContactDto GetContactById(string token, int contactId)
+        public MpContactDto GetContactById(int contactId)
         {
             var contactColumnList = new List<string>
             {
@@ -95,13 +92,13 @@ namespace MinistryPlatform.Translation.Repositories
                 "Gender_ID"
             };
 
-            var contact = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+            var contact = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
                 .Search<MpContactDto>($"Contacts.Contact_ID={contactId}", contactColumnList).FirstOrDefault();
 
             return contact;
         }
 
-        public MpUserDto CreateUserRecord(string token, MpUserDto mpUserDto)
+        public MpUserDto CreateUserRecord(MpUserDto mpUserDto)
         {
             var columnList = new List<string>
             {
@@ -115,10 +112,10 @@ namespace MinistryPlatform.Translation.Repositories
                 "PasswordResetToken"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpUserDto, columnList);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpUserDto, columnList);
         }
 
-        public void CreateUserRoles(string token, List<MpUserRoleDto> mpUserRoleDtos)
+        public void CreateUserRoles(List<MpUserRoleDto> mpUserRoleDtos)
         {
             var columnList = new List<string>
             {
@@ -126,10 +123,10 @@ namespace MinistryPlatform.Translation.Repositories
                 "Role_ID"
             };
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpUserRoleDtos, columnList);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpUserRoleDtos, columnList);
         }
 
-        public void CreateContactPublications(string token, List<MpContactPublicationDto> contactPublicationDtos)
+        public void CreateContactPublications(List<MpContactPublicationDto> contactPublicationDtos)
         {
             var columnList = new List<string>
             {
@@ -138,10 +135,10 @@ namespace MinistryPlatform.Translation.Repositories
                 "Unsubscribed"
             };
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(contactPublicationDtos, columnList);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(contactPublicationDtos, columnList);
         }
 
-        public List<MpUserDto> GetUserByEmailAddress(string token, string emailAddress)
+        public List<MpUserDto> GetUserByEmailAddress(string emailAddress)
         {
             var columnList = new List<string>
             {
@@ -156,7 +153,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contact_ID_Table_Household_ID_Table.[Household_ID]"
             };
 
-            var users = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
+            var users = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
                 .Search<MpUserDto>($"dp_Users.User_Name='{emailAddress}'", columnList);
 
             return users;

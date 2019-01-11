@@ -97,10 +97,8 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
         }
 
-        public List<MpGroupParticipantDto> CreateGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> mpGroupParticipantDtos)
-        {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
-
+        public List<MpGroupParticipantDto> CreateGroupParticipants(List<MpGroupParticipantDto> mpGroupParticipantDtos)
+        {            
             List<string> groupParticipantColumns = new List<string>
             {
                 "Group_Participant_ID",
@@ -112,13 +110,12 @@ namespace MinistryPlatform.Translation.Repositories
                 "Auto_Promote"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpGroupParticipantDtos, groupParticipantColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpGroupParticipantDtos, groupParticipantColumns);
         }
 
-        public void DeleteGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> groupParticipants)
+        public void DeleteGroupParticipants(List<MpGroupParticipantDto> groupParticipants)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
+            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
         }
 
         public void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)

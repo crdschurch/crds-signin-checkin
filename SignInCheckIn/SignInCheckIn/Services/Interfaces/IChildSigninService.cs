@@ -15,7 +15,7 @@ namespace SignInCheckIn.Services.Interfaces
         List<MpEventDto> GetEventsForSignin(ParticipantEventMapDto participantEventMapDto, int kisokTypeId, bool allowLateSignin = false);
         MpNewParticipantDto CreateNewParticipantWithContact(string firstName, string lastName, DateTime dateOfBirth, int? gradeGroupId, int householdId, int householdPositionId, bool? isSpecialNeeds = false, int? genderId = 0);
         bool ReverseSignin(int eventParticipantId);
-        List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos);
-        MpGroupParticipantDto UpdateGradeGroupParticipant(string token, int participantId, DateTime dob, int gradeAttributeId, bool removeExisting);
+        List<MpGroupParticipantDto> CreateGroupParticipants(List<MpNewParticipantDto> mpParticipantDtos);
+        MpGroupParticipantDto UpdateGradeGroupParticipant(int participantId, DateTime dob, int gradeAttributeId, bool removeExisting);
     }
 }

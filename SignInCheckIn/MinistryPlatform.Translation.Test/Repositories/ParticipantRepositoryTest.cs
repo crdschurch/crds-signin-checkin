@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace MinistryPlatform.Translation.Test.Repositories
 {
@@ -412,7 +409,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Delete<MpGroupParticipantDto>(It.IsAny<IEnumerable<int>>()));
 
             // Act
-            _fixture.DeleteGroupParticipants(token, list);
+            _fixture.DeleteGroupParticipants(list);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();

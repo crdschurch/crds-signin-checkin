@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
-using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace MinistryPlatform.Translation.Test.Repositories
 {
@@ -59,7 +54,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create<MpContactRelationshipDto>(contactRelationshipDtos, columnList));
 
             // Act
-            _fixture.CreateContactRelationships(token, contactRelationshipDtos);
+            _fixture.CreateContactRelationships(contactRelationshipDtos);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
@@ -101,7 +96,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create<MpUserDto>(mpUserDto, columnList));
 
             // Act
-            _fixture.CreateUserRecord(token, mpUserDto);
+            _fixture.CreateUserRecord(mpUserDto);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();

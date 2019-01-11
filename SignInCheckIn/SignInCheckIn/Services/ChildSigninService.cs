@@ -544,7 +544,7 @@ namespace SignInCheckIn.Services
         }
 
         // this really can just return void, but we need to get the grade group id on the mp new participant dto
-        public List<MpGroupParticipantDto> CreateGroupParticipants(string token, List<MpNewParticipantDto> mpParticipantDtos)
+        public List<MpGroupParticipantDto> CreateGroupParticipants(List<MpNewParticipantDto> mpParticipantDtos)
         {
             List<MpGroupParticipantDto> groupParticipantDtos = new List<MpGroupParticipantDto>();
 
@@ -563,10 +563,10 @@ namespace SignInCheckIn.Services
                 groupParticipantDtos.Add(groupParticipantDto);
             }
 
-            return _participantRepository.CreateGroupParticipants(token, groupParticipantDtos);
+            return _participantRepository.CreateGroupParticipants(groupParticipantDtos);
         }
 
-        public MpGroupParticipantDto UpdateGradeGroupParticipant(string token, int participantId, DateTime dob, int gradeAttributeId, bool removeExisting)
+        public MpGroupParticipantDto UpdateGradeGroupParticipant(int participantId, DateTime dob, int gradeAttributeId, bool removeExisting)
         {
             var groupParticipantDto = new MpGroupParticipantDto
             {
@@ -582,9 +582,9 @@ namespace SignInCheckIn.Services
             if (removeExisting)
             {
                 var ageGradeGroupParticipants = _participantRepository.GetGroupParticipantsByParticipantId(participantId).Where(gp => gp.GroupTypeId == 4).ToList();
-                _participantRepository.DeleteGroupParticipants(token, ageGradeGroupParticipants);
+                _participantRepository.DeleteGroupParticipants(ageGradeGroupParticipants);
             }
-            return _participantRepository.CreateGroupParticipants(token, list)[0];
+            return _participantRepository.CreateGroupParticipants(list)[0];
         }
 
         // this will pull the current event set and next event set for the site - logic to determine which
@@ -752,7 +752,7 @@ namespace SignInCheckIn.Services
                 newGuestParticipantDtos.Add(newGuestParticipantDto);
             }
 
-            var newGroupParticipants = CreateGroupParticipants(null, newGuestParticipantDtos);
+            var newGroupParticipants = CreateGroupParticipants(newGuestParticipantDtos);
 
             // get the group id and assign it to the participant dto for signin
             foreach (var guest in participantEventMapDto.Participants.Where(r => r.GuestSignin == true))

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Cache;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web.Http.Results;
-using Crossroads.Web.Common.Security;
+﻿using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
@@ -13,7 +8,10 @@ using NUnit.Framework;
 using SignInCheckIn.Controllers;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
-using Crossroads.Web.Common.Services;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Web.Http.Results;
 
 namespace SignInCheckIn.Tests.Controllers
 {
@@ -46,7 +44,7 @@ namespace SignInCheckIn.Tests.Controllers
 
             _fixture = new FamilyController(_authTokenExpiryService.Object, _authenticationRepository.Object, _contactRepository.Object, _kioskRepository.Object,
                 _familyService.Object, _childSigninService.Object);
-            _fixture.SetupAuthorization(AuthType, AuthToken);
+            //_fixture.SetupAuthorization(AuthToken, AuthType);
         }
 
         [Test]
@@ -61,7 +59,7 @@ namespace SignInCheckIn.Tests.Controllers
             };
 
             _kioskRepository.Setup(r => r.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
-            _familyService.Setup(r => r.CreateNewFamily(It.IsAny<string>(), It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
+            _familyService.Setup(r => r.CreateNewFamily(It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
                 .Returns(new List<ContactDto>());
 
             _fixture.Request.Headers.Add("Crds-Kiosk-Identifier", Guid.NewGuid().ToString());
@@ -87,7 +85,7 @@ namespace SignInCheckIn.Tests.Controllers
             };
 
             _kioskRepository.Setup(r => r.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
-            _familyService.Setup(r => r.CreateNewFamily(It.IsAny<string>(), It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
+            _familyService.Setup(r => r.CreateNewFamily(It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
                 .Returns(new List<ContactDto>());
 
             _fixture.Request.Headers.Add("Crds-Kiosk-Identifier", Guid.NewGuid().ToString());
