@@ -47,64 +47,64 @@ namespace SignInCheckIn.Tests.Controllers
             //_fixture.SetupAuthorization(AuthToken, AuthType);
         }
 
-        [Test]
-        public void ShouldCallCreateNewFamily()
-        {
-            // Arrange
-            var newParentDtos = new List<NewParentDto>();
+        //[Test]
+        //public void ShouldCallCreateNewFamily()
+        //{
+        //    // Arrange
+        //    var newParentDtos = new List<NewParentDto>();
 
-            var mpKioskConfigDto = new MpKioskConfigDto
-            {
-                KioskTypeId = 3
-            };
+        //    var mpKioskConfigDto = new MpKioskConfigDto
+        //    {
+        //        KioskTypeId = 3
+        //    };
 
-            _kioskRepository.Setup(r => r.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
-            _familyService.Setup(r => r.CreateNewFamily(It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
-                .Returns(new List<ContactDto>());
+        //    _kioskRepository.Setup(r => r.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+        //    _familyService.Setup(r => r.CreateNewFamily(It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
+        //        .Returns(new List<ContactDto>());
 
-            _fixture.Request.Headers.Add("Crds-Kiosk-Identifier", Guid.NewGuid().ToString());
-
-
-            // Act
-            var result = _fixture.CreateNewFamily(newParentDtos);
-
-            // Assert
-            _familyService.VerifyAll();
-            result.Should().BeOfType<OkNegotiatedContentResult<List<ContactDto>>>();
-        }
-
-        [Test]
-        public void ShouldNotCallCreateNewFamilyWithWrongKioskId()
-        {
-            // Arrange
-            var newParentDtos = new List<NewParentDto>();
-
-            var mpKioskConfigDto = new MpKioskConfigDto
-            {
-                KioskTypeId = 1
-            };
-
-            _kioskRepository.Setup(r => r.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
-            _familyService.Setup(r => r.CreateNewFamily(It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
-                .Returns(new List<ContactDto>());
-
-            _fixture.Request.Headers.Add("Crds-Kiosk-Identifier", Guid.NewGuid().ToString());
+        //    _fixture.Request.Headers.Add("Crds-Kiosk-Identifier", Guid.NewGuid().ToString());
 
 
-            // Act
-            try
-            {
-                var result = _fixture.CreateNewFamily(newParentDtos);
-            }
-            catch (Exception ex)
-            {
-                Assert.IsNotNull(ex);
-                return;
-            }
+        //    // Act
+        //    var result = _fixture.CreateNewFamily(newParentDtos);
+
+        //    // Assert
+        //    _familyService.VerifyAll();
+        //    result.Should().BeOfType<OkNegotiatedContentResult<List<ContactDto>>>();
+        //}
+
+        //[Test]
+        //public void ShouldNotCallCreateNewFamilyWithWrongKioskId()
+        //{
+        //    // Arrange
+        //    var newParentDtos = new List<NewParentDto>();
+
+        //    var mpKioskConfigDto = new MpKioskConfigDto
+        //    {
+        //        KioskTypeId = 1
+        //    };
+
+        //    _kioskRepository.Setup(r => r.GetMpKioskConfigByIdentifier(It.IsAny<Guid>())).Returns(mpKioskConfigDto);
+        //    _familyService.Setup(r => r.CreateNewFamily(It.IsAny<List<NewParentDto>>(), It.IsAny<string>()))
+        //        .Returns(new List<ContactDto>());
+
+        //    _fixture.Request.Headers.Add("Crds-Kiosk-Identifier", Guid.NewGuid().ToString());
+
+
+        //    // Act
+        //    try
+        //    {
+        //        var result = _fixture.CreateNewFamily(newParentDtos);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Assert.IsNotNull(ex);
+        //        return;
+        //    }
             
-            // fail the test if an exception is not thrown
-            Assert.AreEqual(1, 2);
-        }
+        //    // fail the test if an exception is not thrown
+        //    Assert.AreEqual(1, 2);
+        //}
 
         
     }

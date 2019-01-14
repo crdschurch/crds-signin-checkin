@@ -119,7 +119,7 @@ namespace SignInCheckIn.Tests.Services
             _contactRepository.Setup(m => m.CreateUserRecord(It.IsAny<MpUserDto>())).Returns(mpNewUserDto);
             _contactRepository.Setup(m => m.CreateUserRoles(It.IsAny<List<MpUserRoleDto>>()));
             _contactRepository.Setup(m => m.CreateContactPublications(It.IsAny<List<MpContactPublicationDto>>()));
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), null)).Returns(mpNewParticipantDtoFromRepo);
 
             // Act
             var result = _fixture.CreateNewFamily(newParentDtos, kioskId);
@@ -275,8 +275,8 @@ namespace SignInCheckIn.Tests.Services
             _contactRepository.Setup(m => m.CreateHousehold(It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
 
             // the new contact is created as part of creating the participant - would be nice if we can pass down the first name as an arg?
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_one"), token)).Returns(mpNewParticipantDtoFromRepo_1);
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_two"), token)).Returns(mpNewParticipantDtoFromRepo_2);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_one"), null)).Returns(mpNewParticipantDtoFromRepo_1);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_two"), null)).Returns(mpNewParticipantDtoFromRepo_2);
 
             // these are created off of the new participant object - the contact id is on the new participant object
             _contactRepository.Setup(m => m.GetContactById(5544555)).Returns(mpNewContactDto_1);
@@ -460,7 +460,7 @@ namespace SignInCheckIn.Tests.Services
             _contactRepository.Setup(m => m.CreateHousehold(It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
             _contactRepository.Setup(m => m.GetContactById(It.IsAny<int>())).Returns(mpNewContactDto);
             _contactRepository.Setup(m => m.CreateContactPublications(It.IsAny<List<MpContactPublicationDto>>()));
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), null)).Returns(mpNewParticipantDtoFromRepo);
 
             // Act
             var result = _fixture.CreateNewFamily(newParentDtos, kioskId);
