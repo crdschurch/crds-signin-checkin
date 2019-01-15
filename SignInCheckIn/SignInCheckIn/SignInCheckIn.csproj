@@ -293,6 +293,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Security\MPAuth.cs" />
+    <Compile Include="Security\VerifyRoles.cs" />
     <Compile Include="Services\ChildCheckinService.cs" />
     <Compile Include="Services\ChildSigninService.cs" />
     <Compile Include="Services\FamilyService.cs" />

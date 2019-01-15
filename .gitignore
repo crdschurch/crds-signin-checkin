@@ -236,3 +236,4 @@ _Pvt_Extensions
 .fake/
 **/Crossroads.Web.Common-Unity.config
 **/Crossroads.ClientApiKeys-Unity.config
+/SignInCheckIn/.env

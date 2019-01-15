@@ -5,7 +5,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
     public interface IParticipantRepository
     {
-        List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, int eventId, string search);
+        List<MpEventParticipantDto> GetChildParticipantsByEvent(int eventId, string search);
         MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto, string token = null);
         List<MpGroupParticipantDto> CreateGroupParticipants(List<MpGroupParticipantDto> mpGroupParticipantDtos);
         void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos);
@@ -13,9 +13,9 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds);
         List<MpGroupParticipantDto> GetGroupParticipantsByParticipantAndGroupId(int groupId, List<int> participantIds);
         List<MpGroupParticipantDto> GetGroupParticipantsByParticipantId(int participantId);
-        List<MpContactDto> GetFamiliesForSearch(string token, string search);
-        MpHouseholdDto GetHouseholdByHouseholdId(string token, int householdId);
-        void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto);
+        List<MpContactDto> GetFamiliesForSearch(string search);
+        MpHouseholdDto GetHouseholdByHouseholdId(int householdId);
+        void UpdateHouseholdInformation(MpHouseholdDto householdDto);
         void DeleteGroupParticipants(List<MpGroupParticipantDto> groupParticipants);
     }
 }
