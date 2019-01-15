@@ -50,7 +50,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 "Start_Date"
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create<MpContactRelationshipDto>(contactRelationshipDtos, columnList));
 
@@ -93,7 +93,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 PasswordResetToken = "abcdefgh12345678"
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Create<MpUserDto>(mpUserDto, columnList));
 

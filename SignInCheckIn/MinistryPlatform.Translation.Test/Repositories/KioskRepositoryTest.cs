@@ -69,7 +69,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             kioskConfigs.Add(testDto);
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpKioskConfigDto>($"[_Kiosk_Identifier]='{testGuid}' AND cr_Kiosk_Configs.[End_Date] IS NULL", _kioskConfigColumns, null, false)).Returns(kioskConfigs);
             var result = _fixture.GetMpKioskConfigByIdentifier(testGuid);
@@ -94,7 +94,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             mpPrinterMapDtos.Add(mpPrinterMapDto);
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpPrinterMapDto>($"[Printer_Map_ID]={printerMapId}", _printerMapColumns, null, false)).Returns(mpPrinterMapDtos);
             var result = _fixture.GetPrinterMapById(printerMapId);
