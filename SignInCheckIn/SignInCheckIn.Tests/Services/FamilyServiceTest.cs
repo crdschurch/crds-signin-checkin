@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Crossroads.Utilities.Services.Interfaces;
+﻿using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
@@ -7,6 +6,7 @@ using NUnit.Framework;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services;
 using SignInCheckIn.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace SignInCheckIn.Tests.Services
 {
@@ -113,16 +113,16 @@ namespace SignInCheckIn.Tests.Services
 
             _passwordService.Setup(r => r.GetNewUserPassword(16, 2)).Returns("abcdefghijklmnopq");
             _passwordService.Setup(r => r.GeneratorPasswordResetToken("test@test.com")).Returns("abcdefgh12345678");
-            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test@test.com")).Returns(new List<MpUserDto>());
-            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(mpNewContactDto);
-            _contactRepository.Setup(m => m.CreateUserRecord(token, It.IsAny<MpUserDto>())).Returns(mpNewUserDto);
-            _contactRepository.Setup(m => m.CreateUserRoles(token, It.IsAny<List<MpUserRoleDto>>()));
-            _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
+            _contactRepository.Setup(r => r.GetUserByEmailAddress("test@test.com")).Returns(new List<MpUserDto>());
+            _contactRepository.Setup(m => m.CreateHousehold(It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _contactRepository.Setup(m => m.GetContactById(It.IsAny<int>())).Returns(mpNewContactDto);
+            _contactRepository.Setup(m => m.CreateUserRecord(It.IsAny<MpUserDto>())).Returns(mpNewUserDto);
+            _contactRepository.Setup(m => m.CreateUserRoles(It.IsAny<List<MpUserRoleDto>>()));
+            _contactRepository.Setup(m => m.CreateContactPublications(It.IsAny<List<MpContactPublicationDto>>()));
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), null)).Returns(mpNewParticipantDtoFromRepo);
 
             // Act
-            var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
+            var result = _fixture.CreateNewFamily(newParentDtos, kioskId);
 
             // Assert
             Assert.IsNotNull(result[0].HouseholdId);
@@ -268,30 +268,30 @@ namespace SignInCheckIn.Tests.Services
             _passwordService.Setup(r => r.GeneratorPasswordResetToken("test2@test.com")).Returns("abcdefgh12345678");
 
             // these need to return an empty list, as we expect that no parents will be found if they're new
-            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test1@test.com")).Returns(new List<MpUserDto>());
-            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test2@test.com")).Returns(new List<MpUserDto>());
+            _contactRepository.Setup(r => r.GetUserByEmailAddress( "test1@test.com")).Returns(new List<MpUserDto>());
+            _contactRepository.Setup(r => r.GetUserByEmailAddress("test2@test.com")).Returns(new List<MpUserDto>());
 
             // only one household gets created
-            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _contactRepository.Setup(m => m.CreateHousehold(It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
 
             // the new contact is created as part of creating the participant - would be nice if we can pass down the first name as an arg?
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_one"), token)).Returns(mpNewParticipantDtoFromRepo_1);
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_two"), token)).Returns(mpNewParticipantDtoFromRepo_2);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_one"), null)).Returns(mpNewParticipantDtoFromRepo_1);
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.Is<MpNewParticipantDto>(r => r.Contact.FirstName == "first_two"), null)).Returns(mpNewParticipantDtoFromRepo_2);
 
             // these are created off of the new participant object - the contact id is on the new participant object
-            _contactRepository.Setup(m => m.GetContactById(token, 5544555)).Returns(mpNewContactDto_1);
-            _contactRepository.Setup(m => m.GetContactById(token, 4433444)).Returns(mpNewContactDto_2);
+            _contactRepository.Setup(m => m.GetContactById(5544555)).Returns(mpNewContactDto_1);
+            _contactRepository.Setup(m => m.GetContactById(4433444)).Returns(mpNewContactDto_2);
 
             // test creating the actual user records - the email address is the comparator
-            _contactRepository.Setup(m => m.CreateUserRecord(token, It.Is<MpUserDto>(r => r.UserEmail == "test1@test.com"))).Returns(mpNewUserDtoReturn_1);
-            _contactRepository.Setup(m => m.CreateUserRecord(token, It.Is<MpUserDto>(r => r.UserEmail == "test2@test.com"))).Returns(mpNewUserDtoReturn_2);
+            _contactRepository.Setup(m => m.CreateUserRecord(It.Is<MpUserDto>(r => r.UserEmail == "test1@test.com"))).Returns(mpNewUserDtoReturn_1);
+            _contactRepository.Setup(m => m.CreateUserRecord(It.Is<MpUserDto>(r => r.UserEmail == "test2@test.com"))).Returns(mpNewUserDtoReturn_2);
 
-            _contactRepository.Setup(m => m.CreateUserRoles(token, It.IsAny<List<MpUserRoleDto>>()));
-            _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
+            _contactRepository.Setup(m => m.CreateUserRoles(It.IsAny<List<MpUserRoleDto>>()));
+            _contactRepository.Setup(m => m.CreateContactPublications(It.IsAny<List<MpContactPublicationDto>>()));
             //_contactRepository.Setup(m => m.CreateContactRelationships(token, It.IsAny<List<MpContactRelationshipDto>>()));
             
             // Act
-            var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
+            var result = _fixture.CreateNewFamily(newParentDtos, kioskId);
 
             // Assert
             _contactRepository.VerifyAll();
@@ -371,16 +371,16 @@ namespace SignInCheckIn.Tests.Services
 
             _passwordService.Setup(r => r.GetNewUserPassword(16, 2)).Returns("abcdefghijklmnopq");
             _passwordService.Setup(r => r.GeneratorPasswordResetToken("test@test.com")).Returns("abcdefgh12345678");
-            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test@test.com")).Returns(new List<MpUserDto> { new MpUserDto() });
-            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(mpNewContactDto);
-            _contactRepository.Setup(m => m.CreateUserRecord(token, It.IsAny<MpUserDto>())).Returns(mpNewUserDto);
-            _contactRepository.Setup(m => m.CreateUserRoles(token, It.IsAny<List<MpUserRoleDto>>()));
-            _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
+            _contactRepository.Setup(r => r.GetUserByEmailAddress("test@test.com")).Returns(new List<MpUserDto> { new MpUserDto() });
+            _contactRepository.Setup(m => m.CreateHousehold(It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _contactRepository.Setup(m => m.GetContactById(It.IsAny<int>())).Returns(mpNewContactDto);
+            _contactRepository.Setup(m => m.CreateUserRecord(It.IsAny<MpUserDto>())).Returns(mpNewUserDto);
+            _contactRepository.Setup(m => m.CreateUserRoles(It.IsAny<List<MpUserRoleDto>>()));
+            _contactRepository.Setup(m => m.CreateContactPublications(It.IsAny<List<MpContactPublicationDto>>()));
             _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
 
             // Act
-            var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
+            var result = _fixture.CreateNewFamily(newParentDtos, kioskId);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -456,14 +456,14 @@ namespace SignInCheckIn.Tests.Services
 
             _passwordService.Setup(r => r.GetNewUserPassword(16, 2)).Returns("abcdefghijklmnopq");
             _passwordService.Setup(r => r.GeneratorPasswordResetToken("test@test.com")).Returns("abcdefgh12345678");
-            _contactRepository.Setup(r => r.GetUserByEmailAddress(token, "test@test.com")).Returns(new List<MpUserDto> { new MpUserDto() });
-            _contactRepository.Setup(m => m.CreateHousehold(token, It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
-            _contactRepository.Setup(m => m.GetContactById(token, It.IsAny<int>())).Returns(mpNewContactDto);
-            _contactRepository.Setup(m => m.CreateContactPublications(token, It.IsAny<List<MpContactPublicationDto>>()));
-            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), token)).Returns(mpNewParticipantDtoFromRepo);
+            _contactRepository.Setup(r => r.GetUserByEmailAddress("test@test.com")).Returns(new List<MpUserDto> { new MpUserDto() });
+            _contactRepository.Setup(m => m.CreateHousehold(It.IsAny<MpHouseholdDto>())).Returns(mpHouseholdDto);
+            _contactRepository.Setup(m => m.GetContactById(It.IsAny<int>())).Returns(mpNewContactDto);
+            _contactRepository.Setup(m => m.CreateContactPublications(It.IsAny<List<MpContactPublicationDto>>()));
+            _participantRepository.Setup(m => m.CreateParticipantWithContact(It.IsAny<MpNewParticipantDto>(), null)).Returns(mpNewParticipantDtoFromRepo);
 
             // Act
-            var result = _fixture.CreateNewFamily(token, newParentDtos, kioskId);
+            var result = _fixture.CreateNewFamily(newParentDtos, kioskId);
 
             // Assert
             Assert.AreEqual(1, result.Count);

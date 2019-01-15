@@ -410,7 +410,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             _ministryPlatformRestRepository.Setup(mocked => mocked.Delete<MpGroupParticipantDto>(It.IsAny<IEnumerable<int>>()));
 
             // Act
-            _fixture.DeleteGroupParticipants(token, list);
+            _fixture.DeleteGroupParticipants(list);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
