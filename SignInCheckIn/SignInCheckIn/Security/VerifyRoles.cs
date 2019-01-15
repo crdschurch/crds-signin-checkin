@@ -5,10 +5,10 @@ namespace SignInCheckIn.Security
 {
     public static class VerifyRoles
     {
+        private const int KidsClubToolsId = 112;
         public static void KidsClubTools(AuthDTO authDto)
         {
-            const int KidsClubTools = 112;
-            if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubTools))
+            if (!authDto.Authorization.MpRoles.ContainsKey(KidsClubToolsId))
             {
                 throw new UnauthorizedAccessException();
             }
