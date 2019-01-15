@@ -48,14 +48,14 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpGroupDto GetGroup(string authenticationToken, int groupId, bool includeAttributes = false)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = authenticationToken ?? _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var group = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpGroupDto>(groupId, _groupColumns);
             return SetKidsClubGroupAttributes(group, includeAttributes, token);
         }
 
         public List<MpGroupDto> GetGroups(IEnumerable<int> groupIds, bool includeAttributes = false)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var searchString = $"Group_ID IN ({string.Join(",", groupIds)})";
             var groups = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Search<MpGroupDto>(searchString, _groupColumns);
 
@@ -65,7 +65,7 @@ namespace MinistryPlatform.Translation.Repositories
         public List<MpGroupDto> GetGroupsByAttribute(IEnumerable<MpAttributeDto> attributes, bool includeAttributes = false)
         {
             var attributesList = attributes.ToList();
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var searchString = string.Empty;
             var first = true;
             foreach (var typeId in attributesList.Select(a => a.Type.Id).Distinct())
@@ -90,7 +90,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupDto> GetGroupsForParticipantId(int participantId)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
                 .SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId} AND End_Date IS NULL", "Group_ID_Table.[Group_ID]");

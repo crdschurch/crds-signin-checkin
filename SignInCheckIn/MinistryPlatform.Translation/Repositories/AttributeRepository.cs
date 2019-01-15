@@ -40,7 +40,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpContactAttributeDto CreateContactAttribute(MpContactAttributeDto attribute)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var attributeColumns = new List<string>
                     {
                         "Contact_ID",

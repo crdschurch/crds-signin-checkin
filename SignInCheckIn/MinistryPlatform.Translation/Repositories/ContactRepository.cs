@@ -19,7 +19,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpContactDto> GetHeadsOfHouseholdByHouseholdId(int householdId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var contactColumnList = new List<string>
             {

@@ -110,7 +110,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         private List<MpParticipantDto> GetChildParticipantsByPrimaryHousehold(int? householdId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columnList = new List<string>
             {
@@ -141,7 +141,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         private void GetChildParticipantsByOtherHousehold(int? householdId, List<MpParticipantDto> children)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columnList = new List<string>
             {
@@ -169,7 +169,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         private List<MpEventGroupDto> GetEventGroups(int eventId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columnList = new List<string>
             {
@@ -186,7 +186,7 @@ namespace MinistryPlatform.Translation.Repositories
         private List<MpParticipantDto> GetKidsClubAndStudentMinistryChildren(List<MpParticipantDto> children, List<MpEventGroupDto> eventGroups)
         {
             if (children.Count == 0) return new List<MpParticipantDto>();
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columnList = new List<string>
             {
@@ -239,7 +239,7 @@ namespace MinistryPlatform.Translation.Repositories
 	            return new List<MpEventParticipantDto>();
 	        }
 
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columnList = new List<string>
             {

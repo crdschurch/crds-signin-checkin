@@ -34,7 +34,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpConfigDto GetMpConfigByKey(string key)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var mpConfigs = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpConfigDto>($"[Key_Name]='{key}'", _mpConfigColumns);

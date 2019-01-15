@@ -75,7 +75,7 @@ namespace MinistryPlatform.Translation.Repositories
         /// <returns></returns>
         public List<MpEventDto> GetEvents(DateTime startDate, DateTime endDate, int site, bool? includeSubevents = false, List<int> eventTypeIds = null, bool excludeIds = true)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var startTimeString = startDate.ToString();
             // make sure end time is end of day
@@ -112,7 +112,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventDto> GetEventTemplates(int site)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var queryString =
                 $"[Allow_Check-in]=1 AND [Cancelled]=0 AND [Template]=1 AND Events.[Congregation_ID] = {site}";
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
@@ -121,7 +121,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventDto GetEventById(int eventId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Get<MpEventDto>(eventId, _eventColumns);
@@ -129,13 +129,13 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventDto CreateSubEvent(MpEventDto mpEventDto)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpEventDto, _eventColumns);
         }
 
         public MpEventDto UpdateEvent(MpEventDto mpEventDto)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Update(mpEventDto, _eventColumns);
         }
 
@@ -166,33 +166,33 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void DeleteEventGroups(string authenticationToken, IEnumerable<int> eventGroupIds)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = authenticationToken ?? _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpEventGroupDto>(eventGroupIds);
         }
 
         public List<MpEventGroupDto> CreateEventGroups(string authenticationToken, List<MpEventGroupDto> eventGroups)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = authenticationToken ?? _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(eventGroups, _eventGroupsColumns);
         }
 
         public void ResetEventSetup(int eventId)
         {
-            var authenticationToken = _apiUserRepository.GetDefaultApiClientToken();
+            var authenticationToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
                 .PostStoredProc(ResetEventStoredProcedureName, new Dictionary<string, object> { { "@EventId", eventId } });
         }
 
         public void ImportEventSetup(int destinationEventId, int sourceEventId)
         {
-            var authenticationToken = _apiUserRepository.GetDefaultApiClientToken();
+            var authenticationToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken)
                 .PostStoredProc(ImportEventStoredProcedureName, new Dictionary<string, object> { { "@DestinationEventId", destinationEventId }, { "@SourceEventId", sourceEventId } });
         }
 
         public List<MpEventDto> GetEventAndCheckinSubevents(int eventId, bool includeTemplates = false)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var query = $"(Events.Event_ID = {eventId} OR Events.Parent_Event_ID = {eventId}) AND Events.[Allow_Check-in] = 1";
             if (includeTemplates == false)
             {
@@ -207,7 +207,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventDto GetSubeventByParentEventId(int serviceEventId, int eventTypeId)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var events = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
                  .Search<MpEventDto>($"Events.Parent_Event_ID = {serviceEventId} AND Events.[Event_Type_ID] = {eventTypeId}", _eventColumns);
             return events.FirstOrDefault();
@@ -215,7 +215,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventDto> GetSubeventsForEvents(List<int> eventIds, int? eventTypeId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var queryString = eventIds.Aggregate("(", (current, id) => current + (id + ","));
 
