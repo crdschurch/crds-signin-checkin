@@ -51,8 +51,9 @@ namespace MinistryPlatform.Translation.Repositories
         }
 
         // this gets data we won't have with older participants
-        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, int eventId, string search = null)
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(int eventId, string search = null)
         {
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             var parameters = new Dictionary<string, object>
             {
                 {"EventId", eventId}
@@ -251,8 +252,9 @@ namespace MinistryPlatform.Translation.Repositories
             return mpGroupParticipantDtos;
         }
 
-        public List<MpContactDto> GetFamiliesForSearch(string token, string search)
+        public List<MpContactDto> GetFamiliesForSearch(string search)
         {
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             var columns = new List<string>
             {
                 "Contacts.Contact_ID",
@@ -275,8 +277,9 @@ namespace MinistryPlatform.Translation.Repositories
             return contacts;
         }
 
-        public MpHouseholdDto GetHouseholdByHouseholdId(string token, int householdID)
+        public MpHouseholdDto GetHouseholdByHouseholdId(int householdID)
         {
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             var columns = new List<string>
             {
                 "Households.[Household_ID]",
@@ -300,8 +303,9 @@ namespace MinistryPlatform.Translation.Repositories
             return household;
         }
 
-        public void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto)
+        public void UpdateHouseholdInformation(MpHouseholdDto householdDto)
         {
+            var token = _apiUserRepository.GetDefaultApiClientToken();
             var householdIdColumns = new List<string>
             {
                 "Households.[Household_ID]"

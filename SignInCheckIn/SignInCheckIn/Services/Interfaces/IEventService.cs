@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MinistryPlatform.Translation.Models.DTO;
 using SignInCheckIn.Models.DTO;
-using MinistryPlatform.Translation.Models.DTO;
+using System;
+using System.Collections.Generic;
 
 namespace SignInCheckIn.Services.Interfaces
 {
@@ -13,14 +13,14 @@ namespace SignInCheckIn.Services.Interfaces
         EventDto GetCurrentEventForSite(int siteId, string kioskId);
         //List<EventRoomDto> GetCurrentEventsForSite(int siteId); 
         bool CheckEventTimeValidity(EventDto mpEventDto);
-        List<EventRoomDto> ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId);
-        List<EventRoomDto> ResetEventSetup(string authenticationToken, int eventId);
-        List<EventDto> GetEventMaps(string token, int eventId);
-        List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId, string search);
-        void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token);
-        List<ContactDto> GetFamiliesForSearch(string token, string search);
-        HouseholdDto GetHouseholdByHouseholdId(string token, int householdId);
-        HouseholdDto UpdateHouseholdInformation(string token, HouseholdDto householdDto);
+        List<EventRoomDto> ImportEventSetup(int destinationEventId, int sourceEventId);
+        List<EventRoomDto> ResetEventSetup(int eventId);
+        List<EventDto> GetEventMaps(int eventId);
+        List<ParticipantDto> GetListOfChildrenForEvent(int eventId, string search);
+        void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto);
+        List<ContactDto> GetFamiliesForSearch(string search);
+        HouseholdDto GetHouseholdByHouseholdId(int householdId);
+        HouseholdDto UpdateHouseholdInformation(HouseholdDto householdDto);
         List<CapacityDto> GetCapacityBySite(int siteId);
         EventDto GetCurrentEventForSiteKcOnly(int siteId);
     }

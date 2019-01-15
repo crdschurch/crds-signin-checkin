@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using System.Collections.Generic;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -27,16 +27,15 @@ namespace MinistryPlatform.Translation.Repositories
             };
         }
 
-        public List<MpAttributeDto> GetAttributesByAttributeTypeId(int attributeTypeId, string authenticationToken = null)
+        public List<MpAttributeDto> GetAttributesByAttributeTypeId(int attributeTypeId)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
 
-            return GetAttributesByAttributeTypeId(new[] {attributeTypeId}, token);
+            return GetAttributesByAttributeTypeId(new[] { attributeTypeId });
         }
 
-        public List<MpAttributeDto> GetAttributesByAttributeTypeId(IEnumerable<int> attributeTypeIds, string authenticationToken = null)
+        public List<MpAttributeDto> GetAttributesByAttributeTypeId(IEnumerable<int> attributeTypeIds)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken()).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
         }
 
         public MpContactAttributeDto CreateContactAttribute(MpContactAttributeDto attribute)
@@ -46,7 +45,7 @@ namespace MinistryPlatform.Translation.Repositories
                     {
                         "Contact_ID",
                         "Attribute_ID"
-                    };   
+                    };
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(attribute, attributeColumns);
         }
     }

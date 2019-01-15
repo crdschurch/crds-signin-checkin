@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using FluentAssertions;
 using MinistryPlatform.Translation.Models;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
-using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace MinistryPlatform.Translation.Test.Repositories
 {
@@ -44,10 +43,11 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const string token = "456";
 
             var attrs = new List<MpAttributeDto>();
+            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({typeId})", _attributeColumns, null, false)).Returns(attrs);
 
-            var result = _fixture.GetAttributesByAttributeTypeId(typeId, token);
+            var result = _fixture.GetAttributesByAttributeTypeId(typeId);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
 
@@ -76,15 +76,16 @@ namespace MinistryPlatform.Translation.Test.Repositories
         [Test]
         public void TestGetAttributesByAttributeTypeIdMultipleIdWithAuthenticationToken()
         {
-            var typeIds = new[] {123, 456};
+            var typeIds = new[] { 123, 456 };
             const string token = "456";
 
             var attrs = new List<MpAttributeDto>();
+            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
                 mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", typeIds)})", _attributeColumns, null, false)).Returns(attrs);
 
-            var result = _fixture.GetAttributesByAttributeTypeId(typeIds, token);
+            var result = _fixture.GetAttributesByAttributeTypeId(typeIds);
             _apiUserRepository.VerifyAll();
             _ministryPlatformRestRepository.VerifyAll();
 
