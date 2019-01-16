@@ -158,7 +158,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             };
 
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>())).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.GetFromStoredProc<JObject>(It.IsAny<string>(), It.IsAny<Dictionary<string, object>>())).Returns(spResult);
 
@@ -554,7 +554,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 AddressId = 123
             };
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Update(mpUpdatedHouseholdDto, columns)).Returns(returnHouseholdDto);
             _ministryPlatformRestRepository.Setup(m => m.Update(It.IsAny<MpAddressDto>(), columns2)).Returns(returnAddressDto);
@@ -598,7 +598,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 AddressId = 123
             };
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Update(mpUpdatedHouseholdDto, columns)).Returns(returnHouseholdDto);
             _ministryPlatformRestRepository.Setup(m => m.Create(It.IsAny<MpAddressDto>(), columns2)).Returns(returnAddressDto);

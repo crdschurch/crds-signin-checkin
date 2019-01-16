@@ -43,7 +43,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const string token = "456";
 
             var attrs = new List<MpAttributeDto>();
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({typeId})", _attributeColumns, null, false)).Returns(attrs);
 
@@ -80,7 +80,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const string token = "456";
 
             var attrs = new List<MpAttributeDto>();
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
                 mocked => mocked.Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", typeIds)})", _attributeColumns, null, false)).Returns(attrs);

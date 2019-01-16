@@ -35,7 +35,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpAttributeDto> GetAttributesByAttributeTypeId(IEnumerable<int> attributeTypeIds)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Search<MpAttributeDto>($"Attribute_Type_ID_Table.[Attribute_Type_ID] IN ({string.Join(",", attributeTypeIds)})", _attributeColumns);
         }
 
         public MpContactAttributeDto CreateContactAttribute(MpContactAttributeDto attribute)

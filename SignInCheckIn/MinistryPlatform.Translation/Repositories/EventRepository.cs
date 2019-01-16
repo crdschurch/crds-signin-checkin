@@ -147,20 +147,20 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventGroupDto> GetEventGroupsForEventByGroupTypeId(int eventId, int groupTypeId)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn"))
                 .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId} AND Group_ID_Table.[Group_Type_ID] = {groupTypeId}", _eventGroupsColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEvent(List<int> eventIds)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn"))
                 .Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
 
         public List<MpEventGroupDto> GetEventGroupsForEventRoom(int eventId, int roomId)
         {
             return
-                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn"))
                     .Search<MpEventGroupDto>($"Event_Groups.Event_ID = {eventId} AND Event_Room_ID_Table_Room_ID_Table.Room_ID = {roomId}", _eventGroupsColumns);
         }
 
@@ -231,7 +231,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventGroupDto> GetEventGroupsByGroupIdAndEventIds(int groupId, List<int> eventIds)
         {
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn"))
                 .Search<MpEventGroupDto>($"Event_Groups.Group_ID ={groupId} AND Event_Groups.Event_ID IN ({string.Join(",", eventIds)})", _eventGroupsColumns);
         }
 
@@ -242,7 +242,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"EventID", eventId},
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<MpCapacityDto>("api_crds_Capacity_App_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).GetFromStoredProc<MpCapacityDto>("api_crds_Capacity_App_Data", parms);
             return result[0];
         }
     }

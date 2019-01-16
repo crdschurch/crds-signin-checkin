@@ -111,12 +111,12 @@ namespace MinistryPlatform.Translation.Repositories
                 "Auto_Promote"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpGroupParticipantDtos, groupParticipantColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Create(mpGroupParticipantDtos, groupParticipantColumns);
         }
 
         public void DeleteGroupParticipants(List<MpGroupParticipantDto> groupParticipants)
         {
-            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
+            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
         }
 
         public void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)

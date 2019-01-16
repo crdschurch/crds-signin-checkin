@@ -73,7 +73,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var created = new MpEventRoomDto();
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
                 mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>(), null, false))
@@ -107,7 +107,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var updated = new MpEventRoomDto();
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(
                 mocked => mocked.Search<MpEventRoomDto>($"Event_Rooms.Event_ID = {eventRoom.EventId} AND Event_Rooms.Room_ID = {eventRoom.RoomId}", It.IsAny<List<string>>(), null, false))
@@ -148,7 +148,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var updated = new MpEventRoomDto();
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Update(eventRoom, _eventRoomColumns)).Returns(updated);
             var result = _fixture.CreateOrUpdateEventRoom(eventRoom);

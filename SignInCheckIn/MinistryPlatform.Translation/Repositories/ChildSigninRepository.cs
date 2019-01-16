@@ -39,7 +39,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var spResults =
-                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).GetFromStoredProc<MpParticipantDto>(ChildSigninSearchStoredProcName, parms);
             var result = new MpHouseholdParticipantsDto();
 
             // This check indicates that no household was found
@@ -284,7 +284,7 @@ namespace MinistryPlatform.Translation.Repositories
             };
 
             var spResults =
-                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<MpParticipantDto>(MSMSigninSearchStoredProcName, parms);
+                _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).GetFromStoredProc<MpParticipantDto>(MSMSigninSearchStoredProcName, parms);
             var result = new MpHouseholdParticipantsDto();
 
             // This check indicates that no household was found

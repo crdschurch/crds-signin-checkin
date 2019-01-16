@@ -285,7 +285,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"EventID", eventId},
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
             return result;
         }
 
@@ -297,7 +297,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"RoomID", roomId},
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Single_Room_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Single_Room_Data", parms);
             return result;
         }
 
@@ -313,7 +313,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"@GroupsXml", groupsXml}
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
             return result;
         }
 
