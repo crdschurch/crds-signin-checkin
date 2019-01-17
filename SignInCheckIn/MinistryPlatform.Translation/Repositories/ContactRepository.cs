@@ -19,7 +19,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpContactDto> GetHeadsOfHouseholdByHouseholdId(int householdId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var contactColumnList = new List<string>
             {
@@ -47,7 +47,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Households.Household_Name"
             };
 
-           return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpHouseholdDto, householdColumns);
+           return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Create(mpHouseholdDto, householdColumns);
         }
 
         public MpContactDto Update(MpContactDto contactDto)
@@ -60,7 +60,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Gender_ID_Table.[Gender_ID]"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Update<MpContactDto>(contactDto, columnList);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Update<MpContactDto>(contactDto, columnList);
         }
 
         public void CreateContactRelationships(List<MpContactRelationshipDto> contactRelationshipDtos)
@@ -73,7 +73,7 @@ namespace MinistryPlatform.Translation.Repositories
                  "Start_Date"
              };
  
-             _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(contactRelationshipDtos, columnList);
+             _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Create(contactRelationshipDtos, columnList);
          }
 
         public MpContactDto GetContactById(int contactId)
@@ -92,7 +92,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Gender_ID"
             };
 
-            var contact = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
+            var contact = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn"))
                 .Search<MpContactDto>($"Contacts.Contact_ID={contactId}", contactColumnList).FirstOrDefault();
 
             return contact;
@@ -112,7 +112,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "PasswordResetToken"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpUserDto, columnList);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Create(mpUserDto, columnList);
         }
 
         public void CreateUserRoles(List<MpUserRoleDto> mpUserRoleDtos)
@@ -123,7 +123,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Role_ID"
             };
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(mpUserRoleDtos, columnList);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Create(mpUserRoleDtos, columnList);
         }
 
         public void CreateContactPublications(List<MpContactPublicationDto> contactPublicationDtos)
@@ -135,7 +135,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Unsubscribed"
             };
 
-            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).Create(contactPublicationDtos, columnList);
+            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Create(contactPublicationDtos, columnList);
         }
 
         public List<MpUserDto> GetUserByEmailAddress(string emailAddress)
@@ -153,7 +153,7 @@ namespace MinistryPlatform.Translation.Repositories
                 "Contact_ID_Table_Household_ID_Table.[Household_ID]"
             };
 
-            var users = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken())
+            var users = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn"))
                 .Search<MpUserDto>($"dp_Users.User_Name='{emailAddress}'", columnList);
 
             return users;

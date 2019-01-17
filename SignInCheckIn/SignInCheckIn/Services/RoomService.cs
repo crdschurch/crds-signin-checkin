@@ -342,7 +342,7 @@ namespace SignInCheckIn.Services
 
         public EventRoomDto GetEventRoom(int eventId, int roomId, bool canCreateEventRoom = true)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var events = _eventRepository.GetEventAndCheckinSubevents(eventId);
 
             if (events.Count == 0)

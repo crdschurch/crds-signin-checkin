@@ -67,7 +67,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpEventRoomDto> GetRoomsForEvent(List<int> eventIds, int locationId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var roomUsageTypeKidsClub = _applicationConfiguration.RoomUsageTypeKidsClub;
 
             var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
@@ -132,7 +132,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventRoomDto CreateOrUpdateEventRoom(MpEventRoomDto eventRoom)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             MpEventRoomDto response;
             // TODO Modify all frontend calls that get to this service to ensure they send eventRoomId if there is already a reservation
@@ -167,7 +167,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpEventRoomDto GetEventRoom(int eventId, int? roomId = null)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var query = $"Event_Rooms.Event_ID = {eventId}";
 
@@ -182,7 +182,7 @@ namespace MinistryPlatform.Translation.Repositories
         // look for an event room when we do not know if the event room is on a parent or child event
         public MpEventRoomDto GetEventRoomForEventMaps(List<int> eventIds, int roomId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var rooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                 Search<MpEventRoomDto>($"Event_Rooms.Event_ID IN ({string.Join(",", eventIds)}) AND Event_Rooms.Room_ID = {roomId}", _eventRoomColumns);
@@ -197,19 +197,19 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpRoomDto GetRoom(int roomId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Get<MpRoomDto>(roomId, _roomColumnList);
         }
 
         public List<MpBumpingRuleDto> GetBumpingRulesByRoomId(int fromRoomId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"From_Event_Room_ID={fromRoomId}", _bumpingRuleColumns);
         }
 
         public void DeleteBumpingRules(IEnumerable<int> ruleIds)
         {
-            var authenticationToken = _apiUserRepository.GetDefaultApiClientToken();
+            var authenticationToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Delete<MpBumpingRuleDto>(ruleIds);
         }
 
@@ -220,7 +220,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpRoomDto> GetAvailableRoomsBySite(int locationId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken)
                 .Search<MpRoomDto>("Building_ID_Table.Location_ID=" + locationId, _roomColumnList);
@@ -228,7 +228,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public void CreateBumpingRules(List<MpBumpingRuleDto> bumpingRules)
         {
-            var authenticationToken = _apiUserRepository.GetDefaultApiClientToken();
+            var authenticationToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             _ministryPlatformRestRepository.UsingAuthenticationToken(authenticationToken).Create(bumpingRules, _bumpingRuleColumns);
         }
 
@@ -239,7 +239,7 @@ namespace MinistryPlatform.Translation.Repositories
             queryString = queryString.TrimEnd(',');
             queryString += ")";
 
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpBumpingRuleDto>($"To_Event_Room_ID IN {queryString} AND From_Event_Room_ID = {fromEventRoomId}", _bumpingRuleColumns);
         }
 
@@ -258,7 +258,7 @@ namespace MinistryPlatform.Translation.Repositories
                 $"[dbo].crds_getEventParticipantStatusCount({eventId}, To_Event_Room_ID_Table.Room_Id, 4) AS Checked_In"
             };
 
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var priorityOrderRooms = _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).
                     Search<MpBumpingRoomsDto>($"From_Event_Room_ID = {fromEventRoomId}", bumpingRoomsColumns).
                     OrderBy(bumpingRoom => bumpingRoom.PriorityOrder).ToList();
@@ -285,7 +285,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"EventID", eventId},
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Room_Data", parms);
             return result;
         }
 
@@ -297,7 +297,7 @@ namespace MinistryPlatform.Translation.Repositories
                 {"RoomID", roomId},
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Single_Room_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).GetFromStoredProc<JObject>("api_crds_Get_Checkin_Single_Room_Data", parms);
             return result;
         }
 
@@ -313,13 +313,13 @@ namespace MinistryPlatform.Translation.Repositories
                 {"@GroupsXml", groupsXml}
             };
 
-            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetDefaultApiClientToken()).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
+            var result = _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).PostStoredProc<JObject>("api_crds_Update_Single_Room_Checkin_Data", parms);
             return result;
         }
 
         public List<MpEventRoomDto> GetEventRoomsByEventRoomIds(List<int> eventRoomsIds)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Search<MpEventRoomDto>($"Event_Room_ID IN ({string.Join(",", eventRoomsIds)})", _eventRoomColumns);
         }
     }

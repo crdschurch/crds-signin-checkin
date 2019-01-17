@@ -47,7 +47,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const string token = "tok 123";
             var events = new List<MpEventGroupDto>();
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>($"Event_Groups.Event_ID IN ({eventId})", _eventGroupsColumns, null, false)).Returns(events);
             var result = _fixture.GetEventGroupsForEvent(eventId);
@@ -63,7 +63,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const int sourceEventId = 12345;
             const int destinationEventId = 67890;
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.PostStoredProc("api_crds_ImportEcheckEvent", It.IsAny<Dictionary<string, object>>())).Returns(1);
 
@@ -82,7 +82,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const string token = "tok123";
             const int eventId = 12345;
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.PostStoredProc("api_crds_ResetEcheckEvent", It.IsAny<Dictionary<string, object>>())).Returns(1);
 
@@ -103,7 +103,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             List<MpEventDto> mpEventDtos = new List<MpEventDto>();
 
-            _apiUserRepository.Setup(m => m.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventDto>(It.IsAny<string>(), It.IsAny<List<string>>(), null, false)).Returns(mpEventDtos);
 
@@ -131,7 +131,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventGroupDto>(
                 $"Event_Groups.Event_ID = {eventId} AND Group_ID_Table.[Group_Type_ID] = {groupTypeId}", _eventGroupsColumns, null, false)).Returns(mpEventGroups);
