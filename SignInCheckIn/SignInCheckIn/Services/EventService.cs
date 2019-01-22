@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SignInCheckIn.Services
 {
@@ -97,13 +97,13 @@ namespace SignInCheckIn.Services
             return Mapper.Map<MpEventDto, EventDto>(currentEvents.First());
         }
 
-        public void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto, string token)
+        public void UpdateAdventureClubStatusIfNecessary(MpEventDto eventDto)
         {
             // we need to figure out if this event is the adventure club event or the service event
             // if it is not the AC event, we need to get the AC event
             if (eventDto.EventTypeId != _applicationConfiguration.AdventureClubEventTypeId)
             {
-                eventDto = _eventRepository.GetSubeventByParentEventId(token, eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
+                eventDto = _eventRepository.GetSubeventByParentEventId(eventDto.EventId, _applicationConfiguration.AdventureClubEventTypeId);
             }
 
             // search to see if there are existing Event Rooms for the AC subevent
@@ -113,14 +113,14 @@ namespace SignInCheckIn.Services
             {
                 // if there are, set cancelled to false
                 eventDto.Cancelled = false;
-                _eventRepository.UpdateEvent(token, eventDto);
+                _eventRepository.UpdateEvent(eventDto);
             }
             else
             {
                 // if that are not, set cancelled to true
                 // if there are, set cancelled to false
                 eventDto.Cancelled = true;
-                _eventRepository.UpdateEvent(token, eventDto);
+                _eventRepository.UpdateEvent(eventDto);
             }
         }
 
@@ -133,12 +133,12 @@ namespace SignInCheckIn.Services
             return DateTime.Now >= beginSigninWindow && DateTime.Now <= endSigninWindow;
         }
 
-        public List<EventRoomDto> ImportEventSetup(string authenticationToken, int destinationEventId, int sourceEventId)
+        public List<EventRoomDto> ImportEventSetup(int destinationEventId, int sourceEventId)
         {
             var targetEvent = _eventRepository.GetEventById(destinationEventId);
 
-            _eventRepository.ResetEventSetup(authenticationToken, destinationEventId);
-            _eventRepository.ImportEventSetup(authenticationToken, destinationEventId, sourceEventId);
+            _eventRepository.ResetEventSetup(destinationEventId);
+            _eventRepository.ImportEventSetup(destinationEventId, sourceEventId);
 
             // import AC event if source has one
             var sourceAcSubevent = _eventRepository.GetSubeventByParentEventId(sourceEventId, _applicationConfiguration.AdventureClubEventTypeId);
@@ -149,22 +149,22 @@ namespace SignInCheckIn.Services
                 // create a new AC subevent under the destination event if one doesnt exist
                 if (destinationAcSubevent == null)
                 {
-                    destinationAcSubevent = CreateAdventureClubSubevent(destinationEvent, authenticationToken);
+                    destinationAcSubevent = CreateAdventureClubSubevent(destinationEvent);
                 }
                 else
                 {
                     // if we aren't creating a new AC subevent, reset the existing one
-                    _eventRepository.ResetEventSetup(authenticationToken, destinationAcSubevent.EventId);
+                    _eventRepository.ResetEventSetup(destinationAcSubevent.EventId);
                 }
-                _eventRepository.ImportEventSetup(authenticationToken, destinationAcSubevent.EventId, sourceAcSubevent.EventId);
+                _eventRepository.ImportEventSetup(destinationAcSubevent.EventId, sourceAcSubevent.EventId);
                 // set correct adventure club flag
-                UpdateAdventureClubStatusIfNecessary(destinationAcSubevent, authenticationToken);
+                UpdateAdventureClubStatusIfNecessary(destinationAcSubevent);
             }
 
             return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(destinationEventId, targetEvent.LocationId));
         }
 
-        public MpEventDto CreateAdventureClubSubevent(MpEventDto parentEvent, string token)
+        public MpEventDto CreateAdventureClubSubevent(MpEventDto parentEvent)
         {
             MpEventDto mpEventDto = new MpEventDto();
             mpEventDto.EventTitle = $"Adventure Club for Event {parentEvent.EventId}";
@@ -180,38 +180,38 @@ namespace SignInCheckIn.Services
             mpEventDto.EventEndDate = parentEvent.EventEndDate;
             mpEventDto.Cancelled = true;
             mpEventDto.AllowCheckIn = parentEvent.AllowCheckIn;
-            return _eventRepository.CreateSubEvent(token, mpEventDto);
+            return _eventRepository.CreateSubEvent(mpEventDto);
         }
 
-        public List<EventRoomDto> ResetEventSetup(string authenticationToken, int eventId)
+        public List<EventRoomDto> ResetEventSetup(int eventId)
         {
             var targetEvent = _eventRepository.GetEventById(eventId);
 
-            _eventRepository.ResetEventSetup(authenticationToken, eventId);
+            _eventRepository.ResetEventSetup(eventId);
             return Mapper.Map<List<EventRoomDto>>(_roomRepository.GetRoomsForEvent(eventId, targetEvent.LocationId));
         }
 
         // this is only getting a parent and the ac event - this will need to be changed as part of the
         // upcoming refactor story - US6056
-        public List<EventDto> GetEventMaps(string token, int eventId)
+        public List<EventDto> GetEventMaps(int eventId)
         {
-            var events = _eventRepository.GetEventAndCheckinSubevents(token, eventId, true);
+            var events = _eventRepository.GetEventAndCheckinSubevents(eventId, true);
             var parentEvent = events.First(r => r.ParentEventId == null);
 
             // 1. See if there's an existing AC subevent
             if (!events.Any(r => r.ParentEventId == eventId && r.EventTypeId == _applicationConfiguration.AdventureClubEventTypeId))
             {
                 // 2. If not, create it
-                var newAcEvent = CreateAdventureClubSubevent(parentEvent, token);
+                var newAcEvent = CreateAdventureClubSubevent(parentEvent);
                 events.Add(newAcEvent);
             }
 
             return Mapper.Map<List<MpEventDto>, List<EventDto>>(events);
         }
 
-        public List<ParticipantDto> GetListOfChildrenForEvent(string token, int eventId, string search)
+        public List<ParticipantDto> GetListOfChildrenForEvent(int eventId, string search)
         {
-            var result = _participantRepository.GetChildParticipantsByEvent(token, eventId, search);
+            var result = _participantRepository.GetChildParticipantsByEvent(eventId, search);
             var children = new List<ParticipantDto>();
 
             foreach (var tmpChild in result)
@@ -226,22 +226,22 @@ namespace SignInCheckIn.Services
             return children;
         }
 
-        public List<ContactDto> GetFamiliesForSearch(string token, string search)
+        public List<ContactDto> GetFamiliesForSearch(string search)
         {
-            var result = _participantRepository.GetFamiliesForSearch(token, search);
+            var result = _participantRepository.GetFamiliesForSearch(search);
             return result.Select(Mapper.Map<MpContactDto, ContactDto>).ToList();
         }
 
-        public HouseholdDto GetHouseholdByHouseholdId(string token, int householdId)
+        public HouseholdDto GetHouseholdByHouseholdId(int householdId)
         {
-            var result = _participantRepository.GetHouseholdByHouseholdId(token, householdId);
+            var result = _participantRepository.GetHouseholdByHouseholdId(householdId);
             return Mapper.Map<MpHouseholdDto, HouseholdDto>(result);
         }
 
-        public HouseholdDto UpdateHouseholdInformation(string token, HouseholdDto householdDto)
+        public HouseholdDto UpdateHouseholdInformation(HouseholdDto householdDto)
         {
             var mpHouseholdDto = Mapper.Map<HouseholdDto, MpHouseholdDto>(householdDto);
-            _participantRepository.UpdateHouseholdInformation(token, mpHouseholdDto);
+            _participantRepository.UpdateHouseholdInformation(mpHouseholdDto);
             return Mapper.Map<MpHouseholdDto, HouseholdDto>(mpHouseholdDto);
         }
 

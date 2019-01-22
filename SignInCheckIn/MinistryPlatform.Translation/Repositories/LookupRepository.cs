@@ -23,7 +23,7 @@ namespace MinistryPlatform.Translation.Repositories
         /// <returns></returns>
         public List<MpStateDto> GetStates()
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columns = new List<string>
             {
@@ -43,7 +43,7 @@ namespace MinistryPlatform.Translation.Repositories
         /// <returns></returns>
         public List<MpCountryDto> GetCountries()
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columns = new List<string>
             {

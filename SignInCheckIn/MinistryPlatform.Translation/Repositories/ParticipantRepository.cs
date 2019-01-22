@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -15,7 +12,7 @@ namespace MinistryPlatform.Translation.Repositories
         private readonly IApiUserRepository _apiUserRepository;
         private readonly IMinistryPlatformRestRepository _ministryPlatformRestRepository;
         private readonly IContactRepository _contactRepository;
-        private List<string> _eventParticipantColumns; 
+        private List<string> _eventParticipantColumns;
 
         public ParticipantRepository(IApiUserRepository apiUserRepository, IMinistryPlatformRestRepository ministryPlatformRestRepository, IContactRepository contactRepository)
         {
@@ -54,8 +51,9 @@ namespace MinistryPlatform.Translation.Repositories
         }
 
         // this gets data we won't have with older participants
-        public List<MpEventParticipantDto> GetChildParticipantsByEvent(string token, int eventId, string search = null)
+        public List<MpEventParticipantDto> GetChildParticipantsByEvent(int eventId, string search = null)
         {
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var parameters = new Dictionary<string, object>
             {
                 {"EventId", eventId}
@@ -87,7 +85,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpNewParticipantDto CreateParticipantWithContact(MpNewParticipantDto mpNewParticipantDto, string userToken = null)
         {
-            var token = userToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = userToken ?? _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             List<string> participantColumns = new List<string>
             {
@@ -100,10 +98,8 @@ namespace MinistryPlatform.Translation.Repositories
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpNewParticipantDto, participantColumns);
         }
 
-        public List<MpGroupParticipantDto> CreateGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> mpGroupParticipantDtos)
-        {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
-
+        public List<MpGroupParticipantDto> CreateGroupParticipants(List<MpGroupParticipantDto> mpGroupParticipantDtos)
+        {            
             List<string> groupParticipantColumns = new List<string>
             {
                 "Group_Participant_ID",
@@ -115,18 +111,17 @@ namespace MinistryPlatform.Translation.Repositories
                 "Auto_Promote"
             };
 
-            return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Create(mpGroupParticipantDtos, groupParticipantColumns);
+            return _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Create(mpGroupParticipantDtos, groupParticipantColumns);
         }
 
-        public void DeleteGroupParticipants(string authenticationToken, List<MpGroupParticipantDto> groupParticipants)
+        public void DeleteGroupParticipants(List<MpGroupParticipantDto> groupParticipants)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
-            _ministryPlatformRestRepository.UsingAuthenticationToken(token).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
+            _ministryPlatformRestRepository.UsingAuthenticationToken(_apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn")).Delete<MpGroupParticipantDto>(groupParticipants.Select(gp => gp.GroupParticipantId));
         }
 
         public void UpdateEventParticipants(List<MpEventParticipantDto> mpEventParticipantDtos)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columnList = new List<string>
             {
@@ -160,16 +155,16 @@ namespace MinistryPlatform.Translation.Repositories
             _ministryPlatformRestRepository.UsingAuthenticationToken(apiUserToken).Update<MpEventParticipantDto>(mpEventParticipantDtos, columnList);
         }
 
-        public MpEventParticipantDto GetEventParticipantByEventParticipantId(int eventParticipantId, string authenticationToken = null)
+        public MpEventParticipantDto GetEventParticipantByEventParticipantId(int eventParticipantId)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             return _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpEventParticipantDto>(eventParticipantId, _eventParticipantColumns);
         }
 
         // this returns only "valid" participants in the system - not ones that could not get in, or were reversed
         public List<MpEventParticipantDto> GetEventParticipantsByEventAndParticipant(int eventId, List<int> participantIds)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var columnList = new List<string>
             {
@@ -209,7 +204,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantAndGroupId(int groupId, List<int> participantIds)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             List<string> groupParticipantColumns = new List<string>
             {
@@ -232,7 +227,7 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupParticipantDto> GetGroupParticipantsByParticipantId(int participantId)
         {
-            var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+            var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             List<string> groupParticipantColumns = new List<string>
             {
@@ -254,8 +249,9 @@ namespace MinistryPlatform.Translation.Repositories
             return mpGroupParticipantDtos;
         }
 
-        public List<MpContactDto> GetFamiliesForSearch(string token, string search)
+        public List<MpContactDto> GetFamiliesForSearch(string search)
         {
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var columns = new List<string>
             {
                 "Contacts.Contact_ID",
@@ -278,8 +274,9 @@ namespace MinistryPlatform.Translation.Repositories
             return contacts;
         }
 
-        public MpHouseholdDto GetHouseholdByHouseholdId(string token, int householdID)
+        public MpHouseholdDto GetHouseholdByHouseholdId(int householdID)
         {
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var columns = new List<string>
             {
                 "Households.[Household_ID]",
@@ -303,8 +300,9 @@ namespace MinistryPlatform.Translation.Repositories
             return household;
         }
 
-        public void UpdateHouseholdInformation(string token, MpHouseholdDto householdDto)
+        public void UpdateHouseholdInformation(MpHouseholdDto householdDto)
         {
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var householdIdColumns = new List<string>
             {
                 "Households.[Household_ID]"

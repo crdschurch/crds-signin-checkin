@@ -1,29 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
-using System.Web.Http.Description;
-using Crossroads.Utilities.Services.Interfaces;
-using Microsoft.AspNet.SignalR;
-using MinistryPlatform.Translation.Repositories.Interfaces;
+﻿using Crossroads.Utilities.Services.Interfaces;
+using Crossroads.Web.Auth.Controllers;
+//using Crossroads.ApiVersioning;
+using Crossroads.Web.Common.Security;
+using Crossroads.Web.Common.Services;
 using SignInCheckIn.Exceptions.Models;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Security;
 using SignInCheckIn.Services.Interfaces;
-//using Crossroads.ApiVersioning;
-using Crossroads.Web.Common.Security;
-using Crossroads.Web.Common.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace SignInCheckIn.Controllers
 {
     [RoutePrefix("api")]
-    public class RoomController : MpAuth
+    public class RoomController : AuthBaseController
     {
         private readonly IWebsocketService _websocketService;
         private readonly IRoomService _roomService;
         private readonly IApplicationConfiguration _applicationConfiguration;
 
-        public RoomController(IAuthTokenExpiryService authTokenExpiryService, IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authTokenExpiryService, authenticationRepository)
+        public RoomController(IAuthTokenExpiryService authTokenExpiryService, IWebsocketService websocketService, IRoomService roomService, IAuthenticationRepository authenticationRepository, IApplicationConfiguration applicationConfiguration) : base(authenticationRepository, authTokenExpiryService)
         {
             _websocketService = websocketService;
             _roomService = roomService;
@@ -39,11 +38,12 @@ namespace SignInCheckIn.Controllers
             [FromUri(Name = "roomId")] int roomId,
             [FromUri(Name = "eventId")] int eventId)
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 try
                 {
-                    var roomList = _roomService.GetAvailableRooms(token, roomId, eventId);
+                    VerifyRoles.KidsClubTools(authDto);
+                    var roomList = _roomService.GetAvailableRooms(roomId, eventId);
                     return Ok(roomList);
                 }
                 catch (Exception e)
@@ -62,11 +62,12 @@ namespace SignInCheckIn.Controllers
         public IHttpActionResult UpdateAvailableRoomsByLocation(
         [FromUri(Name = "eventId")] int eventId, [FromUri(Name = "roomId")] int roomId, [FromBody] List<EventRoomDto> eventRooms)
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 try
                 {
-                    var roomList = _roomService.UpdateAvailableRooms(token, eventId, roomId, eventRooms);
+                    VerifyRoles.KidsClubTools(authDto);
+                    var roomList = _roomService.UpdateAvailableRooms(eventId, roomId, eventRooms);
                     return Ok(roomList);
                 }
                 catch (Exception e)
@@ -119,14 +120,15 @@ namespace SignInCheckIn.Controllers
         [RequiresAuthorization]
         public IHttpActionResult UpdateEventRoom([FromUri]int eventId, [FromUri]int roomId, [FromBody]EventRoomDto eventRoom)
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 try
                 {
+                    VerifyRoles.KidsClubTools(authDto);
                     eventRoom.EventId = eventId;
                     eventRoom.RoomId = roomId;
 
-                    var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(token, eventRoom);
+                    var updatedEventRoom = _roomService.CreateOrUpdateEventRoom(eventRoom);
                     _websocketService.PublishRoomCapacity(eventId, roomId, updatedEventRoom);
 
                     return Ok(updatedEventRoom);
@@ -147,7 +149,7 @@ namespace SignInCheckIn.Controllers
             try
             {
                 return Ok(_roomService.GetEventRoom(eventId, roomId, true));
-               
+
             }
             catch (Exception e)
             {

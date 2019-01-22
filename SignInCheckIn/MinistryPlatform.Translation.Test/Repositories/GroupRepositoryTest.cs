@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Crossroads.Utilities.Services.Interfaces;
+﻿using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.MinistryPlatform;
 using FluentAssertions;
+using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
-using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using NUnit.Framework;
-using MinistryPlatform.Translation.Models.DTO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MinistryPlatform.Translation.Test.Repositories
 {
@@ -84,7 +83,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             const int groupId = 456;
             var group = new MpGroupDto();
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpGroupDto>(groupId, _groupColumns)).Returns(group);
 
@@ -205,7 +204,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 },
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpGroupDto>(groupId, _groupColumns)).Returns(group);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpAttributeDto>("Group_Attributes", $"Group_Attributes.Group_ID = {group.Id}", _attributeColumns, null, false))
@@ -288,12 +287,12 @@ namespace MinistryPlatform.Translation.Test.Repositories
             }
 
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpGroupDto>("Group_Attributes", expectedSearchString, _groupAttributeColumns, null, false))
-                .Returns(new List<MpGroupDto> {group});
+                .Returns(new List<MpGroupDto> { group });
 
-            var result = _fixture.GetGroupsByAttribute(token, attrs, false);
+            var result = _fixture.GetGroupsByAttribute(attrs, false);
             _ministryPlatformRestRepository.VerifyAll();
 
             result.Count.Should().Be(1);

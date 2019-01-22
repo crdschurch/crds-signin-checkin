@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Crossroads.Web.Common.MinistryPlatform;
+﻿using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace MinistryPlatform.Translation.Test.Repositories
 {
@@ -161,10 +158,11 @@ namespace MinistryPlatform.Translation.Test.Repositories
             };
 
 
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>())).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.GetFromStoredProc<JObject>(It.IsAny<string>(), It.IsAny<Dictionary<string, object>>())).Returns(spResult);
 
-            var result = _fixture.GetChildParticipantsByEvent(token, eventId);
+            var result = _fixture.GetChildParticipantsByEvent(eventId);
             _ministryPlatformRestRepository.VerifyAll();
 
             Assert.AreEqual(result[0].EventParticipantId, children[0].EventParticipantId);
@@ -198,7 +196,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
 
             var returnDto = new MpNewParticipantDto();
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
@@ -244,7 +242,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Create(mpNewParticipantDto, participantColumns)).Returns(returnDto);
 
@@ -279,7 +277,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpEventParticipantDto>(
                 $"Event_Participants.Event_ID = {eventId} AND Event_Participants.Participant_ID in ({string.Join(",", participantIds)}) AND End_Date IS NULL AND Participation_Status_ID IN (3, 4)", _eventParticipantColumns, null, false)).Returns(mpEventParticipantDtos);
@@ -338,7 +336,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpGroupParticipantDto>(
                 $"Group_Participants.Participant_ID IN ({string.Join(",", participantIds)}) AND Group_Participants.Group_ID = ({groupId}) AND End_Date IS NULL", groupParticipantColumns, null, false)).Returns(mpGroupParticipantDtos);
@@ -379,7 +377,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 mpGroupParticipantDto
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpGroupParticipantDto>(
                  $"Group_Participants.Participant_ID = {mpGroupParticipantDto.ParticipantId}" + "AND Group_Participants.End_Date IS NULL", groupParticipantColumns, null, false)).Returns(list);
@@ -396,7 +394,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         {
             // Arrange
             var token = "123abc";
-            
+
             var mpGroupParticipantDto = new MpGroupParticipantDto
             {
                 GroupParticipantId = 345678,
@@ -407,12 +405,12 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 mpGroupParticipantDto
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Delete<MpGroupParticipantDto>(It.IsAny<IEnumerable<int>>()));
 
             // Act
-            _fixture.DeleteGroupParticipants(token, list);
+            _fixture.DeleteGroupParticipants(list);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
@@ -457,12 +455,12 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Search<MpContactDto>($"(Contacts.[Display_Name] LIKE '%{search}%' OR Contacts.[Email_Address] = '{search}' OR Household_ID_Table.Home_Phone = '{search}' OR Contacts.[Mobile_Phone] = '{search}') AND Household_ID_Table.[Household_ID] IS NOT NULL AND Household_Position_ID_Table.[Household_Position_ID] IN (1,7)", columns, "Contacts.Last_Name ASC, Contacts.Nickname ASC", false)).Returns(contacts);
 
             // Act
-            var result = _fixture.GetFamiliesForSearch(token, search);
+            var result = _fixture.GetFamiliesForSearch(search);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
@@ -506,15 +504,15 @@ namespace MinistryPlatform.Translation.Test.Repositories
             {
                 HouseholdId = 1234,
                 HouseholdName = "Dust"
-                
+
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns(token);
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.Get<MpHouseholdDto>(householdId, columns)).Returns(household);
 
             // Act
-            var result = _fixture.GetHouseholdByHouseholdId(token, householdId);
+            var result = _fixture.GetHouseholdByHouseholdId(householdId);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
@@ -556,12 +554,13 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 AddressId = 123
             };
 
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Update(mpUpdatedHouseholdDto, columns)).Returns(returnHouseholdDto);
             _ministryPlatformRestRepository.Setup(m => m.Update(It.IsAny<MpAddressDto>(), columns2)).Returns(returnAddressDto);
 
             // Act
-            _fixture.UpdateHouseholdInformation(token, mpUpdatedHouseholdDto);
+            _fixture.UpdateHouseholdInformation(mpUpdatedHouseholdDto);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();
@@ -586,7 +585,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
             var mpUpdatedHouseholdDto = new MpHouseholdDto
             {
                 HouseholdId = 123,
-                HouseholdName= "Test1"
+                HouseholdName = "Test1"
             };
 
             var returnHouseholdDto = new MpHouseholdDto
@@ -599,12 +598,13 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 AddressId = 123
             };
 
+            _apiUserRepository.Setup(m => m.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns(token);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(token)).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(m => m.Update(mpUpdatedHouseholdDto, columns)).Returns(returnHouseholdDto);
             _ministryPlatformRestRepository.Setup(m => m.Create(It.IsAny<MpAddressDto>(), columns2)).Returns(returnAddressDto);
 
             // Act
-            _fixture.UpdateHouseholdInformation(token, mpUpdatedHouseholdDto);
+            _fixture.UpdateHouseholdInformation(mpUpdatedHouseholdDto);
 
             // Assert
             _ministryPlatformRestRepository.VerifyAll();

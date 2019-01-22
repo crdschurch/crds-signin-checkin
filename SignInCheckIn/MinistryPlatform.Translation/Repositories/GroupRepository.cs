@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Crossroads.Utilities.Services.Interfaces;
+﻿using Crossroads.Utilities.Services.Interfaces;
 using Crossroads.Web.Common.MinistryPlatform;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MinistryPlatform.Translation.Repositories
 {
@@ -48,24 +48,24 @@ namespace MinistryPlatform.Translation.Repositories
 
         public MpGroupDto GetGroup(string authenticationToken, int groupId, bool includeAttributes = false)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
-            var group =  _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpGroupDto>(groupId, _groupColumns);
+            var token = authenticationToken ?? _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
+            var group = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Get<MpGroupDto>(groupId, _groupColumns);
             return SetKidsClubGroupAttributes(group, includeAttributes, token);
         }
 
-        public List<MpGroupDto> GetGroups(string authenticationToken, IEnumerable<int> groupIds, bool includeAttributes = false)
+        public List<MpGroupDto> GetGroups(IEnumerable<int> groupIds, bool includeAttributes = false)
         {
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var searchString = $"Group_ID IN ({string.Join(",", groupIds)})";
-            var groups =  _ministryPlatformRestRepository.UsingAuthenticationToken(token).Search<MpGroupDto>(searchString, _groupColumns);
+            var groups = _ministryPlatformRestRepository.UsingAuthenticationToken(token).Search<MpGroupDto>(searchString, _groupColumns);
 
             return groups.Select(g => SetKidsClubGroupAttributes(g, includeAttributes, token)).ToList();
         }
 
-        public List<MpGroupDto> GetGroupsByAttribute(string authenticationToken, IEnumerable<MpAttributeDto> attributes, bool includeAttributes = false)
+        public List<MpGroupDto> GetGroupsByAttribute(IEnumerable<MpAttributeDto> attributes, bool includeAttributes = false)
         {
             var attributesList = attributes.ToList();
-            var token = authenticationToken ?? _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
             var searchString = string.Empty;
             var first = true;
             foreach (var typeId in attributesList.Select(a => a.Type.Id).Distinct())
@@ -90,13 +90,13 @@ namespace MinistryPlatform.Translation.Repositories
 
         public List<MpGroupDto> GetGroupsForParticipantId(int participantId)
         {
-            var token = _apiUserRepository.GetDefaultApiClientToken();
+            var token = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
             var mpGroupDtos = _ministryPlatformRestRepository.UsingAuthenticationToken(token)
                 .SearchTable<MpGroupDto>("Group_Participants", $"Participant_ID_Table.[Participant_ID]={participantId} AND End_Date IS NULL", "Group_ID_Table.[Group_ID]");
 
             return mpGroupDtos;
-        } 
+        }
 
         private MpGroupDto SetKidsClubGroupAttributes(MpGroupDto group, bool includeAttributes, string token)
         {
