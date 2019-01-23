@@ -84,7 +84,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("auth");
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns("auth");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] = {eventId} AND Room_ID_Table.[Room_ID] = {roomId} AND Event_Participants.End_Date IS NULL", _getEventParticipantColumns, null, false)).Returns(participants);
             
@@ -122,7 +122,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
             };
 
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("auth");
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns("auth");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.SearchTable<MpEventParticipantDto>("Event_Participants", $"Event_ID_Table.[Event_ID] IN ({string.Join(",", eventIds)}) AND Event_Participants.[Call_Number] = {callNumber}", _getEventParticipantByCallNumberColumns, null, false)).Returns(participants);
 
@@ -141,7 +141,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         [Test]
         public void TestCheckinChildrenForCurrentEventAndRoom()
         {
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("auth");
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns("auth");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken("auth")).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UpdateRecord("Event_Participants", It.IsAny<int>(), It.IsAny<Dictionary<string, object>>()));
 
@@ -154,7 +154,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
         public void TestOverrideChildIntoRoom()
         {
             _applicationConfiguration.Setup(mocked => mocked.CheckedInParticipationStatusId).Returns(2);
-            _apiUserRepository.Setup(mocked => mocked.GetDefaultApiClientToken()).Returns("auth");
+            _apiUserRepository.Setup(mocked => mocked.GetApiClientToken("CRDS.Service.SignCheckIn")).Returns("auth");
             _ministryPlatformRestRepository.Setup(mocked => mocked.UsingAuthenticationToken(It.IsAny<string>())).Returns(_ministryPlatformRestRepository.Object);
             _ministryPlatformRestRepository.Setup(mocked => mocked.UpdateRecord("Event_Participants", It.IsAny<int>(), It.IsAny<Dictionary<string, object>>()));
 

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using MinistryPlatform.Translation.Models.DTO;
+﻿using MinistryPlatform.Translation.Models.DTO;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace MinistryPlatform.Translation.Repositories.Interfaces
 {
@@ -9,7 +9,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
         List<MpEventRoomDto> GetRoomsForEvent(int eventId, int locationId);
         List<MpEventRoomDto> GetRoomsForEvent(List<int> eventId, int locationId);
 
-        MpEventRoomDto CreateOrUpdateEventRoom(string authenticationToken, MpEventRoomDto eventRoom);
+        MpEventRoomDto CreateOrUpdateEventRoom(MpEventRoomDto eventRoom);
 
         MpEventRoomDto GetEventRoom(int eventId, int? roomId = null);
 
@@ -19,11 +19,11 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         List<MpRoomDto> GetAvailableRoomsBySite(int locationId);
 
-        void DeleteBumpingRules(string authenticationToken, IEnumerable<int> ruleIds);
+        void DeleteBumpingRules(IEnumerable<int> ruleIds);
 
         void DeleteEventRoom(string authenticationToken, int eventRoomId);
 
-        void CreateBumpingRules(string authenticationToken, List<MpBumpingRuleDto> bumpingRules);
+        void CreateBumpingRules(List<MpBumpingRuleDto> bumpingRules);
 
         List<MpBumpingRuleDto> GetBumpingRulesForEventRooms(List<int?> eventRoomIds, int? fromEventRoomId);
 
@@ -35,7 +35,7 @@ namespace MinistryPlatform.Translation.Repositories.Interfaces
 
         List<List<JObject>> GetSingleRoomGroupsData(int eventId, int roomId);
 
-        List<List<JObject>> SaveSingleRoomGroupsData(string token, int eventId, int roomId, string groupsXml);
+        List<List<JObject>> SaveSingleRoomGroupsData(int eventId, int roomId, string groupsXml);
 
         List<MpEventRoomDto> GetEventRoomsByEventRoomIds(List<int> eventRoomsIds);
     }

@@ -22,7 +22,7 @@ namespace MinistryPlatform.Translation.Repositories
         {
             try
             {
-                var apiUserToken = _apiUserRepository.GetDefaultApiClientToken();
+                var apiUserToken = _apiUserRepository.GetApiClientToken("CRDS.Service.SignCheckIn");
 
                 var congregationColumnList = new List<string>
                 {

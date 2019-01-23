@@ -1,14 +1,12 @@
-﻿
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Crossroads.Utilities.Services.Interfaces;
 using MinistryPlatform.Translation.Models.DTO;
 using MinistryPlatform.Translation.Repositories.Interfaces;
 using SignInCheckIn.Models.DTO;
 using SignInCheckIn.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SignInCheckIn.Services
 {
@@ -33,7 +31,7 @@ namespace SignInCheckIn.Services
             _childSigninService = childSigninService;
         }
 
-        public List<MpNewParticipantDto> AddFamilyMembers(string token, int householdId, List<ContactDto> newContacts)
+        public List<MpNewParticipantDto> AddFamilyMembers(int householdId, List<ContactDto> newContacts)
         {
             // get the adult contacts on the household to create the parent-child relationships
             var headsOfHousehold = _contactRepository.GetHeadsOfHouseholdByHouseholdId(householdId);
@@ -67,19 +65,19 @@ namespace SignInCheckIn.Services
                     StartDate = System.DateTime.Now
                 }).ToList();
 
-                _contactRepository.CreateContactRelationships(token, mpContactRelationshipDtos);
+                _contactRepository.CreateContactRelationships(mpContactRelationshipDtos);
             }
 
             return mpNewChildParticipantDtos;
         }
 
-        public List<ContactDto> CreateNewFamily(string token, List<NewParentDto> newParentDtos, string kioskIdentifier)
+        public List<ContactDto> CreateNewFamily(List<NewParentDto> newParentDtos, string kioskIdentifier)
         {
             // check to see if either parent already exists as a user - if so, don't create them. This is to match
             // logic on the family finder
             foreach (var parent in newParentDtos.Where(r => !String.IsNullOrEmpty(r.EmailAddress)))
             {
-                var existingParents = _contactRepository.GetUserByEmailAddress(token, parent.EmailAddress);
+                var existingParents = _contactRepository.GetUserByEmailAddress(parent.EmailAddress);
 
                 if (existingParents.Any())
                 {
@@ -96,7 +94,7 @@ namespace SignInCheckIn.Services
                 HouseholdSourceId = _applicationConfiguration.KidsClubRegistrationSourceId
             };
 
-            mpHouseholdDto = _contactRepository.CreateHousehold(token, mpHouseholdDto);
+            mpHouseholdDto = _contactRepository.CreateHousehold(mpHouseholdDto);
 
             // Step 2 - create the parent contacts w/participants
             List<ContactDto> parentContactDtos = new List<ContactDto>();
@@ -122,8 +120,8 @@ namespace SignInCheckIn.Services
                     }
                 };
 
-                var newParticipant = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto, token);
-                var newContact = _contactRepository.GetContactById(token, newParticipant.ContactId.GetValueOrDefault());
+                var newParticipant = _participantRepository.CreateParticipantWithContact(parentNewParticipantDto);
+                var newContact = _contactRepository.GetContactById(newParticipant.ContactId.GetValueOrDefault());
 
                 // by default, new contacts get subscribed to these lists
                 var mpContactPublicationDtos = new List<MpContactPublicationDto>
@@ -142,7 +140,7 @@ namespace SignInCheckIn.Services
                     }
                 };
 
-                _contactRepository.CreateContactPublications(token, mpContactPublicationDtos);
+                _contactRepository.CreateContactPublications(mpContactPublicationDtos);
 
                 // since the username is an email address, don't create a new user if the new parent doesn't
                 // provide one
@@ -165,7 +163,7 @@ namespace SignInCheckIn.Services
                         PasswordResetToken = newUserPasswordResetToken
                     };
 
-                    var newUserRecord = _contactRepository.CreateUserRecord(token, mpUserDto);
+                    var newUserRecord = _contactRepository.CreateUserRecord(mpUserDto);
 
                     var mpUserRoleDtos = new List<MpUserRoleDto>
                     {
@@ -176,36 +174,36 @@ namespace SignInCheckIn.Services
                         }
                     };
 
-                    _contactRepository.CreateUserRoles(token, mpUserRoleDtos);
+                    _contactRepository.CreateUserRoles(mpUserRoleDtos);
                 }
 
                 parentContactDtos.Add(Mapper.Map<ContactDto>(newContact));
             }
 
-            if (parentContactDtos.Count == 2)
-            {
-                var mpContactRelationshipDto = new MpContactRelationshipDto
-                {
-                    ContactId = parentContactDtos[1].ContactId,
-                    RelationshipId = _applicationConfiguration.MarriedToRelationshipId,
-                    RelatedContactId = parentContactDtos[0].ContactId,
-                    StartDate = System.DateTime.Now
-                };
+            //if (parentContactDtos.Count == 2)
+            //{
+            //    var mpContactRelationshipDto = new MpContactRelationshipDto
+            //    {
+            //        ContactId = parentContactDtos[1].ContactId,
+            //        RelationshipId = _applicationConfiguration.MarriedToRelationshipId,
+            //        RelatedContactId = parentContactDtos[0].ContactId,
+            //        StartDate = System.DateTime.Now
+            //    };
 
-                var mpContactRelationshipDtos = new List<MpContactRelationshipDto>
-                {
-                    mpContactRelationshipDto
-                };
+            //    var mpContactRelationshipDtos = new List<MpContactRelationshipDto>
+            //    {
+            //        mpContactRelationshipDto
+            //    };
 
-                _contactRepository.CreateContactRelationships(token, mpContactRelationshipDtos);
-            }
+            //    _contactRepository.CreateContactRelationships(token, mpContactRelationshipDtos);
+            //}
 
             return parentContactDtos;
         }
 
-        public UserDto GetUserByEmailAddress(string token, string emailAddress)
+        public UserDto GetUserByEmailAddress(string emailAddress)
         {
-            var mpUser = _contactRepository.GetUserByEmailAddress(token, emailAddress);
+            var mpUser = _contactRepository.GetUserByEmailAddress(emailAddress);
             return Mapper.Map<UserDto>(mpUser.FirstOrDefault());
         }
     }
