@@ -80,9 +80,9 @@ export class ServingToggleComponent {
 
  toggleServingHours(modal, hours) {
    if (hours === 1) {
-     this._isServingOneHour = true;
+     this.servingOneHour = true;
    } else if (hours === 2) {
-     this._isServingTwoHours = true;
+     this.servingTwoHours = true;
    }
    if (modal) {
      return modal.hide();
