@@ -1,7 +1,7 @@
 <label attr.for='isServing' class="text-xs-center pointer px-1 serving-label">
   <div class="serving-question-cont mt-2">
     <span class="tgl-inline-label tgl-serving-label">Are you serving today?</span>
-    <input class='tgl tgl-light' id='isServing' type='checkbox' [(ngModel)]="isServing" (click)="toggleServicesClick(showServiceSelectModal)">
+    <input class='tgl tgl-light' id='isServing' type='checkbox' [checked]="isServing" (click)="toggleServicesClick(showServiceSelectModal)">
     <label class='tgl-btn' for='isServing'>
       <span class="tgl-yes">Yes</span>
       <span class="tgl-no">No</span>

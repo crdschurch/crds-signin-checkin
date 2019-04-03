@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web.Http;
-using System.Web.Http.Description;
-using SignInCheckIn.Exceptions.Models;
-using SignInCheckIn.Models.DTO;
-using SignInCheckIn.Security;
-using SignInCheckIn.Services.Interfaces;
+﻿using Crossroads.Web.Auth.Controllers;
 //using Crossroads.ApiVersioning;
 using Crossroads.Web.Common.Security;
 using Crossroads.Web.Common.Services;
+using SignInCheckIn.Exceptions.Models;
+using SignInCheckIn.Models.DTO;
+using SignInCheckIn.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace SignInCheckIn.Controllers
 {
     [RoutePrefix("api")]
-    public class LookupController : MpAuth
+    public class LookupController : AuthBaseController
     {
         private readonly ILookupService _lookupService;
 
-        public LookupController(IAuthTokenExpiryService authTokenExpiryService, ILookupService lookupService, IAuthenticationRepository authenticationRepository) : base(authTokenExpiryService, authenticationRepository)
+        public LookupController(IAuthTokenExpiryService authTokenExpiryService, ILookupService lookupService, IAuthenticationRepository authenticationRepository) : base(authenticationRepository, authTokenExpiryService)
         {
             _lookupService = lookupService;
         }
@@ -28,7 +28,7 @@ namespace SignInCheckIn.Controllers
         [Route("getStates")]
         public IHttpActionResult GetStates()
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 try
                 {
@@ -49,7 +49,7 @@ namespace SignInCheckIn.Controllers
         [Route("getCountries")]
         public IHttpActionResult GetCountries()
         {
-            return Authorized(token =>
+            return Authorized(authDto =>
             {
                 try
                 {
