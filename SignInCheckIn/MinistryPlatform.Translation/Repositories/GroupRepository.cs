@@ -80,7 +80,7 @@ namespace MinistryPlatform.Translation.Repositories
                 }
 
                 searchString = $"{searchString} (Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {typeId} AND Group_Attributes.Attribute_ID IN ";
-                searchString = searchString + "(" + string.Join(",", attributesList.FindAll(a => a.Type.Id == typeId).Select(a => a.Id).ToList()) + "))";
+                searchString = searchString + "(" + string.Join(",", attributesList.FindAll(a => a.Type.Id == typeId).Select(a => a.Id).ToList()) + ") AND Group_ID_Table_Parent_Group_Table.[Group_ID] IS NULL)";
             }
 
             var groups = _ministryPlatformRestRepository.UsingAuthenticationToken(token).SearchTable<MpGroupDto>("Group_Attributes", searchString, _groupAttributeColumns);
