@@ -283,7 +283,7 @@ namespace MinistryPlatform.Translation.Test.Repositories
                 }
 
                 expectedSearchString = $"{expectedSearchString} (Attribute_ID_Table_Attribute_Type_ID_Table.Attribute_Type_ID = {typeId} AND Group_Attributes.Attribute_ID IN ";
-                expectedSearchString = expectedSearchString + "(" + string.Join(",", attrs.FindAll(a => a.Type.Id == typeId).Select(a => a.Id).ToList()) + "))";
+                expectedSearchString = expectedSearchString + "(" + string.Join(",", attrs.FindAll(a => a.Type.Id == typeId).Select(a => a.Id).ToList()) + ") AND Group_ID_Table_Parent_Group_Table.[Group_ID] IS NULL)";
             }
 
 
