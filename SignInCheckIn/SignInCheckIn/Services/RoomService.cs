@@ -771,14 +771,10 @@ namespace SignInCheckIn.Services
         {
             var ages = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.AgesAttributeTypeId);
             var grades = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.GradesAttributeTypeId);
-            var birthMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.BirthMonthsAttributeTypeId);
-            var nurseryMonths = _attributeRepository.GetAttributesByAttributeTypeId(_applicationConfiguration.NurseryAgesAttributeTypeId);
 
             // existing groups assigned to a room event
             var eventGroups = _eventRepository.GetEventGroupsForEvent(eventId) ?? new List<MpEventGroupDto>();
             var allGroupsAttributes = ages.Concat(grades)
-                                    .Concat(birthMonths)
-                                    .Concat(nurseryMonths)
                                     .ToList();
 
             var unassignedGroups = _groupRepository.GetGroupsByAttribute(allGroupsAttributes, false);
