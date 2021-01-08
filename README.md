@@ -1,3 +1,10 @@
+# This project is no longer being maintained 
+
+The two projects in this repo have been move to their own repo
+
+For KC Check in front_end [please use this repo](https://github.com/crdschurch/crds-kids-club-checkin)
+For SignInCheckin C# project [please use this repo](https://github.com/crdschurch/crds-service-kids-club-checkin)
+
 # crds_signin_checkin
 Crossroads Sign-in and Check-in system for Ministry Platform
 
